@@ -1,0 +1,289 @@
+{
+ "dnd5e": {
+  "system": "dnd5e",
+  "topology": "standard",
+  "quantity": "quantity",
+  "sources": {
+   "Antorcha": {
+    "name": "Antorcha",
+    "type": "equipment",
+    "consumable": true,
+    "states": 2,
+    "light": [
+     {
+      "bright": 20,
+      "dim": 40,
+      "angle": 360,
+      "color": "#ff9329",
+      "alpha": 0.35,
+      "animation": {
+       "type": "flame",
+       "speed": 5,
+       "intensity": 5,
+       "reverse": false
+      }
+     }
+    ]
+   },
+   "Vela": {
+    "name": "Vela",
+    "type": "equipment",
+    "consumable": true,
+    "states": 2,
+    "light": [
+     {
+      "bright": 5,
+      "dim": 10,
+      "angle": 360,
+      "color": "#ffb366",
+      "alpha": 0.3,
+      "animation": {
+       "type": "torch",
+       "speed": 3,
+       "intensity": 2,
+       "reverse": false
+      }
+     }
+    ]
+   },
+   "Vela de sebo": {
+    "name": "Vela de sebo",
+    "type": "equipment",
+    "consumable": true,
+    "states": 2,
+    "light": [
+     {
+      "bright": 5,
+      "dim": 10,
+      "angle": 360,
+      "color": "#ffb366",
+      "alpha": 0.3,
+      "animation": {
+       "type": "torch",
+       "speed": 3,
+       "intensity": 2,
+       "reverse": false
+      }
+     }
+    ]
+   },
+   "Vela de cera de abeja": {
+    "name": "Vela de cera de abeja",
+    "type": "equipment",
+    "consumable": true,
+    "states": 2,
+    "light": [
+     {
+      "bright": 5,
+      "dim": 10,
+      "angle": 360,
+      "color": "#ffc27a",
+      "alpha": 0.3,
+      "animation": {
+       "type": "torch",
+       "speed": 3,
+       "intensity": 2,
+       "reverse": false
+      }
+     }
+    ]
+   },
+   "Vela votiva": {
+    "name": "Vela votiva",
+    "type": "equipment",
+    "consumable": true,
+    "states": 2,
+    "light": [
+     {
+      "bright": 5,
+      "dim": 10,
+      "angle": 360,
+      "color": "#ffc27a",
+      "alpha": 0.3,
+      "animation": {
+       "type": "torch",
+       "speed": 3,
+       "intensity": 2,
+       "reverse": false
+      }
+     }
+    ]
+   },
+   "Lámpara": {
+    "name": "Lámpara",
+    "type": "equipment",
+    "consumable": false,
+    "states": 2,
+    "light": [
+     {
+      "bright": 15,
+      "dim": 45,
+      "angle": 360,
+      "color": "#ffa64d",
+      "alpha": 0.3,
+      "animation": {
+       "type": "torch",
+       "speed": 2,
+       "intensity": 2,
+       "reverse": false
+      }
+     }
+    ]
+   },
+   "Farol con capucha": {
+    "name": "Farol con capucha",
+    "type": "equipment",
+    "consumable": false,
+    "states": 3,
+    "light": [
+     {
+      "bright": 30,
+      "dim": 60,
+      "angle": 360,
+      "color": "#ffa64d",
+      "alpha": 0.3
+     },
+     {
+      "bright": 0,
+      "dim": 5,
+      "angle": 360,
+      "color": "#ffa64d",
+      "alpha": 0.3
+     }
+    ]
+   },
+   "Farol de capucha": {
+    "name": "Farol de capucha",
+    "type": "equipment",
+    "consumable": false,
+    "states": 3,
+    "light": [
+     {
+      "bright": 30,
+      "dim": 60,
+      "angle": 360,
+      "color": "#ffa64d",
+      "alpha": 0.3
+     },
+     {
+      "bright": 0,
+      "dim": 5,
+      "angle": 360,
+      "color": "#ffa64d",
+      "alpha": 0.3
+     }
+    ]
+   },
+   "Linterna sorda": {
+    "name": "Linterna sorda",
+    "type": "equipment",
+    "consumable": false,
+    "states": 3,
+    "light": [
+     {
+      "bright": 30,
+      "dim": 60,
+      "angle": 360,
+      "color": "#ffa64d",
+      "alpha": 0.3
+     },
+     {
+      "bright": 0,
+      "dim": 5,
+      "angle": 360,
+      "color": "#ffa64d",
+      "alpha": 0.3
+     }
+    ]
+   },
+   "Farol de ojo de buey": {
+    "name": "Farol de ojo de buey",
+    "type": "equipment",
+    "consumable": false,
+    "states": 2,
+    "light": [
+     {
+      "bright": 60,
+      "dim": 120,
+      "angle": 57,
+      "color": "#ffa64d",
+      "alpha": 0.3
+     }
+    ]
+   },
+   "Linterna ojo de buey": {
+    "name": "Linterna ojo de buey",
+    "type": "equipment",
+    "consumable": false,
+    "states": 2,
+    "light": [
+     {
+      "bright": 60,
+      "dim": 120,
+      "angle": 57,
+      "color": "#ffa64d",
+      "alpha": 0.3
+     }
+    ]
+   },
+   "Luz": {
+    "name": "Luz",
+    "type": "cantrip",
+    "consumable": false,
+    "states": 2,
+    "light": [
+     {
+      "bright": 20,
+      "dim": 40,
+      "angle": 360,
+      "color": "#fff3d6",
+      "alpha": 0.25
+     }
+    ]
+   },
+   "Luces danzantes": {
+    "name": "Luces danzantes",
+    "type": "cantrip",
+    "consumable": false,
+    "states": 2,
+    "light": [
+     {
+      "bright": 0,
+      "dim": 10,
+      "angle": 360,
+      "color": "#cfe8ff",
+      "alpha": 0.3,
+      "animation": {
+       "type": "pulse",
+       "speed": 3,
+       "intensity": 3,
+       "reverse": false
+      }
+     }
+    ]
+   },
+   "Crear llama": {
+    "name": "Crear llama",
+    "type": "cantrip",
+    "consumable": false,
+    "states": 2,
+    "light": [
+     {
+      "bright": 20,
+      "dim": 40,
+      "angle": 360,
+      "color": "#ff9329",
+      "alpha": 0.4,
+      "attenuation": 0.8,
+      "animation": {
+       "type": "flame",
+       "speed": 5,
+       "intensity": 5,
+       "reverse": false
+      }
+     }
+    ]
+   }
+  }
+ }
+}

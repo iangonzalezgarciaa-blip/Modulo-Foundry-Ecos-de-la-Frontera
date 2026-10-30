@@ -1,0 +1,65 @@
+{
+  "id": "ecos-frontera",
+  "title": "Ecos de la frontera · Reglas de la casa",
+  "description": "Reglas de la campaña Ecos de la frontera para dnd5e: supervivencia (Acechado por la Muerte, Malherido, Herida No Tratada, Secuelas, Santuario), oficios por horas con Pericia y Prestigio, Mercadillo de Arcegris con Item Piles, precios del valle, Monedas Antiguas y el contenido del valle (biografías, fichas y PNJ).",
+  "version": "2.7.5",
+  "authors": [
+    {
+      "name": "Iangonz"
+    }
+  ],
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "5.0.0"
+        }
+      }
+    ],
+    "recommends": [
+      {
+        "id": "item-piles",
+        "type": "module",
+        "reason": "Mercadillo de Arcegris (tiendas)"
+      },
+      {
+        "id": "itempilesdnd5e",
+        "type": "module",
+        "reason": "Integración de Item Piles con dnd5e"
+      },
+      {
+        "id": "sequencer",
+        "type": "module",
+        "reason": "Efectos visuales"
+      },
+      {
+        "id": "midi-qol",
+        "type": "module",
+        "reason": "Combate automático (las Monedas Antiguas se integran con midi)"
+      },
+      {
+        "id": "seasons-and-stars",
+        "type": "module",
+        "reason": "Calendario de Arcegris y aviso de cada día"
+      },
+      {
+        "id": "monks-tokenbar",
+        "type": "module",
+        "reason": "Salvaciones pedidas por midi y XP por enemigos derrotados"
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/ecos.css"
+  ],
+  "socket": true
+}
