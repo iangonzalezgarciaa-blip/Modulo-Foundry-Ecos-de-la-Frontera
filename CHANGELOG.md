@@ -1,5 +1,13 @@
 # Cambios
 
+## 2.9.3 — Control de actualizaciones y arranque silencioso
+
+- Adjuntar `Ecos-Autoactualizacion.bat`: activar, detener y consultar la tarea desde un menú, sin borrar módulo, sesión ni respaldos.
+- Al activar, corregir también las tareas de 2.9.2: usar un lanzador sin consola para impedir las ventanas periódicas de PowerShell. Recrear la tarea si fue quitada con `-Remove`.
+- Detener pausa las comprobaciones futuras; una instalación ya iniciada termina para conservar la integridad de los archivos.
+- El instalador nuevo usa el mismo arranque silencioso. Comprobar ambos en Windows PowerShell 5.1 con datos ficticios.
+- Esta entrega solo cambia el ayudante de Windows; la revisión de interfaz, creación, naturalezas y descansos sigue en desarrollo.
+
 ## 2.9.2 — Actualizaciones privadas en Windows
 
 - Mantener privados el repositorio y los Releases por decisión expresa del autor.

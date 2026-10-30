@@ -106,11 +106,13 @@ try {
     }
     Test-EcosCase 'Tarea usa usuario actual, repeticion y privilegios limitados' {
         $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-        $xml = [xml](New-EcosTaskXml 'C:\Trabajo & datos\Ecos.ps1' $sid 'C:\Windows\powershell.exe')
+        $xml = [xml](New-EcosTaskXml 'C:\Trabajo & datos\Ecos-Silencioso.js' $sid 'C:\Windows\System32\wscript.exe')
         Assert-Ecos ($xml.Task.Triggers.CalendarTrigger.Repetition.Interval -eq 'PT5M') 'Intervalo incorrecto.'
         Assert-Ecos ($xml.Task.Principals.Principal.LogonType -eq 'InteractiveToken') 'No debe guardar contrasenas.'
         Assert-Ecos ($xml.Task.Principals.Principal.RunLevel -eq 'LeastPrivilege') 'No debe ejecutarse con privilegios elevados.'
-        Assert-Ecos ($xml.Task.Actions.Exec.Arguments.Contains('C:\Trabajo & datos\Ecos.ps1')) 'La ruta no se conservo.'
+        Assert-Ecos ($xml.Task.Actions.Exec.Arguments.Contains('C:\Trabajo & datos\Ecos-Silencioso.js')) 'La ruta no se conservo.'
+        Assert-Ecos ($xml.Task.Actions.Exec.Command.EndsWith('wscript.exe')) 'No debe crear una consola de PowerShell.'
+        Assert-Ecos ($xml.Task.Actions.Exec.Arguments.StartsWith('//B //Nologo')) 'Debe evitar cuadros de dialogo.'
         $service = New-Object -ComObject Schedule.Service; $service.Connect()
         $definition = $service.NewTask(0); $definition.XmlText = $xml.OuterXml
     }
@@ -118,6 +120,42 @@ try {
         $f = New-EcosFixture; $script:ReleaseFixture.assets[0].PSObject.Properties.Remove('digest')
         $info = Get-EcosReleaseInfo $script:ReleaseFixture
         Assert-Ecos ($info.Hash -eq (Get-FileHash -LiteralPath $script:ZipFixture -Algorithm SHA256).Hash.ToLowerInvariant()) 'No se interpreto el SHA.'
+    }
+    Test-EcosCase 'BAT activa, pausa y consulta sin borrar ni interrumpir una instalacion' {
+        $bat = Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\tools\windows\Ecos-Autoactualizacion.bat') -Raw
+        $mark = '# ECOS_' + 'POWERSHELL'
+        $env:ECOS_AUTO_TEST = '1'
+        . ([scriptblock]::Create($bat.Substring($bat.IndexOf($mark) + $mark.Length)))
+        Remove-Item Env:ECOS_AUTO_TEST
+        $root = Join-Path $script:Fixtures 'Control & datos con espacios'
+        New-Item -ItemType Directory -Path $root | Out-Null
+        'param([switch]$Check,[string]$StateRoot) [IO.File]::WriteAllText((Join-Path $StateRoot "prueba.txt"), "ok")' | Set-Content -LiteralPath (Join-Path $root 'Ecos-Actualizar.ps1') -Encoding UTF8
+        $real = New-Object -ComObject Schedule.Service; $real.Connect()
+        $script:FakeTask = [pscustomobject]@{ Enabled = $true; Definition = $real.NewTask(0); Runs = 0 }
+        $script:FakeTask.Definition.Principal.UserId = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+        $script:FakeTask.Definition.Principal.LogonType = 3
+        $script:FakeTask | Add-Member ScriptMethod Run { param($Arg) $this.Runs++ }
+        $folder = [pscustomobject]@{ Registered = 0 }
+        $folder | Add-Member ScriptMethod GetTask { param($Name) return $script:FakeTask }
+        $folder | Add-Member ScriptMethod RegisterTaskDefinition { param($Name,$Def,$Flags,$User,$Password,$Logon) $this.Registered++; $script:FakeTask.Definition = $Def; $script:FakeTask.Enabled = $Def.Settings.Enabled; return $script:FakeTask }
+        $service = [pscustomobject]@{ Folder = $folder; Real = $real }
+        $service | Add-Member ScriptMethod GetFolder { param($Name) return $this.Folder }
+        $service | Add-Member ScriptMethod NewTask { param($Flags) return $this.Real.NewTask($Flags) }
+        Set-EcosTaskState $service 'prueba' $root 'detener'
+        Assert-Ecos (-not $script:FakeTask.Enabled -and $script:FakeTask.Runs -eq 0) 'Pausar no debe iniciar ni matar tareas.'
+        Set-EcosTaskState $service 'prueba' $root 'estado'
+        Assert-Ecos ($folder.Registered -eq 0) 'Consultar no debe modificar la tarea.'
+        Set-EcosTaskState $service 'prueba' $root 'activar'
+        Assert-Ecos ($script:FakeTask.Enabled -and $script:FakeTask.Runs -eq 1 -and $folder.Registered -eq 1) 'No activo la tarea.'
+        Assert-Ecos ($script:FakeTask.Definition.Actions.Item(1).Path.EndsWith('wscript.exe')) 'El BAT debe corregir la tarea antigua para no abrir ventanas.'
+        $launcher = Join-Path $root 'Ecos-Silencioso.js'
+        $process = Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\wscript.exe') -ArgumentList @('//B','//Nologo',('"{0}"' -f $launcher)) -PassThru
+        Assert-Ecos ($process.WaitForExit(15000)) 'El lanzador no termino.'
+        Assert-Ecos ($process.ExitCode -eq 0 -and (Test-Path -LiteralPath (Join-Path $root 'prueba.txt'))) 'El lanzador no ejecuto el PS1 con una ruta con espacios.'
+        $service.Folder | Add-Member ScriptMethod GetTask { param($Name) throw 'No existe' } -Force
+        Set-EcosTaskState $service 'prueba' $root 'activar'
+        Assert-Ecos ($script:FakeTask.Definition.Triggers.Count -eq 2) 'Debe recrear la tarea eliminada por -Remove.'
+        Assert-Ecos ($script:FakeTask.Definition.Triggers.Item(1).Repetition.Interval -eq 'PT5M') 'Debe comprobar cada cinco minutos.'
     }
     Write-Host "$script:Tests pruebas del actualizador aprobadas. No se usaron credenciales ni tareas reales."
 } finally { Remove-Item -LiteralPath $script:Fixtures -Recurse -Force }

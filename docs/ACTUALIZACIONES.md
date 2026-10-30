@@ -29,6 +29,16 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\Downloads\
 
 La detección incluye la aplicación de escritorio con nombre Foundry y servidores Node identificados como Foundry o con `--dataPath`. Una instalación con un lanzador personalizado que oculte esos datos requiere adaptar la detección antes de confiar en la tarea. Las pruebas de Windows usan archivos ficticios y no equivalen a haber instalado la tarea ni iniciado sesión en el PC del autor.
 
+## Activar o detener con doble clic
+
+Descarga **Ecos-Autoactualizacion.bat** desde el Release privado y guárdalo donde quieras. Ábrelo con doble clic y elige Activar, Detener o Estado. Usa la configuración que ya instalaste; no solicita la ruta de Foundry ni una autenticación nueva. No necesita ejecutarse como administrador.
+
+**Activar corrige también las ventanas de la versión 2.9.2**: cambia únicamente la tarea de Ecos de tu usuario para arrancar mediante `wscript.exe` en segundo plano. Si antes usaste `-Remove`, vuelve a crear la tarea con su configuración conservada. No es necesario reinstalar el módulo ni repetir el instalador para usar este BAT.
+
+Detener deshabilita las comprobaciones futuras. Una actualización en curso termina; no se mata un proceso en mitad de un respaldo o de sustituir la carpeta. Al activar se hace una primera comprobación y se retoma el intervalo de cinco minutos y el inicio de sesión. Foundry abierto sigue posponiendo las instalaciones.
+
+También admite comandos: `Ecos-Autoactualizacion.bat activar`, `Ecos-Autoactualizacion.bat detener` y `Ecos-Autoactualizacion.bat estado`. La consola del menú se abre solo cuando tú ejecutas el BAT; las comprobaciones periódicas usan el lanzador sin consola.
+
 ## Revisar, comprobar o desactivar
 
 Archivos del ayudante y registro de actividad:

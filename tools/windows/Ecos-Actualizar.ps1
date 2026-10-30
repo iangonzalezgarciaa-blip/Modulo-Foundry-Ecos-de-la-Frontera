@@ -167,9 +167,20 @@ function Invoke-EcosUpdate($Config, [string]$Root) {
         return 'Actualizado'
     } finally { if (Test-Path -LiteralPath $work) { Remove-Item -LiteralPath $work -Recurse -Force } }
 }
-function New-EcosTaskXml([string]$Script, [string]$UserId, [string]$PowerShell) {
-    $exe = [Security.SecurityElement]::Escape($PowerShell)
-    $argsXml = [Security.SecurityElement]::Escape(('-NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File "{0}" -Check -StateRoot "{1}"' -f $Script, [IO.Path]::GetDirectoryName($Script)))
+function New-EcosSilentLauncher([string]$Root) {
+    $script = Join-Path $Root 'Ecos-Actualizar.ps1'
+    if (-not (Test-Path -LiteralPath $script -PathType Leaf)) { throw 'Falta el actualizador instalado. Ejecuta Ecos-Actualizar.ps1 -Install una vez.' }
+    $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+    $command = '"{0}" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "{1}" -Check -StateRoot "{2}"' -f $ps, $script, $Root
+    $literal = ConvertTo-Json -InputObject $command -Compress
+    $launcher = Join-Path $Root 'Ecos-Silencioso.js'
+    $source = 'var shell = new ActiveXObject("WScript.Shell"); WScript.Quit(shell.Run(' + $literal + ', 0, true));'
+    [IO.File]::WriteAllText($launcher, $source, [Text.Encoding]::Unicode)
+    return $launcher
+}
+function New-EcosTaskXml([string]$Launcher, [string]$UserId, [string]$WScript) {
+    $exe = [Security.SecurityElement]::Escape($WScript)
+    $argsXml = [Security.SecurityElement]::Escape(('//B //Nologo "{0}"' -f $Launcher))
     $userXml = [Security.SecurityElement]::Escape($UserId)
     $start = (Get-Date).Date.ToString('yyyy-MM-ddTHH:mm:ss')
     return @"
@@ -216,9 +227,10 @@ function Install-EcosUpdater([string]$Root, [string]$DataPath) {
     # Comprueba el acceso privado antes de registrar la tarea.
     Get-EcosReleaseInfo (Get-EcosRelease $config) | Out-Null
     $config | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $Root 'config.json') -Encoding UTF8
-    $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
-    Register-ScheduledTask -TaskName $taskName -Xml (New-EcosTaskXml $installed $sid $ps) -Force | Out-Null
-    Write-EcosLog 'Configurado: revisa Releases privados cada 5 minutos y al iniciar sesion. No necesita descargar ZIPs manualmente.' $Root
+    $launcher = New-EcosSilentLauncher $Root
+    $hostExe = Join-Path $env:SystemRoot 'System32\wscript.exe'
+    Register-ScheduledTask -TaskName $taskName -Xml (New-EcosTaskXml $launcher $sid $hostExe) -Force | Out-Null
+    Write-EcosLog 'Configurado sin ventanas: revisa Releases privados cada 5 minutos y al iniciar sesion. No necesita descargar ZIPs manualmente.' $Root
 }
 function Start-EcosCheck([string]$Root) {
     $lock = $null

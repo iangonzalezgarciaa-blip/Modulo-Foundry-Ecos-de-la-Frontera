@@ -40,7 +40,8 @@ module.exports = async function publicar({ github, context, core, root = process
   const archivos = [{ name: nombre, data, type: 'application/zip' },
     { name: 'module.json', data: manifestData, type: 'application/json' }];
   if (privado) archivos.push({ name: 'Ecos-Actualizar.ps1',
-    data: fs.readFileSync(path.join(root, 'tools/windows/Ecos-Actualizar.ps1')), type: 'application/octet-stream' });
+    data: fs.readFileSync(path.join(root, 'tools/windows/Ecos-Actualizar.ps1')), type: 'application/octet-stream' }, { name: 'Ecos-Autoactualizacion.bat',
+    data: fs.readFileSync(path.join(root, 'tools/windows/Ecos-Autoactualizacion.bat')), type: 'application/octet-stream' });
   for (const archivo of archivos) {
     const existente = release.assets?.find(a => a.name === archivo.name);
     const archivoDigest = `sha256:${crypto.createHash('sha256').update(archivo.data).digest('hex')}`;
