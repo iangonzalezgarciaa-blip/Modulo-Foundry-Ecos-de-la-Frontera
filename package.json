@@ -1,0 +1,16 @@
+{
+  "name": "ecos-frontera",
+  "version": "2.8.0",
+  "private": true,
+  "type": "module",
+  "description": "Herramientas de validación del módulo de Foundry VTT",
+  "scripts": {
+    "test": "node --test",
+    "check": "node tools/check.mjs",
+    "catalog:audit": "node tools/audit-catalog.mjs",
+    "docs:catalog": "node tools/catalog-report.mjs",
+    "balance": "node tools/balance.mjs",
+    "package": "python3 tools/package.py"
+  },
+  "engines": { "node": ">=22" }
+}

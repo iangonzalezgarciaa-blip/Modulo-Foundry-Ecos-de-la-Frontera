@@ -24,6 +24,8 @@
 import { TIENDAS } from "./catalogo.js";
 import { CALENDARIO, eventosDelDia, faseLunar, diaCampana, sumarDias, mesPrimerAno } from "./calendario.js";
 import "./verbe.js";
+import { crearCola } from "./verbe-core.js";
+import { tipoCuracionVerbe, tratarHeridaConPulso } from "./verbe-medicina.js";
 
 const MOD = "ecos-frontera";
 const RUTA = `modules/${MOD}`;
@@ -1059,7 +1061,7 @@ async function aplicarTratamiento(actor, d) {
   const exito = Number(d.total) >= Number(d.cd);
   const cortado = !!actor.getFlag(MOD, "huboCombate") || !!actor.getFlag(MOD, "trabajoPesado");
   const L = [`<b>${escH(d.sanador)}</b> ${d.solo ? "se trata a sí mismo" : `trata a <b>${actor.name}</b>`}${d.kit ? " con un kit de sanador" : ""}${d.santuario ? "" : ", fuera del Santuario"}: `
-    + `Medicina ${d.total} contra CD ${d.cd} → <b>${exito ? "éxito" : (d.fumble ? "1 natural" : "fallo")}</b>.`];
+    + (d.magico ? "<b>Tratamiento mágico con éxito.</b>" : `Medicina ${d.total} contra CD ${d.cd} → <b>${exito ? "éxito" : (d.fumble ? "1 natural" : "fallo")}</b>.`)];
   await actor.setFlag(MOD, "cura", { intento: true, exito, por: d.sanador });
   if (exito) {
     if (nh && cortado) {
@@ -1342,6 +1344,8 @@ const MAGIA_CURATIVA = [
 ];
 /** Por el nombre (como esté traducido), el nombre original (Babele) o el identificador del conjuro («lesser-restoration»). */
 function tipoMagiaCurativa(x) {
+  const verbe = tipoCuracionVerbe(x);
+  if (verbe) return verbe;
   const nombres = (typeof x === "string") ? [x]
     : [x?.name, x?.flags?.babele?.originalName, String(x?.system?.identifier ?? "").replace(/-/g, " ")];
   for (const n of nombres.filter(Boolean)) {
@@ -1351,8 +1355,20 @@ function tipoMagiaCurativa(x) {
   return null;
 }
 
-async function magiaCura(actor, d) {
+const colaCuraciones = crearCola();
+function magiaCura(actor, d) { return colaCuraciones(actor.uuid ?? actor.id, () => magiaCuraInterna(actor, d)); }
+async function magiaCuraInterna(actor, d) {
   if (d.tipo === "piedad") return estabilizar(actor, { quien: d.de, como: d.objeto });
+  if (d.tipo === "pulsoTratamiento") {
+    if (curaDeHoy(actor)?.exito || !necesitaCuidados(actor)) return;
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: `Palma que cierra · ${actor.name}` },
+      content: `<p>¿Aplicar el tratamiento mágico de <b>${escH(d.de)}</b> a <b>${escH(actor.name)}</b>? Cuenta una sola vez hoy, trata Malherido y avanza un día de Herida No Tratada si pudo reposar. Los PG se resuelven con la tirada de curación.</p>`, rejectClose: false
+    });
+    if (!ok) return;
+    return tratarHeridaConPulso(actor, { leerCura: curaDeHoy, nivel: nivelHNT, aplicar: aplicarTratamiento,
+      sanador: d.de, santuario: enSantuario() });
+  }
   const n = nivelHNT(actor);
   const sinTratar = malSinTratar(actor);
   if (!n && !sinTratar) return;

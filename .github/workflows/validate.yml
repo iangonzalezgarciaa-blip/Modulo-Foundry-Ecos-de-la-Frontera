@@ -1,0 +1,18 @@
+name: Validar módulo
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+      - run: npm run check
+      - run: npm run docs:catalog
+      - run: npm run balance
+      - run: git diff --exit-code -- docs/COBERTURA_CATALOGO.md docs/ESCENARIOS_BALANCE.md
+      - run: npm run package

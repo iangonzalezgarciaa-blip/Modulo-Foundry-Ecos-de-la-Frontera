@@ -2,6 +2,8 @@
 
 Fecha: 30 de octubre de 2026. Documento para el autor y el DM.
 
+**Estado actualizado:** esta auditoría conserva los hallazgos de la importación 2.7.5 como referencia histórica. Las reparaciones, decisiones y límites actuales están en [BASE_ESTABLE_2.8.md](BASE_ESTABLE_2.8.md); la [cobertura completa](COBERTURA_CATALOGO.md) y los [escenarios de balance](ESCENARIOS_BALANCE.md) acompañan al código 2.8. Las frases siguientes sobre «sin cambios» describen la revisión inicial, no la versión reparada.
+
 Base examinada: módulo **2.7.5**, importado sin modificar sus 26 archivos, commit [`1219db8`](https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera/commit/1219db85892189ca61656893e035ba8c40791094).
 
 La prioridad es hacer coincidir las reglas escritas, los cálculos y lo que ocurre en Foundry. Después se puede equilibrar el sistema con datos de partidas. Cambiar daños antes de corregir una defensa o un estado que no se aplica produciría conclusiones engañosas.

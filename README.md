@@ -1,4 +1,8 @@
-# Ecos de la frontera · Reglas de la casa (v2.0.0)
+# Ecos de la frontera · Reglas de la casa (v2.8.0)
+
+Esta versión repara el núcleo del Verbe y su enlace con supervivencia. Conserva las 401 técnicas y 155 dotes. Consulta la [base y decisiones de 2.8](docs/BASE_ESTABLE_2.8.md), el [historial](CHANGELOG.md), la [cobertura completa](docs/COBERTURA_CATALOGO.md) y los [escenarios de balance](docs/ESCENARIOS_BALANCE.md). El código tiene pruebas locales; queda pendiente su validación dentro de Foundry con los módulos de la campaña.
+
+Paquete para instalación manual: [ecos-frontera-2.8.0.zip](releases/ecos-frontera-2.8.0.zip). El repositorio privado exige iniciar sesión en GitHub; este enlace no es un manifiesto público de actualización automática.
 
 Módulo de Foundry VTT v13 para dnd5e 5.x hecho para la campaña **Ecos de la frontera** (mundo *Fantasy and Agony*). Automatiza las reglas de supervivencia, el trabajo de los PJ, la economía del Valle de Arcegris y el Mercadillo.
 
@@ -16,7 +20,7 @@ Este README es la referencia técnica. Lo que es solo para el DM (secretos, merc
 | | |
 |---|---|
 | Foundry | v13 |
-| Sistema | dnd5e 5.0 o superior (reglas modernas 2024) |
+| Sistema | dnd5e 5.2.5 como base de integración (reglas modernas 2024) |
 | Necesario para el Mercadillo | **Item Piles** + *Item Piles: D&D 5e* |
 | Opcionales | Sequencer + JB2A (efectos visuales), Dice So Nice (dados 3D), Seasons & Stars (horarios y estaciones por calendario) |
 
@@ -26,14 +30,22 @@ Archivos:
 
 ```
 module.json
-scripts/main.js        todo el módulo
+scripts/main.js        supervivencia, oficios, economía e integración de campaña
+scripts/verbe.js       panel, progresión, compras y adaptador de técnicas
+scripts/verbe-core.js  reglas puras de gasto, recuperación, choques y creación
+scripts/verbe-effects.js estados y tiradas
+scripts/verbe-medicina.js enlace entre Pulso y heridas
 scripts/catalogo.js    catálogo de las tiendas del Mercadillo
+scripts/calendario.js  calendario de campaña
+data/verbe.txt         catálogo del Verbe codificado
 data/contenido.txt     contenido de la versión (cifrado; lo aplica el DM una vez)
 data/archivo-1.7.2.txt biografías, fichas, PNJ y páginas de la v1.7.2 (cifrado; solo si hay que reaplicarlo)
 styles/ecos.css        tarjetas, ventanas, mercadillo y panel de Prestigio
 icons/                 estados, oficio, soul coin
 README.md              este archivo
 ```
+
+Desarrollo: Node 22 o superior y Python 3, sin dependencias de npm. `npm test` ejecuta regresiones con documentos simulados; `npm run check` valida scripts, JSON y catálogo; `npm run docs:catalog` y `npm run balance` regeneran los informes; `npm run package` crea el ZIP de ejecución. `tools/repair-catalog.mjs` es una reparación puntual e idempotente, no se ejecuta al iniciar el mundo.
 
 ## 2. Quién usa las reglas
 
