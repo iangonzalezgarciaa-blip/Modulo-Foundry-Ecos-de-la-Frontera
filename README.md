@@ -1,8 +1,10 @@
-# Ecos de la frontera · Reglas de la casa (v2.8.0)
+# Ecos de la frontera · Reglas de la casa (v2.9.0)
+
+**Interfaz para nuevos jugadores:** Inicio guía las primeras elecciones; Mis técnicas permite jugar; Aprender separa costes de aprendizaje y uso; Mejorar reúne el progreso; Ayuda rápida responde las dudas sin exigir leer un manual. [Detalles de la interfaz 2.9](docs/INTERFAZ_JUGADORES_2.9.md). [Vista previa independiente](docs/preview/interfaz.html), para descargar y abrir en un navegador con datos ficticios.
 
 Esta versión repara el núcleo del Verbe y su enlace con supervivencia. Conserva las 401 técnicas y 155 dotes. Consulta la [base y decisiones de 2.8](docs/BASE_ESTABLE_2.8.md), el [historial](CHANGELOG.md), la [cobertura completa](docs/COBERTURA_CATALOGO.md) y los [escenarios de balance](docs/ESCENARIOS_BALANCE.md). El código tiene pruebas locales; queda pendiente su validación dentro de Foundry con los módulos de la campaña.
 
-Paquete para instalación manual: [ecos-frontera-2.8.0.zip](releases/ecos-frontera-2.8.0.zip). El repositorio privado exige iniciar sesión en GitHub; este enlace no es un manifiesto público de actualización automática.
+Paquete actual para instalación manual: [ecos-frontera-2.9.0.zip](releases/ecos-frontera-2.9.0.zip). El repositorio privado exige iniciar sesión en GitHub; este enlace no es un manifiesto público de actualización automática.
 
 Módulo de Foundry VTT v13 para dnd5e 5.x hecho para la campaña **Ecos de la frontera** (mundo *Fantasy and Agony*). Automatiza las reglas de supervivencia, el trabajo de los PJ, la economía del Valle de Arcegris y el Mercadillo.
 
@@ -35,6 +37,7 @@ scripts/verbe.js       panel, progresión, compras y adaptador de técnicas
 scripts/verbe-core.js  reglas puras de gasto, recuperación, choques y creación
 scripts/verbe-effects.js estados y tiradas
 scripts/verbe-medicina.js enlace entre Pulso y heridas
+scripts/verbe-ui.js     presentación, primeros pasos y avisos para el jugador
 scripts/catalogo.js    catálogo de las tiendas del Mercadillo
 scripts/calendario.js  calendario de campaña
 data/verbe.txt         catálogo del Verbe codificado
@@ -45,7 +48,7 @@ icons/                 estados, oficio, soul coin
 README.md              este archivo
 ```
 
-Desarrollo: Node 22 o superior y Python 3, sin dependencias de npm. `npm test` ejecuta regresiones con documentos simulados; `npm run check` valida scripts, JSON y catálogo; `npm run docs:catalog` y `npm run balance` regeneran los informes; `npm run package` crea el ZIP de ejecución. `tools/repair-catalog.mjs` es una reparación puntual e idempotente, no se ejecuta al iniciar el mundo.
+Desarrollo: Node 22 o superior y Python 3, sin dependencias de npm. `npm test` ejecuta regresiones con documentos simulados; `npm run check` valida scripts, JSON y catálogo; `npm run docs:catalog` y `npm run balance` regeneran los informes; `npm run ui:preview` genera la vista previa sin Foundry; `npm run package` crea el ZIP de ejecución. `tools/repair-catalog.mjs` es una reparación puntual e idempotente, no se ejecuta al iniciar el mundo.
 
 ## 2. Quién usa las reglas
 

@@ -313,6 +313,186 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-verbe-crece li, .ecos-verbe-mejora li { margin: 1px 0; }
 .ecos-verbe-fuerte { margin: 4px 0; padding: 3px 8px; border-left: 3px solid rgba(168, 50, 45, 0.6); font-size: 0.9em; }
 
+/* Panel 2.9: inicio guiado y repertorio de juego. Los colores siempre van acompañados de texto. */
+.ecos-verbe-panel {
+  --ev-fondo: #f4f3ed; --ev-papel: #fffef9; --ev-tinta: #24312f; --ev-suave: #52645f;
+  --ev-linea: #cbd4cb; --ev-acento: #185e54; --ev-acento-texto: #fff; --ev-agua: #e6f0ea;
+  --ev-oro: #775719; --ev-oro-fondo: #f7efd9; --ev-alerta: #85401e; --ev-alerta-fondo: #fff0df;
+  --ev-bloqueo: #7d3636;
+}
+.theme-dark .ecos-verbe-panel, .ecos-verbe-panel.theme-dark {
+  --ev-fondo: #192522; --ev-papel: #22332e; --ev-tinta: #eef3e9; --ev-suave: #bfd0c5;
+  --ev-linea: #4d6458; --ev-acento: #9dd4bc; --ev-acento-texto: #11291f; --ev-agua: #2a4237;
+  --ev-oro: #ead18b; --ev-oro-fondo: #3d3523; --ev-alerta: #ffc593; --ev-alerta-fondo: #422e23;
+  --ev-bloqueo: #ffb8b3;
+}
+.ecos-verbe-panel .window-content {
+  background: var(--ev-fondo); color: var(--ev-tinta); font-size: 14px; line-height: 1.45;
+  container-type: inline-size; container-name: panel-verbe; min-height: 0;
+}
+.ecos-verbe-panel button, .ecos-verbe-panel input, .ecos-verbe-panel select { font: inherit; }
+.ecos-verbe-panel button { color: var(--ev-tinta); background: var(--ev-papel); border: 1px solid var(--ev-linea); border-radius: 7px; cursor: pointer; }
+.ecos-verbe-panel button:hover:not(:disabled) { border-color: var(--ev-acento); background: var(--ev-agua); box-shadow: none; }
+.ecos-verbe-panel button:disabled { cursor: not-allowed; opacity: .65; }
+.ecos-verbe-panel :is(button, summary, input, select, a):focus-visible { outline: 3px solid var(--ev-acento); outline-offset: 3px; }
+.ecos-verbe-panel input:not([type="checkbox"]), .ecos-verbe-panel select { background: var(--ev-papel); color: var(--ev-tinta); border: 1px solid var(--ev-linea); border-radius: 6px; min-height: 36px; padding: 5px 8px; }
+.ecos-verbe-panel input[type="checkbox"] { accent-color: var(--ev-acento); }
+.ecos-verbe-panel .ecos-verbe-cabpanel { display: grid; grid-template-columns: 1.05fr 1.3fr .9fr; gap: 22px; padding: 20px; align-items: center; background: var(--ev-papel); margin: 0; border-bottom: 1px solid var(--ev-linea); }
+.ecos-verbe-panel .ev-identidad { display: flex; flex-direction: column; min-width: 0; gap: 4px; }
+.ecos-verbe-panel .ev-identidad strong { font-size: 24px; font-family: Georgia, serif; line-height: 1.15; overflow-wrap: anywhere; }
+.ecos-verbe-panel .ev-kicker { font-size: 10px; letter-spacing: .13em; font-weight: 750; color: var(--ev-acento); }
+.ecos-verbe-panel .ev-identidad small { color: var(--ev-suave); font-size: 12px; }
+.ecos-verbe-panel .ecos-verbe-trazos { border: 1px solid var(--ev-linea); border-radius: 10px; min-width: 0; padding: 10px 8px; gap: 2px; }
+.ecos-verbe-panel .ecos-verbe-trazos.hay { background: var(--ev-oro-fondo); color: var(--ev-oro); border-color: color-mix(in srgb, var(--ev-oro) 32%, transparent); }
+.ecos-verbe-panel .ecos-verbe-trazos .n { font-size: 30px; }
+.ecos-verbe-panel .ecos-verbe-trazos .t { font-size: 12px; opacity: 1; }
+.ecos-verbe-panel .ecos-verbe-trazos small { font-size: 10px; text-align: center; }
+.ecos-verbe-panel .ev-recurso-titulo { display: flex; flex-direction: column; gap: 3px; }
+.ecos-verbe-panel .ev-recurso-titulo b { display: flex; align-items: center; gap: 5px; }
+.ecos-verbe-panel .ev-recurso-titulo b span { margin-left: auto; font-variant-numeric: tabular-nums; }
+.ecos-verbe-panel .ev-recurso-titulo small { font-size: 10px; letter-spacing: .08em; color: var(--ev-suave); }
+.ecos-verbe-panel .ecos-verbe-barra.grande { height: 9px; margin: 7px 0; background: var(--ev-agua); border: 0; border-radius: 20px; }
+.ecos-verbe-panel .ecos-verbe-barra > div { background: var(--ev-acento); }
+.ecos-verbe-panel .ecos-verbe-barra.negativo > div { background: var(--ev-alerta); }
+.ecos-verbe-panel .ecos-verbe-res > small { color: var(--ev-suave); font-size: 11px; opacity: 1; }
+.ecos-verbe-panel .ecos-verbe-tabs { padding: 8px 12px; gap: 4px; background: var(--ev-papel); border-color: var(--ev-linea); flex-wrap: wrap; }
+.ecos-verbe-panel .ecos-verbe-tabs button { flex: 1 1 auto; width: auto; min-height: 38px; padding: 6px 10px; border-color: transparent; background: transparent; font-size: 13px; }
+.ecos-verbe-panel .ecos-verbe-tabs button i { margin-right: 4px; }
+.ecos-verbe-panel .ecos-verbe-tabs button.activa { background: var(--ev-agua); border-color: var(--ev-linea); color: var(--ev-acento); font-weight: 750; }
+.ecos-verbe-panel .ecos-verbe-cuerpo { padding: 20px; min-height: 0; }
+.ecos-verbe-panel .ecos-verbe-cuerpo :is(h2, h3) { color: var(--ev-tinta); border: 0; }
+.ecos-verbe-panel .ecos-verbe-cuerpo h2 { font: 600 27px/1.2 Georgia, serif; margin: 5px 0 12px; }
+.ecos-verbe-panel .ecos-verbe-cuerpo h3 { font-size: 17px; margin: 6px 0; }
+.ecos-verbe-panel .ecos-verbe-cuerpo p { margin: 6px 0 12px; }
+.ecos-verbe-panel .ecos-verbe-cuerpo button { min-height: 36px; padding: 6px 10px; font-size: 13px; line-height: 1.3; white-space: normal; }
+.ecos-verbe-panel button.ev-principal { background: var(--ev-acento); border-color: var(--ev-acento); color: var(--ev-acento-texto); font-weight: 700; }
+.ecos-verbe-panel button.ev-principal:hover:not(:disabled) { filter: brightness(.93); background: var(--ev-acento); color: var(--ev-acento-texto); }
+.ecos-verbe-panel .ev-progreso { display: flex; list-style: none; margin: 0 0 18px; padding: 0; gap: 8px; }
+.ecos-verbe-panel .ev-progreso li { display: flex; align-items: center; gap: 6px; flex: 1; font-size: 11px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-progreso li > span { width: 24px; height: 24px; border: 1px solid var(--ev-linea); border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--ev-papel); }
+.ecos-verbe-panel .ev-progreso .actual { color: var(--ev-acento); font-weight: 750; }
+.ecos-verbe-panel .ev-progreso .actual > span { background: var(--ev-acento); color: var(--ev-acento-texto); }
+.ecos-verbe-panel .ev-progreso .hecho > span { background: var(--ev-agua); color: var(--ev-acento); }
+.ecos-verbe-panel .ev-bienvenida { padding: 20px; background: var(--ev-papel); border: 1px solid var(--ev-linea); border-radius: 12px; margin-bottom: 18px; }
+.ecos-verbe-panel .ev-bienvenida > p { color: var(--ev-suave); max-width: 74ch; }
+.ecos-verbe-panel .ev-elecciones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.ecos-verbe-panel .ev-eleccion { display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 7px; padding: 15px; min-height: 155px; }
+.ecos-verbe-panel .ev-eleccion strong { font-size: 18px; }
+.ecos-verbe-panel .ev-eleccion b { font-size: 12px; }
+.ecos-verbe-panel .ev-eleccion small { font-size: 12px; line-height: 1.5; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-eleccion > span:last-child { color: var(--ev-acento); font-size: 11px; font-weight: 700; margin-top: auto; }
+.ecos-verbe-panel .ev-eleccion .ev-elemento { font-size: 27px; line-height: 1; color: var(--ev-acento); }
+.ecos-verbe-panel .ev-eleccion.fuego .ev-elemento { color: #b6542b; }
+.ecos-verbe-panel .ev-eleccion.rayo .ev-elemento { color: var(--ev-oro); }
+.ecos-verbe-panel .ev-eleccion.agua .ev-elemento { color: #3985ad; }
+.ecos-verbe-panel .ev-tarjetas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.ecos-verbe-panel .ev-bienvenida .ev-tarjetas { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.ecos-verbe-panel .ev-tecnica { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--ev-linea); border-radius: 10px; background: var(--ev-papel); padding: 16px; }
+.ecos-verbe-panel .ev-tecnica.riesgo { border-color: var(--ev-alerta); }
+.ecos-verbe-panel .ev-tec-top { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 9px; }
+.ecos-verbe-panel .ev-etiqueta { border-radius: 5px; padding: 3px 6px; background: var(--ev-agua); color: var(--ev-acento); font-size: 10px; font-weight: 700; }
+.ecos-verbe-panel .ev-etiqueta.suave { background: var(--ev-fondo); color: var(--ev-suave); }
+.ecos-verbe-panel .ev-tecnica h3 { font: 600 21px/1.2 Georgia, serif; overflow-wrap: anywhere; }
+.ecos-verbe-panel .ev-texto-tecnica { font-size: 13px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-tec-datos { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 11px; margin: 2px 0 10px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-costes { display: flex; flex-wrap: wrap; gap: 14px; padding: 10px 0; border-block: 1px solid var(--ev-linea); font-size: 12px; margin-top: auto; }
+.ecos-verbe-panel .ev-costes > span { display: block; }
+.ecos-verbe-panel .ev-costes b { font-size: 20px; color: var(--ev-acento); }
+.ecos-verbe-panel .ev-costes small { display: block; color: var(--ev-suave); font-size: 10px; }
+.ecos-verbe-panel .ev-tecnica footer { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.ecos-verbe-panel .ev-tecnica footer button { flex: 1; font-size: 12px; }
+.ecos-verbe-panel p.ev-disponibilidad { color: var(--ev-acento); font-size: 12px; margin: 10px 0 5px; }
+.ecos-verbe-panel p.ev-disponibilidad.bloqueada { color: var(--ev-bloqueo); }
+.ecos-verbe-panel p.ev-disponibilidad.riesgo { color: var(--ev-alerta); }
+.ecos-verbe-panel .ev-nota { font-size: 12px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-acciones { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+.ecos-verbe-panel .ev-mini-pasos { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 18px 0 12px; font-size: 12px; }
+.ecos-verbe-panel .ev-mini-pasos b { display: inline-grid; place-items: center; background: var(--ev-agua); color: var(--ev-acento); width: 22px; height: 22px; border-radius: 50%; margin-right: 3px; }
+.ecos-verbe-panel .ev-estadisticas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 15px 0; }
+.ecos-verbe-panel .ev-estadisticas > div { display: flex; flex-direction: column; gap: 5px; border: 1px solid var(--ev-linea); border-radius: 8px; padding: 13px; background: var(--ev-papel); }
+.ecos-verbe-panel .ev-estadisticas small { color: var(--ev-suave); font-size: 11px; }
+.ecos-verbe-panel .ev-estadisticas b { font-size: 26px; line-height: 1.1; }
+.ecos-verbe-panel .ev-estadisticas span { font-size: 11px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-ficha-personal, .ecos-verbe-panel .ev-filtros-extra { border: 1px solid var(--ev-linea); border-radius: 8px; padding: 10px 12px; margin: 12px 0; background: var(--ev-papel); }
+.ecos-verbe-panel summary { cursor: pointer; min-height: 28px; }
+.ecos-verbe-panel .ev-ficha-personal > summary { font-weight: 650; }
+.ecos-verbe-panel .ev-reponer { background: var(--ev-oro-fondo); border: 1px solid var(--ev-linea); border-radius: 8px; padding: 14px; margin: 15px 0; display: flex; gap: 15px; }
+.ecos-verbe-panel .ev-reponer > div { flex: 1; min-width: 0; }
+.ecos-verbe-panel .ev-reponer p { font-size: 12px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-reponer button { margin-bottom: 6px; }
+.ecos-verbe-panel .ev-reponer small { display: block; font-size: 11px; }
+.ecos-verbe-panel .ev-titulo-pagina { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.ecos-verbe-panel .ev-titulo-pagina p { color: var(--ev-suave); }
+.ecos-verbe-panel .ev-contador { font-size: 11px; white-space: nowrap; background: var(--ev-agua); color: var(--ev-acento); padding: 6px 9px; border-radius: 20px; }
+.ecos-verbe-panel .ev-instruccion { display: flex; gap: 10px; align-items: center; padding: 12px; background: var(--ev-agua); border-radius: 8px; font-size: 12px; color: var(--ev-acento); margin-bottom: 12px; }
+.ecos-verbe-panel .ev-instruccion > i { font-size: 24px; }
+.ecos-verbe-panel .ev-instruccion b { display: block; }
+.ecos-verbe-panel .ecos-verbe-filtros { gap: 10px; padding: 10px 0; margin: 0; }
+.ecos-verbe-panel .ecos-verbe-filtros label { color: var(--ev-suave); font-size: 12px; }
+.ecos-verbe-panel .ev-busqueda { flex: 1 1 220px; display: flex; flex-direction: column; gap: 4px; }
+.ecos-verbe-panel .ecos-verbe-filtros .ev-busqueda input { width: 100%; }
+.ecos-verbe-panel .ev-vacio { border: 1px dashed var(--ev-linea); border-radius: 10px; background: var(--ev-papel); text-align: center; padding: 28px 20px; margin-top: 16px; }
+.ecos-verbe-panel .ev-vacio p { color: var(--ev-suave); }
+.ecos-verbe-panel .ev-avisos { display: grid; gap: 8px; margin-bottom: 14px; }
+.ecos-verbe-panel .ev-avisos > div { padding: 12px; border-radius: 8px; color: var(--ev-alerta); border: 1px solid color-mix(in srgb, var(--ev-alerta) 40%, transparent); background: var(--ev-alerta-fondo); }
+.ecos-verbe-panel .ev-avisos p { font-size: 12px; margin: 4px 0 0; }
+.ecos-verbe-panel .ev-contraste-recursos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
+.ecos-verbe-panel .ev-contraste-recursos > div { background: var(--ev-agua); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 3px; color: var(--ev-acento); }
+.ecos-verbe-panel .ev-contraste-recursos span { font-size: 12px; }
+.ecos-verbe-panel .ev-preguntas details { border-bottom: 1px solid var(--ev-linea); padding: 12px 2px; }
+.ecos-verbe-panel .ev-preguntas summary { font-weight: 650; }
+.ecos-verbe-panel .ev-preguntas p { color: var(--ev-suave); line-height: 1.65; max-width: 80ch; }
+.ecos-verbe-panel .ev-subnav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
+.ecos-verbe-panel .ev-subnav [aria-current="page"] { border-color: var(--ev-acento); background: var(--ev-agua); color: var(--ev-acento); }
+.ecos-verbe-panel .ecos-verbe-intro { background: var(--ev-agua); border-color: var(--ev-acento); padding: 12px; border-radius: 8px; }
+.ecos-verbe-panel .ecos-verbe-intro a { color: var(--ev-acento); text-decoration: underline; }
+.ecos-verbe-panel .ecos-nota { opacity: 1; color: var(--ev-suave); }
+.ecos-verbe-panel details.ecos-verbe-grupo { background: var(--ev-papel); border-color: var(--ev-linea); border-radius: 9px; margin: 14px 0; }
+.ecos-verbe-panel details.ecos-verbe-grupo > summary { padding: 12px; background: var(--ev-agua); }
+.ecos-verbe-panel details.ecos-verbe-tec { border-color: var(--ev-linea); }
+.ecos-verbe-panel details.ecos-verbe-tec > summary { padding: 12px; gap: 10px; align-items: center; }
+.ecos-verbe-panel details.ecos-verbe-tec > summary:hover { background: var(--ev-fondo); }
+.ecos-verbe-panel details.ecos-verbe-tec .gr { font-size: 10px; min-width: 55px; padding: 5px; background: var(--ev-agua); color: var(--ev-acento); }
+.ecos-verbe-panel details.ecos-verbe-tec .nom { gap: 5px; }
+.ecos-verbe-panel details.ecos-verbe-tec .nom > b { font-size: 15px; }
+.ecos-verbe-panel details.ecos-verbe-tec .nom small { color: var(--ev-suave); opacity: 1; }
+.ecos-verbe-panel details.ecos-verbe-tec .nom .ev-efecto-breve { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
+.ecos-verbe-panel details.ecos-verbe-tec .vb { text-align: right; color: var(--ev-acento); opacity: 1; font-size: 12px; }
+.ecos-verbe-panel details.ecos-verbe-tec .vb small, .ecos-verbe-panel details.ecos-verbe-tec .acc small { display: block; font-size: 10px; margin-top: 4px; color: var(--ev-suave); opacity: 1; }
+.ecos-verbe-panel details.ecos-verbe-tec.no { opacity: 1; }
+.ecos-verbe-panel .ecos-verbe-no { opacity: 1; color: var(--ev-bloqueo); }
+.ecos-verbe-panel .ecos-verbe-rama { background: var(--ev-papel); padding: 14px; margin: 12px 0; border-color: var(--ev-linea); }
+.ecos-verbe-panel .ecos-verbe-rama.cerrada { opacity: 1; background: var(--ev-fondo); }
+.ecos-verbe-panel .ecos-verbe-rama .ev-dones { margin-top: 8px; color: var(--ev-suave); }
+.ecos-verbe-panel .ecos-verbe-dones li { opacity: 1; margin: 8px 0; }
+.ecos-verbe-panel .ecos-verbe-dmbar { display: block; padding: 7px 12px; margin: 0; background: var(--ev-oro-fondo); font-size: 12px; }
+.ecos-verbe-panel .ecos-verbe-dmbar > div { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; padding-top: 5px; }
+@container panel-verbe (max-width: 730px) {
+  .ecos-verbe-panel .ecos-verbe-cabpanel { grid-template-columns: 1.4fr 1fr; gap: 12px; padding: 14px; }
+  .ecos-verbe-panel .ev-identidad { grid-column: 1 / -1; }
+  .ecos-verbe-panel .ev-identidad strong { font-size: 22px; }
+  .ecos-verbe-panel .ev-bienvenida .ev-tarjetas { grid-template-columns: 1fr; }
+  .ecos-verbe-panel .ev-bienvenida { padding: 15px; }
+  .ecos-verbe-panel .ecos-verbe-cuerpo { padding: 14px; }
+  .ecos-verbe-panel details.ecos-verbe-tec > summary { flex-wrap: wrap; }
+  .ecos-verbe-panel details.ecos-verbe-tec .nom { flex-basis: 55%; }
+  .ecos-verbe-panel details.ecos-verbe-tec .acc { max-width: 100%; margin-left: auto; }
+  .ecos-verbe-panel .ev-reponer { flex-direction: column; }
+}
+@container panel-verbe (max-width: 520px) {
+  .ecos-verbe-panel .ev-elecciones, .ecos-verbe-panel .ev-tarjetas, .ecos-verbe-panel .ev-contraste-recursos { grid-template-columns: 1fr; }
+  .ecos-verbe-panel .ev-progreso { flex-wrap: wrap; }
+  .ecos-verbe-panel .ev-progreso li { flex: 1 1 40%; }
+  .ecos-verbe-panel .ev-estadisticas { grid-template-columns: 1fr; }
+  .ecos-verbe-panel .ev-estadisticas > div { display: grid; grid-template-columns: 1fr auto; }
+  .ecos-verbe-panel .ev-estadisticas span { grid-column: 1 / -1; }
+  .ecos-verbe-panel .ev-titulo-pagina { flex-direction: column; }
+  .ecos-verbe-panel .ecos-verbe-ficha-cont { padding: 12px; overflow-x: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ecos-verbe-panel *, .ecos-verbe-panel *::before, .ecos-verbe-panel *::after { transition: none !important; animation: none !important; }
+}
+
 /* v2.7: el menú del DM y el de los jugadores, con la explicación a la vista */
 .ecos-panel-dm .ecos-panel-botones button { align-items: flex-start; text-align: left; line-height: 1.25; padding: 5px 8px; min-height: 2.9em; }
 .ecos-panel-dm .ecos-panel-botones button i { margin-top: 2px; }

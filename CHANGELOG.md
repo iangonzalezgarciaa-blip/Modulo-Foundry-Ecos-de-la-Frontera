@@ -1,5 +1,18 @@
 # Cambios
 
+## 2.9.0 — Interfaz para aprender jugando
+
+- Inicio por pasos: elemento, especialidad, primera técnica y acceso al repertorio. El progreso se deduce del personaje existente; también reconoce técnicas regaladas.
+- Recursos separados con explicaciones: Verbe para actuar, Trazos para aprender.
+- Mis técnicas con efecto, acción, alcance, coste actual, energía restante, bloqueos y acceso al uso nativo de dnd5e. No se descuenta energía desde un cálculo paralelo de interfaz.
+- Las defensas reactivas explican su disparador y la integración con midi-qol; no se ejecutan como utilidades anticipadas desde el botón de uso.
+- Sugerencias iniciales que respetan requisitos, naturaleza, Trazos y visibilidad. No compran ni eligen por el jugador.
+- Aprender muestra gasto de Trazos y coste por uso por separado. Filtros adicionales plegados, búsqueda y saldo después de comprar.
+- Mejoras agrupadas en Especialidades, Dotes, Entrenar e Inventar. Requisitos y falta de Trazos visibles; dones y detalles extensos plegados.
+- Ayuda rápida con respuestas breves sobre uso, recursos, turnos, descanso, heridas, sobreesfuerzo y resolución del DM.
+- Avisos por estado, diseño adaptable al ancho del panel, tema claro/oscuro, foco de teclado y estados expresados con texto además de color.
+- Vista previa independiente con datos ficticios y pruebas de interfaz/uso. Se conserva el catálogo y la progresión de 2.8.
+
 ## 2.8.0 — Base de mantenimiento del Verbe
 
 - Separación de reglas puras, efectos y medicina del adaptador de Foundry. Sin técnicas ni dotes nuevas.

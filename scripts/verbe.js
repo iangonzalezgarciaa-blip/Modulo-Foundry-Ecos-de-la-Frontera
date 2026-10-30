@@ -13,6 +13,7 @@ import { VERSION_REGLAS, recuperarReserva, evaluarGasto, requisitoNatural, crear
   resultadoChoque, presupuestoTecnica, validarCreacion, LIMITES_CREACION } from "./verbe-core.js";
 import { configurarAtaque, configurarSalvacion, despuesAtaque, normalizarHielo,
   revisarEstados, consumirMetal, metrosEnHoja } from "./verbe-effects.js";
+import { pasoInicial, progresoHTML, estadoUsoHTML, tarjetaHTML, avisosJugadorHTML, ROLES_RAMA } from "./verbe-ui.js";
 
 const MOD = "ecos-frontera";
 const F = "verbe";
@@ -421,6 +422,38 @@ export function costoUso(actor, meta, grado, { infusion = null } = {}) {
   return Math.max(0, c);
 }
 
+/** La interfaz consulta exactamente los costes y bloqueos del uso nativo, sin gastar nada. */
+export function previsualizarUso(actor, meta, grado = Number(meta?.g) || 0) {
+  const e = estado(actor) ?? {};
+  const extra = meta?.fuerte ? extraContraFuerte(actor).extra : 0;
+  const costo = costoUso(actor, meta, grado, { infusion: meta.infusion }) + extra;
+  const item = itemsDe(actor, meta.id)[0];
+  const permiso = evaluarGasto({ valor: Number(e.valor) || 0, costo, limite: limiteNegativo(actor), grado,
+    gradoMaximo: gradoUsable(actor, meta), agotamiento: Number(actor.system?.attributes?.exhaustion) || 0,
+    incapacitado: noPuedeActuar(actor), reaccion: item?.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R",
+    puedeReaccionar: reaccionDisponible(actor), altoGastado: !!e.usosAltos?.[meta.id] });
+  return { ...permiso, costo, extra };
+}
+
+/** Conserva el diálogo, las tiradas y el consumo de dnd5e. No lanza desde una copia del catálogo. */
+export async function usarTecnica(actor, id) {
+  if (!editarActor(actor) || !despierto(actor)) return false;
+  const item = itemsDe(actor, id)[0];
+  if (!item) return rechazar("Primero debes aprender esa técnica.");
+  if (D.defensas?.[id]) return rechazar("Esta defensa se ofrece cuando recibes un ataque con midi-qol. Sin esa integración, acuerda el uso y el coste con el DM antes de resolver el golpe.");
+  const meta = item.getFlag(MOD, F);
+  const estadoUso = previsualizarUso(actor, meta);
+  if (!estadoUso.ok) return rechazar(estadoUso.motivo);
+  const fuente = item.system?.activities;
+  const actividades = fuente?.values ? [...fuente.values()] : Object.values(fuente ?? {});
+  if (actividades.length === 1 && typeof actividades[0].use === "function") return actividades[0].use();
+  if (item.sheet?.render) {
+    aviso(actividades.length > 1 ? "Elige la actividad que quieres usar en la ficha de tu técnica." : "Usa la actividad desde la ficha de tu técnica.");
+    return item.sheet.render({ force: true });
+  }
+  return rechazar("Abre la sección Técnicas del Verbe de tu hoja para usarla.");
+}
+
 function efectoEstado(st, id, doble = false) {
   const c = ESTADOS[st];
   const s = (c.dura || 6) * (doble ? 2 : 1);
@@ -697,7 +730,7 @@ async function rasgoDote(actor, dote) {
   if (actor.items.some(i => i.getFlag(MOD, F)?.dote === dote.id)) return;
   const nace = (D.innatos ?? []).includes(dote.id);
   await actor.createEmbeddedDocuments("Item", [{ name: dote.nombre, type: "feat", img: "systems/dnd5e/icons/svg/items/feature.svg",
-    system: { description: { value: `<p>${escH(dote.texto)}</p>${nace ? "<p><em>Del Verbe, de nacimiento: lo tiene todo el que despierta. Se mejora con Trazos en el panel (pestaña Dotes).</em></p>" : "<p><em>Dote del Verbe.</em></p>"}` } },
+    system: { description: { value: `<p>${escH(dote.texto)}</p>${nace ? "<p><em>Del Verbe, de nacimiento: lo tiene todo el que despierta. Se mejora con Trazos en el panel (Mejorar → Dotes).</em></p>" : "<p><em>Dote del Verbe.</em></p>"}` } },
     flags: { [MOD]: { [F]: { dote: dote.id } } } }]);
 }
 
@@ -748,7 +781,7 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
     const fuerte = meta.fuerte ? extraContraFuerte(actor) : { extra: 0, quien: null };
     const costo = costoUso(actor, meta, grado, { infusion: meta.infusion }) + fuerte.extra;
     const valor = Number(e.valor) || 0;
-    const reaccion = item.system?.activation?.type === "reaction";
+    const reaccion = item.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R";
     const permiso = evaluarGasto({ valor, costo, limite: limiteNegativo(actor), grado, gradoMaximo: gradoUsable(actor, meta),
       agotamiento: Number(actor.system?.attributes?.exhaustion) || 0, incapacitado: noPuedeActuar(actor),
       reaccion, puedeReaccionar: reaccionDisponible(actor), altoGastado: !!e.usosAltos?.[meta.id] });
@@ -927,7 +960,7 @@ async function manejarInterno(d, { interno = false } = {}) {
         titulo: String(d.titulo ?? d.tipo).slice(0, 150), de: d.de, cuando: Date.now() });
       await game.settings.set(MOD, AJ.pend, pend);
       await susurrarDM(`${escH(actor.name)} pide ${escH(String(d.titulo ?? d.tipo).slice(0, 150))}`,
-        `<p>${escH(String(d.resumen ?? "").replace(/<[^>]*>/g, "").slice(0, 2000))}</p><p>Revísalo en su panel, pestaña DM.</p>`);
+        `<p>${escH(String(d.resumen ?? "").replace(/<[^>]*>/g, "").slice(0, 2000))}</p><p>Revísalo en su panel, sección DM.</p>`);
       refrescarPanel(actor.id);
     }
   } catch (err) {
@@ -1055,7 +1088,7 @@ async function comprarDoteInterno(actor, id, { aprobado = false } = {}) {
   await asegurarAEDotes(actor);
   await refrescar(actor);
   if (["naturaleza-combinada", "elemento-complejo", "tercera-naturaleza", "juramento-casa"].includes(id)) {
-    await susurrarDM(`${escH(actor.name)}: ${escH(dote.nombre)}`, "<p>Dale la combinación, la naturaleza o la escuela en su panel, pestaña DM.</p>");
+    await susurrarDM(`${escH(actor.name)}: ${escH(dote.nombre)}`, "<p>Dale la combinación, la naturaleza o la escuela en su panel, sección DM.</p>");
   }
   return true;
 }
@@ -1836,7 +1869,7 @@ export function describir(tipo, v, actor = null) {
     const combos = Object.values(D.combos).filter(c => c.de.includes(v)).map(c => `${NATS[c.de.find(x => x !== v)] ?? NATS[v]} → <b>${c.nombre}</b>`);
     const tecs = D.tecnicas.filter(t => t.sec === v);
     return `<p><b>${NATS[v]}.</b> Su daño suele ser de ${DANO_ES[TIPO_NAT[v]]}. Cuando hiere deja <b>${st?.name}</b>: ${st?.texto.charAt(0).toLowerCase()}${st?.texto.slice(1)}</p>
-      <p>En un choque de técnicas vence a <b>${NATS[D.ciclo[v]]}</b> y pierde contra <b>${NATS[pierde]}</b>. Con la dote Naturaleza combinada (nivel 9) se mezcla: ${combos.join(" · ")}.</p>
+      <p>En un choque de técnicas tiene ventaja frente a <b>${NATS[D.ciclo[v]]}</b> y desventaja frente a <b>${NATS[pierde]}</b>. Con la dote Naturaleza combinada (nivel 9) se mezcla: ${combos.join(" · ")}.</p>
       <p>Tiene ${tecs.length} técnicas propias en la rama Forma, como ${tecs.slice(0, 3).map(t => `${escH(t.n)} (grado ${t.g})`).join(", ")}.</p>
       <details><summary>Ver todas sus técnicas</summary><ul>${listaTecnicas(t => t.sec === v)}</ul><p class="ecos-nota">Pasa el ratón sobre un nombre para leer qué hace.</p></details>`;
   }
@@ -1863,7 +1896,7 @@ const AYUDA = {
   car: "La característica con la que usas el Verbe. Da la CD de tus técnicas (8 + competencia + modificador), su bonificador de ataque y suma a tu reserva.",
   grado: "Qué tan fuerte es una técnica, de 0 a 11 (como el nivel de un conjuro, con dos grados más arriba del 9). Tu grado máximo sube con tu nivel: grado 1 en el nivel 1, 2 en el 3, 3 en el 5… 9 en el 17, 10 en el 19 y 11 en el 20. En cada rama, además, llegas solo hasta lo que deja tu rango.",
   sobre: "Puedes gastar Verbe que no tienes: tu barra baja de 0 hasta la mitad de tu reserva en negativo. Cada técnica que usas en negativo te pide una salvación de CON (CD 10 + su grado); si fallas, ganas 1 Agotamiento. Lo que quede en negativo cuesta el doble de recuperar.",
-  control: "Una habilidad nueva de tu hoja (con Sabiduría). Se tira para ganar un choque entre dos técnicas, romper un Velo, abrir los Cerrojos y no perderse en la Quietud. Se compra en la pestaña Ramas."
+  control: "Una habilidad nueva de tu hoja (con Sabiduría). Se tira para ganar un choque entre dos técnicas, romper un Velo, abrir los Cerrojos y no perderse en la Quietud. Se compra en Mejorar → Especialidades."
 };
 const ayuda = k => `<i class="ecos-verbe-ayuda fa-solid fa-circle-question" data-tooltip="${escH(AYUDA[k])}"></i>`;
 /** Una línea para entender la pestaña; lo largo, plegado; y el enlace a su parte de la guía escrita. */
@@ -1887,9 +1920,9 @@ export function htmlGuia() {
   return `<h1>El Verbe</h1>
 <p><em>Para quien despertó. El panel del Verbe (botón «Verbe» en la cabecera de tu hoja) administra técnicas y recursos. Los efectos narrativos, las condiciones del entorno y el entrenamiento los resuelve el DM.</em></p>
 ${h2("primeros-pasos", "Primeros pasos")}
-<ol><li>En el panel, pestaña <b>Resumen</b>: elige tu <b>naturaleza</b> y tu <b>rama principal</b>. Al cambiar la lista ves qué es cada opción antes de elegir; si no quieres leer, «Que decida el destino».</li>
-<li>Gasta tus <b>Trazos</b> (el número grande del panel): técnicas en la <b>Tienda</b>, rangos en <b>Ramas</b>, mejoras en <b>Dotes</b>. Puedes guardar.</li>
-<li>Usa tus técnicas desde la pestaña de conjuros de la hoja, sección «Técnicas del Verbe». El Verbe se descuenta solo.</li>
+<ol><li>En <b>Inicio</b>, elige tu <b>naturaleza</b> y tu <b>rama principal</b> con las tarjetas. Cada elección pide confirmación antes de guardarse.</li>
+<li>En <b>Aprender</b> compras técnicas con Trazos. En <b>Mejorar</b> subes rangos, compras dotes o entrenas técnicas. Puedes guardar puntos para después.</li>
+<li>Abre <b>Mis técnicas</b> para usarlas. También están en la sección «Técnicas del Verbe» de tu hoja. La ventana de dnd5e comprueba el gasto al confirmar.</li>
 <li>Si te equivocaste al comprar, pídeselo al DM: puede deshacerlo y devolverte los Trazos.</li></ol>
 ${h2("verbe-y-descansos", "Verbe y descansos")}
 <ul><li>Tu reserva sube con tu nivel y suma el modificador de tu característica de Verbe.</li>
@@ -1917,7 +1950,7 @@ ${tablaG(["Rango", "Aprendes hasta", "Desde el nivel", "Cuesta", "Te da"], D.ran
 ${h2("dones-de-rango", "Los dones de cada rama")}
 ${D.dones.filter(d => d.rama !== "Sangre").map(d => `<h3>${escH(d.rama)}</h3><ul>${DONES_K.map((k, i) => { const [n, t] = partirDon(d.jugador?.[k] ?? d[k]); return `<li><b>${D.rangos[i + 2]?.nombre ?? ""} · ${escH(n)}:</b> ${escH(t)}</li>`; }).join("")}</ul>`).join("")}
 ${h2("naturalezas", "Naturalezas")}
-<p>Tu naturaleza es el elemento al que responde tu Verbe. Te da sus técnicas (en la rama Forma) y puedes ponérsela a otras técnicas. Puede que tu Verbe responda a otra que no conoces: en la Tienda, «Probar» lo intenta sin costo.</p>
+<p>Tu naturaleza es el elemento al que responde tu Verbe. Te da sus técnicas (en la rama Forma) y puedes ponérsela a otras técnicas. Puede que tu Verbe responda a otra que no conoces: en Aprender, «Probar» intenta descubrirla. Si responde, aprender la técnica cuesta los Trazos indicados; si no responde, no los gastas.</p>
 ${tablaG(["Naturaleza", "Deja", "Vence a", "Pierde contra"], Object.keys(NATS).map(n => [NATS[n], `${ESTADOS[ESTADO_NAT[n][0]].name}: ${ESTADOS[ESTADO_NAT[n][0]].texto}`, NATS[D.ciclo[n]], pierde(n)]))}
 <p>Con la dote Naturaleza combinada (nivel 9 y un maestro) dos naturalezas se mezclan: ${Object.values(D.combos).map(c => `${c.nombre} (${c.de.map(x => NATS[x]).join(" + ")})`).join(", ")}.</p>
 ${h2("afinidad-e-infusion", "Afinidad e infusión")}
@@ -1929,7 +1962,7 @@ ${h2("cultivo", "Cultivo")}
 <p>Una técnica que te gusta se entrena: Pulida (1 Trazo), Dominada (2) y Propia (3). Cada nivel da una mejora y pide días de entrenamiento. Dominada saca variantes; Propia evoluciona en una técnica nueva con tu firma. Cultivas tantas como tu competencia.</p>
 <ul>${D.mejoras.map(m => `<li>${escH(m)}</li>`).join("")}</ul>
 ${h2("crear-tecnicas", "Crear técnicas")}
-<p>Con Entrenado en una rama puedes inventar técnicas de esa rama, en la pestaña Crear. El menú propone un presupuesto según acción, alcance, área, estados y daño repetido. El DM aprueba; una excepción de balance queda registrada con su motivo. Cuesta grado + 1 Trazos (más combinaciones), días de entrenamiento y 25 o por grado. El oro y los días de creación o cultivo se resuelven en mesa antes de confirmar: el panel cobra los Trazos.</p>
+<p>Con Entrenado en una rama puedes inventar técnicas de esa rama, en Mejorar → Inventar una técnica. El menú propone un presupuesto según acción, alcance, área, estados y daño repetido. El DM aprueba; una excepción de balance queda registrada con su motivo. Cuesta grado + 1 Trazos (más combinaciones), días de entrenamiento y 25 o por grado. El oro y los días de creación o cultivo se resuelven en mesa antes de confirmar: el panel cobra los Trazos.</p>
 ${h2("control-y-sobreesfuerzo", "Control, choques y sobreesfuerzo")}
 <ul><li><b>Control del Verbe</b> es una habilidad con Sabiduría: choques de técnicas, romper Velos, abrir Cerrojos, la Quietud.</li>
 <li><b>Choque</b>: la ventaja en el ciclo suma 2 al grado al comparar potencia; gana la potencia mayor y un empate se resuelve con Control contra Control. El DM puede elegir la regla clásica de prioridad elemental en los ajustes.</li>
@@ -1946,13 +1979,13 @@ ${h2("defensas", "Sustitución y otras defensas")}
 <ul><li><b>Sustitución</b>: el ataque falla y golpea un objeto. Cuesta 2 Verbe, y 2 más por cada grado que el ataque supere tu grado máximo. El grado de un ataque es el de su técnica o conjuro; si es un arma o una criatura, la mitad de su nivel o VD. Pide un objeto de tu tamaño o menor a 3 m. No sirve contra áreas ni salvaciones, salvo con la dote Sustitución amplia.</li>
 <li>Las demás suben tu CA contra ese ataque o le dan desventaja.</li></ul>
 ${h2("dones-despertar", "Dones del despertar")}
-<p>Todo el que despierta tiene cuatro dones desde el primer día (pestaña Dotes, «Dones del despertar»). No cuestan nada y se mejoran con Trazos:</p>
+<p>Todo el que despierta tiene cuatro dones desde el primer día (Mejorar → Dotes, «Dones del despertar»). No cuestan nada y se mejoran con Trazos:</p>
 <ul><li><b>Sentido del Verbe:</b> al tocar a alguien sabes si despertó, y notas el Verbe que se usa a 1,5 m. Crece con Sentir el Verbe (9 m) y Sentir más lejos (36 m).</li>
 <li><b>Cuerpo despierto:</b> el sobreesfuerzo te cuesta menos (CD 9 + grado). II y III: más PG máximos.</li>
 <li><b>Aliento del Verbe:</b> cada Dado de Golpe que gastas al descansar te devuelve 1 de Verbe (2 con el II); con el III, además cura tu modificador de Verbe.</li>
 <li><b>Paso del Verbe:</b> con al menos 1 de Verbe andas un turno por paredes o sobre agua quieta. II: +3 m de velocidad y el agua movida también te sostiene. III: saltos triples y caídas sin daño.</li></ul>
 ${h2("titeres-y-medicina", "Títeres y medicina")}
-<p>Dos artes finas de Control, con dotes en tres pasos (pestaña Dotes, «Títeres y medicina»):</p>
+<p>Dos artes finas de Control, con dotes en tres pasos (Mejorar → Dotes, «Títeres y medicina»):</p>
 <ul><li><b>Títeres (rama Hilo):</b> Titiritero, Titiritero de oficio y Maestro titiritero. Las marionetas se compran y se mejoran con oro (Equipo): blindaje, muelles, depósitos y ojos de vidrio.</li>
 <li><b>Medicina (rama Pulso, con Control fino):</b> Médico del Verbe, Médico de oficio y Cirujano del Verbe. Con el maletín de cirujano, cuentas como si llevaras un kit de sanador.</li></ul>
 ${h2("lo-mas-fuerte", "Lo más fuerte crece contigo")}
@@ -2036,16 +2069,36 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     this.pestana = "resumen";
     this.comoJugador = false;
     this.filtro = { rama: "", grado: "", nat: "", texto: "", solo: true, agrupar: "rama" };
-    this.filtroDote = { texto: "", solo: false };
+    this.filtroDote = { texto: "", solo: true };
+    this.filtroUso = { texto: "", solo: false };
     this.abiertos = null; // grupos desplegados (null: los que tienen algo para aprender)
   }
 
   static DEFAULT_OPTIONS = {
     classes: ["ecos-verbe-panel"],
     window: { resizable: true },
-    position: { width: 820, height: 760 },
+    position: { width: 940, height: 790 },
     actions: {
-      pestana(ev, t) { this.pestana = t.dataset.p; this.render(); },
+      pestana(ev, t) { this.pestana = t.dataset.p; this.abiertos = null; this.render(); },
+      usar(ev, t) {
+        ev?.preventDefault?.();
+        if (this._usoEnCurso) return;
+        this._usoEnCurso = true; t.disabled = true;
+        Promise.resolve(usarTecnica(this.actor, t.dataset.id))
+          .catch(err => { console.error(`${MOD} | uso desde panel`, err); aviso("No se pudo abrir el uso. Puedes intentarlo desde tu hoja.", "error"); })
+          .finally(() => { this._usoEnCurso = false; this.render(); });
+      },
+      ficha(ev, t) {
+        ev?.preventDefault?.();
+        COMO_JUGADOR = game.user.isGM && this.comoJugador;
+        let html;
+        try { html = this.#fichaTec(t.dataset.id); } finally { COMO_JUGADOR = false; }
+        if (!html) return;
+        const tec = tecnicaPorId(t.dataset.id, this.actor);
+        foundry.applications.api.DialogV2.wait({ window: { title: tec.n, resizable: true }, position: { width: 760 }, content: `<div class="ecos-dialogo">${html}</div>`,
+          buttons: [{ action: "cerrar", label: "Cerrar", default: true }], rejectClose: false });
+      },
+      limpiarFiltros() { this.filtro = { rama: "", grado: "", nat: "", texto: "", solo: true, agrupar: "rama" }; this.abiertos = null; this.render(); },
       comoJugador() { this.comoJugador = !this.comoJugador; this.render(); },
       rango(ev, t) { correr(this, subirRango(this.actor, t.dataset.rama)); },
       aprender(ev, t) {
@@ -2072,7 +2125,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       crear(ev, t) { correr(this, dialogoCrear(this.actor, { base: t.dataset.base || null, modo: t.dataset.modo || null })); },
       async elegir(ev, t) {
         const campo = t.dataset.campo;
-        let v = valorDe(this, campo);
+        let v = t.dataset.valor || valorDe(this, campo);
         if (t.dataset.destino) {
           const pares = (ELECCION[campo]?.pares() ?? []);
           if (!pares.length) return;
@@ -2158,20 +2211,38 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       const a = this.actor;
       const e = estado(a);
       if (!e?.despierto) return `<p>${escH(a.name)} no despertó.</p>`;
-      const pest = [["guia", "Cómo funciona"], ["resumen", "Resumen"], ["ramas", "Ramas"], ["tienda", "Tienda"], ["dotes", "Dotes"], ["cultivo", "Cultivo"],
-        ["crear", "Crear"], ...(dm() ? [["dm", "DM"]] : [])];
+      const mejora = ["ramas", "dotes", "cultivo", "crear"].includes(this.pestana);
+      const pest = [["resumen", "Inicio", "house"], ["jugar", "Mis técnicas", "bolt"], ["tienda", "Aprender", "book-open"],
+        ["ramas", "Mejorar", "seedling"], ["guia", "Ayuda rápida", "circle-question"], ...(dm() ? [["dm", "DM", "sliders"]] : [])];
       if (this.pestana === "dm" && !dm()) this.pestana = "resumen";
-      const tabs = pest.map(([k, n]) => `<a class="${this.pestana === k ? "activa" : ""} ${k === "dm" ? "dm" : ""}" data-action="pestana" data-p="${k}">${n}</a>`).join("");
-      const cuerpo = ({ guia: () => this.#guia(), resumen: () => this.#resumen(), ramas: () => this.#ramas(), tienda: () => this.#tienda(), dotes: () => this.#dotes(),
+      const tabs = pest.map(([k, n, icon]) => {
+        const activa = this.pestana === k || (k === "ramas" && mejora);
+        return `<button type="button" class="${activa ? "activa" : ""} ${k === "dm" ? "dm" : ""}" ${activa ? 'aria-current="page"' : ""} data-action="pestana" data-p="${k}"><i class="fa-solid fa-${icon}" aria-hidden="true"></i> ${n}</button>`;
+      }).join("");
+      const subnav = mejora ? `<nav class="ev-subnav" aria-label="Cómo quieres mejorar">${[["ramas", "Especialidades"], ["dotes", "Dotes"], ["cultivo", "Entrenar técnicas"], ["crear", "Inventar una técnica"]].map(([k, n]) => `<button type="button" data-action="pestana" data-p="${k}" ${this.pestana === k ? 'aria-current="page"' : ""}>${n}</button>`).join("")}</nav>` : "";
+      const cuerpo = ({ guia: () => this.#guia(), resumen: () => this.#resumen(), jugar: () => this.#jugar(), ramas: () => this.#ramas(), tienda: () => this.#tienda(), dotes: () => this.#dotes(),
         cultivo: () => this.#cultivo(), crear: () => this.#crear(), dm: () => this.#dm() })[this.pestana]?.() ?? "";
-      return `${this.#cabecera()}<nav class="ecos-verbe-tabs">${tabs}</nav><section class="ecos-verbe-cuerpo">${cuerpo}</section>`;
+      return `${this.#cabecera()}<nav class="ecos-verbe-tabs" aria-label="Panel del Verbe">${tabs}</nav><section class="ecos-verbe-cuerpo" aria-label="${escH(pest.find(([k]) => k === this.pestana)?.[1] ?? "Mejorar")}">${subnav}${cuerpo}</section>`;
     } finally {
       COMO_JUGADOR = false;
     }
   }
 
   _replaceHTML(result, content) {
+    const anterior = content.querySelector(".ecos-verbe-cuerpo");
+    const scroll = this._paginaAnterior === this.pestana ? anterior?.scrollTop ?? 0 : 0;
+    const activo = content.contains(document.activeElement) ? document.activeElement : null;
+    const foco = activo?.matches?.('input[type="search"]') ? { filtro: activo.dataset.filtro ?? activo.dataset.filtroDote ?? activo.dataset.filtroUso,
+      atributo: activo.hasAttribute("data-filtro") ? "data-filtro" : activo.hasAttribute("data-filtro-dote") ? "data-filtro-dote" : "data-filtro-uso",
+      inicio: activo.selectionStart, fin: activo.selectionEnd } : null;
     content.innerHTML = result;
+    this._paginaAnterior = this.pestana;
+    const cuerpo = content.querySelector(".ecos-verbe-cuerpo");
+    if (cuerpo) cuerpo.scrollTop = scroll;
+    if (foco) {
+      const siguiente = content.querySelector(`[${foco.atributo}="${foco.filtro}"]`);
+      siguiente?.focus({ preventScroll: true }); siguiente?.setSelectionRange(foco.inicio, foco.fin);
+    }
     content.querySelectorAll("[data-filtro]").forEach(i => i.addEventListener("change", ev => {
       const k = ev.target.dataset.filtro;
       this.filtro[k] = ev.target.type === "checkbox" ? ev.target.checked : ev.target.value;
@@ -2180,6 +2251,10 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     }));
     content.querySelectorAll("[data-filtro-dote]").forEach(i => i.addEventListener("change", ev => {
       this.filtroDote[ev.target.dataset.filtroDote] = ev.target.type === "checkbox" ? ev.target.checked : ev.target.value;
+      this.render();
+    }));
+    content.querySelectorAll("[data-filtro-uso]").forEach(i => i.addEventListener("change", ev => {
+      this.filtroUso[ev.target.dataset.filtroUso] = ev.target.type === "checkbox" ? ev.target.checked : ev.target.value;
       this.render();
     }));
     // Grupos que el jugador abre o cierra: se recuerdan mientras el panel esté abierto.
@@ -2211,39 +2286,90 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const v = Number(e.valor) || 0;
     const t = trazos(a);
     const pct = max ? Math.clamp(Math.abs(v) / max, 0, 1) : 0;
-    const barraDM = game.user.isGM ? `<div class="ecos-verbe-dmbar"><b>DM:</b> Trazos
+    const barraDM = game.user.isGM ? `<details class="ecos-verbe-dmbar"><summary><i class="fa-solid fa-sliders" aria-hidden="true"></i> Herramientas del DM ${this.comoJugador ? "· vista del jugador" : ""}</summary><div><b>Trazos:</b>
         ${[-1, 1, 2, 5].map(n => `<button type="button" data-action="trazosDM" data-n="${n}">${n > 0 ? "+" : ""}${n}</button>`).join("")}
         · <button type="button" data-action="verbeDM" data-n="lleno">Llenar Verbe</button>
-        · <button type="button" data-action="comoJugador" class="${this.comoJugador ? "activo" : ""}"><i class="fa-solid fa-eye"></i> ${this.comoJugador ? "Viendo como el jugador" : "Ver como el jugador"}</button></div>` : "";
+        · <button type="button" data-action="comoJugador" class="${this.comoJugador ? "activo" : ""}"><i class="fa-solid fa-eye"></i> ${this.comoJugador ? "Viendo como el jugador" : "Ver como el jugador"}</button></div></details>` : "";
     return `<header class="ecos-verbe-cabpanel">
-      <div class="ecos-verbe-trazos ${t.libres > 0 ? "hay" : ""}" data-tooltip="${escH(AYUDA.trazos)}"><span class="n">${t.libres}</span><span class="t">Trazos para gastar</span></div>
-      <div class="ecos-verbe-res"><div class="ecos-verbe-barra grande ${v < 0 ? "negativo" : ""}" data-tooltip="${escH(AYUDA.verbe)}"><div style="width:${pct * 100}%"></div><span>Verbe ${v} / ${max}</span></div>
-        <small>Grado máximo ${gradoMax(a)} ${ayuda("grado")} · ${t.gastados} Trazos gastados de ${t.total}</small></div>
+      <div class="ev-identidad"><span class="ev-kicker">EL VERBE · NIVEL ${nivelDe(a)}</span><strong>${escH(a.name)}</strong><small>${e.principal ? nombreRama(e.principal) : "Tu aventura empieza aquí"}${e.nats?.length ? ` · ${[...natsDe(a)].map(n => escH(nombreNat(n))).join(" + ")}` : ""}</small></div>
+      <div class="ecos-verbe-res"><div class="ev-recurso-titulo"><b><i class="fa-solid fa-droplet" aria-hidden="true"></i> Verbe <span>${v} / ${max}</span></b><small>ENERGÍA PARA USAR</small></div><div class="ecos-verbe-barra grande ${v < 0 ? "negativo" : ""}" role="meter" aria-label="${v < 0 ? "Deuda de Verbe" : "Reserva de Verbe"}" aria-valuemin="${v < 0 ? limiteNegativo(a) : 0}" aria-valuemax="${max}" aria-valuenow="${v}" aria-valuetext="${v} de ${max} de Verbe"><div style="width:${pct * 100}%"></div></div>
+        <small>${v < 0 ? "Estás en deuda: recuperarla cuesta el doble." : "Se gasta al usar técnicas; vuelve al descansar."}</small></div>
+      <div class="ecos-verbe-trazos ${t.libres > 0 ? "hay" : ""}"><span class="n">${t.libres}</span><span class="t"><b>Trazos</b> para aprender</span><small>Se gastan una vez por compra</small></div>
     </header>${barraDM}`;
   }
 
-  #paso(n, hecho, titulo, cuerpo) {
-    return `<div class="ecos-verbe-paso ${hecho ? "hecho" : ""}"><div class="num">${hecho ? "✓" : n}</div><div><b>${titulo}</b>${cuerpo}</div></div>`;
+  #tarjeta(t, { aprender: compra = false, item = null } = {}) {
+    const a = this.actor;
+    const meta = item?.getFlag(MOD, F) ?? { ...t.item.flags[MOD][F], infusion: estado(a)?.infusiones?.[t.id] ?? null };
+    const uso = previsualizarUso(a, meta);
+    const r = compra ? requisitos(a, t) : null;
+    const defensa = !compra && !!D.defensas?.[t.id];
+    return tarjetaHTML({ id: t.id, nombre: item?.name ?? t.n, texto: textoDe(t), grado: t.g, rama: nombreRama(t.rama),
+      naturaleza: meta.infusion || t.nat ? nombreNat(meta.infusion || t.nat) : null,
+      tiempo: TIEMPO_L[t.t] ?? t.t ?? "Ver ficha", alcance: t.alc ? alcanceL(t.alc) : "Ver ficha", area: t.area,
+      costo: uso.costo, trazos: compra ? t.trazos : null,
+      accion: compra ? "aprender" : defensa ? "ficha" : "usar", boton: compra ? `${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Aprender"} · ${t.trazos} ${t.trazos === 1 ? "Trazo" : "Trazos"}` : defensa ? "Cómo usar esta defensa" : "Usar técnica",
+      bloqueada: compra ? !r.ok || r.probar : !defensa && !uso.ok,
+      riesgo: !compra && uso.ok && uso.despues < 0,
+      estado: compra ? `<p class="ev-disponibilidad">${r.ok ? `Te quedarán ${trazos(a).libres - t.trazos} Trazos después de aprenderla.` : escH(r.motivo)}</p>` : estadoUsoHTML(uso),
+      nota: compra ? (r.pideDM ? "Requiere aprobación del DM antes de aprenderla." : "Aprender no gasta Verbe. Lo gastarás al usarla.")
+        : defensa ? "Con midi-qol, se ofrece al recibir un ataque. Sin esa integración, resuélvela con el DM. El coste final depende del ataque."
+          : (uso.extra ? `Incluye ${uso.extra} Verbe extra por el objetivo marcado.` : t.g > 0 && gradoUsable(a, meta) > t.g ? "Puedes elevar el grado en la ventana de uso; el coste aumentará." : "Marca el objetivo si afecta a otra criatura.") });
   }
 
-  #eleccion(campo, explicacion, tipoDesc) {
-    const { pares } = ELECCION[campo];
-    return `<div class="ecos-verbe-eleccion">${explicacion}
-      <p><select name="${campo}" data-desc="${tipoDesc}"><option value="">— Mira las opciones —</option>${opciones(pares(), "")}</select>
-        <button type="button" data-action="elegir" data-campo="${campo}"><i class="fa-solid fa-check"></i> Elegir esta</button>
-        <button type="button" data-action="elegir" data-campo="${campo}" data-destino="1" data-tooltip="Para quien no quiere leer: el azar elige por ti"><i class="fa-solid fa-dice"></i> Que decida el destino</button></p>
-      <div class="ecos-verbe-desc" data-de="${campo}">${describir(tipoDesc, "")}</div></div>`;
+  #inicio() {
+    const a = this.actor, e = estado(a), tecnicas = itemsTecnica(a).length;
+    const paso = pasoInicial({ naturalezas: [...natsDe(a)], principal: e.principal, tecnicas });
+    const titulos = ["", "¿Qué elemento responde a ti?", "¿Cómo quieres usar tu poder?", "Aprende tu primera técnica", "Ya puedes entrar en acción"];
+    let contenido;
+    if (paso === 1) contenido = `<p>Elige un elemento por su estilo. Funciona con cualquier especialidad. Verás una confirmación antes de guardarlo.</p><div class="ev-elecciones">${Object.entries(NATS).map(([n, nombre]) => `<button type="button" class="ev-eleccion ${n}" data-action="elegir" data-campo="nat" data-valor="${n}"><span class="ev-elemento" aria-hidden="true">${({ fuego: "✦", agua: "≈", viento: "≋", tierra: "◆", rayo: "ϟ" })[n]}</span><strong>${nombre}</strong><small>${escH(ESTADOS[ESTADO_NAT[n][0]].texto)}</small><span>Elegir ${nombre} →</span></button>`).join("")}</div>`;
+    else if (paso === 2) contenido = `<p>Tu especialidad se llama <b>rama principal</b>. Empiezas Entrenado gratis; puedes aprender otras ramas después.</p><div class="ev-elecciones ramas">${ramasLibres().map(([id, nombre]) => {
+      const [icon, rol, desc] = ROLES_RAMA[id] ?? ["sparkles", nombre, "Explora sus técnicas."];
+      return `<button type="button" class="ev-eleccion" data-action="elegir" data-campo="principal" data-valor="${id}"><i class="fa-solid fa-${icon}" aria-hidden="true"></i><strong>${nombre}</strong><b>${rol}</b><small>${desc}</small><span>Elegir ${nombre} →</span></button>`;
+    }).join("")}</div>`;
+    else if (paso === 3) {
+      const candidatos = [...D.tecnicas, ...extraMundo()].filter(t => visibleJugador(t) && t.g <= 1 && !conoce(a, t.id))
+        .filter(t => { const r = requisitos(a, t); return r.ok && !r.probar && !r.pideDM; })
+        .sort((x, y) => Number(y.rama === e.principal) - Number(x.rama === e.principal) || Number(!!y.nat) - Number(!!x.nat) || x.g - y.g).slice(0, 3);
+      contenido = `<p>Aprender cuesta <b>Trazos</b> una sola vez. Usar después la técnica cuesta <b>Verbe</b>. Estas opciones encajan con tus elecciones; tú decides.</p>
+        ${candidatos.length ? `<div class="ev-tarjetas">${candidatos.map(t => this.#tarjeta(t, { aprender: true })).join("")}</div>` : `<p class="ev-vacio">Ahora no hay una opción disponible con tus Trazos y requisitos. Puedes revisar el catálogo y ver qué te falta.</p>`}
+        <p><button type="button" data-action="pestana" data-p="tienda">Explorar todas las técnicas</button> <small>Puedes guardar Trazos para más adelante.</small></p>`;
+    } else contenido = `<p>Conoces <b>${tecnicas} ${tecnicas === 1 ? "técnica" : "técnicas"}</b>. Abre tu repertorio, elige qué hacer y usa el botón de la técnica.</p><div class="ev-acciones"><button type="button" class="ev-principal" data-action="pestana" data-p="jugar"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Usar mis técnicas</button><button type="button" data-action="pestana" data-p="tienda">Aprender algo nuevo</button></div>
+      <div class="ev-mini-pasos"><span><b>1</b> Marca el objetivo, si hace falta</span><span><b>2</b> Pulsa «Usar técnica»</span><span><b>3</b> Resuelve la ventana de dnd5e</span></div><p class="ev-nota">El gasto se comprueba al confirmar el uso. La posición, la visibilidad y los efectos narrativos se resuelven con el DM.</p>`;
+    return `${avisosJugadorHTML(a)}${progresoHTML(paso)}<section class="ev-bienvenida"><span class="ev-kicker">${paso < 4 ? `TU SIGUIENTE PASO · ${paso} DE 3` : "TU REPERTORIO ESTÁ PREPARADO"}</span><h2>${titulos[paso]}</h2>${contenido}</section>`;
+  }
+
+  #jugar() {
+    const a = this.actor, f = this.filtroUso;
+    const conocidas = itemsTecnica(a).map(item => ({ item, t: tecnicaPorId(item.getFlag(MOD, F).id, a) })).filter(x => x.t);
+    const lista = conocidas.filter(({ item, t }) => !f.texto || `${item.name} ${textoDe(t)}`.toLowerCase().includes(f.texto.toLowerCase()))
+      .filter(({ item }) => !f.solo || previsualizarUso(a, item.getFlag(MOD, F)).ok);
+    return `${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana habitual de dnd5e para confirmar el uso.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
+      <div class="ev-instruccion"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span><b>Si afecta a otro, marca su token antes de usarla.</b> El alcance y las condiciones de cada técnica siguen contando.</span></div>
+      <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar en mis técnicas</span><input type="search" data-filtro-uso="texto" placeholder="Nombre o efecto…" value="${escH(f.texto)}"></label><label><input type="checkbox" data-filtro-uso="solo" ${f.solo ? "checked" : ""}> Ocultar las bloqueadas por recursos o estado</label></div>
+      ${lista.length ? `<div class="ev-tarjetas">${lista.map(({ t, item }) => this.#tarjeta(t, { item })).join("")}</div>` : `<div class="ev-vacio"><h3>${conocidas.length ? "Ninguna coincide con ese filtro" : "Tu primera técnica te espera"}</h3><p>${conocidas.length ? "Quita el filtro para ver los bloqueos y sus motivos." : "Aprende una técnica con Trazos. Después aparecerá aquí lista para usarla."}</p><button type="button" data-action="pestana" data-p="tienda">Ir a Aprender</button></div>`}`;
   }
 
   #guia() {
-    return `${intro("El Verbe es la energía que despertó en ti.", "Con ella haces técnicas: se usan como conjuros desde tu hoja y gastan Verbe en vez de espacios.")}
-      <ol class="ecos-verbe-lista">
-        <li><b>Elige tu naturaleza</b> y tu <b>rama principal</b> en Resumen.</li>
-        <li><b>Gasta tus Trazos</b> (el número grande de arriba): técnicas en la Tienda, rangos en Ramas, mejoras en Dotes.</li>
-        <li><b>Usa tus técnicas</b> desde la pestaña de conjuros de tu hoja, sección «Técnicas del Verbe».</li>
-        <li><b>Al subir de nivel</b> ganas 4 Trazos y tu reserva crece.</li></ol>
-      <p class="ecos-nota">Pasa el ratón por un botón o un <i class="fa-solid fa-circle-question"></i> y te dice qué es. Lo que no tienes manera de saber todavía no aparece: si existe, sale jugando.</p>
-      <p><button type="button" data-action="guia" data-s=""><i class="fa-solid fa-book-open"></i> Abrir la guía completa</button> <button type="button" data-action="pestana" data-p="resumen">Ir a mis primeros pasos</button></p>`;
+    const a = this.actor, e = estado(a), v = Number(e.valor) || 0;
+    const max = maxVerbe(a), santuario = cambiosRecuperacion(a, Math.floor(max / 2));
+    const intemperie = cambiosRecuperacion(a, Math.floor(max / 4));
+    const preguntas = [
+      ["¿Qué hago para usar una técnica?", "Abre Mis técnicas. Si afecta a otro, marca su token. Pulsa Usar técnica y resuelve la ventana de dnd5e. El Verbe se comprueba y descuenta al confirmar. Respeta la acción, el alcance y las condiciones de la ficha. También puedes usarla desde Técnicas del Verbe en tu hoja."],
+      ["¿Qué diferencia hay entre Verbe y Trazos?", "Verbe es energía: la gastas al actuar y vuelve al descansar. Trazos son puntos para aprender técnicas y comprar mejoras: pagas una vez y lo aprendido permanece. No se cambian automáticamente entre sí. Puedes guardar Trazos."],
+      ["¿Qué significa grado, rango o afinidad?", "Grado es la potencia de una técnica. Rango es tu formación en una rama y limita qué técnicas aprendes o elevas. Afinidad es lo bien que manejas tu elemento. En Mejorar verás qué te aporta la siguiente compra y sus requisitos."],
+      ["¿Por qué no puedo aprender o usar algo?", "Cada opción muestra el motivo: Trazos insuficientes, nivel, rango, naturaleza, energía, reacción ocupada o un estado. Aprender y usar tienen requisitos distintos. Si pide maestro o un permiso de la historia, el botón envía la solicitud al DM; no concede el poder al instante."],
+      ["¿Qué pasa si no me queda energía?", `Puedes entrar en sobreesfuerzo hasta ${limiteNegativo(a)} de Verbe. Cada gasto que queda en negativo exige Constitución o gana Agotamiento. Con Agotamiento 4 no puedes gastar en negativo. Recuperar cada punto de deuda cuesta dos; los puntos impares se guardan. Las técnicas de grado 0 necesitan al menos 1 de Verbe.`],
+      ["¿Cuánto recupero al descansar?", `Sin mejoras, un Descanso Largo en Santuario recupera ${Math.floor(max / 2)} puntos de recuperación y una noche a la intemperie ${Math.floor(max / 4)}. Con tu reserva actual (${v}), quedarías en ${santuario.valor} o ${intemperie.valor}, respectivamente. Las dotes pueden modificar esas cantidades; el descanso real aplica tus mejoras. La deuda siempre se paga al doble.`],
+      ["¿Cómo funcionan mis acciones y reacciones?", "La ficha indica Acción, Acción adicional, Reacción o un tiempo más largo. Usar la técnica no te regala una acción extra. Si ya gastaste tu reacción o estás Cargado, las defensas y técnicas de reacción quedan bloqueadas hasta recuperarla."],
+      ["¿Qué pasa con las heridas?", "Recuperar PG no borra Malherido ni Herida No Tratada. Busca tratamiento y reposo. Si estás Acechado por la Muerte, no puedes tomar acciones, acciones adicionales ni reacciones: pide ayuda y sigue las indicaciones de tu estado. El Santuario mejora el descanso; fuera de él recuperas menos."],
+      ["¿Cómo mejoro sin equivocarme?", "En Mejorar puedes subir tu especialidad, comprar una dote o entrenar una técnica conocida. Mira el coste y lo que ganas antes de elegir. Inventar técnicas es opcional y requiere al DM; el oro y los días de entrenamiento se resuelven en mesa. Si compras algo por error, el DM puede deshacerlo."],
+      ["¿Qué hace automáticamente el módulo?", "Administra compras, energía, tiradas y varios estados. El DM decide objetivos válidos, posición, ilusiones, invocaciones y efectos narrativos. Las defensas automáticas requieren midi-qol y pueden necesitar ajustes de mesa en críticos o áreas. Una descripción no significa que todo su efecto ocurra solo."]
+    ];
+    return `<div class="ev-titulo-pagina"><div><span class="ev-kicker">UNA DUDA, UNA RESPUESTA</span><h2>Lo necesario para jugar</h2><p>Abre solo la pregunta que tengas ahora. Puedes aprender jugando desde el panel.</p></div></div>
+      <div class="ev-contraste-recursos"><div><i class="fa-solid fa-droplet" aria-hidden="true"></i><b>Verbe = actuar</b><span>Se gasta por uso. Se recupera descansando.</span></div><div><i class="fa-solid fa-pen-nib" aria-hidden="true"></i><b>Trazos = aprender</b><span>Compras una mejora y la conservas.</span></div></div>
+      <div class="ev-preguntas">${preguntas.map(([q, r]) => `<details><summary>${q}</summary><p>${escH(r)}</p></details>`).join("")}</div>
+      <p class="ev-nota">Para consultar una excepción o profundizar, tienes la guía de referencia.</p><button type="button" data-action="guia" data-s="">Abrir referencia completa</button>`;
   }
 
   #resumen() {
@@ -2253,20 +2379,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const cd = 8 + competencia(a) + modDe(a, e.car);
     const lin = linajeDe(a);
     const natsTxt = [...natsDe(a)].map(n => `${NATS[n] ?? n}${afinidadDe(a, n) > 1 ? ` (${["", "", "Entrenada", "Maestra"][afinidadDe(a, n)]})` : ""}`).join(", ");
-    const sinNat = !e.nats?.length;
-    const sinRama = !e.principal;
-    const pasos = (sinNat || sinRama || t.gastados === 0) ? `<h3>Primeros pasos</h3>
-      <p class="ecos-nota">¿Primera vez? <a data-action="pestana" data-p="guia">Cómo funciona</a> lo explica en un minuto.</p>
-      ${this.#paso(1, !sinNat, "Elige tu naturaleza", sinNat ? this.#eleccion("nat", "<p>El elemento al que responde tu Verbe: te da sus técnicas y puedes ponérselo a otras. Sirve con cualquier rama.</p>", "nat") : ` <span>${NATS[e.nats[0]]}</span>`)}
-      ${this.#paso(2, !sinRama, "Elige tu rama principal", sinRama ? this.#eleccion("principal", `<p>El tipo de técnica en que te especializas: empiezas con Entrenado en ella, gratis.</p>
-          <details><summary>Qué gano y qué pierdo</summary><ul class="ecos-verbe-lista">
-          <li><b>Ganas:</b> Entrenado gratis (técnicas hasta grado 3), sus rangos cuestan 1 Trazo menos y sus dones llegan un rango antes.</li>
-          <li><b>No pierdes:</b> puedes aprender técnicas de cualquier rama abierta (con Novato, hasta grado 1) y entrenar otras cuando quieras.</li>
-          <li><b>Cuesta más:</b> desde la tercera rama que entrenes, cada rango cuesta 1 Trazo extra.</li>
-          <li>Mirada, Sangre y Pacto se abren con la historia; Pulso, con una dote.</li></ul></details>`, "rama") : ` <span>${nombreRama(e.principal)}</span>`)}
-      ${this.#paso(3, t.gastados > 0, "Gasta tus Trazos", `<p>Tienes <b>${t.libres}</b>. Cada técnica cuesta su grado (mínimo 1). Con 12, por ejemplo: Entrenado en una segunda rama (1), tres técnicas de grado 1 (3), tres de grado 0 (3), una dote de 2 o 3, y guardas el resto.</p>
-        <p><button type="button" data-action="pestana" data-p="tienda">Ir a la Tienda</button> <button type="button" data-action="pestana" data-p="ramas">Ver las Ramas</button> <button type="button" data-action="pestana" data-p="dotes">Ver las Dotes</button></p>`)}
-      ${this.#paso(4, false, "Úsalas desde tu hoja", "<p>Pestaña de conjuros, sección «Técnicas del Verbe». El Verbe se descuenta solo.</p>")}` : "";
+    const pasos = this.#inicio();
     const el = [];
     if (tieneDote(a, "rama-segunda") && !e.segunda) el.push(this.#elegirSimple("segunda", "Rama segunda: elige tu segunda rama principal (sus rangos cuestan 1 Trazo menos).", ramasLibres().filter(([k]) => k !== e.principal), "rama"));
     if (tieneDote(a, "maestria-control") && !e.maestria) el.push(this.#elegirSimple("maestria", "Maestría del Control: elige la rama cuyas técnicas te cuestan 1 Verbe menos.", D.ramas.filter(r => ramaAbierta(a, r.id)).map(r => [r.id, r.nombre]), "rama"));
@@ -2280,17 +2393,20 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       : "Desconocido. Hay cosas de tu sangre que no tienes manera de saber; si las hay, aparecen jugando.";
     const oc = ocultaDe(a);
     const ocFila = e.descubierta ? `Descubriste una segunda naturaleza: ${NATS[oc] ?? ""}.`
-      : `Puede que tu Verbe responda a otra naturaleza que no conoces. Se descubre con «Probar» en la Tienda (no cuesta nada).${dm() && oc ? ` <i>Oculta: ${NATS[oc]}</i>` : ""}`;
+      : `Puede que tu Verbe responda a otra naturaleza que no conoces. Se intenta descubrir con «Probar» en Aprender; si responde, aprender la técnica cuesta los Trazos indicados.${dm() && oc ? ` <i>Oculta: ${NATS[oc]}</i>` : ""}`;
     const cerrAbierto = efectoV(a, "cerrojo");
     const cerr = (Number(e.cerrojos) || 0) ? `<h3>Siete Cerrojos</h3><p>${D.cerrojos.filter(c => c.n <= e.cerrojos).map(c =>
       `<button type="button" data-action="cerrojo" data-n="${c.n}" data-tooltip="${escH(c.da)} · cuesta ${costoGrado(c.grado)} Verbe y una prueba de Control CD ${10 + (2 * c.n)} · ${c.pg ? `${c.pg} PG por turno` : "sin PG"}">Abrir hasta el ${c.n} · ${escH(c.nombre)}</button>`).join(" ")}
       ${cerrAbierto ? ` <button type="button" data-action="cerrar">Cerrar (${escH(cerrAbierto.name)})</button>` : ""}</p>` : "";
     const monedas = Number(a.system?.currency?.soul) || 0;
-    const mon = monedas ? `<h3>Monedas Antiguas (${monedas})</h3><p>Una moneda puede volverse Verbe o Trazos. <button type="button" data-action="moneda" data-uso="verbe">Recuperar ${2 * competencia(a)} de Verbe</button>
-      <button type="button" data-action="moneda" data-uso="trazo" data-tooltip="Como mucho 2 por nivel">Volverla 1 Trazo (${Number(e.monedas?.[nivelDe(a)]) || 0} de 2 en este nivel)</button></p>` : "";
+    const recMoneda = cambiosRecuperacion(a, 2 * competencia(a));
+    const monedasNivel = Number(e.monedas?.[nivelDe(a)]) || 0;
+    const mon = monedas ? `<section class="ev-reponer"><div><span class="ev-kicker">RECURSO OPCIONAL</span><h3>${monedas} ${monedas === 1 ? "Moneda Antigua" : "Monedas Antiguas"}</h3><p>Gastas una moneda por botón. Elige energía para ahora o un Trazo para aprender.</p></div><div><button type="button" data-action="moneda" data-uso="verbe">Gastar 1 moneda → quedar en ${recMoneda.valor} Verbe${recMoneda.recResto ? " + 1 punto guardado" : ""}</button>
+      <button type="button" data-action="moneda" data-uso="trazo" ${monedasNivel >= 2 ? "disabled" : ""}>Gastar 1 moneda → +1 Trazo</button><small>${monedasNivel} de 2 conversiones a Trazo usadas en este nivel.</small></div></section>` : "";
     const ctl = Number(a.system?.skills?.cvb?.value) || 0;
     return `${pasos}${el.join("")}
-      <h3>Tu Verbe</h3>
+      <div class="ev-estadisticas"><div><small>CD de tus técnicas</small><b>${cd}</b><span>El rival debe igualar o superar esta dificultad.</span></div><div><small>Ataque con Verbe</small><b>${competencia(a) + modDe(a, e.car) >= 0 ? "+" : ""}${competencia(a) + modDe(a, e.car)}</b><span>La técnica puede usar otra característica.</span></div><div><small>Grado máximo por nivel</small><b>${gradoMax(a)}</b><span>Cada rama también tiene su propio límite.</span></div></div>
+      ${mon}<details class="ev-ficha-personal"><summary>Mi personaje: afinidades, linaje y otros detalles</summary>
       <table class="ecos-verbe-datos">
         <tr><th>Característica ${ayuda("car")}</th><td>${CARS[e.car]} · CD de tus técnicas <b>${cd}</b> · ataque <b>+${competencia(a) + modDe(a, e.car)}</b></td></tr>
         <tr><th>Naturaleza</th><td>${natsTxt || "por elegir"}</td></tr>
@@ -2303,8 +2419,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         <tr><th>Sobreesfuerzo ${ayuda("sobre")}</th><td>Puedes gastar Verbe que no tienes hasta llegar a ${limiteNegativo(a)}.</td></tr>
         ${Object.keys(e.miradas ?? {}).length ? `<tr><th>Ojos</th><td>${Object.entries(e.miradas).map(([k, n]) => `${escH(D.miradas.find(m => m.id === k)?.nombre ?? k)}, etapa ${n}${(e.trasplantes ?? []).includes(k) ? " (trasplantado)" : ""}`).join("; ")}</td></tr>` : ""}
         ${(e.pactos ?? []).length ? `<tr><th>Pactos</th><td>${e.pactos.map(p => escH(nombrePacto(p))).join(", ")}</td></tr>` : ""}
-      </table>
-      ${cerr}${mon}
+      </table></details>
+      ${cerr ? `<details class="ev-ficha-personal"><summary>Siete Cerrojos · poder con coste de PG y Agotamiento</summary>${cerr}</details>` : ""}
       <details><summary>Historial</summary><ul>${(e.historial ?? []).slice().reverse().map(h => `<li>${escH(h)}</li>`).join("")}</ul></details>`;
   }
 
@@ -2329,7 +2445,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       const sig = rg < ultimo ? D.rangos[rg + 1] : null;
       const c = sig ? costoRango(a, r.id, rg + 1) : null;
       const faltaNivel = !!sig && nivelDe(a) < sig.nivel;
-      const puede = abierta && sig && !faltaNivel;
+      const faltanTrazos = sig ? Math.max(0, c - trazos(a).libres) : 0;
+      const puede = abierta && sig && !faltaNivel && !faltanTrazos;
       const don = D.dones.find(x => x.rama === r.nombre);
       const dones = (don && vePropia) ? DONES_K.map((k, i) => {
         const tiene = rangoDon(a, r.id) >= i + 2;
@@ -2338,19 +2455,19 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         const cuando = tiene ? "ya lo tienes" : `llega cuando subas a ${llega}${principal ? " (un rango antes, por ser tu rama principal)" : ""}`;
         return `<li class="${tiene ? "tiene" : ""}"><b>${ORD_DON[i]} don · ${escH(nombre)}</b> <span class="ecos-nota">${cuando}</span><br>${escH(texto)}</li>`;
       }).join("") : "";
-      const cerradaPor = { pulso: "Se abre con la dote Control fino del Verbe (pestaña Dotes).", mirada: "Se abre si despierta un ojo, en la historia.",
+      const cerradaPor = { pulso: "Se abre con la dote Control fino del Verbe (Mejorar → Dotes).", mirada: "Se abre si despierta un ojo, en la historia.",
         pacto: "Se abre con un pacto que se gana en la historia.", sangre: "Se abre con una herencia de sangre. No tienes manera de saber si la tienes; si es así, la historia lo dirá." }[r.id] ?? "La abre el DM.";
       const extra = (c !== null && !principal && ordenRama(a, r.id) >= 2) ? " (incluye 1 de más por ser tu tercera rama o más)" : "";
       const ahora = abierta
-        ? `Rango <b>${nombreRango(rg)}</b>: aprendes técnicas de ${r.nombre} hasta grado ${rangoGrado(rg)}${rg >= 2 ? `, y las que dañan o curan tiran ${rg - 1} dado${rg > 2 ? "s" : ""} más` : ""}.`
+        ? `Rango <b>${nombreRango(rg)}</b> · tu límite ahora es <b>grado ${Math.min(gradoMax(a), rangoGrado(rg))}</b>${rg >= 2 ? ` · +${rg - 1} dado${rg > 2 ? "s" : ""} al dañar o curar` : ""}.`
         : "<b>Cerrada</b>.";
       const ayudaSig = sig ? `${sig.nombre}: aprendes hasta grado ${sig.grado}${rg + 1 >= 2 ? `, sus técnicas que dañan o curan tiran ${rg} dado${rg > 1 ? "s" : ""} más` : ""}. Pide nivel ${sig.nivel}. Cuesta ${c} Trazo${c === 1 ? "" : "s"}${extra}.` : "";
-      const boton = (sig && abierta) ? `<button type="button" data-action="rango" data-rama="${r.id}" ${puede ? "" : "disabled"} data-tooltip="${escH(ayudaSig)}">Subir a ${sig.nombre} · ${c} Trazo${c === 1 ? "" : "s"}</button>${faltaNivel ? ` <span class="ecos-nota">pide nivel ${sig.nivel}</span>` : ""}`
+      const boton = (sig && abierta) ? `<button type="button" data-action="rango" data-rama="${r.id}" ${puede ? "" : "disabled"} data-tooltip="${escH(ayudaSig)}">Subir a ${sig.nombre} · ${c} Trazo${c === 1 ? "" : "s"}</button>${faltaNivel ? ` <span class="ecos-nota">Necesitas nivel ${sig.nivel}.</span>` : faltanTrazos ? ` <span class="ecos-nota">Te faltan ${faltanTrazos} Trazos.</span>` : ""}`
         : (abierta ? `<span class="ecos-nota">Es el rango más alto.</span>` : "");
       return `<section class="ecos-verbe-rama ${abierta ? "" : "cerrada"}">
         <header><b>${r.nombre}</b>${principal ? " <span class='ecos-verbe-pill'>principal</span>" : ""}${e.segunda === r.id ? " <span class='ecos-verbe-pill'>segunda</span>" : ""}
           <span>${ahora}</span>${boton}</header>
-        <p class="ecos-nota">${abierta || r.id !== "sangre" ? escH(leadDe(r)) : ""} ${abierta ? "" : `<b>${cerradaPor}</b>`}</p>${dones ? `<ul class="ecos-verbe-dones">${dones}</ul>` : ""}</section>`;
+        <p class="ecos-nota">${abierta || r.id !== "sangre" ? escH(leadDe(r)) : ""} ${abierta ? "" : `<b>${cerradaPor}</b>`}</p>${dones ? `<details class="ev-dones"><summary>Qué dones gano en esta rama</summary><ul class="ecos-verbe-dones">${dones}</ul></details>` : ""}</section>`;
     }).join("");
     const af = [...natsDe(a)].map(n => {
       const v = Number(e.afinidad?.[n]) || 1;
@@ -2362,7 +2479,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     return `${intro("Cada rama es un tipo de técnica (Forma, Velo, Cuerpo…).", "Tu rango en una rama dice hasta qué grado puedes aprender técnicas de ella. Se sube con Trazos; desde Experto, sus técnicas que dañan o curan tiran dados de más y ganas los dones de la rama.",
       `<p>Tu <b>rama principal</b> empieza en Entrenado gratis, cada rango le cuesta 1 Trazo menos y sus dones llegan un rango antes. Desde la <b>tercera rama</b> que entrenes, cada rango cuesta 1 Trazo más: conviene especializarse.</p>${tabla}`, "ramas-y-rangos")}
       ${filas}
-      <h3>Afinidad con tu naturaleza</h3><p class="ecos-nota">Qué tan bien manejas tu elemento. Entrenada: sus técnicas tiran 1 dado más y sus estados duran el doble. Maestra: 2 dados más, y quien falla contra ella no resiste su daño.</p><ul>${af || "<li>Primero elige tu naturaleza (Resumen).</li>"}</ul>
+      <h3>Afinidad con tu naturaleza</h3><p class="ecos-nota">Qué tan bien manejas tu elemento. Entrenada: sus técnicas tiran 1 dado más y sus estados duran el doble. Maestra: 2 dados más, y quien falla contra ella no resiste su daño.</p><ul>${af || "<li>Primero elige tu naturaleza (Inicio).</li>"}</ul>
       <h3>Control del Verbe ${ayuda("control")}</h3><p>${["Sin competencia", "Competente", "Pericia"][Math.min(2, ctl)]}. ${ctl < 2 ? `<button type="button" data-action="control" data-tooltip="${ctl === 0 ? "Sumas tu competencia a las pruebas de Control" : "Sumas el doble de tu competencia"}">${ctl === 0 ? "Volverte competente · 2 Trazos" : "Pericia · 3 Trazos (nivel 5)"}</button>` : ""}</p>
       <h3>Siete Cerrojos</h3><p class="ecos-nota">Un estado de Cuerpo: pegas más fuerte y más rápido, pagando PG cada turno y Agotamiento al cerrar. <a class="ecos-verbe-guia" data-action="guia" data-s="siete-cerrojos"><i class="fa-solid fa-book-open"></i> Guía</a></p>
       <p>${cerr ? `Sabes hasta el ${cerr}.` : "No sabes ninguno."} ${sigC ? `<button type="button" data-action="aprenderCerrojo" data-tooltip="${escH(`${sigC.nombre}: ${sigC.da}. Grado ${sigC.grado}.`)}">Aprender el ${sigC.n} · ${escH(sigC.nombre)} · ${sigC.grado} Trazo${sigC.grado === 1 ? "" : "s"}</button>` : ""}</p>`;
@@ -2407,30 +2524,33 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const natsF = [...Object.entries(NATS), ...Object.entries(D.combos).map(([k, v]) => [k, v.nombre])];
     const ramasF = D.ramas.filter(r => r.id !== "sangre" || ve).map(r => [r.id, r.nombre]);
     return `${intro("Aquí aprendes técnicas.", "Haz clic en una para ver su ficha completa. Se aprende una vez, pagando Trazos; después, cada vez que la usas desde tu hoja gasta Verbe.",
-      `<ul class="ecos-verbe-lista"><li><b>G</b> es el grado: qué tan fuerte es. Puedes aprender hasta tu grado máximo (${gradoMax(a)}) y, en cada rama, hasta lo que deja tu rango en ella (pestaña Ramas).</li>
+      `<ul class="ecos-verbe-lista"><li><b>G</b> es el grado: qué tan fuerte es. Puedes aprender hasta tu grado máximo (${gradoMax(a)}) y, en cada rama, hasta lo que deja tu rango en ella (Mejorar → Especialidades).</li>
         <li><b>Verbe</b> es lo que gasta cada uso; el botón dice cuántos <b>Trazos</b> cuesta aprenderla.</li>
         <li><b>Probar</b>: es de una naturaleza que no tienes. Si tu Verbe responde, la aprendes; si no, no pierdes nada.</li>
         <li><b>Pedir al DM</b>: pide un maestro; el DM la aprueba.</li></ul>`, "tecnicas-y-grados")}
-      <div class="ecos-verbe-filtros">
-      <select data-filtro="rama"><option value="">Todas las ramas</option>${opciones(ramasF, f.rama)}</select>
-      <select data-filtro="grado"><option value="">Todo grado</option>${opciones([...Array(GRADO_TOPE + 1).keys()].map(g => [g, `Grado ${g}`]), String(f.grado))}</select>
-      <select data-filtro="nat"><option value="">Toda naturaleza</option>${opciones(natsF, f.nat)}</select>
-      <select data-filtro="agrupar">${opciones([["rama", "Ordenar por rama"], ["grado", "Ordenar por grado"]], f.agrupar ?? "rama")}</select>
-      <input type="search" data-filtro="texto" placeholder="Buscar por nombre o efecto" value="${escH(f.texto)}">
-      <label><input type="checkbox" data-filtro="solo" ${f.solo ? "checked" : ""}> Solo lo que puedo aprender ahora</label></div>
+      <div class="ev-contraste-recursos"><div><b>Aprender = pagar Trazos una vez</b><span>Lo aprendido pasa a «Mis técnicas».</span></div><div><b>Usar = gastar Verbe cada vez</b><span>El coste tiene en cuenta tus mejoras y el contexto actual.</span></div></div>
+      <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar una técnica</span><input type="search" data-filtro="texto" placeholder="Nombre o efecto…" value="${escH(f.texto)}"></label>
+      <label><input type="checkbox" data-filtro="solo" ${f.solo ? "checked" : ""}> Solo disponibles y aprendidas</label><button type="button" data-action="limpiarFiltros">Restablecer</button></div>
+      <details class="ev-filtros-extra" ${f.rama || f.grado !== "" || f.nat ? "open" : ""}><summary>Filtrar por especialidad, grado o elemento</summary><div class="ecos-verbe-filtros">
+      <label>Especialidad <select data-filtro="rama"><option value="">Todas las ramas</option>${opciones(ramasF, f.rama)}</select></label>
+      <label>Potencia <select data-filtro="grado"><option value="">Todos los grados</option>${opciones([...Array(GRADO_TOPE + 1).keys()].map(g => [g, `Grado ${g}`]), String(f.grado))}</select></label>
+      <label>Elemento <select data-filtro="nat"><option value="">Todos los elementos</option>${opciones(natsF, f.nat)}</select></label>
+      <label>Agrupar <select data-filtro="agrupar">${opciones([["rama", "Por especialidad"], ["grado", "Por grado"]], f.agrupar ?? "rama")}</select></label></div></details>
       ${f.solo && ocultas ? `<p class="ecos-nota">Hay ${ocultas} técnicas más que todavía no puedes aprender: desmarca la casilla para verlas y saber qué piden.</p>` : ""}
-      ${grupos || "<p>Nada con esos filtros.</p>"}`;
+      ${grupos || '<div class="ev-vacio"><h3>No hay técnicas con esos filtros</h3><p>Restablece la búsqueda o desmarca «Solo disponibles y aprendidas» para ver qué te falta.</p><button type="button" data-action="limpiarFiltros">Restablecer filtros</button></div>'}`;
   }
 
   #filaTec(t, r, sabe) {
-    const btn = sabe ? "<span class='ecos-verbe-pill'>la sabes</span>"
-      : r.ok && r.probar ? `<button type="button" data-action="probar" data-id="${t.id}" data-tooltip="No es de tu naturaleza. Si tu Verbe responde, la descubres y la aprendes por ${t.trazos} Trazo${t.trazos === 1 ? "" : "s"}; si no, no pierdes nada">Probar</button>`
+    const btn = sabe ? '<button type="button" data-action="pestana" data-p="jugar">Aprendida · ir a Mis técnicas</button>'
+      : r.ok && r.probar ? `<button type="button" data-action="probar" data-id="${t.id}" data-tooltip="Si tu Verbe responde, la descubres y aprendes. Si no, no pierdes Trazos">Probar · ${t.trazos} ${t.trazos === 1 ? "Trazo" : "Trazos"} si responde</button>`
         : r.ok ? `<button type="button" data-action="aprender" data-id="${t.id}">${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Aprender"} · ${t.trazos} Trazo${t.trazos === 1 ? "" : "s"}</button>`
           : `<span class="ecos-verbe-no" data-tooltip="${escH(r.motivo)}">${escH(r.motivo)}</span>`;
     const tiempo = TIEMPO_L[t.t] ?? t.t ?? "";
+    const meta = itemsDe(this.actor, t.id)[0]?.getFlag(MOD, F) ?? { ...t.item.flags[MOD][F], infusion: estado(this.actor)?.infusiones?.[t.id] ?? null };
+    const costo = previsualizarUso(this.actor, meta).costo;
     return `<details class="ecos-verbe-tec ${sabe ? "sabe" : r.ok ? "puede" : "no"}" data-id="${t.id}" data-tipo="tec"><summary>
-      <span class="gr" data-tooltip="Grado">G${t.g}</span><span class="nom"><b>${escH(t.n)}</b><small>${escH([tiempo, t.alc ? alcanceL(t.alc) : null, t.area].filter(Boolean).join(" · "))}</small></span>
-      <span class="vb" data-tooltip="Verbe por uso">${t.costo} Verbe</span><span class="acc">${btn}</span></summary><div class="ecos-verbe-ficha-cont"></div></details>`;
+      <span class="gr">Grado ${t.g}</span><span class="nom"><b>${escH(t.n)}</b><small>${escH([tiempo, t.alc ? alcanceL(t.alc) : null, t.area].filter(Boolean).join(" · "))}</small><small class="ev-efecto-breve">${escH(textoDe(t))}</small></span>
+      <span class="vb"><b>${costo} Verbe</b><small>por uso base</small></span><span class="acc">${btn}${!sabe && r.ok && !r.probar ? `<small>Te quedarían ${trazos(this.actor).libres - t.trazos} Trazos</small>` : ""}</span></summary><div class="ecos-verbe-ficha-cont"></div></details>`;
   }
 
   #fichaTec(id) {
@@ -2448,11 +2568,12 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const dano = t.dmg ? `${t.veces > 1 ? `${t.veces} × ` : ""}${escH(t.dmg)}${extra ? ` <b>(+${extra} dado${extra > 1 ? "s" : ""} tuyo${extra > 1 ? "s" : ""})</b>` : ""}` : "—";
     const deja = (it?.effects ?? []).map(ef => (ESTADOS[ef.statuses?.[0]] ? `<span data-tooltip="${escH(ESTADOS[ef.statuses[0]].texto)}">${escH(ef.name)}</span>` : escH(ef.name))).join(", ") || "—";
     const sube = t.sube === "truco" ? "más dados en los niveles 5, 11 y 17" : t.sube ? `${escH(t.sube)} por cada grado de más` : (t.g > 0 ? "—" : "—");
-    const verbes = t.g > 0 ? Array.from({ length: Math.max(0, gradoMax(a) - t.g) + 1 }, (_, i) => `grado ${t.g + i}: ${costoGrado(t.g + i)}`).join(" · ") : "0 (pide tener al menos 1)";
+    const meta = itemsDe(a, id)[0]?.getFlag(MOD, F) ?? { ...it.flags[MOD][F], infusion: estado(a)?.infusiones?.[id] ?? null };
+    const verbes = t.g > 0 ? Array.from({ length: Math.max(0, gradoUsable(a, meta) - t.g) + 1 }, (_, i) => `grado ${t.g + i}: ${costoUso(a, meta, t.g + i, { infusion: meta.infusion })} Verbe`).join(" · ") : `${costoUso(a, meta, 0, { infusion: meta.infusion })} Verbe (pide tener al menos 1)`;
     const pide = [t.g ? `nivel ${nivel}` : null, rangoN > 0 ? `${nombreRango(rangoN)} en ${nombreRama(t.rama)}` : null, t.nat ? `naturaleza ${nombreNat(t.nat)}` : null,
       t.req && !(t.sec === "sangre" && !dm()) ? escH(t.req) : null].filter(Boolean).join(" · ") || "—";
     const f = (k, v) => `<th>${k}</th><td>${v}</td>`;
-    return `<p class="texto">${escH(textoDe(t))}</p>
+    return `${D.defensas?.[id] ? '<p class="ecos-verbe-intro"><b>Es una defensa reactiva.</b> Con midi-qol se ofrece cuando un ataque va a impactarte; el aviso muestra el coste según el ataque. No la lances como una técnica normal antes del golpe. Sin esa integración, el DM resuelve la reacción, el objeto y el coste en mesa.</p>' : ''}<p class="texto">${escH(textoDe(t))}</p>
       <table class="ecos-verbe-ficha">
         <tr>${f("Rama", `${nombreRama(t.rama)}${t.nat ? ` · ${escH(nombreNat(t.nat))}` : ""}`)}${f("Grado", `${t.g}${t.g >= 6 ? " · una vez por Descanso Largo" : ""}`)}</tr>
         <tr>${f("Tiempo", escH(TIEMPO_L[t.t] ?? t.t ?? "—"))}${f("Alcance", escH(t.alc ? alcanceL(t.alc) : "—"))}</tr>
@@ -2490,8 +2611,9 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       const abierto = this.abiertos ? this.abiertos.has(k) : true;
       return `<details class="ecos-verbe-grupo" data-g="${k}" ${abierto ? "open" : ""}><summary><b>${escH(cat?.nombre ?? "Otras")}</b> <span>${escH(cat?.texto ?? "")} · ${ds.length}</span></summary>
         ${ds.map(({ d, tiene, r }) => {
+          const faltan = Math.max(0, d.trazos - trazos(a).libres);
           const btn = tiene ? `<span class='ecos-verbe-pill'>${d.innato ? "de nacimiento" : "la tienes"}</span>`
-            : r.ok ? `<button type="button" data-action="dote" data-id="${d.id}">${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Comprar"} · ${d.trazos} Trazos</button>`
+            : r.ok ? `<button type="button" data-action="dote" data-id="${d.id}" ${faltan ? "disabled" : ""}>${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Comprar"} · ${d.trazos} Trazos</button><small>${faltan ? `Te faltan ${faltan} Trazos` : `Te quedarían ${trazos(a).libres - d.trazos} Trazos`}</small>`
               : `<span class="ecos-verbe-no">${escH(r.motivo)}</span>`;
           return `<details class="ecos-verbe-tec ${tiene ? "sabe" : r.ok ? "puede" : "no"}" data-id="${d.id}" data-tipo="dote"><summary>
             <span class="gr" data-tooltip="Trazos">${d.trazos}</span><span class="nom"><b>${escH(d.nombre)}</b><small>${escH(dotTexto(d)).slice(0, 90)}${dotTexto(d).length > 90 ? "…" : ""}</small></span>
@@ -2499,7 +2621,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         }).join("")}</details>`;
     }).join("");
     return `${intro("Mejoras permanentes del Verbe.", "Haz clic en una para verla entera. Se pagan una vez con Trazos y quedan como rasgos en tu hoja; las que piden un maestro van al DM.", "", "dotes")}
-      <div class="ecos-verbe-filtros"><input type="search" data-filtro-dote="texto" placeholder="Buscar dote" value="${escH(f.texto)}">
+      <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar una mejora</span><input type="search" data-filtro-dote="texto" placeholder="Nombre o beneficio…" value="${escH(f.texto)}"></label>
         <label><input type="checkbox" data-filtro-dote="solo" ${f.solo ? "checked" : ""}> Solo las que puedo comprar ahora</label></div>
       ${html || "<p>Nada con ese filtro.</p>"}`;
   }
@@ -2540,7 +2662,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     return `${intro("Entrena una técnica que ya sabes para que crezca.", `Cada técnica cultivada pasa por tres niveles (Pulida, Dominada y Propia) y cada nivel le da una mejora que eliges. Puedes cultivar tantas técnicas como tu bonificador de competencia: ${competencia(a)} (llevas ${usadas}).`,
       `<ul class="ecos-verbe-lista">${D.mejoras.map(m => `<li>${escH(m)}</li>`).join("")}</ul>
       <p>Dominada saca variantes; Propia evoluciona. <b>Infundir</b> le pone tu elemento a una técnica que hace daño: +2 Verbe por uso, sin Trazos.</p>`, "cultivo")}
-      <table class="ecos-verbe-tabla"><thead><tr><th>Técnica</th><th>Cultivar</th><th>Infusión</th></tr></thead><tbody>${filas || "<tr><td colspan=\"3\">Todavía no sabes técnicas: apréndelas en la Tienda.</td></tr>"}</tbody></table>
+      <table class="ecos-verbe-tabla"><thead><tr><th>Técnica</th><th>Cultivar</th><th>Infusión</th></tr></thead><tbody>${filas || "<tr><td colspan=\"3\">Todavía no sabes técnicas: apréndelas en Aprender.</td></tr>"}</tbody></table>
       <p class="ecos-nota"><button type="button" data-action="rearmar">Rearmar mis técnicas</button> si algo de la hoja no se actualizó después de subir de nivel o de rango.</p>`;
   }
 
