@@ -71,6 +71,7 @@ function Test-EcosFoundryRunning {
     return $false
 }
 function Expand-EcosPackage([string]$Zip, [string]$Destination) {
+    Add-Type -AssemblyName System.IO.Compression
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     New-Item -ItemType Directory -Path $Destination -Force | Out-Null
     $base = [IO.Path]::GetFullPath($Destination).TrimEnd([char[]]@([char]92, [char]47)) + [IO.Path]::DirectorySeparatorChar

@@ -1,6 +1,7 @@
 ﻿#requires -Version 5.1
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot '..\tools\windows\Ecos-Actualizar.ps1')
+Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $script:Tests = 0
 function Assert-Ecos($Condition, [string]$Message) { if (-not $Condition) { throw $Message } }
