@@ -11,7 +11,7 @@ const walk = dir => fs.readdirSync(dir, { withFileTypes: true }).flatMap(e => {
   return e.isDirectory() ? walk(p) : [p];
 });
 for (const f of walk(root)) {
-  if (/\.(?:mjs|js)$/.test(f)) {
+  if (/\.(?:mjs|cjs|js)$/.test(f)) {
     const r = spawnSync(process.execPath, ['--check', f], { encoding: 'utf8' });
     if (r.status !== 0) { failed = true; console.error(r.stderr); }
   }
