@@ -16,7 +16,7 @@ function entorno(t) {
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ version: '1.2.3' }));
   fs.writeFileSync(path.join(root, 'CHANGELOG.md'), '# Cambios\n\n## 1.2.3 — Prueba\n\n- Cambio comprobado.\n');
   fs.writeFileSync(path.join(root, 'releases/ecos-frontera-1.2.3.zip'), 'archivo de prueba del adaptador HTTP');
-  const estado = { release: null, calls: [], fallarManifest: false };
+  const estado = { release: null, calls: [], fallarManifest: false, esperados: 2 };
   const repos = {
     async getReleaseByTag() { if (!estado.release) throw Object.assign(Error('ausente'), { status: 404 }); return { data: estado.release }; },
     async createRelease(data) { estado.calls.push('crear'); estado.release = { id: 1, draft: data.draft, body: data.body, assets: [], html_url: `${base}/releases/tag/v1.2.3` }; return { data: estado.release }; },
@@ -26,7 +26,7 @@ function entorno(t) {
       const asset = { name: data.name, size: data.data.length, digest: 'sha256:' + crypto.createHash('sha256').update(data.data).digest('hex') };
       estado.release.assets.push(asset); return { data: asset };
     },
-    async updateRelease(data) { assert.equal(estado.release.assets.length, 2); estado.calls.push('publicar'); estado.release.draft = data.draft; return { data: estado.release }; }
+    async updateRelease(data) { assert.equal(estado.release.assets.length, estado.esperados); estado.calls.push('publicar'); estado.release.draft = data.draft; return { data: estado.release }; }
   };
   return { estado, root, args: { github: { rest: { repos } }, context: { repo: { owner: 'autor', repo: 'modulo' }, sha: 'commit-validado' },
     core: { notice() {}, setOutput() {} }, root } };
@@ -55,4 +55,19 @@ test('no publica un manifiesto cuya descarga apunta a otra versión', async t =>
   const e = entorno(t), file = path.join(e.root, 'module.json');
   const m = JSON.parse(fs.readFileSync(file)); m.download = m.download.replace('v1.2.3','v0.0.1'); fs.writeFileSync(file, JSON.stringify(m));
   await assert.rejects(publicar(e.args), /no apunta/); assert.equal(e.estado.calls.length, 0);
+});
+test('modo privado adjunta el ayudante y no exige enlaces públicos', async t => {
+  const e = entorno(t); e.estado.esperados = 3;
+  fs.writeFileSync(path.join(e.root, 'package.json'), JSON.stringify({ version: '1.2.3', ecosUpdateMode: 'private' }));
+  fs.writeFileSync(path.join(e.root, 'module.json'), JSON.stringify({ version: '1.2.3' }));
+  fs.mkdirSync(path.join(e.root, 'tools/windows'), { recursive: true });
+  fs.writeFileSync(path.join(e.root, 'tools/windows/Ecos-Actualizar.ps1'), '# ayudante de prueba');
+  await publicar(e.args);
+  assert.deepEqual(e.estado.calls, ['crear','ecos-frontera-1.2.3.zip','module.json','Ecos-Actualizar.ps1','publicar']);
+  assert.match(e.estado.release.body, /Actualización privada/);
+});
+test('modo privado rechaza anunciar una actualización nativa sin autenticación', async t => {
+  const e = entorno(t);
+  fs.writeFileSync(path.join(e.root, 'package.json'), JSON.stringify({ version: '1.2.3', ecosUpdateMode: 'private' }));
+  await assert.rejects(publicar(e.args), /modo privado/); assert.equal(e.estado.calls.length, 0);
 });

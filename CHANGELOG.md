@@ -1,5 +1,15 @@
 # Cambios
 
+## 2.9.2 — Actualizaciones privadas en Windows
+
+- Mantener privados el repositorio y los Releases por decisión expresa del autor.
+- Añadir un actualizador de configuración inicial única con GitHub CLI y una tarea del usuario cada cinco minutos.
+- Consultar versiones estables terminadas, comprobar SHA-256, identificador, versión y rutas del ZIP; posponer si se detecta Foundry abierto.
+- Respaldar el módulo anterior y las bases de datos de mundos antes de intercambiar carpetas; restaurar el módulo anterior si falla el intercambio.
+- Adjuntar el instalador al Release privado y verificarlo en Windows PowerShell antes de publicar.
+- Retirar enlaces nativos sin autenticación: la actualización privada se realiza por el ayudante local, no por un enlace público.
+- Mantener interfaz, técnicas, dotes y mecánicas de 2.9.1.
+
 ## 2.9.1 — Preparación de instalación por manifiesto
 
 - Añadir `url`, `manifest` estable y `download` ligado a la versión del módulo.

@@ -17,7 +17,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  updater-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprobar actualizador privado en Windows PowerShell 5.1
+        shell: powershell
+        run: .\tests\windows-updater.test.ps1
   release:
+    needs: updater-windows
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

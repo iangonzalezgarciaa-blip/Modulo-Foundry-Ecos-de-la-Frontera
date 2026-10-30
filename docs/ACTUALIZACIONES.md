@@ -1,30 +1,58 @@
-# Instalación una vez y actualizaciones desde Foundry
+# Actualizaciones privadas: una configuración inicial en Windows
 
-Desde 2.9.1, los Releases incluyen el ZIP y `module.json`. El manifiesto usa una URL estable para consultar la última versión y una descarga fijada a su propio Release. Así una versión no instala el código inacabado de `main`.
+El repositorio y sus Releases permanecen privados. Se ha descartado la distribución pública. Para evitar descargar ZIPs en cada versión, el actualizador usa el acceso de tu cuenta a GitHub en tu propio PC; Foundry por sí solo no reutiliza la sesión de ChatGPT o del navegador.
 
-URL preparada:
+## Configurarlo una vez
 
-```text
-https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera/releases/latest/download/module.json
+1. Entra al último Release privado con tu cuenta de GitHub y descarga **Ecos-Actualizar.ps1**. No necesitas desinstalar el módulo.
+2. Abre Windows PowerShell y ejecuta, si el archivo está en Descargas:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\Downloads\Ecos-Actualizar.ps1" -Install
 ```
 
-## Estado de acceso
+3. El instalador busca GitHub CLI y, si falta, intenta instalarlo mediante WinGet. Abre el inicio de sesión de GitHub si todavía no hay una cuenta autorizada. Usa la cuenta que tiene acceso a este repositorio.
+4. Indica la carpeta de datos de usuario de Foundry. Si es la predeterminada, pulsa Enter para usar `%LOCALAPPDATA%\FoundryVTT`. Se debe seleccionar la carpeta que contiene `Data`, no la del ejecutable.
+5. El instalador registra una tarea del usuario y comprueba la última versión. Si detecta Foundry abierto, lo deja para después. Cierra Foundry para que pueda aplicar la actualización.
 
-El repositorio es privado. El acceso autorizado de ChatGPT y la sesión del navegador del autor no proporcionan autenticación al servidor de Foundry. Por tanto, la URL preparada **no es todavía una URL de instalación nativa utilizable sin credenciales**. No se debe pegar un enlace Raw temporal con token ni guardar tokens en el módulo.
+`ExecutionPolicy Bypass` afecta a ese proceso; el instalador no cambia globalmente la política de PowerShell. La sesión se gestiona mediante GitHub CLI. El archivo de configuración propio solo guarda la ruta de datos, la ruta del programa GitHub CLI y el nombre de la tarea; no contiene tokens ni contraseñas.
 
-Para usar la instalación estándar, el manifiesto y el ZIP necesitan alojamiento accesible para Foundry: por ejemplo, una distribución pública autorizada que contenga solo los archivos del módulo. Crear esa distribución o volver público el repositorio requiere decisión expresa del autor; esta versión no publica contenido fuera del repositorio privado.
+## A partir de ahí
 
-## Cuando la distribución sea accesible
+- La tarea consulta Releases privados estables cada **5 minutos** y al iniciar sesión en Windows.
+- Cada versión terminada que publiquemos se podrá instalar sin otra descarga manual ni pulsar Actualizar en Foundry.
+- Si se detecta Foundry abierto, se pospone; si se abre durante la descarga o el respaldo, se vuelve a posponer. No se cierran procesos del usuario.
+- Solo instala versiones superiores a la local. No instala commits de trabajo sin un Release terminado ni baja de versión por sí solo.
+- Comprueba SHA-256, identificador, versión, archivos declarados y rutas del paquete antes de tocar el módulo instalado.
+- Conserva un respaldo del módulo anterior y de `world.json` y las carpetas `data` de los mundos. No duplica las bibliotecas de imágenes o mapas de cada mundo.
+- Al abrir Foundry después de una actualización, se cargará la versión nueva. No sustituye el código de una partida que ya está abierta.
 
-1. Respaldar el mundo y conservar la carpeta anterior del módulo.
-2. Instalar el módulo desde Configuración → Módulos → Instalar módulo → URL de manifiesto, usando la URL final de distribución.
-3. Para actualizaciones posteriores, salir del mundo y usar Actualizar/Actualizar todos desde la configuración de Foundry. Ya no se extraen ZIPs a mano.
-4. Si el módulo ya recibió manualmente el paquete con los enlaces definitivos, la reinstalación inicial no es necesaria: Foundry puede consultar su manifiesto al buscar actualizaciones.
+La detección incluye la aplicación de escritorio con nombre Foundry y servidores Node identificados como Foundry o con `--dataPath`. Una instalación con un lanzador personalizado que oculte esos datos requiere adaptar la detección antes de confiar en la tarea. Las pruebas de Windows usan archivos ficticios y no equivalen a haber instalado la tarea ni iniciado sesión en el PC del autor.
 
-Foundry inicia la comprobación cuando el usuario pulsa Actualizar. La configuración nativa no instala cada commit ni actualiza una partida abierta en cuanto GitHub cambia. Si se quisiera actualización totalmente desatendida, haría falta un mecanismo externo distinto; el autor ha elegido la vía de manifiesto.
+## Revisar, comprobar o desactivar
 
-## Publicación del autor
+Archivos del ayudante y registro de actividad:
 
-Al completar una versión, sincronizar `module.json`, `package.json`, las notas y el ZIP. El flujo de Release valida y adjunta el ZIP y el manifiesto antes de publicarlo. Una versión publicada es inmutable: las correcciones se publican con otro número.
+```text
+%LOCALAPPDATA%\Ecos-Frontera-Actualizador\
+```
 
-Referencias: [actualización de paquetes en Foundry](https://foundryvtt.com/article/package-management/) e [instalación y gestión de módulos](https://foundryvtt.com/article/modules/).
+Comprobar ahora:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:LOCALAPPDATA\Ecos-Frontera-Actualizador\Ecos-Actualizar.ps1" -Check
+```
+
+Desactivar la tarea, conservando el módulo y todos sus respaldos:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:LOCALAPPDATA\Ecos-Frontera-Actualizador\Ecos-Actualizar.ps1" -Remove
+```
+
+Los respaldos quedan dentro de la carpeta de datos de usuario, en `Backups\Ecos-Frontera`. No se borran automáticamente. Si una migración de un mundo requiriera volver atrás, cerrar Foundry y restaurar juntos el módulo anterior y los datos correspondientes del mundo; el ayudante no revierte mundos automáticamente.
+
+## Para el desarrollo
+
+Las versiones se siguen publicando como Releases privados con ZIP, manifiesto e instalador. El modo privado no anuncia `manifest`/`download` como enlaces de actualización nativa sin autenticación. Ningún paso cambia la visibilidad del repositorio.
+
+Fuentes: [GitHub CLI en Windows](https://github.com/cli/cli/blob/trunk/docs/install_windows.md), [autenticación](https://cli.github.com/manual/gh_auth_login), [descarga de Releases](https://cli.github.com/manual/gh_release_download) y [tareas repetidas de Windows](https://learn.microsoft.com/en-us/windows/win32/taskschd/taskschedulerschema-repetition-triggerbasetype-element).
