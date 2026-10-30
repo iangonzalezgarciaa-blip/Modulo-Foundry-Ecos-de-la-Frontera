@@ -7,6 +7,8 @@ on:
       - module.json
       - .github/workflows/release.yml
       - tools/publish-release.cjs
+      - tools/windows/**
+      - tests/windows-updater.test.ps1
   workflow_dispatch:
 
 permissions:

@@ -34,7 +34,14 @@ function New-EcosFixture([string]$ModuleId = 'ecos-frontera') {
     $payload = Join-Path $dir 'payload'; New-Item -ItemType Directory -Path (Join-Path $payload 'ecos-frontera\scripts') -Force | Out-Null
     @{ id = $ModuleId; version = '2.9.2'; esmodules = @('scripts/main.js'); styles = @(); relationships = @{ systems = @() } } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $payload 'ecos-frontera\module.json') -Encoding UTF8
     'nuevo' | Set-Content -LiteralPath (Join-Path $payload 'ecos-frontera\scripts\main.js') -Encoding UTF8
-    $script:ZipFixture = Join-Path $dir 'paquete.zip'; [IO.Compression.ZipFile]::CreateFromDirectory($payload, $script:ZipFixture)
+    $script:ZipFixture = Join-Path $dir 'paquete.zip'
+    $archive = [IO.Compression.ZipFile]::Open($script:ZipFixture, [IO.Compression.ZipArchiveMode]::Create)
+    try {
+        foreach ($file in Get-ChildItem -LiteralPath $payload -Recurse -File) {
+            $relative = $file.FullName.Substring($payload.Length + 1).Replace([char]92, [char]47)
+            [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive, $file.FullName, $relative) | Out-Null
+        }
+    } finally { $archive.Dispose() }
     $hash = (Get-FileHash -LiteralPath $script:ZipFixture -Algorithm SHA256).Hash.ToLowerInvariant()
     $script:ReleaseFixture = [pscustomobject]@{ tag_name = 'v2.9.2'; draft = $false; prerelease = $false; body = "SHA-256 del ZIP: $hash";
         assets = @([pscustomobject]@{ name = 'ecos-frontera-2.9.2.zip'; digest = "sha256:$hash" }) }
