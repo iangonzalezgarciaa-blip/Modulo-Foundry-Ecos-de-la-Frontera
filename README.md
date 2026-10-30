@@ -1,10 +1,10 @@
-# Ecos de la frontera · Reglas de la casa (v2.9.0)
+# Ecos de la frontera · Reglas de la casa (v2.9.1)
 
 **Interfaz para nuevos jugadores:** Inicio guía las primeras elecciones; Mis técnicas permite jugar; Aprender separa costes de aprendizaje y uso; Mejorar reúne el progreso; Ayuda rápida responde las dudas sin exigir leer un manual. [Detalles de la interfaz 2.9](docs/INTERFAZ_JUGADORES_2.9.md). [Vista previa independiente](docs/preview/interfaz.html), para descargar y abrir en un navegador con datos ficticios.
 
 Esta versión repara el núcleo del Verbe y su enlace con supervivencia. Conserva las 401 técnicas y 155 dotes. Consulta la [base y decisiones de 2.8](docs/BASE_ESTABLE_2.8.md), el [historial](CHANGELOG.md), la [cobertura completa](docs/COBERTURA_CATALOGO.md) y los [escenarios de balance](docs/ESCENARIOS_BALANCE.md). El código tiene pruebas locales; queda pendiente su validación dentro de Foundry con los módulos de la campaña.
 
-Paquete actual para instalación manual: [ecos-frontera-2.9.0.zip](releases/ecos-frontera-2.9.0.zip). El repositorio privado exige iniciar sesión en GitHub; este enlace no es un manifiesto público de actualización automática.
+Paquete actual: [ecos-frontera-2.9.1.zip](releases/ecos-frontera-2.9.1.zip). Desde 2.9.1, cada Release incluye también `module.json` y el módulo tiene sus enlaces de actualización. **El repositorio sigue siendo privado:** Foundry no puede instalar desde esos enlaces sin una distribución accesible sin sesión. Consulta [instalación y actualizaciones](docs/ACTUALIZACIONES.md). No se ha cambiado la visibilidad del repositorio.
 
 Módulo de Foundry VTT v13 para dnd5e 5.x hecho para la campaña **Ecos de la frontera** (mundo *Fantasy and Agony*). Automatiza las reglas de supervivencia, el trabajo de los PJ, la economía del Valle de Arcegris y el Mercadillo.
 

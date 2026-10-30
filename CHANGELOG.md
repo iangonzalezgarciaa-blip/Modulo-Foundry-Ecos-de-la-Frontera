@@ -1,5 +1,13 @@
 # Cambios
 
+## 2.9.1 — Preparación de instalación por manifiesto
+
+- Añadir `url`, `manifest` estable y `download` ligado a la versión del módulo.
+- Adjuntar `module.json` y el ZIP antes de publicar cada Release.
+- Validar que el manifiesto apunte al paquete de su propia versión; conservar archivos ya publicados.
+- Documentar la instalación por URL y el bloqueo de acceso del repositorio privado. No cambia la visibilidad del repositorio.
+- Conservar la interfaz, las mecánicas y los personajes de 2.9.0. Los commits de trabajo no son el canal de actualización.
+
 ## 2.9.0 — Interfaz para aprender jugando
 
 - Inicio por pasos: elemento, especialidad, primera técnica y acceso al repertorio. El progreso se deduce del personaje existente; también reconoce técnicas regaladas.

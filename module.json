@@ -2,7 +2,10 @@
   "id": "ecos-frontera",
   "title": "Ecos de la frontera · Reglas de la casa",
   "description": "Reglas de la campaña Ecos de la frontera para dnd5e: supervivencia (Acechado por la Muerte, Malherido, Herida No Tratada, Secuelas, Santuario), oficios por horas con Pericia y Prestigio, Mercadillo de Arcegris con Item Piles, precios del valle, Monedas Antiguas y el contenido del valle (biografías, fichas y PNJ).",
-  "version": "2.9.0",
+  "version": "2.9.1",
+  "url": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera",
+  "manifest": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera/releases/latest/download/module.json",
+  "download": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera/releases/download/v2.9.1/ecos-frontera-2.9.1.zip",
   "authors": [
     {
       "name": "Iangonz"
