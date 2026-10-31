@@ -25,6 +25,7 @@ import { TIENDAS } from "./catalogo.js";
 import { CALENDARIO, eventosDelDia, faseLunar, diaCampana, sumarDias, mesPrimerAno } from "./calendario.js";
 import "./verbe.js";
 import { crearCola } from "./verbe-core.js";
+import { recuperacionDGLarga, presupuestoCorto, ajustarRecuperacionDG } from "./rest-core.js";
 import { tipoCuracionVerbe, tratarHeridaConPulso } from "./verbe-medicina.js";
 
 const MOD = "ecos-frontera";
@@ -7124,7 +7125,7 @@ async function alternarClimaEscena(escena = canvas?.scene) {
 /*
  * Regla de la casa (Configuración → Ecos de la frontera → «Descansos y Dados de Golpe»):
  * - Descansar no devuelve PG por sí solo: vuelven gastando Dados de Golpe. La magia, las pociones y lo que cura siguen curando.
- * - Al terminar un Descanso Corto se recupera 1 Dado de Golpe (2 en un Santuario); un Descanso Largo en Santuario, la mitad
+ * - Un Corto propone 1 Dado de Golpe (2 en Santuario), limitado por un presupuesto compartido de la mitad de un Largo; un Largo en Santuario, la mitad
  *   del nivel. A la intemperie el Descanso Largo cuenta como corto.
  * - Entre un descanso y el siguiente se gastan como mucho tantos Dados de Golpe como el bonificador de competencia.
  * Usan la regla las hojas que el DM encienda con el botón Ecos de su cabecera («Descansos»), PJ o PNJ.
@@ -7161,9 +7162,9 @@ const dgDisponibles = actor => Math.max(0, Number(actor?.system?.attributes?.hd?
 /** Dados de Golpe que devuelve un descanso. */
 function dgARecuperar(actor, tipo, santuario = enSantuario()) {
   const c = cfgDesc();
-  if (tipo !== "long") return Math.max(0, Number(santuario ? c.cortoSantuario : c.corto) || 0);
-  const n = nivelDG(actor);
-  return ({ cuarto: Math.ceil(n / 4), mitad: Math.ceil(n / 2), todos: n })[c.largo] ?? Math.ceil(n / 2);
+  const largo = recuperacionDGLarga(nivelDG(actor), c.largo);
+  if (tipo === "long") return largo;
+  return presupuestoCorto(largo, actor.getFlag(MOD, "dgRecCortos"), santuario ? c.cortoSantuario : c.corto).cantidad;
 }
 
 /** Cuántos Dados de Golpe se pueden gastar por descanso. */
@@ -7188,7 +7189,7 @@ function notaReglaDG(actor, tipo) {
   const rec = dgARecuperar(actor, tipo);
   const quedan = dgQuedan(actor);
   const tope = Number.isFinite(quedan) ? ` Puedes gastar <b>${quedan}</b> más (tope: ${TOPE_DG[cfgDesc().tope]}, ${topeDG(actor)}).` : "";
-  return `<b>Descansos de la casa:</b> descansar no devuelve PG; se recuperan gastando Dados de Golpe.${tope} Al terminar recuperas <b>${plural(rec, "Dado de Golpe", "Dados de Golpe")}</b>${(tipo !== "long") && enSantuario() ? " (en Santuario)" : ""}.`;
+  return `<b>Descansos de la casa:</b> descansar no devuelve PG; se recuperan gastando Dados de Golpe.${tope} Los cortos comparten un límite de recuperación entre largos: ${Math.floor(recuperacionDGLarga(nivelDG(actor), cfgDesc().largo) / 2)} DG en total. Al terminar recuperas <b>${plural(rec, "Dado de Golpe", "Dados de Golpe")}</b>${(tipo !== "long") && enSantuario() ? " (en Santuario)" : ""}.`;
 }
 
 /* El tope y «solo durante un descanso». */
@@ -7263,7 +7264,7 @@ async function dialogoDescansoDG(actor, tipo, config = {}) {
     : (cfgDesc().gastarLargo ? `Al terminar se abre una ventana para <b>gastar</b> ${Number.isFinite(tope) ? `hasta <b>${tope}</b>` : "los"} Dados de Golpe y curarte.`
       : `Puedes gastar ${Number.isFinite(tope) ? `hasta ${tope}` : "los"} Dados de Golpe desde la hoja.`);
   const content = `<div class="ecos-dialogo">
-    <p><b>Descansar no devuelve PG:</b> se recuperan gastando Dados de Golpe (y con magia, pociones o técnicas que curan).</p>
+    <p><b>Descansar no devuelve PG:</b> se recuperan gastando Dados de Golpe (y con magia, pociones o técnicas que curan).</p><p class="ecos-nota">Todos los cortos juntos reponen como máximo la mitad de los DG de un largo, redondeada hacia abajo; se renueva al completar un largo. En nivel 1 puede ser 0: aún puedes gastar tus dados disponibles.</p>
     <table class="ecos-tabla">
       <tr><th>Puntos de Golpe</th><td><b>${hp.value}</b> / ${hp.effectiveMax}</td></tr>
       <tr><th>Dados de Golpe</th><td>${disp} de ${total} disponibles</td></tr>
@@ -7294,43 +7295,8 @@ async function dialogoDescansoDG(actor, tipo, config = {}) {
 Hooks.on("dnd5e.preRestCompleted", (actor, result, config) => {
   try {
     if (!reglaDescanso(actor) || !result) return;
-    const largo = (config?.type === "long");
-    const ud = (result.updateData ??= {});
-    result.updateItems ??= [];
-    result.deltas ??= { hitPoints: 0, hitDice: 0 };
-    // 1 · Los PG no vuelven solos (lo curado con Dados de Golpe en un Descanso Corto ya está en la hoja).
-    if ("system.attributes.hp.value" in ud) delete ud["system.attributes.hp.value"];
-    if (largo) result.deltas.hitPoints = 0;
-    // 2 · Fuera la recuperación de Dados de Golpe del sistema; dentro la de la casa.
-    const clases = new Set(Array.from(actor.system.attributes?.hd?.classes ?? []).map(c => c.id));
-    for (const u of result.updateItems) if (clases.has(u._id)) delete u["system.hd.spent"];
-    result.updateItems = result.updateItems.filter(u => Object.keys(u).some(k => k !== "_id"));
-    delete ud["system.attributes.hd.spent"];
-    const base = largo ? 0 : (Number(result.dhd) || 0);
-    const n = largo && Number.isInteger(config.maxHitDice) ? config.maxHitDice : dgARecuperar(actor, largo ? "long" : "short");
-    let recuperados = 0;
-    if (n > 0) {
-      const hd = actor.system.attributes?.hd;
-      if (actor.type === "npc") {
-        recuperados = Math.min(n, Number(hd?.spent) || 0);
-        if (recuperados) ud["system.attributes.hd.spent"] = hd.spent - recuperados;
-      } else if (typeof hd?.createHitDiceUpdates === "function") {
-        const tmp = { deltas: { hitDice: 0 }, updateItems: [] };
-        hd.createHitDiceUpdates({ maxHitDice: n }, tmp);
-        recuperados = tmp.deltas.hitDice;
-        for (const u of tmp.updateItems) {
-          const ya = result.updateItems.find(x => x._id === u._id);
-          if (ya) Object.assign(ya, u);
-          else result.updateItems.push(u);
-        }
-      }
-    }
-    result.deltas.hitDice = base + recuperados;
-    result.dhd = result.deltas.hitDice;
-    result.dhp = result.deltas.hitPoints;
-    // 3 · Empieza la cuenta del tope para lo que venga.
-    ud[`flags.${MOD}.dgUso`] = 0;
-    result.ecosDG = { recuperados };
+    const largo = config?.type === "long";
+    ajustarRecuperacionDG(actor, result, { largo, limiteRec: dgARecuperar(actor, largo ? "long" : "short"), maxHitDice: config?.maxHitDice, mod: MOD });
   } catch (err) {
     console.error(`${MOD} | descansos de la casa`, err);
   }
@@ -7545,6 +7511,7 @@ class AjustesDescansos extends foundry.applications.api.ApplicationV2 {
         <button type="submit"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
         <button type="button" data-action="defecto"><i class="fa-solid fa-rotate-left"></i> Valores recomendados</button>
       </div>
+      <p>Los valores del corto están limitados: todos los cortos entre largos reponen hasta la mitad de lo que repone un largo (hacia abajo). Un largo renueva ese presupuesto; no se regeneran dados repitiendo pausas.</p>
       <h3>Hojas con los descansos de la casa (${usan.length})</h3>
       <ul class="ecos-lista-desc">${usan.map(fila).join("") || "<li>Ninguna.</li>"}</ul>
       <div class="ecos-botones"><button type="button" data-action="anadir"><i class="fa-solid fa-plus"></i> Dárselos a los tokens seleccionados</button></div>
@@ -9008,6 +8975,7 @@ class PanelDM extends foundry.applications.api.ApplicationV2 {
       ecos: PanelDM.#accion, pestanaPanel: PanelDM.#tab, ...ACCIONES_BARRA,
       fnHoja: PanelDM.#fnHoja, funcionesHoja: PanelDM.#funcionesHoja, abrirHoja: PanelDM.#abrirHoja, filtroHojas: PanelDM.#filtroHojas,
       descansosMenu: () => new AjustesDescansos().render({ force: true }),
+      editorVerbe: () => game.user.isGM && verbeApi()?.editorCatalogo?.(),
       configFoundry: () => game.settings.sheet?.render(true)
     }
   };
@@ -9055,7 +9023,8 @@ class PanelDM extends foundry.applications.api.ApplicationV2 {
       const etiqueta = (op === "santuario") ? `Santuario: ${santo ? "SÍ" : "NO"}` : et;
       return `<button type="button" data-action="ecos" data-op="${op}" class="ecos-buscable ${activo ? "activo" : ""}" data-texto="${escH(`${et} ${tip}`.toLowerCase())}"><i class="fa-solid ${ic}"></i><span class="ecos-panel-et"><b>${etiqueta}</b><small>${escH(tip)}</small></span></button>`;
     };
-    const ecos = OPS_PANEL.map(([titulo, ops]) => `<section><h3>${titulo}</h3><div class="ecos-panel-botones">${ops.map(boton).join("")}</div></section>`).join("");
+    const taller = verbeApi() ? `<section><h3>Catálogo del Verbe</h3><p>Crea y publica técnicas universales sin seleccionar una hoja ni gastar sus Trazos.</p><button type="button" data-action="editorVerbe">Abrir taller del DM</button></section>` : "";
+    const ecos = taller + OPS_PANEL.map(([titulo, ops]) => `<section><h3>${titulo}</h3><div class="ecos-panel-botones">${ops.map(boton).join("")}</div></section>`).join("");
     const comp = compacta();
     const ajustes = `<section><h3>La barra izquierda</h3>
         <p class="ecos-nota">Con la <b>barra compacta</b>, a la izquierda quedan solo Seleccionar, Regla y este menú; todo lo demás está en las pestañas de este menú (al usar un grupo, aparece a la izquierda mientras lo uses). La chincheta de cada tarjeta lo deja fijo. Cada usuario tiene su propia barra.</p>

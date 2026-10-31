@@ -15,5 +15,5 @@ jobs:
       - run: npm run docs:catalog
       - run: npm run balance
       - run: npm run ui:preview
-      - run: git diff --exit-code -- docs/COBERTURA_CATALOGO.md docs/ESCENARIOS_BALANCE.md docs/preview/interfaz.html
+      - run: git diff --exit-code -- docs/COBERTURA_CATALOGO.md docs/ESCENARIOS_BALANCE.md docs/PROGRESION_2.10.md docs/preview/interfaz.html
       - run: npm run package

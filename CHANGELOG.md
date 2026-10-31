@@ -1,5 +1,17 @@
 # Cambios
 
+## 2.10.0 — Taller del DM y progresión clara
+
+- Cambiar verde por pergamino, gris y carbón; corregir las tarjetas de elementos con altura automática y distribución adaptable.
+- Explicar linajes y fuerzas antes de asignarlos, incluyendo herencia, Despertar, naturalezas, tope de grado y recargos.
+- Cerrar naturalezas ajenas al conocer dos, elegir la tercera por dote y abrir combinaciones compatibles con todas sus técnicas y requisitos. Conservar dones del DM y del linaje.
+- Ofrecer entrenamiento compatible con la actividad, precios por potencia y topes; añadir duración, contacto, componentes y dos opciones específicas para Sustitución. Conservar compras anteriores.
+- Añadir taller exclusivo del DM: publicación universal sin cobrar ni enseñar al actor seleccionado; curación, estados, requisitos, geometría, materiales, escalado, edición, duplicado y retirada.
+- Limitar la recuperación acumulada de cortos: DG hasta la mitad de un largo; Verbe compartido entre Respiro, Aliento e intemperie, con ampliación por Sueño reparador siempre inferior al largo. Solo el largo renueva estos presupuestos y poderes diarios.
+- Conservar Trazos; resolver el hueco de grado 8 en Maestro sin adelantar sus dones. Documentar construcciones reales en niveles 1, 5, 11, 16, 18 y 20.
+- Incluir el BAT y el arranque silencioso de 2.9.3; mantener privados repositorio y Releases.
+- Validar regresiones con documentos simulados, Windows, catálogo, informes, vista previa HTML y empaquetado. La comprobación visual en la mesa sigue siendo necesaria. Detalle: `docs/REVISION_2.10.md`.
+
 ## 2.9.3 — Control de actualizaciones y arranque silencioso
 
 - Adjuntar `Ecos-Autoactualizacion.bat`: activar, detener y consultar la tarea desde un menú, sin borrar módulo, sesión ni respaldos.

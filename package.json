@@ -1,6 +1,6 @@
 {
   "name": "ecos-frontera",
-  "version": "2.9.3",
+  "version": "2.10.0",
   "ecosUpdateMode": "private",
   "private": true,
   "type": "module",

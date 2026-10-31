@@ -315,14 +315,14 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 
 /* Panel 2.9: inicio guiado y repertorio de juego. Los colores siempre van acompañados de texto. */
 .ecos-verbe-panel {
-  --ev-fondo: #f4f3ed; --ev-papel: #fffef9; --ev-tinta: #24312f; --ev-suave: #52645f;
-  --ev-linea: #cbd4cb; --ev-acento: #185e54; --ev-acento-texto: #fff; --ev-agua: #e6f0ea;
+  --ev-fondo: #f3eee2; --ev-papel: #fffcf4; --ev-tinta: #292724; --ev-suave: #655d50;
+  --ev-linea: #d7ceba; --ev-acento: #443d32; --ev-acento-texto: #fff; --ev-agua: #eee7d8;
   --ev-oro: #775719; --ev-oro-fondo: #f7efd9; --ev-alerta: #85401e; --ev-alerta-fondo: #fff0df;
   --ev-bloqueo: #7d3636;
 }
 .theme-dark .ecos-verbe-panel, .ecos-verbe-panel.theme-dark {
-  --ev-fondo: #192522; --ev-papel: #22332e; --ev-tinta: #eef3e9; --ev-suave: #bfd0c5;
-  --ev-linea: #4d6458; --ev-acento: #9dd4bc; --ev-acento-texto: #11291f; --ev-agua: #2a4237;
+  --ev-fondo: #1f2023; --ev-papel: #2a2c30; --ev-tinta: #f2eee2; --ev-suave: #c4bfb1;
+  --ev-linea: #535159; --ev-acento: #ead9a4; --ev-acento-texto: #252525; --ev-agua: #373530;
   --ev-oro: #ead18b; --ev-oro-fondo: #3d3523; --ev-alerta: #ffc593; --ev-alerta-fondo: #422e23;
   --ev-bloqueo: #ffb8b3;
 }
@@ -548,3 +548,30 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-card .ecos-clima-elementos .ecos-elem-mas { color: #2f7a3f; }
 .ecos-card .ecos-clima-elementos .ecos-elem-menos { color: #a33a2c; }
 .ecos-card .ecos-clima-elementos .ecos-nota { color: inherit; opacity: 0.8; }
+
+/* El botón nativo de Foundry puede fijar altura y alineación: las tarjetas necesitan altura intrínseca. */
+.ecos-verbe-panel .ecos-verbe-cuerpo button.ev-eleccion {
+  height: auto; width: 100%; max-width: none; min-width: 0; min-height: 180px;
+  display: grid; grid-template-rows: auto auto 1fr auto; gap: 9px; padding: 16px;
+  text-align: left; white-space: normal; overflow-wrap: anywhere; align-items: start;
+  align-content: stretch; justify-content: stretch; line-height: 1.45; margin: 0;
+}
+.ecos-verbe-panel .ev-eleccion > * { min-width: 0; margin: 0; height: auto; width: auto; }
+.ecos-verbe-panel .ev-eleccion strong { line-height: 1.25; }
+.ecos-verbe-panel .ev-elecciones { align-items: stretch; }
+.ecos-verbe-panel .ev-naturalezas { padding: 14px; border: 1px solid var(--ev-linea); border-radius: 8px; background: var(--ev-papel); margin: 12px 0; }
+.ecos-verbe-panel .ev-naturalezas .ecos-botones { flex-wrap: wrap; }
+@container panel-verbe (max-width: 730px) {
+  .ecos-verbe-panel .ev-elecciones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container panel-verbe (max-width: 520px) {
+  .ecos-verbe-panel .ev-elecciones { grid-template-columns: minmax(0, 1fr); }
+}
+
+.ecos-editor-catalogo .window-content { overflow-y: auto; }
+.ecos-editor-catalogo .ev-editor-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.ecos-editor-catalogo fieldset { min-width: 0; border: 1px solid var(--ev-linea); border-radius: 8px; padding: 12px; }
+.ecos-editor-catalogo label:not(.ecos-check) { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.ecos-editor-catalogo textarea { width: 100%; background: var(--ev-papel); color: var(--ev-tinta); min-height: 130px; resize: vertical; }
+.ecos-editor-catalogo .ev-editor-preview { padding: 12px; margin: 12px 0; border: 1px solid var(--ev-linea); border-radius: 8px; }
+@container panel-verbe (max-width: 730px) { .ecos-editor-catalogo .ev-editor-grid { grid-template-columns: minmax(0,1fr); } }

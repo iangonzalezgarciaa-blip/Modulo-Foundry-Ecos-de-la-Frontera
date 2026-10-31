@@ -69,11 +69,11 @@ test('las monedas pagan la deuda al doble con una sola actualización del actor'
   assert.equal(V.estado(a).valor, -3); assert.equal(a.system.currency.soul, 0);
   assert.equal(a.updates.length, 1);
 });
-test('descansos consecutivos conservan el crédito impar de recuperación', async () => {
+test('recuperaciones consecutivas conservan el crédito impar de recuperación', async () => {
   const a = new MockActor(1, { valor: -2 });
-  await V.alDescansar(a, {}, { type: 'short', ecos: { intemperie: true } });
+  await V.recuperarVerbe(a, 1);
   assert.equal(V.estado(a).valor, -2); assert.equal(V.estado(a).recResto, 1);
-  await V.alDescansar(a, {}, { type: 'short', ecos: { intemperie: true } });
+  await V.recuperarVerbe(a, 1);
   assert.equal(V.estado(a).valor, -1); assert.equal(V.estado(a).recResto, 0);
 });
 test('Agotamiento 4 bloquea por igual técnica, defensa y Cerrojo en negativo', async () => {

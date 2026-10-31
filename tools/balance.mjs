@@ -31,3 +31,5 @@ lines.push('', '## Lectura para el diseño', '',
   'En niveles 1, 3, 5, 11, 17 y 20, comparar marcial y lanzador, uno y varios enemigos, tres encuentros antes de descansar, Santuario e intemperie. Registrar daño/curación reales, turnos de control, reacciones, Verbe neto y minutos de arbitraje. Cambiar una variable por tanda y conservar el historial de personajes. El informe identifica sensibilidades; no certifica balance perfecto del catálogo.', '');
 fs.writeFileSync(new URL('../docs/ESCENARIOS_BALANCE.md', import.meta.url), lines.join('\n'));
 console.log('Escenarios de balance generados con reglas reales y documentos simulados.');
+
+await import('./progression.mjs');
