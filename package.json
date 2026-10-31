@@ -1,6 +1,6 @@
 {
   "name": "ecos-frontera",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "ecosUpdateMode": "private",
   "private": true,
   "type": "module",
@@ -10,10 +10,10 @@
     "check": "node tools/check.mjs",
     "catalog:audit": "node tools/audit-catalog.mjs",
     "docs:catalog": "node tools/catalog-report.mjs",
-    "balance": "node tools/balance.mjs",
-    "ui:preview": "node tools/preview-ui.mjs && node tools/preview-mesa.mjs",
+    "balance": "node tools/balance.mjs && node tools/session-audit.mjs",
+    "ui:preview": "node tools/preview-ui.mjs && node tools/preview-mesa.mjs && node tools/prepare-playtest.mjs",
     "package": "python3 tools/package.py",
-    "catalog:expand": "node tools/expand-shinobi.mjs && node tools/evolve-catalog.mjs && node tools/expand-divinity.mjs && node tools/expand-vida.mjs && node tools/clarify-catalog.mjs && node tools/build-relics.mjs && node tools/originalizar.mjs",
+    "catalog:expand": "node tools/expand-shinobi.mjs && node tools/evolve-catalog.mjs && node tools/expand-divinity.mjs && node tools/expand-vida.mjs && node tools/clarify-catalog.mjs && node tools/build-relics.mjs && node tools/originalizar.mjs && node tools/build-memoria.mjs",
     "audit:text": "node tools/text-audit.mjs",
     "audit:balance": "node tools/audit-progression.mjs"
   },

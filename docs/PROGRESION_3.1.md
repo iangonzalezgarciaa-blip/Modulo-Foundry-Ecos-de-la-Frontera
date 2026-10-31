@@ -1,6 +1,6 @@
 # Calibración de la progresión 3.1
 
-Las referencias a Naruto son objetivos de escala elegidos por el autor para esta campaña; no son equivalencias oficiales entre un rango de la serie y un nivel de D&D. Los Trazos compran amplitud y especialización. El nivel, los grados, las acciones, las dotes y los dones de historia determinan qué se puede hacer realmente.
+Los títulos de Nimerios son objetivos de escala de la campaña; no son rangos oficiales de D&D. Los Trazos compran amplitud y especialización. El nivel, los grados, las acciones, las dotes y los dones de historia determinan qué se puede hacer realmente.
 
 **Decisión:** conservar `4 × nivel + 4` Trazos. Ya permite especialización fuerte sin comprarlo todo. A nivel 1 es un presupuesto holgado para un estudiante: las técnicas de grado 0–1 y el acceso a una primera naturaleza contienen su potencia, pero puede tener más recursos que un principiante de la serie. Para recrear a un alumno muy verde, el DM debe limitar lo enseñado en la historia; subir o bajar toda la moneda no reproduce por sí solo a un personaje concreto.
 
@@ -10,12 +10,12 @@ Construcción de control: Forma principal gratis en Entrenado, Fuego, sin linaje
 
 | Nivel | Referencia de campaña | Trazos totales | Grado permitido | Rango | Rangos + afinidad + Control + senda | Repertorio de prueba | Gastado total | Libres |
 |---:|---|---:|---:|---|---:|---|---:|---:|
-| 1 | Estudiante de academia | 8 | 1 | Entrenado | 2 | Aliento de brasa (1) | 3 | 5 |
-| 5 | Chunin | 24 | 3 | Experto | 11 | Aliento de brasa (1), Gran soplo (3) | 15 | 9 |
-| 11 | Jonin de élite | 48 | 6 | Maestro | 26 | Calor de fragua (2), Muro de llamas (4), Horno (6) | 38 | 10 |
-| 16 | Sannin | 68 | 8 | Maestro | 26 | Aliento de brasa (1), Gran soplo (3), Serpiente de llamas (5), Fauces de fuego (7), Sol caído (8) | 50 | 18 |
-| 18 | Madara (referencia de campaña) | 76 | 9 | Legendario | 38 | Aliento de brasa (1), Gran soplo (3), Serpiente de llamas (5), Fauces de fuego (7), Sol caído (8) | 62 | 14 |
-| 20 | Escala de Seis Caminos | 84 | 11 | Mítico | 56 | Forma última (11) | 67 | 17 |
+| 1 | Aprendiz de academia | 8 | 1 | Entrenado | 2 | Aliento de brasa (1) | 3 | 5 |
+| 5 | Operador de campo | 24 | 3 | Experto | 11 | Aliento de brasa (1), Gran soplo (3) | 15 | 9 |
+| 11 | Maestro de élite | 48 | 6 | Maestro | 26 | Calor de fragua (2), Muro de llamas (4), Horno (6) | 38 | 10 |
+| 16 | Fundador de una tradición | 68 | 8 | Maestro | 26 | Aliento de brasa (1), Gran soplo (3), Serpiente de llamas (5), Fauces de fuego (7), Sol caído (8) | 50 | 18 |
+| 18 | Señor de una era | 76 | 9 | Legendario | 38 | Aliento de brasa (1), Gran soplo (3), Serpiente de llamas (5), Fauces de fuego (7), Sol caído (8) | 62 | 14 |
+| 20 | Escala trascendente | 84 | 11 | Mítico | 56 | Forma última (11) | 67 | 17 |
 
 ## Qué concluye y qué queda por medir
 

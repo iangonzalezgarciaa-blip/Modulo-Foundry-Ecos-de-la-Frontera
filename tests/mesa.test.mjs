@@ -81,6 +81,13 @@ test('una actualización rechazada no deja cambios parciales en los campos del N
  const a=new MockActor();a.type='npc';a.system.attributes.hp={max:40,value:20};a.system.attributes.ac.calc='natural';a.system.attributes.ac.flat=12;a.system.details.cr=2;
  a.failNextUpdate=true;await assert.rejects(()=>guardarNpc(a,perfilNpc({nombre:'Cambio fallido',vd:5}),{copiar:false}));assert.equal(a.name,'Actor local');assert.equal(a.system.attributes.hp.max,40);assert.equal(a.items.length,0);
 });
+test('deshacer una adaptación no restaura PG ni borra notas añadidas después de usar el NPC',async()=>{
+ const a=new MockActor();a.type='npc';a.system.attributes.hp={max:40,value:20};
+ await guardarNpc(a,perfilNpc({nombre:'Guardián',vd:3}),{copiar:false});const antes=a.system.attributes.hp.value;a.system.attributes.hp.value--;
+ assert.equal(await deshacerNpc(a),false);assert.equal(a.system.attributes.hp.value,antes-1);
+ a.system.attributes.hp.value=antes;const i=a.items.find(i=>i.getFlag(MOD,'rutinaNpc'));i.system.description.value+='<p>Nota posterior.</p>';
+ assert.equal(await deshacerNpc(a),false);assert.match(i.system.description.value,/Nota posterior/);
+});
 test('crear variante deja el original intacto y el actor nuevo privado',async()=>{
  const a=new MockActor();a.type='npc';a.system.attributes.hp={max:80,value:40};a.name='Original';
  a.toObject=()=>({name:a.name,type:'npc',ownership:{default:3},system:structuredClone(a.system),items:[],prototypeToken:{actorLink:true,name:a.name}});

@@ -1,5 +1,18 @@
 # Historial de cambios
 
+## 3.4.0 — 2026-10-31
+
+- Creación verificada por estructura, nivel, elecciones duplicadas, valores base, PG, recursos y avances nativos consultables. El DM confirma los apartados manuales y decide activar Ecos; el Verbe conserva su concesión independiente. La aprobación detecta cambios posteriores de construcción.
+- Intenciones de juego con requisitos y costes propios, hasta ocho sugerencias y apertura del Verbe filtrado. La búsqueda relaciona fuentes por coincidencias dentro del conjunto permitido y acotado; no inventa vínculos de canon ni revela fuentes privadas.
+- Recibos sobre la tarjeta nativa: gasto confirmado, defensas, choques y revisión de mesa. Corrección exclusiva del Verbe de usos simples, por el GM principal, condicionada al último uso y reserva sin cambios. No revierte daño, efectos, movimiento o acciones; recursos complejos requieren revisión manual.
+- Revisión de capacidades de NPC: actividades legibles, fórmulas, Multiataque, áreas, control, magia, resistencias, inmunidades y acciones extraordinarias. Siete plantillas narrativas y calculadora de presión con grupo, cantidades, rutina, ataque y blancos de área. Conserva las acciones importadas y muestra límites del cálculo.
+- Memoria de Nimerios: 174 entradas para adoptar o editar en un cuaderno privado, con referencias del panteón conservadas, vínculos del catálogo y relatos nuevos propuestos. Las páginas existentes no se sobrescriben. Los relatos de reliquia actualizan solo explicaciones generadas reconocidas, sin reiniciar estado.
+- Diagnóstico de versiones y capacidades; informe técnico sin nombres, diarios, rutas o credenciales. Quince casos reales inicialmente pendientes, con registro de resultados y notas en un diario privado. El informe del DM incluye estados de casos, sin sus notas.
+- Claves de panel por UUID para separar tokens no vinculados; vencimiento y migración de reliquias alcanzan instancias presentes en combate o escena.
+- 96 secuencias de tres encuentros/tareas en niveles 1, 5, 11, 16, 18 y 20, cuatro planes y cuatro linajes, con compras y consumo reales del adaptador. Se mantiene la potencia estructurada de las 778 técnicas previas. Las victorias y la experiencia de juego quedan para las pruebas reales del autor.
+- Vistas HTML ampliadas con las diez pestañas de Mesa Ecos y un recibo de ejemplo. Regresiones para creación, permisos, propuestas, diagnóstico, recursos, recibos y actores sintéticos.
+
+
 ## 3.3.0 — 2026-10-31
 
 - Identidad de Nimerios para nombres visibles, alias y referencias de técnicas, entidades y reliquias. Conserva identificadores, vínculos, compras, autorizaciones y cargas. Las reliquias y artefactos entregados migran nombres generados conocidos y conservan personalizaciones del DM. Nueva página privada para revisar el panteón sin reemplazar el lore escrito.

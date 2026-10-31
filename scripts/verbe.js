@@ -11,6 +11,8 @@
 
 import { VERSION_PROGRESION, NIVEL_GRADO, limiteEscalado, accesoObtencion, permisoCuota, cuotasPoder, pisoCosto, limiteDadosExtra, requisitoDote, validarConcentraciones, permisoTurno, gradoReplicas } from "./verbe-progression.js";
 import { abrirReliquias } from "./relics.js";
+import { actoresPresentes } from './mesa-actores.js';
+import { prepararRecibo, registrarPaso } from "./mesa-resolucion.js";
 import {avanceTexto,efectoHTML,textoClaro,resolucionTexto,duracionTexto,referenciaHTML,glosarioHTML,escTexto,tablaSangreHTML,huellaTexto} from "./verbe-reading.js";
 import { tecnicaChocable, AYUDA_CHOQUE, PASOS_CHOQUE } from "./verbe-clash.js";
 import { donDivino, asegurarNotaPanteon } from "./verbe-divinity.js";
@@ -766,6 +768,28 @@ export async function guardar(actor, cambios, otrosCambios = {}) {
   return e;
 }
 
+export function ofertasActor(actor){
+  if(!actor||!editarActor(actor)||!D)return [];
+  const e=estado(actor)??{};
+  return [...D.tecnicas,...extraMundo(),...(e.propias??[]).filter(t=>!t.modo)].filter(t=>{
+    if(t.retirada||!naturalezaVisible(actor,t))return false;if(game.user.isGM)return true;
+    if(t.soloDM)return false;
+    const sangre=t.sec==='sangre'||D.linajes.some(l=>l.req&&l.req===t.req);
+    if(sangre&&!t.item.flags[MOD][F].shinobi&&(!veLinaje(actor)||!herenciaDe(actor)||(t.req!=='una herencia'&&herenciaDe(actor).req!==t.req)))return false;
+    if(t.rama==='mirada'&&!(e.miradas??{})[t.id.split('-')[1]])return false;
+    return true;
+  });
+}
+export async function corregirGastoSimple(actor,recibo){
+  if(!game.user.isGM||!soyGM())return {ok:false,motivo:'Solo el GM principal corrige un gasto.'};
+  const resultado=await serializarActor(actor,async()=>{
+    const e=estado(actor),r=e?.ultimoRecibo;
+    if(!r||r.complejo||r.nonce!==recibo.nonce||r.itemId!==recibo.itemId||r.grado>5||r.despues<0||!Number.isSafeInteger(r.antes)||!Number.isSafeInteger(r.despues)||r.antes-r.despues!==r.costo)return {ok:false,motivo:'Este uso tiene recursos especiales o no conserva un recibo simple verificable.'};
+    if(e.ultimoUso!==r.nonce||Number(e.valor)!==r.despues)return {ok:false,motivo:'Hubo otro uso o cambió la reserva. Revisa y ajusta el gasto manualmente.'};
+    await guardar(actor,{valor:r.antes,ultimoUso:r.ultimoUsoAnterior,ultimoRecibo:null});return {ok:true};
+  });return resultado||{ok:false,motivo:'Espera a que termine la actividad pendiente.'};
+}
+
 export function aprender(actor, ...args) { return serializarActor(actor, () => aprenderInterno(actor, ...args)); }
 async function aprenderInterno(actor, tec, { gratis = false, nota = null, aprobado = false } = {}) {
   if (!editarActor(actor) || !tec || conoce(actor, tec.id)) return false;
@@ -1097,6 +1121,9 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
     if (e.reserva === meta.id && !e.reservaUsada && grado === meta.g) updates.actor[`flags.${MOD}.${F}.reservaUsada`] = true;
     usageConfig.ecosVerbe = { grado, costo, antes: valor, despues: nuevo, nonce, fuerte: fuerte.extra ? fuerte : null, replica, reparto };
     foundry.utils.setProperty(messageConfig, `data.flags.${MOD}.${F}`, { grado, costo, despues: nuevo, extraFuerte: fuerte.extra || 0 });
+    const recibo=prepararRecibo(actor,item,usageConfig.ecosVerbe,e,meta);
+    updates.actor[`flags.${MOD}.${F}.ultimoRecibo`]=recibo;
+    foundry.utils.setProperty(messageConfig, `data.flags.${MOD}.resolucion`, recibo);
   } catch (err) {
     console.error(`${MOD} | capa V: consumo`, err);
     aviso("No se pudo comprobar el gasto de Verbe. La técnica no se ha autorizado.", "error");
@@ -2434,7 +2461,7 @@ const intro = (titulo, texto, mas = "", seccion = "") => `<div class="ecos-verbe
 
 const ID_REGLAS = "G0rD0J3JkpOkXM00";
 const diarioReglas = () => game.journal.get(ID_REGLAS) ?? game.journal.find(j => /reglas de la casa/i.test(j.name));
-const paginaGuia = () => diarioReglas()?.pages.find(p => p.getFlag(MOD, F)?.guia) ?? null;
+const paginaGuia = () => diarioReglas()?.pages.find(p => p.getFlag(MOD, F)?.guiaRevision===3) ?? diarioReglas()?.pages.find(p => p.getFlag(MOD, F)?.guia) ?? null;
 const h2 = (anchor, texto) => `<h2 data-anchor="${anchor}">${texto}</h2>`;
 const fila = celdas => `<tr>${celdas.map(c => `<td>${c}</td>`).join("")}</tr>`;
 const tablaG = (cab, filas) => `<table><thead><tr>${cab.map(c => `<th>${c}</th>`).join("")}</tr></thead><tbody>${filas.map(fila).join("")}</tbody></table>`;
@@ -2464,7 +2491,7 @@ ${h2("tecnicas-y-grados", "Técnicas y grados")}
 <ul><li>Una técnica se usa como un conjuro: tiene acción, alcance, duración, ataque o salvación. Gasta Verbe en vez de un espacio.</li>
 <li>El <b>grado</b> (0 a 11) es como el nivel de un conjuro, con dos grados más arriba del 9. El grado 6 llega al nivel 11; el 8 al 16, el 9 al 18, el 10 al 19 y el 11 al 20. Los aprendizajes altos también piden su senda de dotes y las ascensiones pertinentes. En cada rama llegas hasta lo que deja tu rango.</li>
 <li>Puedes usar una técnica a un grado mayor pagando el Verbe de ese grado, hasta el límite de tu nivel y rango de rama. Una técnica concedida por la historia conserva su grado base.</li>
-<li>Las de grado 0 casi no gastan, pero piden tener al menos 1 de Verbe. Cada técnica tiene un uso alto por Descanso Largo y comparte los cupos de mayores (6–8) o culminaciones (9–11). Grado 11: uno en total por largo. Elevar consume el mismo cupo; no copia poderes, blancos ni área.</li>
+<li>Las de grado 0 casi no gastan, pero piden tener al menos 1 de Verbe. Las técnicas lanzadas a grado 6 o más tienen un uso alto por Descanso Largo y comparten los cupos de mayores (6–8) o culminaciones (9–11). Grado 11: uno en total por largo. Elevar consume el mismo cupo; no copia poderes, blancos ni área.</li>
 <li>Componentes: <b>gestos</b> (una mano libre), <b>voz</b> (el silencio la impide) y <b>Concentración</b> (como en los conjuros).</li></ul>
 ${tablaG(["Grado", ...Array.from({ length: GRADO_TOPE + 1 }, (_, g) => String(g))], [["Verbe", ...Array.from({ length: GRADO_TOPE + 1 }, (_, g) => costoGrado(g))],
     ["Nivel", ...Array.from({ length: GRADO_TOPE + 1 }, (_, g) => String(nivelParaGrado(g)))]])}
@@ -2523,7 +2550,7 @@ ${h2("el-clima", "El clima")}
 ${h2("linajes-y-miradas", "Herencias y Miradas")}
 <p>Algunas sangres traen poderes que no se compran ni se enseñan: <b>herencias</b> y <b>ojos</b> (Miradas). Si tienes una, lo sabrás jugando, y desde ese día su rama se abre en tu panel con todo explicado. Quién la tiene y de dónde viene no tienes manera de saberlo: lo decide la historia.</p>
 <ul><li><b>Una herencia</b> trae un rasgo que siempre está (una resistencia, más reserva, una naturaleza de más…), sus técnicas propias (se pagan con Trazos como las demás) y el <b>Despertar del linaje</b>: durante 1 minuto tomas otra forma con lo que da tu sangre, y al terminar ganas 1 Agotamiento. La <b>fuerza</b> de la sangre dice hasta qué grado llegan sus técnicas: plena 9, media 5, débil 3, rastro 1.</li>
-<li><b>Un ojo</b> tiene tres <b>etapas</b>. Cada una despierta en un hito de la historia y se paga entonces (3, 5 y 8 Trazos); sus técnicas vienen con la etapa. Se abre con una acción adicional y mantenerlo abierto cuesta 1 Verbe por minuto. Un ojo trasplantado cuesta el doble, salvo con la dote Injerto aceptado.</li>
+<li><b>Una Mirada</b> progresa por etapas. Su panel muestra cuántas tiene, sus precios y niveles; no todas las Miradas avanzan igual. El DM concede los hitos necesarios. Las técnicas marcadas como incluidas llegan con su etapa; las demás se aprenden por separado. Se abre con una acción adicional y mantenerla cuesta 1 Verbe por minuto. Un ojo trasplantado cuesta el doble, salvo con Injerto aceptado.</li>
 <li>Las técnicas de los ojos que mandan, duermen o atan también cuestan más contra alguien más fuerte que tú.</li></ul>
 ${h2("lo-que-no-sabes", "Lo que no sabes")}
 <p>Hay cosas que no tienes manera de saber todavía: de dónde viene tu sangre, si tu Verbe responde a otra naturaleza, qué despierta en ti con el tiempo. Si existen, aparecen jugando.</p>`;
@@ -2541,14 +2568,14 @@ export async function asegurarGuia() {
   }
   const html = htmlGuia();
   const pag = paginaGuia();
-  if (!pag) {
+  if (!pag || pag.getFlag(MOD,F)?.guiaRevision!==3) {
     const orden = Math.max(0, ...diario.pages.map(p => p.sort ?? 0)) + 100000;
-    await diario.createEmbeddedDocuments("JournalEntryPage", [{ name: "10 · El Verbe", type: "text", sort: orden, ownership,
-      text: { content: html, format: CONST.JOURNAL_ENTRY_PAGE_FORMATS.HTML }, flags: { [MOD]: { [F]: { guia: 1 } } } }]);
+    await diario.createEmbeddedDocuments("JournalEntryPage", [{ name: "10 · El Verbe · guía revisada", type: "text", sort: orden, ownership,
+      text: { content: html, format: CONST.JOURNAL_ENTRY_PAGE_FORMATS.HTML }, flags: { [MOD]: { [F]: { guia: 1,guiaRevision:3,guiaHuella:huellaTexto(html) } } } }]);
     return;
   }
   const cambios = {};
-  if (pag.text?.content !== html) cambios["text.content"] = html;
+  if (pag.text?.content !== html && huellaTexto(pag.text?.content??'')===pag.getFlag(MOD,F)?.guiaHuella) {cambios["text.content"] = html;cambios[`flags.${MOD}.${F}.guiaHuella`]=huellaTexto(html);}
   if (Object.entries(ownership).some(([k, v]) => (pag.ownership?.[k] ?? CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE) !== v)) cambios.ownership = ownership;
   if (Object.keys(cambios).length) await pag.update(cambios);
 }
@@ -2564,17 +2591,25 @@ export function abrirGuia(seccion = "") {
 /* ------------------------------------------------------------------ */
 
 const paneles = new Map();
+export const clavePanelVerbe=actor=>actor.uuid??actor.id;
 export function abrirPanel(actor, pestana) {
   if (!activo()) return;
-  let p = paneles.get(actor.id);
-  if (!p) { p = new PanelVerbe(actor); paneles.set(actor.id, p); }
+  const clave=clavePanelVerbe(actor);let p = paneles.get(clave);
+  if (!p) { p = new PanelVerbe(actor); paneles.set(clave, p); }
   if (pestana) p.pestana = pestana;
   return p.render({ force: true });
 }
 const esperaPanel = {};
 function refrescarPanel(id) {
   clearTimeout(esperaPanel[id]);
-  esperaPanel[id] = setTimeout(() => { const p = paneles.get(id); if (p?.rendered) p.render(); }, 150);
+  esperaPanel[id] = setTimeout(() => { for(const [clave,p]of paneles)if((clave===id||p.actor.id===id)&&p.rendered)p.render(); }, 150);
+}
+export function abrirOferta(actor,id){
+  if(!editarActor(actor)||!despierto(actor)||!ofertasActor(actor).some(t=>t.id===id))return aviso('Esta ficha no tiene acceso a esa técnica. Revisa su despertar con el DM.','warn');
+  const clave=clavePanelVerbe(actor);let p=paneles.get(clave);if(!p){p=new PanelVerbe(actor);paneles.set(clave,p);}
+  const t=tecnicaPorId(id,actor);p.pestana=conoce(actor,id)?'jugar':'tienda';
+  p.filtro={rama:'',grado:'',nat:'',texto:t.n,solo:false,agrupar:'rama'};p.filtroUso={texto:t.n,solo:false};p.abiertos=null;
+  return p.render({force:true});
 }
 
 const correr = (app, promesa) => Promise.resolve(promesa).then(() => app.render())
@@ -2589,7 +2624,7 @@ const ELECCION = {
 
 export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
   constructor(actor) {
-    super({ id: `ecos-verbe-${actor.id}`, window: { title: `El Verbe · ${actor.name}`, icon: "fa-solid fa-droplet" } });
+    super({ id: `ecos-verbe-${clavePanelVerbe(actor).replace(/[^A-Za-z0-9_-]/g,'-')}`, window: { title: `El Verbe · ${actor.name}`, icon: "fa-solid fa-droplet" } });
     this.actor = actor;
     this.pestana = "resumen";
     this.comoJugador = false;
@@ -2910,7 +2945,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       ${pregunta('¿Cuánto recupero al descansar?',`<dl class="ev-lectura-datos"><div><dt>Largo en Santuario</dt><dd>Ahora ofrece hasta ${largo} puntos de recuperación. Con tu saldo actual quedarías en ${santuario.valor} de Verbe.</dd></div><div><dt>Noche a la intemperie</dt><dd>Usa el presupuesto breve. Con tu saldo y los límites actuales quedarías en ${noche.valor} de Verbe.</dd></div><div><dt>Presupuesto breve compartido</dt><dd>Te quedan ${breve.restante} de ${limite.limite} puntos entre Descansos Largos. Lo comparten noches, Respiro, Aliento y recuperaciones que lo indiquen.</dd></div></dl><p>Las cifras anteriores ya tienen en cuenta tu personaje. Los puntos de recuperación pagan la deuda al doble: no siempre se convierten uno a uno en saldo.</p><p>Solo el Largo renueva este presupuesto y los poderes diarios. <b>Excepción concreta:</b> Sustitución refleja vuelve tras un Corto; eso no devuelve las técnicas altas ni todos los usos del personaje. Otras excepciones deben estar expresamente indicadas en su ficha.</p>`)}
       ${pregunta('¿Qué mejora me conviene buscar?',`<ul><li><b>Quiero otra herramienta:</b> busca una técnica en Aprender.</li><li><b>Quiero técnicas de mayor grado:</b> revisa nivel, rango y, desde grado 6, las dotes de senda.</li><li><b>Quiero mejorar una que ya conozco:</b> abre Mejorar → Entrenar técnicas. Ese entrenamiento también se llama cultivo.</li><li><b>Quiero un beneficio permanente:</b> revisa Mejorar → Dotes.</li><li><b>Quiero inventar algo:</b> Crear una técnica es opcional y requiere la aprobación del DM.</li></ul><p>Mira qué ganarás y cuántos Trazos quedarían. Puedes ahorrar puntos; no tienes que usar todas las opciones. Si compras algo por error, el DM puede deshacer la compra.</p>`)}
       ${pregunta('¿Qué son las sendas y las ascensiones?',`<p>Las sendas son cadenas de dotes de una especialidad. Se compran por orden: <b>Disciplina</b> desde nivel 3, <b>Especialista</b> desde 7, <b>Maestría</b> desde 11 y <b>Leyenda</b> desde 18. Los números son niveles de personaje, no precios ni rangos.</p><p>Grado 10 exige Ascensión mítica y grado 11 Ascensión trascendente. También requieren sus hitos de historia del DM. Alcanzar el nivel no entrega esas dotes ni las técnicas gratuitamente.</p>`)}
-      ${pregunta('¿Dónde están las herramientas nuevas de campaña?','<p>Pulsa Mesa Ecos en la cabecera de tu ficha o Ctrl + M. En Mi turno tienes accesos y recordatorios; Crear personaje te guía por elecciones e importadores; Buscar información consulta fuentes a las que tengas acceso. Dados 1 y 20 explica las tablas. El DM dispone de Dirección y Taller de NPC.</p>')}
+      ${pregunta('¿Dónde están las herramientas nuevas de campaña?','<p>Pulsa Mesa Ecos en la cabecera de tu ficha o Ctrl + M. En Mi turno tienes accesos y recordatorios; Qué quiero hacer propone técnicas para una intención; Crear personaje verifica elecciones y avances. Buscar información consulta fuentes legibles. Diagnóstico y pruebas prepara tu revisión de mesa. El DM dispone también de Dirección, Taller de NPC, Encuentros e Identidad de Nimerios.</p>')}
       ${pregunta('¿Qué hago con una reliquia?',`<ol><li>El DM entrega y autoriza una copia de la reliquia.</li><li>Revisa su nivel mínimo y equípala. Las reliquias de nivel mínimo 9 o más también exigen sintonía.</li><li>Ábrela en el inventario y usa su actividad. Normalmente gasta un cargo, no Verbe.</li><li>Si es un ritual, el DM debe preparar un permiso para esa activación.</li></ol><p>Las copias de una familia comparten su límite; las mayores también comparten un único uso por Largo. Un consumible no vuelve por descansar. La clasificación de Made in Abyss no es un grado de técnica del Verbe.</p><p><b>Objetos que habilitan técnicas:</b> algunos poderes piden una reliquia concreta como requisito. Recibir ese objeto no enseña sus técnicas: se aprenden con Trazos y se usan con Verbe. Revisa la ficha para distinguirlos de los objetos con actividad propia del compendio.</p>`)}
       ${pregunta('¿Por qué sigo herido después de recuperar vida?',`<p>Recuperar puntos de vida no borra automáticamente Malherido ni Herida No Tratada. Necesitas el tratamiento y el reposo que indiquen sus reglas.</p><p>Si estás Acechado por la Muerte, no puedes tomar acciones, acciones adicionales ni reacciones. Pide ayuda y sigue las indicaciones del estado. El Santuario mejora el descanso; una noche fuera no equivale a un Largo en Santuario.</p>`)}
       ${pregunta('¿Qué significan las palabras y abreviaturas de la hoja?',glosarioHTML())}
@@ -3561,18 +3596,19 @@ async function choqueAutomatico(wf) {
       const ganador=await resolverChoque({actor:wf.actor,nombre:wf.item.name,nat:wf.item.getFlag(MOD,F).infusion||wf.item.getFlag(MOD,F).nat,g:gradoAtaque(wf)},
         {actor,nombre:item.name,nat:m.infusion||m.nat,g:respuesta.grado},{automatico:true});
       if(ganador<=0)for(const token of [...wf.targets])if(token.actor===actor||token.actor?.uuid===actor.uuid)excluirBlanco(wf,token);
+      await registrarPaso(wf,'choque-'+actor.id,'Choque de técnicas',`${actor.name}: ${respuesta.nombre??item.name}, grado ${respuesta.grado}, ${respuesta.costo??'consulta la contratécnica'} Verbe. ${ganador<=0?'Intercepta contra este defensor.':'La amenaza continúa contra este defensor.'}`);
     }
   })();choquesWorkflow.set(wf,trabajo);return trabajo;
 }
 async function enfrentamientoAutomatico(wf){
   if(!wf)return;if(oposicionesWorkflow.has(wf))return oposicionesWorkflow.get(wf);
-  const trabajo=(async()=>{await defenderAtaque(wf);await defenderArea(wf);await choqueAutomatico(wf);})();
+  const trabajo=(async()=>{const antes=wf.targets?.size??0;await defenderAtaque(wf);await defenderArea(wf);await registrarPaso(wf,'defensas','Defensas previas resueltas',`${antes-(wf.targets?.size??0)} objetivo(s) protegido(s) antes del choque. Las reacciones y sus costes conservan sus reglas.`);await choqueAutomatico(wf);})();
   oposicionesWorkflow.set(wf,trabajo);return trabajo;
 }
 
 /** En el flujo nativo se pausa la continuación síncrona después de pagar una sola vez. */
 async function choqueNativo(activity,usage,results){
-  const wf={actor:activity.actor,item:activity.item,activity,targets:new Set(game.user.targets??[]),castData:{castLevel:activity.item.system.level}};
+  const wf={actor:activity.actor,item:activity.item,activity,_ecosMensaje:results?.message,targets:new Set(game.user.targets??[]),castData:{castLevel:activity.item.system.level}};
   for(const tok of [...wf.targets]){
     if(!despierto(tok.actor)||tok.actor===wf.actor)continue;
     const area=!!activity.target?.template?.type;
@@ -3580,7 +3616,9 @@ async function choqueNativo(activity,usage,results){
     const defensa=await preguntarDefensa(tok.actor,{quien:wf.actor.name,con:wf.item.name,grado:gradoAtaque(wf),previo:true,area});
     if(defensa&&(area||D.defensas[defensa]?.tipo==='falla'))excluirBlanco(wf,tok);
   }
+  await registrarPaso(wf,'defensas','Defensas previas resueltas',`${wf.ecosExcluidos?.size??0} objetivo(s) protegido(s) antes del choque.`);
   await choqueAutomatico(wf);
+  await registrarPaso(wf,'continuacion','Lanzamiento después del enfrentamiento',`${wf.targets.size} objetivo(s) restante(s). La tarjeta y la ficha resuelven las tiradas y el daño; revisa las consecuencias de mesa.`);
   if(results?.message && wf.ecosExcluidos?.size){
     const refs=results.message.flags?.dnd5e?.targets;
     const protegidos=new Set([...wf.ecosExcluidos].flatMap(t=>[t.document?.uuid,t.uuid,t.actor?.uuid]));
@@ -3743,7 +3781,7 @@ Hooks.once("ready", async () => {
     return console.error(`${MOD} | capa V: no pude leer sus datos`, err);
   }
   const api = (game.modules.get(MOD).api ??= {});
-  api.verbe = { usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), despierto, estado, maxVerbe, trazos, refrescar, aprender,
+  api.verbe = { ofertasActor, corregirGastoSimple, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
     deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)
@@ -3812,7 +3850,7 @@ Hooks.on("dnd5e.rollHitDieV2", (rolls, datos) => {
 });
 Hooks.on("updateWorldTime", () => {
   if (!activo() || !soyGM()) return;
-  for (const a of game.actors) for (const ef of a.effects) { const fl=ef.getFlag(MOD,F); if ((fl?.shinobi||fl?.replicas) && Number.isFinite(ef.duration?.remaining) && ef.duration.remaining<=0) ef.delete().catch(err=>console.error(`${MOD} | caducidad shinobi`,err)); }
+  for (const a of actoresPresentes()) for (const ef of a.effects) { const fl=ef.getFlag(MOD,F); if ((fl?.shinobi||fl?.replicas) && Number.isFinite(ef.duration?.remaining) && ef.duration.remaining<=0) ef.delete().catch(err=>console.error(`${MOD} | caducidad shinobi`,err)); }
 });
 Hooks.on("updateSetting", setting => {
   if (activo() && setting.key === `${MOD}.${AJ.extra}`) for (const id of paneles.keys()) refrescarPanel(id);

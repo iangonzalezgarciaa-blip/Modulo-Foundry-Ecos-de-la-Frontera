@@ -1,16 +1,20 @@
-# Ecos de la frontera · Reglas de la casa (v3.3.0)
+# Ecos de la frontera · Reglas de la casa (v3.4.0)
 
-**Mesa de campaña 3.3:** abre **Mesa Ecos** en la ficha, pulsa **Ctrl + M** o usa su botón en Ajustes. Mi turno reúne recordatorios, accesos frecuentes y tiradas; Crear personaje guía elecciones con el importador de Plutonium; Buscar información consulta fuentes legibles; el DM dispone de Dirección y Taller de NPC con vista previa, copias privadas y reversión de la última adaptación. [Guía de uso 3.3](docs/MESA_3.3.md) · [Vista de la mesa](docs/preview/mesa.html).
+**Preparada para tus pruebas de mesa:** abre **Mesa Ecos → Diagnóstico y pruebas**. Encontrarás versiones, avisos de integración, informe técnico sin datos privados y quince casos para registrar en un cuaderno privado. Ninguna prueba real se declara superada por las comprobaciones de código. [Recorrido de pruebas](docs/PRUEBAS_REALES_3.4.md) · [Guía de funciones 3.4](docs/MESA_3.4.md).
 
-**Identidad de Nimerios:** nombres visibles, alias y referencias del catálogo utilizan nombres de campaña. Se conservan códigos internos, compras, vínculos, autorizaciones y usos gastados. Los nombres o notas personalizados del DM se conservan en las migraciones de reliquias. [Identidad del catálogo](docs/IDENTIDAD_NIMERIOS_3.3.md).
+**Creación verificada:** detecta elecciones repetidas, niveles o valores incoherentes y avances nativos pendientes. El DM aprueba la configuración y decide si activa Ecos. Despertar el Verbe es una concesión independiente. **Qué quiero hacer** propone técnicas por intención, con requisitos y costes, y abre el Verbe filtrado por la opción elegida.
 
-**Dados 1 y 20:** 64 consecuencias breves para ataque, salvación, habilidad en combate y escena. Escalan por nivel y el GM principal aprueba cada propuesta; solo cuenta el primer d20 de la criatura por turno. Fuera de combate hay un límite de diez minutos de juego. El éxito normal de habilidades y salvaciones se conserva; no hay daño ni recursos gratuitos.
+**Resolución clara:** las tarjetas muestran recibos de gasto y pasos de defensa o choque confirmados. Los resultados manuales permanecen señalados; el DM puede registrar su revisión. La corrección automática restaura solo el Verbe de usos simples verificables, con bloqueo frente a cambios posteriores. No deshace daño, efectos, posiciones o acciones.
 
-**Técnicas de utilidad:** 82 nuevas técnicas originales refuerzan sobre todo Umbral, Rastro, Pulso y Quietud. Viajes, oficios, cuidados, conversación y organización mantienen sus herramientas, costes y límites. El catálogo reúne **860 técnicas, 219 dotes y 78 reliquias**. Las 778 técnicas previas conservan su huella de potencia estructurada. [Auditoría de esta revisión](docs/AUDITORIA_TEXTUAL_3.3.0.md).
+**NPC y encuentros:** revisión de capacidades importadas, siete plantillas narrativas, copias privadas, vista previa y reversión de la última adaptación. El calculador de presión permite ajustar rutina, ataque y blancos de área con hipótesis visibles. El daño basado en salvaciones puede introducirse ya ajustado. No certifica la dificultad oficial ni reemplaza revisar poderes especiales.
 
-**Base de campaña:** choques automáticos con defensas primero, ayuda por tareas, jerarquía de seis Primeros con Maethra como la mayor, sendas de especialización, topes de escalado, descanso breve limitado y taller universal del DM. La consulta de linajes tiene desplazamiento propio. [Cobertura completa](docs/COBERTURA_CATALOGO.md) · [Escenarios de balance](docs/ESCENARIOS_BALANCE.md) · [Vista del Verbe](docs/preview/interfaz.html).
+**Identidad de Nimerios:** 174 entradas para revisar ramas, tradiciones, entidades, panteón, artefactos y reliquias. El panteón de referencia se conserva; los relatos nuevos pueden adoptarse, editarse o descartarse en un cuaderno privado. Las páginas del autor no se reemplazan. [Memoria propuesta](docs/MEMORIA_NIMERIOS_3.4.md).
 
-**Actualizaciones privadas en Windows:** configura una vez el actualizador del Release. Revisa nuevas versiones en segundo plano y pospone la instalación mientras Foundry esté abierto. El BAT activa o detiene la tarea instalada y puede mostrar avisos tras actualizar. No guarda tokens en el módulo. [Actualizaciones y respaldos](docs/ACTUALIZACIONES.md). Paquete manual: [ecos-frontera-3.3.0.zip](releases/ecos-frontera-3.3.0.zip).
+**Base conservada:** 860 técnicas, 219 dotes y 78 reliquias; nombres visibles de Nimerios; códigos de compatibilidad, compras y usos conservados. Las 778 técnicas anteriores mantienen su huella individual de potencia. Además de revisar cada técnica a veinte niveles y dos perfiles, se ensayan 96 secuencias de recursos con compras, consumo, contratécnicas y descansos del adaptador. [Ensayos](docs/ENSAYO_SESIONES_3.4.md) · [Auditoría](docs/AUDITORIA_TEXTUAL_3.4.0.md).
+
+**Acceso:** Mesa Ecos en la ficha, Ajustes o **Ctrl + M**. [Vista de la mesa](docs/preview/mesa.html) · [Vista del Verbe](docs/preview/interfaz.html). Las vistas son HTML real con datos ficticios; queda por comprobar el recorrido dentro del Foundry instalado.
+
+**Actualización privada:** el actualizador instala los Releases cuando Foundry está cerrado y conserva un respaldo. El BAT activa o pausa la tarea y puede avisar tras actualizar. [Instrucciones](docs/ACTUALIZACIONES.md) · [Paquete manual 3.4.0](releases/ecos-frontera-3.4.0.zip).
 
 Módulo de Foundry VTT v13 para dnd5e 5.x hecho para la campaña **Ecos de la frontera** (mundo *Fantasy and Agony*). Automatiza las reglas de supervivencia, el trabajo de los PJ, la economía del Valle de Arcegris y el Mercadillo.
 
@@ -65,7 +69,7 @@ Desarrollo: Node 22 o superior y Python 3, sin dependencias de npm. `npm test` e
 
 ## 2. Quién usa las reglas
 
-Los personajes de tipo *character* con nivel 1 o más dentro de la carpeta de actores configurada (por defecto **Nimerios/Player**) o de sus subcarpetas. Un PJ nuevo en esa carpeta las usa solo. Para forzar a un actor que esté fuera, o excluir a uno de dentro: `api.marcarPJ(actor, true|false)`.
+Las reglas de PJ se activan hoja por hoja mediante la bandera `ecos-frontera.pj`, para personajes o NPC. Una ficha nueva empieza apagada. El DM las activa desde Ecos en la cabecera o desde la aprobación de creación de Mesa Ecos. La carpeta solo se usó en una migración antigua. La API ofrece `api.marcarPJ(actor, true|false)`. Activar esas reglas no despierta el Verbe.
 
 El resto del mundo (PNJ, monstruos) juega con las reglas normales de dnd5e.
 

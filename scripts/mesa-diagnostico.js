@@ -1,0 +1,46 @@
+const MOD='ecos-frontera',incidencias=[];
+export const PRUEBAS_REALES=[
+ {id:'creacion',titulo:'Crear y revisar un personaje',pasos:'En una ficha de prueba importa clase, especie y trasfondo con Plutonium. Completa los avances. La revisión debe detectar elecciones pendientes o repetidas. Aprueba desde el DM y cambia una elección: debe pedir revisión nueva.'},
+ {id:'ecos',titulo:'Separar Ecos y Verbe',pasos:'Activa las reglas de Ecos desde la revisión del DM. Comprueba el indicador. Despierta el Verbe por separado y revisa linaje, fuerza, reserva y ramas. Apagar uno no debe modificar el otro.'},
+ {id:'uso',titulo:'Aprender y usar una técnica',pasos:'Aprende una técnica de grado 1 en una copia con recursos conocidos. Marca un objetivo válido. Usa la técnica y comprueba un solo gasto, tirada y tarjeta de resolución.'},
+ {id:'defensa',titulo:'Defensa antes del choque',pasos:'Con dos hojas despiertas prueba Sustitución frente a un ataque. Después prueba un ataque que siga siendo válido: el choque debe ofrecerse después de las defensas y respetar sus costes.'},
+ {id:'area',titulo:'Área con varios objetivos',pasos:'Marca al menos dos defensores y una criatura sin Verbe. Intercepta contra uno: los demás objetivos deben conservar su resolución. Comprueba alcance, plantilla y salvaciones.'},
+ {id:'reaccion',titulo:'Choque con reacción gastada',pasos:'Gasta la reacción ordinaria de un defensor. Provoca un choque válido: debe poder pagar su contratécnica sin recibir una acción ofensiva o daño adicional.'},
+ {id:'azar',titulo:'Resultados naturales 1 y 20',pasos:'Desde tiradas nativas prueba ventaja y desventaja, varios ataques y una salvación. Solo cuenta el primer d20 válido del turno global. El GM principal aprueba. CA y velocidad deben vencer en su momento.'},
+ {id:'ocultas',titulo:'Información y tiradas privadas',pasos:'Conecta un jugador y el DM. Prueba tiradas ocultas y búsquedas. El jugador no debe recibir diarios, páginas o reliquias privadas; las propuestas de d20 deben conservar destinatarios.'},
+ {id:'descanso',titulo:'Descansos y deuda',pasos:'Anota Verbe, deuda, presupuesto breve y usos diarios. Completa un Corto y después el Largo correspondiente. Comprueba los límites compartidos y las excepciones descritas, como Sustitución refleja.'},
+ {id:'npc',titulo:'Variantes de NPC y reversión',pasos:'Usa un NPC importado con Multiataque o magia. Revisa los avisos. Crea una copia privada y comprueba que el original no cambie. Actualiza una copia de prueba y deshaz su última adaptación.'},
+ {id:'sintetico',titulo:'Tokens vinculados y no vinculados',pasos:'Repite un gasto, un efecto breve y su vencimiento en un token vinculado y en uno no vinculado. Los cambios deben afectar a la instancia correcta.'},
+ {id:'correccion',titulo:'Corrección de un gasto simple',pasos:'Usa una técnica ordinaria de grado bajo sin efectos de recurso especiales. Desde el DM corrige su gasto antes de otro uso: debe restaurar solo Verbe. Un uso posterior o un poder complejo debe bloquear esa corrección automática.'},
+ {id:'reconexion',titulo:'Recargar y reconectar',pasos:'Recarga jugador y DM después de un uso. Comprueba recursos, efectos, permisos y tarjetas. Revisa que el módulo no cobre de nuevo ni duplique una resolución.'},
+ {id:'actualizacion',titulo:'Actualizar con respaldo',pasos:'Con Foundry cerrado, deja que el actualizador privado instale el Release. Reabre el mundo de prueba y comprueba versión y datos. Conserva el respaldo hasta terminar la revisión.'},
+ {id:'sesion',titulo:'Primera escena sin manual',pasos:'Pide a alguien nuevo que cree una ficha de prueba, encuentre una técnica por intención y juegue una escena social y otra de combate. Anota dónde necesitó una explicación externa.'}
+];
+export function anotarIncidencia(codigo){incidencias.push({codigo:String(codigo).replace(/[^a-z0-9:._-]/gi,'').slice(0,90),fecha:new Date().toISOString()});if(incidencias.length>30)incidencias.shift();}
+export function diagnosticoMesa(){
+ const mods=['ecos-frontera','plutonium','midi-qol','item-piles','itempilesdnd5e'].map(id=>{const m=game.modules.get(id);return {id,instalado:!!m,activo:!!m?.active,version:m?.version??null};});
+ const avisos=[],core=String(game.version??game.release?.version??'desconocida'),sistema=game.system??{};
+ if(!core.startsWith('13.'))avisos.push('Esta revisión apunta a Foundry 13; comprueba la compatibilidad de tu versión.');
+ if(sistema.id!=='dnd5e')avisos.push('La integración requiere el sistema dnd5e.');
+ if(sistema.version!=='5.2.5')avisos.push('La base de integración comprobada en código es dnd5e 5.2.5; tu combinación necesita las pruebas reales.');
+ if(game.modules.get('plutonium')?.active&&!game.modules.get('plutonium')?.api?.importer?.pOpen)avisos.push('Plutonium no expone el importador esperado. Usa su botón nativo y registra la versión.');
+ const api=game.modules.get(MOD)?.api;
+ if(!api?.verbe?.datos?.())avisos.push('El catálogo del Verbe no está disponible: revisa Capa V y espera a que termine la carga.');
+ if(!game.users?.activeGM)avisos.push('No hay GM principal conectado para propuestas y operaciones que requieren DM.');
+ return {formato:1,fecha:new Date().toISOString(),core,sistema:{id:sistema.id??null,version:sistema.version??null},modulos:mods,
+  ...(game.user.isGM?{pruebas:PRUEBAS_REALES.map(p=>({id:p.id,estado:(()=>{const x=game.journal?.find(j=>j.getFlag?.(MOD,'pruebasMesa'))?.getFlag(MOD,'resultadoPruebas')?.[p.id]?.estado;return ['pendiente','correcto','fallo','no-aplica'].includes(x)?x:'pendiente';})()}))}:{}),
+  capacidades:{importador:!!game.modules.get('plutonium')?.api?.importer?.pOpen,midi:!!game.modules.get('midi-qol')?.active,verbe:!!api?.verbe?.datos?.(),resolucion:!!api?.resolucion},avisos,incidencias:[...incidencias],
+  privacidad:'Informe técnico sin nombres de actores, secretos, diarios, tokens, rutas locales ni credenciales. No prueba que una sesión real haya pasado.'};
+}
+export async function cuadernoPruebas(){
+ if(!game.user.isGM)return null;let j=game.journal?.find(x=>x.getFlag(MOD,'pruebasMesa'));
+ const ownership={default:0,...Object.fromEntries(Array.from(game.users).filter(u=>!u.isGM).map(u=>[u.id,0]))};
+ if(!j)j=await JournalEntry.create({name:'Ecos · Pruebas reales de mesa (DM)',ownership,flags:{[MOD]:{pruebasMesa:true}},pages:[{name:'Recorrido de validación 3.4',type:'text',text:{format:1,content:'<h1>Antes de la primera sesión</h1><p>Haz estas pruebas en un mundo o fichas de prueba con respaldo. El módulo no las marca como superadas por ejecutar pruebas de código.</p>'+PRUEBAS_REALES.map(p=>`<h2>${p.titulo}</h2><p>${p.pasos}</p>`).join('')}}]});
+ await j.update({ownership},{diff:false,recursive:false});return j;
+}
+export async function registrarPrueba(id,estado,nota=''){
+ if(!game.user.isGM||!PRUEBAS_REALES.some(p=>p.id===id)||!['pendiente','correcto','fallo','no-aplica'].includes(estado))return false;
+ const j=await cuadernoPruebas(),datos=j.getFlag(MOD,'resultadoPruebas')??{};
+ await j.setFlag(MOD,'resultadoPruebas',{...datos,[id]:{estado,nota:String(nota).slice(0,1000),fecha:new Date().toISOString(),por:game.user.id}});return true;
+}
+export function exportarDiagnostico(){const data=diagnosticoMesa();saveDataToFile(JSON.stringify(data,null,2),'application/json','Ecos-Diagnostico.json');return data;}

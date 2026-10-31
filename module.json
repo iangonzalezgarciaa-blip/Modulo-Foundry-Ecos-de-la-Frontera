@@ -1,8 +1,8 @@
 {
   "id": "ecos-frontera",
   "title": "Ecos de la frontera · Reglas de la casa",
-  "description": "Reglas de Ecos de la frontera para dnd5e: supervivencia, oficios, economía y El Verbe, con 860 técnicas, 219 dotes, 78 reliquias de Nimerios, mesa de campaña, buscador local, creación guiada y taller de NPC.",
-  "version": "3.3.0",
+  "description": "Herramientas de Nimerios para Foundry 13 y dnd5e: 860 técnicas, 219 dotes, 78 reliquias, creación verificada, recibos de resolución, búsqueda por intención, memoria de campaña, revisión de NPC, encuentros y diagnóstico.",
+  "version": "3.4.0",
   "url": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera",
   "authors": [
     {

@@ -646,3 +646,7 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-mesa-acceso {flex:0 0 auto!important;width:auto!important;margin-inline:8px!important;font-size:12px!important;padding:2px 8px!important;min-height:24px;}
 .ecos-azar {border-left:3px solid #9c7c37;padding:8px 12px}.ecos-azar button {margin:4px}.ecos-azar-estado {font-size:12px}
 @media(max-width:680px){.ecos-mesa .em-cabecera {flex-direction:column}.ecos-mesa .em-cabecera label {max-width:none}.ecos-mesa .em-contenido,.ecos-mesa .em-tabs,.ecos-mesa .em-cabecera {padding-left:14px;padding-right:14px}}
+
+.ecos-recibo { border:1px solid #a59b82; border-left:4px solid #8a7441; border-radius:5px; padding:10px 12px; margin-top:12px; font-size:13px; line-height:1.5; }
+.ecos-recibo h3 { font-size:15px; margin:0 0 8px; }.ecos-recibo ol {padding-left:20px}.ecos-recibo li {margin:7px 0}.ecos-recibo button {margin:5px 5px 0 0;white-space:normal;min-height:30px}
+.ecos-mesa .em-tabs {max-height:148px;overflow:auto;flex-shrink:0}.ecos-mesa .em-etiqueta {overflow-wrap:anywhere}
