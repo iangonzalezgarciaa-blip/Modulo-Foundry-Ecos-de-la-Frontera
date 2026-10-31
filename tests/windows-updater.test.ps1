@@ -196,8 +196,19 @@ $config = Get-Content -LiteralPath (Join-Path $StateRoot 'config.json') -Raw | C
             New-Item -ItemType Directory -Path $env:LOCALAPPDATA | Out-Null
             $batPath = Join-Path $env:LOCALAPPDATA 'Ecos Auto & prueba.bat'
             Copy-Item -LiteralPath (Join-Path $PSScriptRoot '..\tools\windows\Ecos-Autoactualizacion.bat') -Destination $batPath
-            $result = & $env:ComSpec /d /c ('""' + $batPath + '" estado"') 2>&1
-            Assert-Ecos ($LASTEXITCODE -eq 1 -and ($result | Out-String).Contains('No hay configuracion')) 'El BAT no ejecuto su script o ignoro la falta de configuracion.'
+            # ProcessStartInfo evita que PowerShell 5.1 vuelva a escapar las comillas de cmd /s /c.
+            $start = New-Object Diagnostics.ProcessStartInfo
+            $start.FileName = $env:ComSpec
+            $start.Arguments = '/d /s /c ""' + $batPath + '" estado"'
+            $start.UseShellExecute = $false
+            $start.RedirectStandardOutput = $true
+            $start.RedirectStandardError = $true
+            $process = [Diagnostics.Process]::Start($start)
+            try {
+                $result = $process.StandardOutput.ReadToEnd() + $process.StandardError.ReadToEnd()
+                Assert-Ecos ($process.WaitForExit(15000)) 'El BAT no termino.'
+                Assert-Ecos ($process.ExitCode -eq 1 -and $result.Contains('No hay configuracion')) ('El BAT no ejecuto su script o ignoro la falta de configuracion: ' + $result)
+            } finally { $process.Dispose() }
         } finally { $env:LOCALAPPDATA = $old }
     }
     Write-Host "$script:Tests pruebas del actualizador aprobadas. No se usaron credenciales ni tareas reales."
