@@ -1,6 +1,8 @@
-# Ecos de la frontera · Reglas de la casa (v3.2.0)
+# Ecos de la frontera · Reglas de la casa (v3.2.1)
 
-**Nuevo en 3.2:** choques automáticos con defensas primero y explicación en Ayuda rápida; jerarquía de seis Primeros con Maethra como la mayor, 24 técnicas divinas y seis herencias nuevas; panteón de 22 entradas con dos dioses menores propuestos y una nota privada para revisar los diarios de lore. [Panteón y progresión](docs/PANTEON_3.2.md).
+**Lectura guiada 3.2.1:** las 778 técnicas y 78 reliquias separan efecto, uso, costes y requisitos. Ayuda rápida incluye un recorrido de primera sesión, glosario, ejemplos y choques por pasos. Los requisitos distinguen nivel, grado, rango y senda; los datos avanzados y fuentes quedan en desplegables. Las explicaciones conocidas de las reliquias se actualizan sin reponer cargas ni reemplazar notas del DM. [Auditoría textual](docs/AUDITORIA_TEXTUAL_3.2.1.md). La huella de reglas estructuradas coincide con 3.2.0.
+
+**Base de 3.2:** choques automáticos con defensas primero y explicación en Ayuda rápida; jerarquía de seis Primeros con Maethra como la mayor, 24 técnicas divinas y seis herencias nuevas; panteón de 22 entradas con dos dioses menores propuestos y una nota privada para revisar los diarios de lore. [Panteón y progresión](docs/PANTEON_3.2.md).
 
 **Reliquias:** 51 perfiles de la serie/componentes/dispositivos de Made in Abyss, 11 del videojuego y 16 creaciones propias. Son adaptaciones de mesa con fuentes y límites explícitos; no se afirma cubrir cada variante del juego o futuras publicaciones. En Verbe → DM → Compendio de reliquias se entregan copias y permisos rituales. Se añaden un compendio y un diario privados sin reemplazar las ediciones del DM. [Catálogo y alcance](docs/RELIQUIAS_3.2.md).
 
@@ -10,7 +12,7 @@
 
 La base 3.1 añadió **64 dotes**, sendas para las 13 ramas, ascensiones de historia, topes de escalado y usos altos compartidos. [Auditoría de 3.1](docs/AUDITORIA_3.1.md) · [Progresión comprada con Trazos reales](docs/PROGRESION_3.1.md). El catálogo reúne **778 técnicas, 219 dotes y 78 perfiles de reliquias**: incluye las 353 adaptaciones del estudio Naruto/Shippuden incorporadas en 3.0, 327 fuera de Forma, junto a las 401 técnicas originales y las 24 técnicas divinas nuevas. Incorpora Umbral (espacio-tiempo) y Vasija (huéspedes), con requisitos y límites explícitos. [Repertorio y uso de 3.0](docs/REPERTORIO_3.0.md). Consulta la [base y decisiones de 2.8](docs/BASE_ESTABLE_2.8.md), el [historial](CHANGELOG.md), la [cobertura completa](docs/COBERTURA_CATALOGO.md) y los [escenarios de balance](docs/ESCENARIOS_BALANCE.md). El código tiene pruebas locales; queda pendiente su validación dentro de Foundry con los módulos de la campaña.
 
-**Actualizaciones privadas en Windows:** descarga `Ecos-Actualizar.ps1` del Release y configúralo una vez. Después revisa nuevas versiones en segundo plano y pospone si detecta Foundry abierto. Usa tu cuenta mediante GitHub CLI; no publica el código ni guarda tokens en el módulo. [Configuración y respaldos](docs/ACTUALIZACIONES.md). Paquete manual actual: [ecos-frontera-3.2.0.zip](releases/ecos-frontera-3.2.0.zip).
+**Actualizaciones privadas en Windows:** descarga `Ecos-Actualizar.ps1` del Release y configúralo una vez. Después revisa nuevas versiones en segundo plano y pospone si detecta Foundry abierto. Usa tu cuenta mediante GitHub CLI; no publica el código ni guarda tokens en el módulo. [Configuración y respaldos](docs/ACTUALIZACIONES.md). Paquete manual actual: [ecos-frontera-3.2.1.zip](releases/ecos-frontera-3.2.1.zip).
 
 Módulo de Foundry VTT v13 para dnd5e 5.x hecho para la campaña **Ecos de la frontera** (mundo *Fantasy and Agony*). Automatiza las reglas de supervivencia, el trabajo de los PJ, la economía del Valle de Arcegris y el Mercadillo.
 

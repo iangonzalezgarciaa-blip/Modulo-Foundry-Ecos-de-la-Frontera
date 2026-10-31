@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import {decodeCatalog} from '../tools/catalog.mjs';
 import {MockActor,MockItem,collection,resetEnvironment} from './helpers/foundry.mjs';
 import * as R from '../scripts/relics.js';
+import {huellaTexto} from '../scripts/verbe-reading.js';
 const D=decodeCatalog(fs.readFileSync(new URL('../data/reliquias.txt',import.meta.url),'utf8'));
 beforeEach(()=>{resetEnvironment();R.usarDatosReliquias(D);});
 const ficha=id=>D.reliquias.find(r=>r.id===id);
@@ -65,4 +66,20 @@ test('compendio privado añade faltantes sin sustituir documentos del DM',async(
 test('dos activaciones simultáneas no preparan un doble gasto',()=>{
  const a=new MockActor(20),i=equipar(a,'mia-gentle-knock');assert.notEqual(R.consumirReliquia({actor:a,item:i},{},{}),false);
  assert.equal(R.consumirReliquia({actor:a,item:i},{},{}),false);
+});
+test('actualizar una explicación conocida conserva cargas, permisos, equipo y efectos de la copia',async()=>{
+ const a=new MockActor(20),i=equipar(a,'mia-unheard-bell'),m=i.getFlag('ecos-frontera','reliquia');
+ i.system.description.value='Explicación antigua generada';m.textoHuella=huellaTexto(i.system.description.value);m.textoVersion=1;m.permisoRitual=false;i.system.uses.spent=1;
+ const antes=structuredClone({uses:i.system.uses,autorizada:m.autorizada,permiso:m.permisoRitual,equipped:i.system.equipped,attuned:i.system.attuned,effects:i.effects});
+ const cambio=R.cambiosTextoReliquia(i);assert.ok(cambio);await i.update(cambio);
+ assert.deepEqual({uses:i.system.uses,autorizada:m.autorizada,permiso:m.permisoRitual,equipped:i.system.equipped,attuned:i.system.attuned,effects:i.effects},antes);
+ assert.equal(i.system.description.value,ficha('mia-unheard-bell').item.system.description.value);
+ assert.equal(R.cambiosTextoReliquia(i),null);
+});
+test('una nota personalizada del DM no se sustituye por el texto nuevo del catálogo',()=>{
+ const a=new MockActor(20),i=equipar(a,'mia-sun-sphere');
+ i.getFlag('ecos-frontera','reliquia').textoHuella=huellaTexto(i.system.description.value);
+ i.system.description.value+='<p>Nota privada de mi campaña y condiciones propias.</p>';
+ assert.equal(R.cambiosTextoReliquia(i),null);
+ game.user=game.users.get('player');return R.actualizarTextosReliquias().then(n=>assert.equal(n,0));
 });

@@ -1,6 +1,6 @@
 {
   "name": "ecos-frontera",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "ecosUpdateMode": "private",
   "private": true,
   "type": "module",
@@ -13,7 +13,8 @@
     "balance": "node tools/balance.mjs",
     "ui:preview": "node tools/preview-ui.mjs",
     "package": "python3 tools/package.py",
-    "catalog:expand": "node tools/expand-shinobi.mjs && node tools/evolve-catalog.mjs && node tools/expand-divinity.mjs && node tools/build-relics.mjs",
+    "catalog:expand": "node tools/expand-shinobi.mjs && node tools/evolve-catalog.mjs && node tools/expand-divinity.mjs && node tools/clarify-catalog.mjs && node tools/build-relics.mjs",
+    "audit:text": "node tools/text-audit.mjs",
     "audit:balance": "node tools/audit-progression.mjs"
   },
   "engines": {

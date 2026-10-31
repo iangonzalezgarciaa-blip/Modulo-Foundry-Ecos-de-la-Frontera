@@ -1,5 +1,16 @@
 # Cambios
 
+## 3.2.1 — Lectura guiada para la primera partida
+
+- Las 778 técnicas tienen bloques «Qué hace», «Cómo se usa» y «Qué cuesta» en su ficha de la hoja. El panel separa aprendizaje y uso, explica quién tira, amplía abreviaturas y conserva el efecto completo y sus límites en un desplegable. Las referencias divinas dejan de mostrar páginas inexistentes y no revelan el nombre de la deidad al jugador desde la referencia.
+- Ayuda rápida organizada por situaciones: primera escena, botones bloqueados, ataque o salvación, acciones, choques, deuda, descansos, mejoras, sendas, reliquias y heridas. Glosario y ejemplo concreto para distinguir nivel, grado, rango, Maestro y Maestría. Los choques se explican en cinco pasos.
+- El panel muestra usos altos restantes en lugar de una fracción ambigua y aparta esa información cuando el personaje aún no dispone de ellos. Aclara que una mejora sugerida no está comprada, que las tiradas ya incluyen sus bonificaciones y que el aviso de bloqueo muestra el primer requisito pendiente.
+- Cultivo e infusión explicados por separado, con el precio completo en cada opción y un aviso cuando no quedan mejoras compatibles. La consulta de sangre Plena muestra el crecimiento en una tabla por nivel. Las dotes ya presentes en la hoja reciben su explicación actualizada conservando los usos gastados.
+- Las 78 reliquias separan preparación, carga, familia, uso mayor, permiso ritual y procedencia. El catálogo del DM guía la entrega y la búsqueda abre los grupos con resultados. Las descripciones generadas conocidas se actualizan en compendio y copias; las personalizaciones del DM, permisos, efectos y cargas se conservan.
+- Aclaradas las utilidades que requieren resolución de mesa y el presupuesto breve de Marea interior. Sustitución refleja conserva su renovación por Corto; no se presenta como una renovación de todos los poderes. La recuperación nocturna de la ayuda contempla los multiplicadores y dotes reales del personaje.
+- 178 pruebas Node y auditoría de 31.120 fichas de técnica. Las pruebas de actualización textual comprueban que no se repongan cargas ni permisos y que se conserven notas personalizadas.
+- Auditoría de texto reproducible y huella de reglas comparada con 3.2.0: costes, niveles, requisitos, actividades, efectos y linajes estructurados conservados. Continúa pendiente la comprobación visual y funcional dentro del Foundry instalado.
+
 ## 3.2.0 — Sangre divina, choques y reliquias
 
 - Sangres de seis dioses primigenios por encima de los menores: reserva y defensas progresivas, atenuadas por la fuerza de sangre. Maethra es la mayor y tiene el techo más alto, siete técnicas nuevas propias y culminaciones con sangre plena e hitos del DM. Asignar o subir un linaje no rellena su energía.

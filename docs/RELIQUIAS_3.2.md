@@ -8,7 +8,7 @@ Todas las cifras, duraciones, niveles y límites son reglas nuevas de Nimerios. 
 
 ## Uso
 
-DM → Compendio de reliquias. Se crea un compendio mundial privado y un diario de consulta. Las fichas nuevas se añaden sin reemplazar ediciones del DM. En el panel del personaje, el DM entrega y autoriza una copia. El jugador la equipa y, desde nivel 9, la sintoniza. Cada ejemplar tiene un cargo; además el actor comparte un uso por familia y uno de reliquia mayor por Largo, para impedir recargas por cambiar de copia. Los consumibles no se reponen. Los rituales necesitan autorización para un solo uso, que un descanso no devuelve.
+DM → Compendio de reliquias. Se crea un compendio mundial privado y un diario de consulta. Las fichas nuevas se añaden sin reemplazar ediciones del DM. En el panel del personaje, el DM entrega y autoriza una copia. El jugador la equipa y, desde nivel 9, la sintoniza. Cada ejemplar tiene una carga; además el actor comparte un uso por familia y uno de reliquia mayor por Largo, para impedir recargas por cambiar de copia. Los consumibles no se reponen. Los rituales necesitan autorización para un solo uso, que un descanso no devuelve.
 
 La tirada nativa usa la característica del Verbe al entregar la copia (Sabiduría por defecto) o la CD fija de la ficha. Los efectos propios se convierten a las unidades de la hoja y se eliminan al vencer; efectos de objetivos, utilidades y consecuencias narrativas se resuelven en mesa. Los objetos no dan Trazos, deuda gratuita, turnos, reservas o acceso universal a poderes.
 

@@ -11,7 +11,8 @@
 
 import { VERSION_PROGRESION, NIVEL_GRADO, limiteEscalado, accesoObtencion, permisoCuota, cuotasPoder, pisoCosto, limiteDadosExtra, requisitoDote, validarConcentraciones, permisoTurno, gradoReplicas } from "./verbe-progression.js";
 import { abrirReliquias } from "./relics.js";
-import { tecnicaChocable, AYUDA_CHOQUE } from "./verbe-clash.js";
+import {avanceTexto,efectoHTML,textoClaro,resolucionTexto,duracionTexto,referenciaHTML,glosarioHTML,escTexto,tablaSangreHTML} from "./verbe-reading.js";
+import { tecnicaChocable, AYUDA_CHOQUE, PASOS_CHOQUE } from "./verbe-clash.js";
 import { donDivino, asegurarNotaPanteon } from "./verbe-divinity.js";
 import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
@@ -882,19 +883,10 @@ async function asegurarRasgos(actor) {
     await guardar(actor, { dotes: [...(e.dotes ?? []), ...faltan] });
     e = estado(actor);
   }
-  // Cada dote que tiene (las de nacimiento y las compradas) va como rasgo en la hoja: si falta alguno, se pone.
-  const conRasgo = new Set(actor.items.map(i => i.getFlag(MOD, F)?.dote).filter(Boolean));
-  const sinRasgo = (e.dotes ?? []).filter(id => !conRasgo.has(id));
-  for (const id of sinRasgo) {
+  // Actualiza el texto y la actividad del rasgo sin reponer los usos ya gastados.
+  for (const id of e.dotes ?? []) {
     const dote = D.dotes.find(x => x.id === id);
     if (dote) await rasgoDote(actor, dote);
-  }
-  for (const it of actor.items) {
-    const id = it.getFlag(MOD,F)?.dote;
-    if (!["respiro","innato-aliento","innato-aliento-2","sueno-reparador"].includes(id)) continue;
-    const dote=D.dotes.find(d=>d.id===id); if (!dote) continue;
-    const descripcion=`<p>${escH(dote.textoJ ?? dote.texto)}</p><p><em>Dote del Verbe. Recuperación breve limitada entre largos.</em></p>`;
-    if (it.system?.description?.value !== descripcion) await it.update({"system.description.value":descripcion});
   }
   await asegurarAEDotes(actor);
   const lin = linajeDe(actor);
@@ -946,7 +938,7 @@ async function rasgoDote(actor, dote) {
   const nace = (D.innatos ?? []).includes(dote.id);
   const p=dote.poder,aid=idFijo(`d${firma(dote.id)}actividad`),eid=idFijo(`d${firma(dote.id)}efecto`);
   const data={ name:dote.nombre,type:'feat',img:'systems/dnd5e/icons/svg/items/feature.svg',effects:[],
-    system:{description:{value:`<p>${escH(dote.texto)}</p><p><b>Requisitos:</b> ${escH(requisitosDoteTexto(dote))}</p><p>${escH(dote.automatizacion??'Consulta las condiciones en mesa.')}</p>${nace?'<p>Del despertar, sin coste de Trazos.</p>':''}`}},flags:{[MOD]:{[F]:{dote:dote.id}}}};
+    system:{description:{value:`<h3>Qué ganas</h3>${efectoHTML(dote.textoJ??dote.texto)}<p><b>Para aprender esta dote:</b> ${escH(requisitosDoteTexto(dote))}</p><p>${escH(dote.automatizacion??'Consulta las condiciones en mesa.')}</p>${nace?'<p>Del despertar, sin coste de Trazos.</p>':''}`}},flags:{[MOD]:{[F]:{dote:dote.id}}}};
   if(p){
     const act={_id:aid,name:dote.nombre,type:p.curacion?'heal':'utility',activation:{type:p.tiempo??'bonus',value:1,override:true},duration:{units:p.duracion?'round':'inst',value:p.duracion?p.duracion/6:null,override:true},range:{units:'self',override:true},target:{affects:{type:'self',count:'1'},template:{},override:true},effects:[],uses:{spent:0,recovery:[]},consumption:{targets:[{type:'itemUses',target:'',value:'1',scaling:{mode:'',formula:''}}],scaling:{allowed:false},spellSlot:false}};
     if(p.curacion)act.healing={number:1,denomination:6,bonus:'',types:['healing'],custom:{enabled:false,formula:''},scaling:{mode:'',number:0,formula:''}};
@@ -2370,14 +2362,14 @@ function resumenDivino(actor) {
   const l=linajeDe(actor),e=estado(actor),d=donDivino(l,e?.fuerza,nivelDe(actor));
   if(!d.etapa)return "";
   const extra=Math.floor(Math.max(0,Number(D.verbeMax[nivelDe(actor)])+modDe(actor,e.car))*d.reserva);
-  return `<p><b>Potencial de tu sangre · etapa ${d.etapa}:</b> +${extra} de reserva máxima (no rellena energía), +${d.ac} CA pasiva. Durante Despertar: +${d.despertarAC} CA adicional${d.resistencias.length?", resistencia al necrótico y veneno":""}. Tus técnicas se aprenden con Trazos; los hitos los concede el DM.</p>`;
+  return `<p><b>Dones de tu sangre · umbral de nivel ${d.etapa}:</b> +${extra} de reserva máxima (no rellena energía), +${d.ac} CA pasiva. Durante Despertar: +${d.despertarAC} CA adicional${d.resistencias.length?", resistencia al necrótico y veneno":""}. Tus técnicas se aprenden con Trazos; los hitos los concede el DM.</p>`;
 }
 
 export function describir(tipo, v, actor = null) {
   if (!v) return "<p class=\"ecos-nota\">Cambia la opción de arriba para ver qué es. No se elige hasta que pulses el botón.</p>";
   if (tipo === "fuerza") {
     const f = FUERZA[v]; if (!f) return "";
-    return `<p><b>Sangre ${escH(f.nombre)}.</b> ${v === "ninguna" ? "No activa una herencia, sus dones ni sus naturalezas. Elegir un linaje sin sangre no concede esos beneficios." : `Sus técnicas de Sangre llegan hasta grado ${f.grado}, además de los límites por nivel y rango. Cada subida de rango de Sangre cuesta ${f.extra ? `${f.extra} Trazo${f.extra > 1 ? "s" : ""} adicional${f.extra > 1 ? "es" : ""}` : "lo habitual, sin recargo"}. El don Mítico de Sangre supera el tope de fuerza; no supera tu nivel ni el rango de rama.`}</p><p>En sangre primigenia, los dones nuevos se atenúan: rastro 25% y etapa 1; débil 50% y etapa 5; media 75% y etapa 11; plena 100% y etapa 20. El Mítico no cambia esa intensidad. La fuerza no concede etapas de Mirada.</p>`;
+    return `<p><b>Sangre ${escH(f.nombre)}.</b> ${v === "ninguna" ? "No activa una herencia, sus dones ni sus naturalezas. Elegir un linaje sin sangre no concede esos beneficios." : `Esta fuerza permite técnicas de Sangre hasta grado ${f.grado}; tu nivel, rango y los requisitos de cada técnica pueden poner un límite menor. Cada subida de rango de Sangre cuesta ${f.extra ? `${f.extra} Trazo${f.extra > 1 ? "s" : ""} adicional${f.extra > 1 ? "es" : ""}` : "lo habitual, sin recargo"}. El don Mítico de Sangre puede superar este tope ordinario de grado; no supera tu nivel, el rango de rama ni los requisitos expresos de sangre Plena de una culminación.`}</p><p><b>Si el linaje es primigenio:</b> la fuerza también limita sus dones nuevos. Rastro usa el 25% de intensidad y crece solo hasta el umbral de nivel 1; Débil, el 50% hasta 5; Media, el 75% hasta 11; Plena, el 100% hasta 20. Estos umbrales no son etapas de Mirada. El don Mítico no convierte la sangre en Plena.</p>`;
   }
   if (tipo === "linaje") {
     if (!game.user.isGM) return "";
@@ -2385,7 +2377,7 @@ export function describir(tipo, v, actor = null) {
     const h = D.herencias?.find(x=>x.nombre===l.herencia);
     return `<p><b>${escH(l.alias ?? l.nombre)} · ${escH(l.real ?? l.nombre)}</b>${l.herencia ? ` — ${escH(l.herencia)}` : ""}</p>
       ${l.jerarquia ? `<p><b>Jerarquía:</b> ${l.id==="maethra"?"La mayor de los Primigenios":({primordial:"Primigenio",menor:"Dios menor",sueno:"Sueño divinizado"})[l.jerarquia]}. ${escH(D.panteon?.find(d=>d.id===l.id)?.texto)}${l.propuesto?" <b>Ampliación propuesta: pendiente del lore.</b>":""}</p>`:""}
-      ${l.jerarquia==="primordial"?`<p><b>Potencial nuevo:</b> reserva adicional sobre la base: ${l.id==="maethra"?"35/50/65/80/90/100%":"10/12/15/18/20/25%"} en niveles 1/5/11/16/18/20 con sangre plena. ${l.id==="maethra"?"+1 CA pasiva desde 5, +2 desde 11; Despertar +1 CA adicional desde 11 y +2 desde 18, resistencia al veneno y necrótico desde 16.":"+1 CA pasiva desde 11."} Con fuerza menor se reduce la intensidad y el techo de estos dones. No concede técnicas ni recupera energía al asignarlo.</p>`:""}
+      ${l.jerarquia==="primordial"?tablaSangreHTML(l):""}
       <p>${escH(h?.rasgo ?? (typeof l.rasgo === "string" ? l.rasgo : "Sus facultades dependen de los dones indicados en su ficha y de la historia."))}</p>
       <p>${l.nats?.length ? `Naturalezas concedidas: ${l.nats.map(nombreNat).join(", ")}. ` : ""}${l.maxMult ? `Reserva ×${l.maxMult}. ` : ""}${l.recMult ? `Recuperación ×${l.recMult} (también respeta el presupuesto de los cortos). ` : ""}${l.req ? `Abre Sangre con fuerza distinta de «Sin sangre» y permite técnicas que piden ${escH(l.req)}.` : "Este linaje no abre una herencia de Sangre por sí solo."}</p>
       ${h?.despertar ? `<p><b>Despertar:</b> ${escH(h.despertar)}</p>` : ""}`;
@@ -2421,11 +2413,11 @@ const AYUDA = {
   verbe: "Tu reserva. Cada técnica gasta Verbe al usarla. Se recupera la mitad en un Descanso Largo en el Santuario. Respiro, Aliento y noches a la intemperie comparten un presupuesto breve de hasta la mitad de esa recuperación larga, renovado solo por un largo (Sueño reparador lo eleva hasta dos tercios). Sube sola con tu nivel.",
   trazos: "Tus puntos para crecer. Con ellos aprendes técnicas, subes rangos, compras dotes y cultivas. Ganas 4 por nivel, y a veces más por hitos de la historia o Monedas Antiguas. Lo que compras es para siempre.",
   car: "La característica con la que usas el Verbe. Da la CD de tus técnicas (8 + competencia + modificador), su bonificador de ataque y suma a tu reserva.",
-  grado: "Qué tan fuerte es una técnica, de 0 a 11 (como el nivel de un conjuro, con dos grados más arriba del 9). Tu grado máximo sube con tu nivel: grado 1 al nivel 1, 2 al 3, 3 al 5, 6 al 11, 8 al 16, 9 al 18, 10 al 19 y 11 al 20. En cada rama, además, llegas solo hasta lo que deja tu rango.",
-  sobre: "Puedes gastar Verbe que no tienes: tu barra baja de 0 hasta la mitad de tu reserva en negativo. Cada técnica que usas en negativo te pide una salvación de CON (CD 10 + su grado); si fallas, ganas 1 Agotamiento. Lo que quede en negativo cuesta el doble de recuperar.",
-  control: "Una habilidad nueva de tu hoja (con Sabiduría). Se tira para ganar un choque entre dos técnicas, romper un Velo, abrir los Cerrojos y no perderse en la Quietud. Se compra en Mejorar → Especialidades."
+  grado: "Potencia de una técnica, de 0 a 11. Es distinto de tu nivel de personaje y de tu rango en una rama. Tu grado máximo sube con tu nivel: grado 1 al nivel 1, 2 al 3, 3 al 5, 6 al 11, 8 al 16, 9 al 18, 10 al 19 y 11 al 20. En cada rama, además, llegas solo hasta lo que deja tu rango.",
+  sobre: "Puedes gastar Verbe que no tienes hasta el límite negativo que indique tu barra. Normalmente es la mitad de tu reserva; algunas dotes lo amplían. Cada técnica que usas en negativo te pide una salvación de CON (CD 10 + su grado); si fallas, ganas 1 Agotamiento. Lo que quede en negativo cuesta el doble de recuperar.",
+  control: "Una habilidad de tu hoja basada en Sabiduría. Decide un choque cuando las potencias empatan entre dos técnicas, romper un Velo, abrir los Cerrojos y no perderse en la Quietud. Se compra en Mejorar → Especialidades."
 };
-const ayuda = k => `<i class="ecos-verbe-ayuda fa-solid fa-circle-question" data-tooltip="${escH(AYUDA[k])}"></i>`;
+const ayuda = k => `<i class="ecos-verbe-ayuda fa-solid fa-circle-question" tabindex="0" role="img" aria-label="${escH(AYUDA[k])}" data-tooltip="${escH(AYUDA[k])}"></i>`;
 /** Una línea para entender la pestaña; lo largo, plegado; y el enlace a su parte de la guía escrita. */
 const intro = (titulo, texto, mas = "", seccion = "") => `<div class="ecos-verbe-intro"><p><b>${titulo}</b> ${texto}${seccion ? ` <a class="ecos-verbe-guia" data-action="guia" data-s="${seccion}" data-tooltip="Abre la guía escrita en esa parte"><i class="fa-solid fa-book-open"></i> Guía</a>` : ""}</p>${mas ? `<details><summary>Saber más</summary>${mas}</details>` : ""}</div>`;
 
@@ -2449,7 +2441,7 @@ export function htmlGuia() {
 ${h2("primeros-pasos", "Primeros pasos")}
 <ol><li>En <b>Inicio</b>, elige tu <b>naturaleza</b> y tu <b>rama principal</b> con las tarjetas. Cada elección pide confirmación antes de guardarse.</li>
 <li>En <b>Aprender</b> compras técnicas con Trazos. En <b>Mejorar</b> subes rangos, compras dotes o entrenas técnicas. Puedes guardar puntos para después.</li>
-<li>Abre <b>Mis técnicas</b> para usarlas. También están en la sección «Técnicas del Verbe» de tu hoja. La ventana de dnd5e comprueba el gasto al confirmar.</li>
+<li>Abre <b>Mis técnicas</b> para usarlas. También están en la sección «Técnicas del Verbe» de tu hoja. La ventana de uso comprueba el gasto al confirmar.</li>
 <li>Si te equivocaste al comprar, pídeselo al DM: puede deshacerlo y devolverte los Trazos.</li></ol>
 ${h2("verbe-y-descansos", "Verbe y descansos")}
 <ul><li>Tu reserva sube con tu nivel y suma el modificador de tu característica de Verbe.</li>
@@ -2487,12 +2479,12 @@ ${h2("dotes", "Dotes")}
 <p>Mejoras permanentes: más reserva, más Control, abrir Pulso, combinar elementos. La lista, con lo que pide cada una, está en el panel. Las que piden un maestro o algo de la historia van al DM.</p>
 ${h2("cultivo", "Cultivo")}
 <p>Una técnica que te gusta se entrena: Pulida (1 Trazo), Dominada (2) y Propia (3). Cada nivel da una mejora y pide días de entrenamiento. Dominada saca variantes; Propia evoluciona en una técnica nueva con tu firma. Cultivas tantas como tu competencia.</p>
-<ul>${D.mejoras.map(m => `<li>${escH(m)}</li>`).join("")}</ul>
+<ul>${D.mejoras.map(m => `<li>${escH(textoClaro(m))}</li>`).join("")}</ul>
 ${h2("crear-tecnicas", "Crear técnicas")}
 <p>Con Entrenado en una rama puedes inventar técnicas de esa rama, en Mejorar → Inventar una técnica. El menú propone un presupuesto según acción, alcance, área, estados y daño repetido. El DM aprueba; una excepción de balance queda registrada con su motivo. Cuesta grado + 1 Trazos (más combinaciones), días de entrenamiento y 25 o por grado. El oro y los días de creación o cultivo se resuelven en mesa antes de confirmar: el panel cobra los Trazos.</p>
 ${h2("control-y-sobreesfuerzo", "Control, choques y sobreesfuerzo")}
 <ul><li><b>Control del Verbe</b> es una habilidad con Sabiduría: choques de técnicas, romper Velos, abrir Cerrojos, la Quietud.</li>
-<li><b>Choque</b>: ${escH(AYUDA_CHOQUE)} El DM puede elegir la regla clásica de prioridad elemental en los ajustes.</li>
+<li><b>Choque</b>: se resuelve en este orden.<ol>${PASOS_CHOQUE.map(([t,d])=>`<li><b>${escH(t)}.</b> ${escH(d)}</li>`).join("")}</ol>El DM puede elegir la regla clásica de prioridad elemental en los ajustes.</li>
 <li><b>Sobreesfuerzo</b>: puedes gastar Verbe que no tienes, hasta la mitad de tu reserva en negativo. Cada gasto en negativo, incluidas defensas y Cerrojos, pide CON (CD 10 + grado, antes de dones) o 1 Agotamiento. Con Agotamiento 4 no se permite. Todas las fuentes recuperan la deuda a razón de 2 por punto; un punto impar se guarda para la próxima recuperación.</li></ul>
 ${h2("siete-cerrojos", "Ocho Cerrojos")}
 <p>Un estado de Cuerpo. Se abre con una acción adicional y una prueba de Control (CD 10 + 2 × el cerrojo que abres) y dura 1 minuto. Lo que dan se acumula; los PG por turno y el Agotamiento al cerrar son los del más alto.</p>
@@ -2846,10 +2838,10 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const uso = previsualizarUso(a, meta);
     const r = compra ? requisitos(a, t) : null;
     const defensa = !compra && !!D.defensas?.[t.id];
-    return tarjetaHTML({ id: t.id, nombre: item?.name ?? t.n, texto: textoDe(t), grado: t.g, rama: nombreRama(t.rama),
+    return tarjetaHTML({ id: t.id, nombre: item?.name ?? t.n, texto: textoDe(t), resolucion:resolucionTexto(t), grado: t.g, rama: nombreRama(t.rama),
       naturaleza: meta.infusion || t.nat ? nombreNat(meta.infusion || t.nat) : null,
       tiempo: TIEMPO_L[t.t] ?? t.t ?? "Ver ficha", alcance: t.alc ? alcanceL(t.alc) : "Ver ficha", area: t.area,
-      referencia:t.origen?.nombre,
+      referencia:t.divina&&!dm()?null:t.origen?.nombre,
       accionesExtra:!compra && Number(meta.g)<=capacidadReplicas(a) && efectoV(a,"replicas") && Object.values(t.item.system.activities).some(x=>["attack","save","damage","heal"].includes(x.type)) ? `<button type="button" data-action="usarReplica" data-id="${escH(t.id)}" ${Number(e.reservaReplicas)<uso.costo||e.accionReplicaUsada?"disabled":""}>Usar desde réplica</button>`:"",
       costo: uso.costo, trazos: compra ? t.trazos : null,
       accion: compra ? "aprender" : defensa ? "ficha" : "usar", boton: compra ? `${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Aprender"} · ${t.trazos} ${t.trazos === 1 ? "Trazo" : "Trazos"}` : defensa ? "Cómo usar esta defensa" : "Usar técnica",
@@ -2866,8 +2858,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const paso = pasoInicial({ naturalezas: [...natsDe(a)], principal: e.principal, tecnicas });
     const titulos = ["", "¿Qué elemento responde a ti?", "¿Cómo quieres usar tu poder?", "Aprende tu primera técnica", "Ya puedes entrar en acción"];
     let contenido;
-    if (paso === 1) contenido = `<p>Elige un elemento por su estilo. Funciona con cualquier especialidad. Verás una confirmación antes de guardarlo.</p><div class="ev-elecciones">${Object.entries(NATS).map(([n, nombre]) => `<button type="button" class="ev-eleccion ${n}" data-action="elegir" data-campo="nat" data-valor="${n}"><span class="ev-elemento" aria-hidden="true">${({ fuego: "✦", agua: "≈", viento: "≋", tierra: "◆", rayo: "ϟ" })[n]}</span><strong>${nombre}</strong><small>${escH(ESTADOS[ESTADO_NAT[n][0]].texto)}</small><span>Elegir ${nombre} →</span></button>`).join("")}</div>`;
-    else if (paso === 2) contenido = `<p>Tu especialidad se llama <b>rama principal</b>. Empiezas Entrenado gratis; puedes aprender otras ramas después.</p><div class="ev-elecciones ramas">${ramasLibres().map(([id, nombre]) => {
+    if (paso === 1) contenido = `<p>Elige el primer elemento que manejará tu personaje. Aquí «naturaleza» significa elemento. Funciona con cualquier especialidad y no te enseña técnicas por sí solo. Verás una confirmación antes de guardarlo.</p><div class="ev-elecciones">${Object.entries(NATS).map(([n, nombre]) => `<button type="button" class="ev-eleccion ${n}" data-action="elegir" data-campo="nat" data-valor="${n}"><span class="ev-elemento" aria-hidden="true">${({ fuego: "✦", agua: "≈", viento: "≋", tierra: "◆", rayo: "ϟ" })[n]}</span><strong>${nombre}</strong><small>${escH(ESTADOS[ESTADO_NAT[n][0]].texto)}</small><span>Elegir ${nombre} →</span></button>`).join("")}</div>`;
+    else if (paso === 2) contenido = `<p>Tu especialidad se llama <b>rama principal</b>. Empiezas con el rango Entrenado sin gastar Trazos. Este rango amplía qué técnicas puedes aprender; las técnicas se compran por separado. Puedes aprender otras ramas después.</p><div class="ev-elecciones ramas">${ramasLibres().map(([id, nombre]) => {
       const [icon, rol, desc] = ROLES_RAMA[id] ?? ["sparkles", nombre, "Explora sus técnicas."];
       return `<button type="button" class="ev-eleccion" data-action="elegir" data-campo="principal" data-valor="${id}"><i class="fa-solid fa-${icon}" aria-hidden="true"></i><strong>${nombre}</strong><b>${rol}</b><small>${desc}</small><span>Elegir ${nombre} →</span></button>`;
     }).join("")}</div>`;
@@ -2879,7 +2871,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         ${candidatos.length ? `<div class="ev-tarjetas">${candidatos.map(t => this.#tarjeta(t, { aprender: true })).join("")}</div>` : `<p class="ev-vacio">Ahora no hay una opción disponible con tus Trazos y requisitos. Puedes revisar el catálogo y ver qué te falta.</p>`}
         <p><button type="button" data-action="pestana" data-p="tienda">Explorar todas las técnicas</button> <small>Puedes guardar Trazos para más adelante.</small></p>`;
     } else contenido = `<p>Conoces <b>${tecnicas} ${tecnicas === 1 ? "técnica" : "técnicas"}</b>. Abre tu repertorio, elige qué hacer y usa el botón de la técnica.</p><div class="ev-acciones"><button type="button" class="ev-principal" data-action="pestana" data-p="jugar"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Usar mis técnicas</button><button type="button" data-action="pestana" data-p="tienda">Aprender algo nuevo</button></div>
-      <div class="ev-mini-pasos"><span><b>1</b> Marca el objetivo, si hace falta</span><span><b>2</b> Pulsa «Usar técnica»</span><span><b>3</b> Resuelve la ventana de dnd5e</span></div><p class="ev-nota">El gasto se comprueba al confirmar el uso. La posición, la visibilidad y los efectos narrativos se resuelven con el DM.</p>`;
+      <div class="ev-mini-pasos"><span><b>1</b> Marca el objetivo, si hace falta</span><span><b>2</b> Pulsa «Usar técnica»</span><span><b>3</b> Confirma el uso y resuelve la tirada</span></div><p class="ev-nota">El gasto se comprueba al confirmar el uso. La posición, la visibilidad y los efectos narrativos se resuelven con el DM.</p>`;
     return `${avisosJugadorHTML(a)}${progresoHTML(paso)}<section class="ev-bienvenida"><span class="ev-kicker">${paso < 4 ? `TU SIGUIENTE PASO · ${paso} DE 3` : "TU REPERTORIO ESTÁ PREPARADO"}</span><h2>${titulos[paso]}</h2>${contenido}</section>`;
   }
 
@@ -2889,33 +2881,33 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const lista = conocidas.filter(({ item, t }) => !f.texto || `${item.name} ${(t.alias ?? []).join(" ")} ${textoDe(t)}`.toLowerCase().includes(f.texto.toLowerCase()))
       .filter(({ item }) => !f.solo || previsualizarUso(a, item.getFlag(MOD, F)).ok);
     const cupos=cuotasPoder(nivelDe(a),dotesActivas(a)),gastados=estado(a).cuotasPoder??{};
-    return `<div class="ev-instruccion"><span><b>Poderes entre Descansos Largos:</b> mayores (6–8): ${gastados.mayores||0}/${cupos.mayores}; culminaciones (9–11): ${gastados.culminaciones||0}/${cupos.culminaciones}; grado 11: ${gastados.trascendentes||0}/${cupos.trascendentes}. Elevar una técnica también consume su uso compartido.</span></div>${efectoV(a,"replicas")?`<div class="ev-instruccion"><span><b>Reserva repartida en réplicas: ${Number(estado(a).reservaReplicas)||0} Verbe</b>Una acción ofensiva conjunta por turno. «Usar desde réplica» gasta ese saldo y solo admite grado 0–${capacidadReplicas(a)}. Al disipar, se pierde el saldo restante.</span><button type="button" data-action="cerrarReplicas">Disipar réplicas</button></div>`:""}${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana habitual de dnd5e para confirmar el uso.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
+    return `${cupos.mayores?`<details class="ev-limites-poder"><summary>Usos altos que te quedan hasta el próximo Descanso Largo</summary><ul><li>Grados 6–8: <b>${Math.max(0,cupos.mayores-(gastados.mayores||0))} de ${cupos.mayores}</b> usos compartidos.</li><li>Grados 9–11: <b>${Math.max(0,cupos.culminaciones-(gastados.culminaciones||0))} de ${cupos.culminaciones}</b> usos compartidos.</li>${cupos.trascendentes?`<li>Dentro de los anteriores, grado 11: <b>${Math.max(0,cupos.trascendentes-(gastados.trascendentes||0))} de ${cupos.trascendentes}</b>.</li>`:""}</ul><p>También cuenta el grado elegido al elevar una técnica. Cada técnica alta conserva su propio uso por Largo. Cambiar de técnica no devuelve usos compartidos.</p></details>`:""}${efectoV(a,"replicas")?`<div class="ev-instruccion"><span><b>Reserva repartida en réplicas: ${Number(estado(a).reservaReplicas)||0} Verbe</b>Una acción ofensiva conjunta por turno. «Usar desde réplica» gasta ese saldo y solo admite grado 0–${capacidadReplicas(a)}. Al disipar, se pierde el saldo restante.</span><button type="button" data-action="cerrarReplicas">Disipar réplicas</button></div>`:""}${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana de uso. Comprueba el grado y el gasto antes de confirmar.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
       <div class="ev-instruccion"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span><b>Si afecta a otro, marca su token antes de usarla.</b> El alcance y las condiciones de cada técnica siguen contando.</span></div>
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar en mis técnicas</span><input type="search" data-filtro-uso="texto" placeholder="Nombre o efecto…" value="${escH(f.texto)}"></label><label><input type="checkbox" data-filtro-uso="solo" ${f.solo ? "checked" : ""}> Ocultar las bloqueadas por recursos o estado</label></div>
       ${lista.length ? `<div class="ev-tarjetas">${lista.map(({ t, item }) => this.#tarjeta(t, { item })).join("")}</div>` : `<div class="ev-vacio"><h3>${conocidas.length ? "Ninguna coincide con ese filtro" : "Tu primera técnica te espera"}</h3><p>${conocidas.length ? "Quita el filtro para ver los bloqueos y sus motivos." : "Aprende una técnica con Trazos. Después aparecerá aquí lista para usarla."}</p><button type="button" data-action="pestana" data-p="tienda">Ir a Aprender</button></div>`}`;
   }
 
   #guia() {
-    const a = this.actor, e = estado(a), v = Number(e.valor) || 0;
-    const max = maxVerbe(a), santuario = cambiosRecuperacion(a, recuperacionLargaVerbe(a));
-    const intemperie = recuperacionBreve(a, Math.floor(max / 4));
-    const preguntas = [
-      ["¿Cómo chocan dos técnicas?", AYUDA_CHOQUE],
-      ["¿Qué hago para usar una técnica?", "Abre Mis técnicas. Si afecta a otro, marca su token. Pulsa Usar técnica y resuelve la ventana de dnd5e. El Verbe se comprueba y descuenta al confirmar. Respeta la acción, el alcance y las condiciones de la ficha. También puedes usarla desde Técnicas del Verbe en tu hoja."],
-      ["¿Qué diferencia hay entre Verbe y Trazos?", "Verbe es energía: la gastas al actuar y vuelve al descansar. Trazos son puntos para aprender técnicas y comprar mejoras: pagas una vez y lo aprendido permanece. No se cambian automáticamente entre sí. Puedes guardar Trazos."],
-      ["¿Qué significa grado, rango o afinidad?", "Grado es la potencia de una técnica. Rango es tu formación en una rama y limita qué técnicas aprendes o elevas. Afinidad es lo bien que manejas tu elemento. En Mejorar verás qué te aporta la siguiente compra y sus requisitos."],
-      ["¿Por qué no puedo aprender o usar algo?", "Cada opción muestra el motivo: Trazos insuficientes, nivel, rango, naturaleza, energía, reacción ocupada o un estado. Aprender y usar tienen requisitos distintos. Si pide maestro o un permiso de la historia, el botón envía la solicitud al DM; no concede el poder al instante."],
-      ["¿Qué pasa si no me queda energía?", `Puedes entrar en sobreesfuerzo hasta ${limiteNegativo(a)} de Verbe. Cada gasto que queda en negativo exige Constitución o gana Agotamiento. Con Agotamiento 4 no puedes gastar en negativo. Recuperar cada punto de deuda cuesta dos; los puntos impares se guardan. Las técnicas de grado 0 necesitan al menos 1 de Verbe.`],
-      ["¿Cuánto recupero al descansar?", `Tu Descanso Largo en Santuario aporta ${recuperacionLargaVerbe(a)} puntos de recuperación. Los cortos, Aliento y las noches a la intemperie comparten un presupuesto de ${presupuestoBreveVerbe(a).limite} entre largos; ahora quedan ${presupuestoBreveVerbe(a,e.recCortos).restante}. Con tu reserva actual (${v}), quedarías en ${santuario.valor} o ${intemperie.valor}, respectivamente. Las dotes pueden modificar esas cantidades; el descanso real aplica tus mejoras. La deuda siempre se paga al doble. Solo el largo renueva el presupuesto breve y los poderes diarios.`],
-      ["¿Cómo funcionan mis acciones y reacciones?", "La ficha indica Acción, Acción adicional, Reacción o un tiempo más largo. Usar la técnica no te regala una acción extra. Si ya gastaste tu reacción o estás Cargado, las defensas y técnicas de reacción quedan bloqueadas hasta recuperarla."],
-      ["¿Qué pasa con las heridas?", "Recuperar PG no borra Malherido ni Herida No Tratada. Busca tratamiento y reposo. Si estás Acechado por la Muerte, no puedes tomar acciones, acciones adicionales ni reacciones: pide ayuda y sigue las indicaciones de tu estado. El Santuario mejora el descanso; fuera de él recuperas menos."],
-      ["¿Cómo mejoro sin equivocarme?", "En Mejorar puedes subir tu especialidad, comprar una dote o entrenar una técnica conocida. Mira el coste y lo que ganas antes de elegir. Inventar técnicas es opcional y requiere al DM; el oro y los días de entrenamiento se resuelven en mesa. Si compras algo por error, el DM puede deshacerlo."],
-      ["¿Qué hace automáticamente el módulo?", "Administra compras, energía, tiradas y varios estados. El DM decide objetivos válidos, posición, ilusiones, invocaciones y efectos narrativos. Las defensas automáticas requieren midi-qol y pueden necesitar ajustes de mesa en críticos o áreas. Una descripción no significa que todo su efecto ocurra solo."]
-    ];
-    return `<div class="ev-titulo-pagina"><div><span class="ev-kicker">UNA DUDA, UNA RESPUESTA</span><h2>Lo necesario para jugar</h2><p>Abre solo la pregunta que tengas ahora. Puedes aprender jugando desde el panel.</p></div></div>
-      <div class="ev-contraste-recursos"><div><i class="fa-solid fa-droplet" aria-hidden="true"></i><b>Verbe = actuar</b><span>Se gasta por uso. Se recupera descansando.</span></div><div><i class="fa-solid fa-pen-nib" aria-hidden="true"></i><b>Trazos = aprender</b><span>Compras una mejora y la conservas.</span></div></div>
-      <div class="ev-preguntas">${preguntas.map(([q, r]) => `<details><summary>${q}</summary><p>${escH(r)}</p></details>`).join("")}</div>
-      <p class="ev-nota">Para consultar una excepción o profundizar, tienes la guía de referencia.</p><button type="button" data-action="guia" data-s="">Abrir referencia completa</button>`;
+    const a=this.actor,e=estado(a),v=Number(e.valor)||0,largo=recuperacionLargaVerbe(a),limite=presupuestoBreveVerbe(a),breve=presupuestoBreveVerbe(a,e.recCortos);
+    const santuario=cambiosRecuperacion(a,largo),fracNoche=efectosDotes(a).reduce((t,ef)=>Math.max(t,Number(ef.rec?.intemperie)||0),.25),noche=recuperacionBreve(a,Math.floor(maxVerbe(a)*fracNoche*(Number(herenciaDe(a)?.recMult)||1)));
+    const pregunta=(q,html)=>`<details><summary>${q}</summary>${html}</details>`;
+    return `<div class="ev-titulo-pagina"><div><span class="ev-kicker">EMPIEZA POR LO QUE QUIERES HACER</span><h2>Lo necesario para jugar</h2><p>No necesitas memorizar el catálogo. Abre una pregunta cuando aparezca esa situación.</p></div></div>
+      <section class="ev-bienvenida"><h3>Para tu primera escena</h3><ol><li>Abre <b>Inicio</b> y completa las elecciones que te falten.</li><li>Aprende una técnica con <b>Trazos</b>. Puedes guardar los puntos restantes.</li><li>En <b>Mis técnicas</b>, lee qué hace, marca el objetivo si hace falta y pulsa <b>Usar técnica</b>.</li><li>Comprueba el coste en <b>Verbe</b>, confirma el uso y resuelve la tirada o el efecto con el DM.</li></ol><div class="ev-acciones"><button type="button" data-action="pestana" data-p="resumen">Ir a Inicio</button><button type="button" data-action="pestana" data-p="jugar">Ir a Mis técnicas</button><button type="button" data-action="pestana" data-p="tienda">Aprender una técnica</button></div></section>
+      <div class="ev-contraste-recursos"><div><b>Verbe = energía para actuar</b><span>Se gasta al usar una técnica. Descansar puede recuperarlo.</span></div><div><b>Trazos = puntos para aprender</b><span>Pagas una vez por compra. Una técnica aprendida queda en tu repertorio.</span></div></div>
+      <div class="ev-preguntas">
+      ${pregunta('¿Qué diferencia hay entre nivel, grado y rango?',`<p><b>Nivel:</b> el de tu personaje. <b>Grado:</b> la potencia de una técnica. <b>Rango:</b> tu entrenamiento en una rama, como Forma.</p><p>Ejemplo: un personaje de nivel 5 tiene un techo general de grado 3. Si en Velo solo tiene rango Novato, allí sigue limitado a grado 1. Subir su rango a Entrenado permite llegar a grado 3, pero todavía tiene que aprender la técnica que quiera.</p><p><b>Importante:</b> Maestro es un rango; Maestría es una dote de senda. Son compras distintas. Para técnicas de grado 6 o más también cuenta la senda, además de nivel y rango.</p>`)}
+      ${pregunta('¿Cómo sé si debo tirar un ataque o una salvación?',`<p><b>Ataque:</b> tú tiras y comparas el resultado con la Clase de Armadura del objetivo. <b>Salvación:</b> tira el objetivo y compara con la dificultad de tu técnica. La ficha indica qué ocurre si tiene éxito.</p><p><b>Curación:</b> tiras los dados indicados y aplicas las reglas de heridas. <b>Utilidad:</b> sigues las instrucciones del efecto; abrir su tarjeta no garantiza por sí solo que todo se aplique automáticamente.</p>`)}
+      ${pregunta('¿Por qué está bloqueado un botón?',`<p>Lee el motivo junto a la opción. El aviso muestra <b>el primer requisito pendiente</b>; al resolverlo puede aparecer otro.</p><ul><li><b>Para aprender:</b> revisa nivel, rango, Trazos, elemento y requisitos de historia.</li><li><b>Para usar:</b> además necesitas la técnica aprendida, Verbe, el tiempo de acción correspondiente y los usos que queden.</li><li><b>Pedir al DM:</b> envía una solicitud; no concede el poder al instante. Un hito o ritual se concede cuando ocurre en la historia.</li></ul><p>La ficha separa el estado del aprendizaje y el estado del uso para ayudarte a saber qué te falta.</p>`)}
+      ${pregunta('¿Cómo funcionan mis acciones y reacciones?',`<p><b>Acción</b> y <b>acción adicional</b> son tiempos distintos de tu turno. Una <b>reacción</b> se usa cuando ocurre su disparador. La ficha indica cuál necesita; el botón no te regala acciones.</p><p>Si ya gastaste la reacción o estás Cargado, las defensas de reacción quedan bloqueadas hasta recuperarla. <b>El choque es una excepción:</b> no gasta reacción ni tu acción normal, aunque sí paga energía y usos limitados.</p><p>En combate el módulo limita a dos técnicas de acción o acción adicional por turno y a una de grado 6 o más. Estos topes no conceden acciones que tu personaje no tenga.</p>`)}
+      ${pregunta('¿Cómo chocan dos técnicas?',`<ol class="ev-pasos-lectura">${PASOS_CHOQUE.map(([t,d])=>`<li><b>${escH(t)}.</b> ${escH(d)}</li>`).join('')}</ol><details><summary>Qué resuelve el módulo</summary><p>Con midi-qol se retiran los objetivos protegidos antes del daño. En el flujo sin midi se pausa la continuación y se indica qué objetivos siguen afectados; el daño o los movimientos manuales se resuelven siguiendo esa tarjeta con el DM.</p></details>`)}
+      ${pregunta('¿Qué ocurre si no me alcanza el Verbe?',`<p>Tu saldo actual es <b>${v}</b>. Tu límite de sobreesfuerzo ahora es <b>${limiteNegativo(a)}</b>. Si una técnica te deja por debajo de cero, entras en deuda y haces la salvación de Constitución que indique el uso. Fallarla añade Agotamiento.</p><p>Con Agotamiento 4 no puedes gastar en negativo. Recuperar un punto de deuda cuesta dos puntos de recuperación; el sobrante impar se guarda. Las técnicas de grado 0 necesitan al menos 1 de Verbe aunque su coste sea cero.</p><p>Ejemplo: pasar de −2 a 0 requiere 4 puntos de recuperación.</p>`)}
+      ${pregunta('¿Cuánto recupero al descansar?',`<dl class="ev-lectura-datos"><div><dt>Largo en Santuario</dt><dd>Ahora ofrece hasta ${largo} puntos de recuperación. Con tu saldo actual quedarías en ${santuario.valor} de Verbe.</dd></div><div><dt>Noche a la intemperie</dt><dd>Usa el presupuesto breve. Con tu saldo y los límites actuales quedarías en ${noche.valor} de Verbe.</dd></div><div><dt>Presupuesto breve compartido</dt><dd>Te quedan ${breve.restante} de ${limite.limite} puntos entre Descansos Largos. Lo comparten noches, Respiro, Aliento y recuperaciones que lo indiquen.</dd></div></dl><p>Las cifras anteriores ya tienen en cuenta tu personaje. Los puntos de recuperación pagan la deuda al doble: no siempre se convierten uno a uno en saldo.</p><p>Solo el Largo renueva este presupuesto y los poderes diarios. <b>Excepción concreta:</b> Sustitución refleja vuelve tras un Corto; eso no devuelve las técnicas altas ni todos los usos del personaje. Otras excepciones deben estar expresamente indicadas en su ficha.</p>`)}
+      ${pregunta('¿Qué mejora me conviene buscar?',`<ul><li><b>Quiero otra herramienta:</b> busca una técnica en Aprender.</li><li><b>Quiero técnicas de mayor grado:</b> revisa nivel, rango y, desde grado 6, las dotes de senda.</li><li><b>Quiero mejorar una que ya conozco:</b> abre Mejorar → Entrenar técnicas. Ese entrenamiento también se llama cultivo.</li><li><b>Quiero un beneficio permanente:</b> revisa Mejorar → Dotes.</li><li><b>Quiero inventar algo:</b> Crear una técnica es opcional y requiere la aprobación del DM.</li></ul><p>Mira qué ganarás y cuántos Trazos quedarían. Puedes ahorrar puntos; no tienes que usar todas las opciones. Si compras algo por error, el DM puede deshacer la compra.</p>`)}
+      ${pregunta('¿Qué son las sendas y las ascensiones?',`<p>Las sendas son cadenas de dotes de una especialidad. Se compran por orden: <b>Disciplina</b> desde nivel 3, <b>Especialista</b> desde 7, <b>Maestría</b> desde 11 y <b>Leyenda</b> desde 18. Los números son niveles de personaje, no precios ni rangos.</p><p>Grado 10 exige Ascensión mítica y grado 11 Ascensión trascendente. También requieren sus hitos de historia del DM. Alcanzar el nivel no entrega esas dotes ni las técnicas gratuitamente.</p>`)}
+      ${pregunta('¿Qué hago con una reliquia?',`<ol><li>El DM entrega y autoriza una copia de la reliquia.</li><li>Revisa su nivel mínimo y equípala. Las reliquias de nivel mínimo 9 o más también exigen sintonía.</li><li>Ábrela en el inventario y usa su actividad. Normalmente gasta un cargo, no Verbe.</li><li>Si es un ritual, el DM debe preparar un permiso para esa activación.</li></ol><p>Las copias de una familia comparten su límite; las mayores también comparten un único uso por Largo. Un consumible no vuelve por descansar. La clasificación de Made in Abyss no es un grado de técnica del Verbe.</p><p><b>Objetos que habilitan técnicas:</b> algunos poderes piden una reliquia concreta como requisito. Recibir ese objeto no enseña sus técnicas: se aprenden con Trazos y se usan con Verbe. Revisa la ficha para distinguirlos de los objetos con actividad propia del compendio.</p>`)}
+      ${pregunta('¿Por qué sigo herido después de recuperar vida?',`<p>Recuperar puntos de vida no borra automáticamente Malherido ni Herida No Tratada. Necesitas el tratamiento y el reposo que indiquen sus reglas.</p><p>Si estás Acechado por la Muerte, no puedes tomar acciones, acciones adicionales ni reacciones. Pide ayuda y sigue las indicaciones del estado. El Santuario mejora el descanso; una noche fuera no equivale a un Largo en Santuario.</p>`)}
+      ${pregunta('¿Qué significan las palabras y abreviaturas de la hoja?',glosarioHTML())}
+      </div><p class="ev-nota">La referencia completa queda disponible para excepciones o consultas del DM.</p><button type="button" data-action="guia" data-s="">Abrir referencia completa</button>`;
   }
 
   #resumen() {
@@ -2951,7 +2943,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       <button type="button" data-action="moneda" data-uso="trazo" ${monedasNivel >= 2 ? "disabled" : ""}>Gastar 1 moneda → +1 Trazo</button><small>${monedasNivel} de 2 conversiones a Trazo usadas en este nivel.</small></div></section>` : "";
     const ctl = Number(a.system?.skills?.cvb?.value) || 0;
     return `${pasos}${el.join("")}
-      <div class="ev-estadisticas"><div><small>CD de tus técnicas</small><b>${cd}</b><span>El rival debe igualar o superar esta dificultad.</span></div><div><small>Ataque con Verbe</small><b>${competencia(a) + modDe(a, e.car) >= 0 ? "+" : ""}${competencia(a) + modDe(a, e.car)}</b><span>La técnica puede usar otra característica.</span></div><div><small>Grado máximo por nivel</small><b>${gradoMax(a)}</b><span>Cada rama también tiene su propio límite.</span></div></div>
+      <div class="ev-estadisticas"><div><small>Dificultad base (CD)</small><b>${cd}</b><span>Para técnicas con tu característica de Verbe; la actividad aplica sus mejoras.</span></div><div><small>Ataque base con Verbe</small><b>${competencia(a) + modDe(a, e.car) >= 0 ? "+" : ""}${competencia(a) + modDe(a, e.car)}</b><span>La técnica puede usar otra característica.</span></div><div><small>Grado máximo por nivel</small><b>${gradoMax(a)}</b><span>Cada rama también tiene su propio límite.</span></div></div>
       ${mon}${resumenDivino(a)}<details class="ev-ficha-personal"><summary>Mi personaje: afinidades, linaje y otros detalles</summary>
       <table class="ecos-verbe-datos">
         <tr><th>Característica ${ayuda("car")}</th><td>${CARS[e.car]} · CD de tus técnicas <b>${cd}</b> · ataque <b>+${competencia(a) + modDe(a, e.car)}</b></td></tr>
@@ -3005,14 +2997,14 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         pacto: "Se abre con un pacto que se gana en la historia.", sangre: "Se abre con una herencia de sangre. No tienes manera de saber si la tienes; si es así, la historia lo dirá." }[r.id] ?? "La abre el DM.";
       const extra = (c !== null && !principal && ordenRama(a, r.id) >= 2) ? " (incluye 1 de más por ser tu tercera rama o más)" : "";
       const ahora = abierta
-        ? `Rango <b>${nombreRango(rg)}</b> · tu límite ahora es <b>grado ${Math.min(gradoMax(a), rangoGrado(rg))}</b>${rg >= 2 ? ` · +${rg - 1} dado${rg > 2 ? "s" : ""} al dañar o curar` : ""}.`
+        ? `Rango <b>${nombreRango(rg)}</b> · por nivel y rango llegas hasta <b>grado ${Math.min(gradoMax(a), rangoGrado(rg))}</b>${rg >= 2 ? ` · +${rg - 1} dado${rg > 2 ? "s" : ""} al dañar o curar` : ""}.`
         : "<b>Cerrada</b>.";
       const ayudaSig = sig ? `${sig.nombre}: aprendes hasta grado ${sig.grado}${rg + 1 >= 2 ? `, sus técnicas que dañan o curan tiran ${rg} dado${rg > 1 ? "s" : ""} más` : ""}. Pide nivel ${sig.nivel}. Cuesta ${c} Trazo${c === 1 ? "" : "s"}${extra}.` : "";
       const boton = (sig && abierta) ? `<button type="button" data-action="rango" data-rama="${r.id}" ${puede ? "" : "disabled"} data-tooltip="${escH(ayudaSig)}">Subir a ${sig.nombre} · ${c} Trazo${c === 1 ? "" : "s"}</button>${faltaNivel ? ` <span class="ecos-nota">Necesitas nivel ${sig.nivel}.</span>` : faltanTrazos ? ` <span class="ecos-nota">Te faltan ${faltanTrazos} Trazos.</span>` : ""}`
         : (abierta ? `<span class="ecos-nota">Es el rango más alto.</span>` : "");
       return `<section class="ecos-verbe-rama ${abierta ? "" : "cerrada"}">
         <header><b>${r.nombre}</b>${principal ? " <span class='ecos-verbe-pill'>principal</span>" : ""}${e.segunda === r.id ? " <span class='ecos-verbe-pill'>segunda</span>" : ""}
-          <span>${ahora}</span>${boton}</header>
+          <span>${ahora}</span>${boton}</header><p class="ecos-nota">${abierta?"El rango abre un límite de aprendizaje; no enseña automáticamente las técnicas. Desde grado 6 también necesitas las dotes de senda indicadas en cada ficha.":""}</p>
         <p class="ecos-nota">${abierta || r.id !== "sangre" ? escH(leadDe(r)) : ""} ${abierta ? "" : `<b>${cerradaPor}</b>`}</p>${dones ? `<details class="ev-dones"><summary>Qué dones gano en esta rama</summary><ul class="ecos-verbe-dones">${dones}</ul></details>` : ""}</section>`;
     }).join("");
     const af = [...natsDe(a)].map(n => {
@@ -3076,7 +3068,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     }).join("");
     const natsF = [...Object.entries(NATS).filter(([n]) => natsDe(a).has(n) || natsDe(a).size < 2), ...Object.entries(D.combos).filter(([n]) => combosDe(a).has(n)).map(([k, v]) => [k, v.nombre])];
     const ramasF = D.ramas.filter(r => r.id !== "sangre" || ve).map(r => [r.id, r.nombre]);
-    return `${intro("Aquí aprendes técnicas.", "Haz clic en una para ver su ficha completa. Se aprende una vez, pagando Trazos; después, cada vez que la usas desde tu hoja gasta Verbe.",
+    return `${intro("Aquí aprendes técnicas.", "Haz clic en una para ver su ficha completa. El botón «Aprender» paga Trazos y la añade a tu repertorio; no la activa. Después la usas desde «Mis técnicas», pagando el Verbe indicado.",
       `<ul class="ecos-verbe-lista"><li><b>G</b> es el grado: qué tan fuerte es. Puedes aprender hasta tu grado máximo (${gradoMax(a)}) y, en cada rama, hasta lo que deja tu rango en ella (Mejorar → Especialidades).</li>
         <li><b>Verbe</b> es lo que gasta cada uso; el botón dice cuántos <b>Trazos</b> cuesta aprenderla.</li>
         <li><b>Probar</b>: es de una naturaleza que no tienes. Si tu Verbe responde, la aprendes; si no, no pierdes nada.</li>
@@ -3097,12 +3089,12 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const btn = sabe ? '<button type="button" data-action="pestana" data-p="jugar">Aprendida · ir a Mis técnicas</button>'
       : r.ok && r.probar ? `<button type="button" data-action="probar" data-id="${t.id}" data-tooltip="Si tu Verbe responde, la descubres y aprendes. Si no, no pierdes Trazos">Probar · ${t.trazos} ${t.trazos === 1 ? "Trazo" : "Trazos"} si responde</button>`
         : r.ok ? `<button type="button" data-action="aprender" data-id="${t.id}">${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Aprender"} · ${t.trazos} Trazo${t.trazos === 1 ? "" : "s"}</button>`
-          : `<span class="ecos-verbe-no" data-tooltip="${escH(r.motivo)}">${escH(r.motivo)}</span>`;
+          : `<span class="ecos-verbe-no" data-tooltip="${escH(r.motivo)}">${escH(textoClaro(r.motivo))}</span>`;
     const tiempo = TIEMPO_L[t.t] ?? t.t ?? "";
     const meta = itemsDe(this.actor, t.id)[0]?.getFlag(MOD, F) ?? { ...t.item.flags[MOD][F], infusion: estado(this.actor)?.infusiones?.[t.id] ?? null };
     const costo = previsualizarUso(this.actor, meta).costo;
     return `<details class="ecos-verbe-tec ${sabe ? "sabe" : r.ok ? "puede" : "no"}" data-id="${t.id}" data-tipo="tec"><summary>
-      <span class="gr">Grado ${t.g}</span><span class="nom"><b>${escH(t.n)}</b><small>${escH((t.alias??[]).slice(0,2).join(" · "))}</small><small>${escH([tiempo, t.alc ? alcanceL(t.alc) : null, t.area].filter(Boolean).join(" · "))}</small><small class="ev-efecto-breve">${escH(textoDe(t))}</small></span>
+      <span class="gr">Grado ${t.g}</span><span class="nom"><b>${escH(t.n)}</b><small>${escH((t.alias??[]).slice(0,2).join(" · "))}</small><small>${escH([tiempo, t.alc ? alcanceL(t.alc) : null, t.area].filter(Boolean).join(" · "))}</small><small class="ev-efecto-breve">${escH(avanceTexto(textoDe(t)))}</small><small>Abre la ficha para leer todas sus condiciones.</small></span>
       <span class="vb"><b>${costo} Verbe</b><small>por uso base</small></span><span class="acc">${btn}${!sabe && r.ok && !r.probar ? `<small>Te quedarían ${trazos(this.actor).libres - t.trazos} Trazos</small>` : ""}</span></summary><div class="ecos-verbe-ficha-cont"></div></details>`;
   }
 
@@ -3113,34 +3105,38 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const r = requisitos(a, t);
     const it = t.item;
     const act = Object.values(it?.system?.activities ?? {})[0];
-    const nivel = nivelParaGrado(t.g);
+    const nivel = Math.max(nivelParaGrado(t.g),Number(t.nivelMin)||1);
     const rangoN = D.rangos.findIndex(x => x.grado >= t.g);
-    const durTxt = t.dur ? (t.dur === "inst." ? "instantánea" : t.dur.startsWith("C ") ? `Concentración, ${t.dur.slice(2)}` : t.dur) : (it?.system?.duration?.units ?? "—");
-    const tirada = t.tir === "ataque" ? `Ataque${t.veces > 1 ? ` (${t.veces} ataques)` : ""}` : t.tir ? `Salvación de ${t.tir}${t.dmg ? (t.mitad ? ", mitad si la supera" : ", nada si la supera") : ""}` : "Ninguna";
+    const durTxt = duracionTexto(t);
+    const tirada = t.tir === "ataque" ? `Ataque${t.veces > 1 ? ` (${t.veces} ataques)` : ""}` : t.tir ? `Salvación de ${textoClaro(t.tir)}${t.dmg ? (t.mitad ? ", mitad si la supera" : ", nada si la supera") : ""}` : "Ninguna";
     const extra = it ? Math.floor(dadosExtra(a, it.flags?.[MOD]?.[F] ?? t, null)/(Number(it.flags?.[MOD]?.[F]?.divisorDados)||1)) : 0;
     const dano = t.dmg ? `${t.veces > 1 ? `${t.veces} × ` : ""}${escH(t.dmg)}${extra ? ` <b>(+${extra} dado${extra > 1 ? "s" : ""} tuyo${extra > 1 ? "s" : ""})</b>` : ""}` : "—";
     const deja = (it?.effects ?? []).map(ef => (ESTADOS[ef.statuses?.[0]] ? `<span data-tooltip="${escH(ESTADOS[ef.statuses[0]].texto)}">${escH(ef.name)}</span>` : escH(ef.name))).join(", ") || "—";
     const sube = t.sube === "truco" ? "más dados en los niveles 5, 11 y 17" : t.sube ? `${escH(t.sube)} por cada grado de más` : (t.g > 0 ? "—" : "—");
     const meta = itemsDe(a, id)[0]?.getFlag(MOD, F) ?? { ...it.flags[MOD][F], infusion: estado(a)?.infusiones?.[id] ?? null };
     const verbes = t.g > 0 ? Array.from({ length: Math.max(0, gradoUsable(a, meta) - t.g) + 1 }, (_, i) => `grado ${t.g + i}: ${costoUso(a, meta, t.g + i, { infusion: meta.infusion })} Verbe`).join(" · ") : `${costoUso(a, meta, 0, { infusion: meta.infusion })} Verbe (pide tener al menos 1)`;
-    const ac=meta.acceso??{}, requeridos=[ac.tradicion?`Tradición: ${D.tradicionesShinobi?.find(x=>x.id===ac.tradicion)?.nombre??ac.tradicion}`:null,ac.herencia?`Herencia: ${ac.herencia}`:null,ac.ojo?`${D.miradas.find(x=>x.id===ac.ojo.id)?.nombre??ac.ojo.id}, etapa ${ac.ojo.etapa}; abrir para usar`:null,ac.hito?`Hito: ${D.hitosShinobi?.find(x=>x.id===ac.hito)?.nombre??ac.hito}`:null,ac.bestia?`Bestia: ${D.bestiasShinobi?.find(x=>x.id===ac.bestia)?.nombre??ac.bestia}`:ac.vasija?'Una bestia vinculada':null,ac.vinculo?`Vínculo ${ac.vinculo}`:null,ac.cerrojo?`Cerrojo ${ac.cerrojo} aprendido y abierto para usar`:null,ac.artefacto?`${D.artefactosShinobi?.find(x=>x.id===ac.artefacto)?.nombre??ac.artefacto} equipado para usar`:null,ac.modo?`Modo activo: ${ac.modo.replaceAll('-',' ')}`:null,meta.ritual?'Preparativos y permiso del DM para cada uso':null,meta.familiaUso?'Comparte un uso por largo con sus variantes':null].filter(Boolean).map(escH);
+    const ac=meta.acceso??{}, requeridos=[t.previa?`Primero aprende: ${tecnicaPorId(t.previa,a)?.n??t.previa}`:null,ac.fuerzas?.length?`Fuerza de sangre: ${ac.fuerzas.map(f=>FUERZA[f]?.nombre??f).join(" o ")}`:null,...(ac.modos??[]).map(m=>`Modo activo: ${m.replaceAll("-"," ")}`),ac.tradicion?`Tradición: ${D.tradicionesShinobi?.find(x=>x.id===ac.tradicion)?.nombre??ac.tradicion}`:null,ac.herencia?`Herencia: ${ac.herencia}`:null,ac.ojo?`${D.miradas.find(x=>x.id===ac.ojo.id)?.nombre??ac.ojo.id}, etapa ${ac.ojo.etapa}; abrir para usar`:null,ac.hito?`Hito: ${D.hitosShinobi?.find(x=>x.id===ac.hito)?.nombre??ac.hito}`:null,ac.bestia?`Bestia: ${D.bestiasShinobi?.find(x=>x.id===ac.bestia)?.nombre??ac.bestia}`:ac.vasija?'Una bestia vinculada':null,ac.vinculo?`Vínculo ${ac.vinculo}`:null,ac.cerrojo?`Cerrojo ${ac.cerrojo} aprendido y abierto para usar`:null,ac.artefacto?`${D.artefactosShinobi?.find(x=>x.id===ac.artefacto)?.nombre??ac.artefacto} equipado para usar`:null,ac.modo?`Modo activo: ${ac.modo.replaceAll('-',' ')}`:null,meta.ritual?'Preparativos y permiso del DM para cada uso':null,meta.familiaUso?'Comparte un uso por largo con sus variantes':null].filter(Boolean).map(escH);
     const pide = [t.g ? `nivel ${nivel}` : null, rangoN > 0 ? `${nombreRango(rangoN)} en ${nombreRama(t.rama)}` : null, t.nat ? `naturaleza ${nombreNat(t.nat)}` : null,...requeridos,
       t.req && !(t.sec === "sangre" && !dm()) ? escH(t.req) : null].filter(Boolean).join(" · ") || "—";
     const f = (k, v) => `<th>${k}</th><td>${v}</td>`;
-    return `${D.defensas?.[id] ? '<p class="ecos-verbe-intro"><b>Es una defensa reactiva.</b> Con midi-qol se ofrece cuando un ataque va a impactarte; el aviso muestra el coste según el ataque. No la lances como una técnica normal antes del golpe. Sin esa integración, el DM resuelve la reacción, el objeto y el coste en mesa.</p>' : ''}<p class="texto">${escH(textoDe(t))}</p>${t.origen ? `<p class="ecos-nota">Referencia: <b>${escH(t.origen.nombre)}</b> · ${escH(t.origen.obra)} · estudio, p. ${t.origen.pagina}. Grado y cifras adaptados a esta campaña.</p>` : ""}${t.automatizacion ? `<p class="ecos-nota">${escH(t.automatizacion)}</p>` : ""}
+    const conocida=conoce(a,t.id),uso=previsualizarUso(a,meta);
+    return `<div class="ev-contraste-recursos"><div><b>${t.incl?"Incluida con su Mirada":`Aprender · ${t.trazos} Trazos`}</b><p>${conocida?"Ya está en tu repertorio.":r.ok?(r.probar?"Primero prueba si tu elemento responde.":r.pideDM?"Necesita aprobación del DM.":"Cumples los requisitos de aprendizaje."):escH(textoClaro(r.motivo))}</p></div><div><b>Usar · ${uso.costo} Verbe al grado base</b>${!conocida?'<p>Primero debes aprenderla. Este precio corresponde a su uso posterior.</p>':D.defensas?.[id]?'<p>Es una defensa: espera su disparador. El coste definitivo depende del ataque recibido.</p>':estadoUsoHTML(uso)}</div></div>
+      <h3>Qué hace</h3>${efectoHTML(textoDe(t))}
+      <h3>Cómo se usa</h3><p>${escH(resolucionTexto(t))}</p>${D.defensas?.[id]?'<p><b>Defensa reactiva:</b> se elige cuando se ofrece contra una amenaza válida, antes del choque. Conserva los requisitos de objeto, visibilidad y reacción de su ficha. El DM resuelve las posiciones que no se muevan automáticamente.</p>':""}
+      <details class="ev-datos-avanzados" open><summary>Qué cuesta y qué necesitas</summary>
       <table class="ecos-verbe-ficha">
         <tr>${f("Rama", `${nombreRama(t.rama)}${t.nat ? ` · ${escH(nombreNat(t.nat))}` : ""}`)}${f("Grado", `${t.g}${t.g >= 6 ? " · una vez por Descanso Largo" : ""}`)}</tr>
         <tr>${f("Tiempo", escH(TIEMPO_L[t.t] ?? t.t ?? "—"))}${f("Alcance", escH(t.alc ? alcanceL(t.alc) : "—"))}</tr>
         <tr>${f("Área", escH(t.area ?? "—"))}${f("Duración", escH(durTxt))}</tr>
         <tr>${f("Componentes", escH(COMP_L[t.comp] ?? t.comp ?? "—"))}${f("Tirada", tirada)}</tr>
-        <tr>${f("Daño o curación", dano)}${f("Deja", deja)}</tr>
-        <tr>${f("Usa", USA_TXT[(it?.flags?.[MOD]?.[F]?.usa) ?? "verbe"] ?? "")}${f("Sube", sube)}</tr>
-        <tr>${f("Verbe por uso", verbes)}${f("Para aprender", `${t.trazos} Trazo${t.trazos === 1 ? "" : "s"}${t.rara ? " (rara: +1)" : ""}`)}</tr>
-        <tr>${f("Pide", pide+(t.g>=6?` · ${t.g>=9?"Leyenda":"Maestría"} de ${nombreRama(t.rama)} para aprender${t.g>=10?" · Ascensión mítica":""}${t.g===11?" · Ascensión trascendente":""}`:""))}${f("Puedes", conoce(a, t.id) ? "ya la sabes" : r.ok ? (r.probar ? "probarla" : "sí") : escH(r.motivo))}</tr>
-      </table>${act && act.type === "save" && t.g > 0 ? `<p class="ecos-nota">CD con tu Verbe: ${8 + competencia(a) + modDe(a, habilidadTecnica(a, it.flags?.[MOD]?.[F] ?? {}))}.</p>` : ""}
+        <tr>${f("Daño o curación", dano)}${f("Efectos registrados", deja)}</tr>
+        <tr>${f("Usa", USA_TXT[(it?.flags?.[MOD]?.[F]?.usa) ?? "verbe"] ?? "")}${f("Al elegir un grado mayor", sube)}</tr>
+        <tr>${f("Verbe por uso", verbes)}${f("Para aprender", t.incl?"Incluida en su etapa de Mirada":`${t.trazos} Trazo${t.trazos === 1 ? "" : "s"}${t.rara ? " (rara: +1 ya incluido)" : ""}`)}</tr>
+        <tr>${f("Pide", pide+(t.g>=6?` · ${t.g>=9?"Leyenda":"Maestría"} de ${nombreRama(t.rama)} para aprender${t.g>=10?" · Ascensión mítica":""}${t.g===11?" · Ascensión trascendente":""}`:""))}${f("Aprendizaje", conoce(a, t.id) ? "ya la sabes" : r.ok ? (r.probar ? "probarla" : "sí") : escH(r.motivo))}</tr>
+      </table><p class="ev-nota">La cifra de daño o curación anterior es la base y muestra por separado los dados extra. La tirada de tu actividad ya incluye las mejoras calculadas: no las sumes otra vez.</p></details>${referenciaHTML(t,{dm:dm()})}${t.automatizacion?`<details><summary>Qué se aplica en la hoja y qué resuelve el DM</summary><p>${escH(textoClaro(t.automatizacion))}</p></details>`:""}${act && act.type === "save" && t.g > 0 ? `<p class="ecos-nota">La dificultad definitiva aparece en la actividad de uso e incluye las mejoras que correspondan.</p>` : ""}
       ${t.fuerte ? `<p class="ecos-verbe-fuerte"><b>Contra alguien más fuerte:</b> ${escH(D.textoFuerte ?? "")}</p>` : ""}
-      ${t.prog?.length ? `<div class="ecos-verbe-crece"><b>Crece</b><ul>${t.prog.map(x => `<li>${escH(x)}</li>`).join("")}</ul></div>` : ""}
-      ${t.mejora?.length ? `<div class="ecos-verbe-mejora"><b>Se mejora con</b><ul>${t.mejora.map(x => `<li>${escH(x)}</li>`).join("")}</ul></div>` : ""}`;
+      ${t.prog?.length ? `<div class="ecos-verbe-crece"><details><summary>Progresión y excepciones de esta técnica</summary><ul>${t.prog.map(x => `<li>${escH(textoClaro(x))}</li>`).join("")}</ul></details></div>` : ""}
+      ${t.mejora?.length ? `<div class="ecos-verbe-mejora"><details><summary>Opciones para mejorarla más adelante</summary><p>Estas son posibilidades, no beneficios que ya tengas. Debes comprar o conseguir cada mejora y respetar sus límites.</p><ul>${t.mejora.map(x => `<li>${escH(textoClaro(x))}</li>`).join("")}</ul></details></div>` : ""}`;
   }
 
   #dotes() {
@@ -3162,20 +3158,20 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       ds.sort((x, y) => x.d.trazos - y.d.trazos || x.d.nombre.localeCompare(y.d.nombre));
       const cat = cats.find(x => x.id === c);
       const k = `dote-${c}`;
-      const abierto = this.abiertos ? this.abiertos.has(k) : true;
+      const abierto = this.abiertos ? this.abiertos.has(k) : !!f.texto;
       return `<details class="ecos-verbe-grupo" data-g="${k}" ${abierto ? "open" : ""}><summary><b>${escH(cat?.nombre ?? "Otras")}</b> <span>${escH(cat?.texto ?? "")} · ${ds.length}</span></summary>
         ${ds.map(({ d, tiene, r }) => {
           const faltan = Math.max(0, d.trazos - trazos(a).libres);
           const btn = tiene ? `<span class='ecos-verbe-pill'>${d.innato ? "de nacimiento" : "la tienes"}</span>${d.poder?`<button type="button" data-action="usarDote" data-id="${escH(d.id)}" ${estado(a).usosDote?.[d.id]||!doteActiva(a,d)?"disabled":""}>${estado(a).usosDote?.[d.id]?"Usada hasta el largo":"Activar"}</button>`:""}`
             : r.ok ? `<button type="button" data-action="dote" data-id="${d.id}" ${faltan ? "disabled" : ""}>${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Comprar"} · ${d.trazos} Trazos</button><small>${faltan ? `Te faltan ${faltan} Trazos` : `Te quedarían ${trazos(a).libres - d.trazos} Trazos`}</small>`
-              : `<span class="ecos-verbe-no">${escH(r.motivo)}</span>`;
+              : `<span class="ecos-verbe-no">${escH(textoClaro(r.motivo))}</span>`;
           return `<details class="ecos-verbe-tec ${tiene ? "sabe" : r.ok ? "puede" : "no"}" data-id="${d.id}" data-tipo="dote"><summary>
-            <span class="gr" data-tooltip="Trazos">${d.trazos}</span><span class="nom"><b>${escH(d.nombre)}</b><small>${escH(dotTexto(d)).slice(0, 90)}${dotTexto(d).length > 90 ? "…" : ""}</small></span>
+            <span class="gr" data-tooltip="Coste de compra en Trazos">${d.trazos}<small>Trazos</small></span><span class="nom"><b>${escH(d.nombre)}</b><small>${escH(avanceTexto(dotTexto(d),120))}</small></span>
             <span class="acc">${btn}</span></summary><div class="ecos-verbe-ficha-cont"></div></details>`;
         }).join("")}</details>`;
     }).join("");
-    return `${intro("Mejoras permanentes del Verbe.", "Haz clic en una para verla entera. Se pagan una vez con Trazos y quedan como rasgos en tu hoja; las que piden un maestro van al DM.", "", "dotes")}
-      <div class="ev-instruccion"><span><b>Sendas:</b> Disciplina (3) → Especialista (7) → Maestría (11) → Leyenda (18). Grado 10 pide Ascensión mítica y 11 Ascensión trascendente; el DM concede sus pruebas de historia.</span></div>
+    return `${intro("Mejoras permanentes del Verbe.", "Abre una categoría según el beneficio que buscas o usa el buscador. Cada dote se paga una vez con Trazos y queda como rasgo en tu hoja; las que piden un maestro requieren al DM.", "", "dotes")}
+      <div class="ev-instruccion"><span><b>Sendas:</b> Disciplina (nivel 3) → Especialista (nivel 7) → Maestría (nivel 11) → Leyenda (nivel 18). Son dotes que se compran por orden; Maestro es un rango distinto. Grado 10 pide Ascensión mítica y 11 Ascensión trascendente; el DM concede sus pruebas de historia.</span></div>
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar una mejora</span><input type="search" data-filtro-dote="texto" placeholder="Nombre o beneficio…" value="${escH(f.texto)}"></label>
         <label><input type="checkbox" data-filtro-dote="solo" ${f.solo ? "checked" : ""}> Solo las que puedo comprar ahora</label></div>
       ${html || "<p>Nada con ese filtro.</p>"}`;
@@ -3187,8 +3183,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     if (!d) return "";
     const r = cumpleReqDote(a, d);
     const cat = (D.categoriasDote ?? []).find(x => x.id === d.cat);
-    return `<p class="texto">${escH(dotTexto(d))}</p><p class="ecos-nota">${escH(d.automatizacion??"Revisa con el DM las condiciones del beneficio.")}</p>
-      <table class="ecos-verbe-ficha"><tr><th>Precio</th><td>${d.trazos} Trazos</td><th>Pide</th><td>${escH(requisitosDoteTexto(d))}</td></tr>
+    return `<h3>Qué ganas</h3>${efectoHTML(dotTexto(d))}${d.poder?`<p><b>Uso activo:</b> ${d.poder.costo??0} Verbe. ${estado(a).usosDote?.[d.id]?"Ya lo usaste; vuelve tras un Descanso Largo.":"Actívalo desde su botón cuando cumplas las condiciones."} Comprar esta dote y activar su poder son pasos distintos.</p>`:"<p>La dote queda aprendida. Su beneficio se aplica solo en las condiciones descritas; no siempre está activo.</p>"}<p class="ecos-nota">${escH(d.automatizacion??"Revisa con el DM las condiciones del beneficio.")}</p>
+      <table class="ecos-verbe-ficha"><tr><th>Precio</th><td>${d.trazos} Trazos</td><th>Pide</th><td>${escH(textoClaro(requisitosDoteTexto(d)))}</td></tr>
         <tr><th>Tipo</th><td>${escH(cat?.nombre ?? "—")}</td><th>Puedes</th><td>${tieneDote(a, d.id) ? (d.innato ? "la tienes desde que despertaste" : "ya la tienes") : r.ok ? (r.pideDM ? "pedirla al DM" : "sí") : escH(r.motivo)}</td></tr></table>
       ${d.mejora?.length ? `<div class="ecos-verbe-mejora"><b>Se mejora con</b><ul>${d.mejora.map(x => `<li>${escH(x)}</li>`).join("")}</ul></div>` : ""}`;
   }
@@ -3211,26 +3207,26 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       const infSel = INFUNDIBLES.has(tec.sec) && conDano ? `<select name="inf-${meta.id}"><option value="">Sin infusión</option>${opciones([...nats.map(n => [n, NATS[n] ?? n]), ...[...combosDe(a)].map(c => [c, nombreNat(c)])], e.infusiones?.[meta.id] ?? "")}</select>
         <button type="button" data-action="infundir" data-id="${meta.id}" data-tooltip="Su daño pasa a ser de ese elemento y deja su estado. Cada uso cuesta 2 Verbe más (4 con una combinación). Se cambia cuando quieras">Infundir</button>` : "<small>No se infunde</small>";
       const pend = Number(cul.pendiente) > 0;
-      const acc = (cul.nivel < 3 || pend) ? `<select name="mejora-${meta.id}">${opciones(opc, "dado")}</select> <button type="button" data-action="cultivar" data-id="${meta.id}">${pend ? "Mejora gratis" : `Entrenar: ${NIVEL_CULTIVO[cul.nivel + 1]}`}</button>` : "Ya es Propia";
+      const acc = (cul.nivel < 3 || pend) ? (opc.length?`<select name="mejora-${meta.id}" aria-label="Mejora para ${escH(it.name)}">${opciones(opc, "dado")}</select> <button type="button" data-action="cultivar" data-id="${meta.id}">${pend ? "Elegir mejora ya pagada" : `Entrenar: ${NIVEL_CULTIVO[cul.nivel + 1]}`}</button>`:"No quedan mejoras compatibles con esta técnica y sus límites actuales.") : "Entrenamiento completo: Propia";
       const der = [cul.nivel >= 2 ? `<button type="button" data-action="crear" data-base="${meta.id}" data-modo="variante" data-tooltip="Una técnica hermana con otra forma: lanzada, más grande, contra dos blancos">Sacar una variante</button>` : "",
         cul.nivel >= 3 ? `<button type="button" data-action="crear" data-base="${meta.id}" data-modo="evolucion" data-tooltip="Una técnica nueva, hasta tres grados más, con tu firma">Evolucionarla</button>` : ""].join(" ").trim();
       return `<tr><td><b>${escH(it.name)}</b><br><small>Grado ${tec.g} · ${NIVEL_CULTIVO[cul.nivel]}${cul.mejoras.length ? ` · ${cul.mejoras.map(m => MEJORAS[m] ?? "infusión fija").join(", ")}` : ""}${tec.base ? " · derivada" : ""}</small></td>
         <td>${acc}${der ? `<br>${der}` : ""}</td><td>${infSel}</td></tr>`;
     }).join("");
-    return `${intro("Entrena una técnica que ya sabes para que crezca.", `Cada técnica pasa por Pulida, Dominada y Propia. El selector solo ofrece mejoras con efecto en su forma. Coste: nivel de cultivo nuevo (1, 2 o 3), +1 por dado/CD/ahorro de Verbe o control de Sustitución; +2 por rapidez, componentes o infusión fija. El coste final aparece en cada opción. Puedes cultivar tantas técnicas como tu competencia más tus dotes: ${competencia(a)+sumaEf(a,ef=>ef.cultivosExtra)} (llevas ${usadas}).`,
-      `<ul class="ecos-verbe-lista">${D.mejoras.map(m => `<li>${escH(m)}</li>`).join("")}</ul>
-      <p>Dominada saca variantes; Propia evoluciona. <b>Infundir</b> le pone tu elemento a una técnica que hace daño: +2 Verbe por uso, sin Trazos.</p>`, "cultivo")}
-      <table class="ecos-verbe-tabla"><thead><tr><th>Técnica</th><th>Cultivar</th><th>Infusión</th></tr></thead><tbody>${filas || "<tr><td colspan=\"3\">Todavía no sabes técnicas: apréndelas en Aprender.</td></tr>"}</tbody></table>
-      <p class="ecos-nota"><button type="button" data-action="rearmar">Rearmar mis técnicas</button> si algo de la hoja no se actualizó después de subir de nivel o de rango.</p>`;
+    return `${intro("Entrena una técnica que ya sabes para que crezca.", `Este entrenamiento se llama cultivo. Elige una técnica, selecciona una mejora y revisa sus Trazos antes de pulsar Entrenar. Cada opción muestra su coste completo. Has entrenado ${usadas} de las ${competencia(a)+sumaEf(a,ef=>ef.cultivosExtra)} técnicas distintas que puedes tener en cultivo.`,
+      `<p>El entrenamiento avanza por Pulida → Dominada → Propia. El menú oculta mejoras que no afectan a esa técnica o que ya alcanzaron su tope. El coste combina el paso nuevo (1, 2 o 3 Trazos) y el recargo de la mejora; el precio de la opción ya incluye ambas cosas.</p><ul class="ecos-verbe-lista">${D.mejoras.map(m => `<li>${escH(m)}</li>`).join("")}</ul>
+      <p>Desde Dominada puedes proponer una variante; desde Propia puedes proponer una evolución. Crear esas técnicas requiere aprobación del DM y su propio coste.</p><p><b>Infundir es otra elección:</b> añade tu elemento a una técnica compatible. No cuesta Trazos; añade 2 Verbe por uso, o 4 si es una combinación, antes de los descuentos que procedan. Una infusión fija comprada como mejora tiene sus propias condiciones.</p>`, "cultivo")}
+      <table class="ecos-verbe-tabla"><thead><tr><th>Técnica</th><th>Elegir mejora y entrenar</th><th>Infusión</th></tr></thead><tbody>${filas || "<tr><td colspan=\"3\">Todavía no sabes técnicas: apréndelas en Aprender.</td></tr>"}</tbody></table>
+      <p class="ecos-nota"><button type="button" data-action="rearmar">Actualizar mis fichas</button> vuelve a preparar sus datos después de subir de nivel o rango; no compra mejoras nuevas.</p>`;
   }
 
   #crear() {
     const a = this.actor;
     const ramas = D.ramas.filter(r => rangoDe(a, r.id) >= 1 && ramaAbierta(a, r.id) && r.id !== "sangre");
-    return `${intro("Inventa tus propias técnicas.", "Desde Entrenado en una rama puedes crear técnicas de esa rama. El menú te propone el daño justo para su grado y el DM la aprueba.",
+    return `${intro("Inventa tus propias técnicas.", "Desde Entrenado en una rama puedes crear técnicas de esa rama. El menú ayuda a preparar una propuesta para el DM. Él revisa el efecto, sus límites y su coste antes de aprobarla.",
       `<p>Cuesta su grado + 1 en Trazos (+1 si mezcla dos naturalezas), tantos días de trabajo como su grado y 25 de oro por grado. Llega hasta el grado que te deja tu rango en la rama menos uno; desde Maestro, hasta ese grado entero.</p>`, "crear-tecnicas")}
       <p>${ramas.length ? `Puedes crear en: ${ramas.map(r => `<b>${r.nombre}</b> (hasta grado ${gradoCrear(a, r.id)})`).join(", ")}.` : "Todavía no tienes Entrenado en ninguna rama."}</p>
-      <p><button type="button" data-action="crear" ${ramas.length ? "" : "disabled"}><i class="fa-solid fa-pen-nib"></i> Crear una técnica</button></p>
+      <p><button type="button" data-action="crear" ${ramas.length ? "" : "disabled"}><i class="fa-solid fa-pen-nib"></i> Preparar una propuesta de técnica</button></p>
       <details><summary>Presupuesto por grado</summary><table class="ecos-verbe-tabla"><tr><th>Grado</th><th>Un blanco</th><th>Área</th><th>Área hasta</th><th>Alcance</th><th>Estados</th></tr>
       ${D.presupuesto.map(p => `<tr><td>${p.grado}</td><td>${p.uno}</td><td>${escH(p.area)}</td><td>${escH(p.areaHasta)}</td><td>${p.alcance}</td><td>${escH(p.estados)}</td></tr>`).join("")}</table></details>`;
   }
@@ -3250,7 +3246,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const todas = [...D.tecnicas,...extraMundo()].filter(x => !x.retirada && !conoce(a, x.id)).map(x => [x.id, `${nombreRama(x.rama)} · grado ${x.g} · ${x.n}`]);
     const cerradas = D.ramas.filter(r => !ramaAbierta(a, r.id)).map(r => [r.id, r.nombre]);
     const sec = (titulo, html, abierto = false) => `<details class="ecos-verbe-dmsec" ${abierto ? "open" : ""}><summary>${titulo}</summary>${html}</details>`;
-    return `<p><button type="button" data-action="editorCatalogo"><i class="fa-solid fa-pen-nib"></i> Taller del DM · crear y publicar técnicas universales</button> <button type="button" data-action="panteonDM">Panteón y nota de lore (solo DM)</button> <button type="button" data-action="reliquiasDM">Compendio de reliquias</button></p>${intro("Solo tú ves esta pestaña.", "Pedidos, Trazos, deshacer compras y cambios a mano. «Ver como el jugador» (arriba) muestra el panel tal como lo ve él.")}
+    return `<p><button type="button" data-action="editorCatalogo"><i class="fa-solid fa-pen-nib"></i> Taller del DM · crear y publicar técnicas universales</button> <button type="button" data-action="panteonDM">Panteón y nota de lore (solo DM)</button> <button type="button" data-action="reliquiasDM">Compendio de reliquias</button></p>${intro("Solo tú ves esta pestaña.", "Para preparar una hoja: elige linaje y fuerza, decide si el jugador conoce ese origen y revisa el resultado con «Ver como el jugador». Ese botón oculta tus controles de administración. Las opciones de más abajo permiten conceder recursos, enseñar técnicas o deshacer compras.")}
       ${sec("Reorientar un cultivo sin volver a cobrar",`<p>Tras cambiar el balance, puedes sustituir la última mejora registrada de una técnica conservando sus Trazos y nivel de cultivo.</p><select name="reorientarTecnica">${opciones(itemsTecnica(a).filter(i=>e.cultivos?.[i.getFlag(MOD,F)?.id]?.mejoras?.length).map(i=>[i.getFlag(MOD,F).id,i.name]),"")}</select><select name="reorientarMejora">${opciones(Object.entries(MEJORAS),"")}</select><button type="button" data-action="reorientarDM">Sustituir última mejora</button>`)}
       ${D.shinobi?sec("Repertorio shinobi: tradiciones, bestias y rituales",`
         <p>Tradición: <select name="shinobiTradicion">${opciones((D.tradicionesShinobi??[]).map(t=>[t.id,`${e.tradiciones?.includes(t.id)?"✓ ":""}${t.nombre}`]),"")}</select><button type="button" data-action="shinobiDM" data-campo="tradicion" data-de="shinobiTradicion">Conceder / retirar</button></p>

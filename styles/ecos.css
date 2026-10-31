@@ -587,4 +587,32 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-editor-catalogo label:not(.ecos-check) { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
 .ecos-editor-catalogo textarea { width: 100%; background: var(--ev-papel); color: var(--ev-tinta); min-height: 130px; resize: vertical; }
 .ecos-editor-catalogo .ev-editor-preview { padding: 12px; margin: 12px 0; border: 1px solid var(--ev-linea); border-radius: 8px; }
+
+/* Lectura guiada: la instrucción principal y las condiciones se recorren por bloques. */
+.ev-lectura { line-height: 1.65; overflow-wrap: anywhere; }
+.ev-lectura h3 { margin: 1.1em 0 .4em; }
+.ev-lectura p, .ev-lectura li { max-width: 85ch; }
+.ev-lectura li + li { margin-top: .55em; }
+.ev-lectura details { margin: .8em 0; }
+.ev-lectura summary { cursor: pointer; font-weight: 600; }
+.ev-lectura-datos, .ev-glosario { margin: .8rem 0; }
+.ev-lectura-datos > div, .ev-glosario > div { display: grid; grid-template-columns: minmax(8rem, 1fr) minmax(0, 3fr); gap: .7rem; padding: .65rem 0; border-bottom: 1px solid var(--ev-linea, #8a817844); }
+.ev-lectura-datos dt, .ev-glosario dt { font-weight: 650; }
+.ev-lectura-datos dd, .ev-glosario dd { margin: 0; line-height: 1.6; }
+.ecos-verbe-panel .ev-efecto-completo { font-size: 13px; line-height: 1.6; margin-bottom: 10px; }
+.ecos-verbe-panel .ev-efecto-completo summary { font-weight: 600; cursor: pointer; }
+.ecos-verbe-panel .ev-efecto-completo p { margin: .65em 0; }
+.ecos-verbe-panel .ev-pasos-lectura { padding-left: 1.5rem; }
+.ecos-verbe-panel .ev-pasos-lectura li { margin: .85rem 0; max-width: 80ch; line-height: 1.65; }
+.ecos-verbe-panel .ev-preguntas li, .ecos-verbe-panel .ev-bienvenida li { line-height: 1.65; margin-bottom: .55em; }
+.ecos-verbe-panel .ev-limites-poder { padding: 12px; margin-bottom: 12px; border: 1px solid var(--ev-linea); border-radius: 8px; }
+.ecos-verbe-panel .ev-limites-poder summary { cursor: pointer; font-weight: 600; }
+.ecos-verbe-panel .ev-datos-avanzados > summary { padding: .6rem 0; font-weight: 600; cursor: pointer; }
+.ecos-verbe-panel .ev-contraste-recursos p { margin: .35rem 0; }
+.ecos-verbe-panel .gr small { display: block; font-size: 10px; font-weight: 400; }
+.ecos-reliquias [data-reliquia-ficha] { border-bottom: 1px solid var(--ev-linea); padding: .8rem 0; }
+.ecos-reliquias [data-reliquia-ficha] > summary { font-weight: 600; cursor: pointer; }
+@media (max-width: 600px) {
+  .ev-lectura-datos > div, .ev-glosario > div { grid-template-columns: 1fr; gap: .2rem; }
+}
 @container panel-verbe (max-width: 730px) { .ecos-editor-catalogo .ev-editor-grid { grid-template-columns: minmax(0,1fr); } }

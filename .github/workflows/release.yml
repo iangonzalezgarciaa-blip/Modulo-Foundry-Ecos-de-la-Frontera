@@ -42,6 +42,7 @@ jobs:
       - run: npm run docs:catalog
       - run: npm run balance
       - run: npm run ui:preview
+      - run: npm run audit:text
       - run: npm run audit:balance
       - run: git diff --exit-code -- data/verbe.txt docs/
       - run: npm run package

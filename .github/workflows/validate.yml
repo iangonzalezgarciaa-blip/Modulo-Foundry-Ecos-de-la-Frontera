@@ -17,6 +17,7 @@ jobs:
       - run: npm run docs:catalog
       - run: npm run balance
       - run: npm run ui:preview
+      - run: npm run audit:text
       - run: npm run audit:balance
-      - run: git diff --exit-code -- docs/COBERTURA_CATALOGO.md docs/ESCENARIOS_BALANCE.md docs/PROGRESION_2.10.md docs/PROGRESION_3.1.md docs/AUDITORIA_3.1.md docs/preview/interfaz.html
+      - run: git diff --exit-code -- docs/COBERTURA_CATALOGO.md docs/ESCENARIOS_BALANCE.md docs/PROGRESION_2.10.md docs/PROGRESION_3.1.md docs/AUDITORIA_3.1.md docs/AUDITORIA_TEXTUAL_3.2.1.md docs/preview/interfaz.html
       - run: npm run package

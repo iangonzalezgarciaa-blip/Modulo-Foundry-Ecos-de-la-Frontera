@@ -1,3 +1,5 @@
+import {avanceTexto,efectoHTML,textoClaro} from "./verbe-reading.js";
+
 /** Presentación del panel. Sin escrituras ni dependencias de Foundry. */
 export const escapar = s => String(s ?? "").replace(/[&<>"']/g, c => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -27,7 +29,7 @@ export function progresoHTML(paso) {
 }
 
 export function estadoUsoHTML({ ok, motivo, despues, costo }) {
-  if (!ok) return `<p class="ev-disponibilidad bloqueada"><i class="fa-solid fa-lock" aria-hidden="true"></i> ${escapar(motivo)}</p>`;
+  if (!ok) return `<p class="ev-disponibilidad bloqueada"><i class="fa-solid fa-lock" aria-hidden="true"></i> ${escapar(textoClaro(motivo))}</p>`;
   if (despues < 0) return `<p class="ev-disponibilidad riesgo"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Sobreesfuerzo: quedarías en ${despues}. Exige salvación de Constitución.</p>`;
   return `<p class="ev-disponibilidad"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> ${costo === 0 ? "Sin gasto de energía" : `Te quedarían ${despues} de Verbe`} al usar el grado base.</p>`;
 }
@@ -36,7 +38,7 @@ export function tarjetaHTML(t) {
   const id = escapar(t.id);
   return `<article class="ev-tecnica ${t.riesgo ? "riesgo" : ""}">
     <div class="ev-tec-top"><span class="ev-etiqueta">Grado ${t.grado}</span><span class="ev-etiqueta suave">${escapar(t.rama)}</span>${t.naturaleza ? `<span class="ev-etiqueta suave">${escapar(t.naturaleza)}</span>` : ""}</div>
-    <h3>${escapar(t.nombre)}</h3>${t.referencia ? `<small class="ev-referencia">${escapar(t.referencia)}</small>` : ""}<p class="ev-texto-tecnica">${escapar(t.texto)}</p>
+    <h3>${escapar(t.nombre)}</h3>${t.referencia ? `<small class="ev-referencia">${escapar(t.referencia)}</small>` : ""}<p class="ev-texto-tecnica">${escapar(avanceTexto(t.texto))}</p><details class="ev-efecto-completo"><summary>Leer el efecto completo y sus límites</summary>${efectoHTML(t.texto)}</details>${t.resolucion?`<p class="ev-nota"><b>Quién tira:</b> ${escapar(t.resolucion)}</p>`:""}
     <div class="ev-tec-datos"><span><i class="fa-regular fa-clock" aria-hidden="true"></i> ${escapar(t.tiempo)}</span><span><i class="fa-solid fa-crosshairs" aria-hidden="true"></i> ${escapar(t.alcance)}</span>${t.area ? `<span>${escapar(t.area)}</span>` : ""}</div>
     <div class="ev-costes"><span><b>${t.costo}</b> Verbe <small>por uso base</small></span>${t.trazos != null ? `<span><b>${t.trazos}</b> Trazos <small>para aprender</small></span>` : ""}</div>
     ${t.estado ?? ""}${t.nota ? `<p class="ev-nota">${escapar(t.nota)}</p>` : ""}
@@ -47,11 +49,11 @@ export function tarjetaHTML(t) {
 export function avisosJugadorHTML(actor) {
   const s = actor?.statuses ?? new Set();
   const avisos = [];
-  if (s.has("acechado")) avisos.push(["No puedes actuar", "Estás a 0 PG y Acechado por la Muerte. Puedes hablar y arrastrarte; pide ayuda. El módulo gestiona tus salvaciones al comenzar el turno."]);
+  if (s.has("acechado")) avisos.push(["No puedes actuar", "Estás a 0 puntos de vida y Acechado por la Muerte. Puedes hablar y arrastrarte; pide ayuda. El módulo gestiona tus salvaciones al comenzar el turno."]);
   else if (["incapacitated", "paralyzed", "stunned", "unconscious", "petrified", "dead"].some(k => s.has(k))) avisos.push(["Un estado te impide actuar", "Resuelve ese estado con el DM antes de usar técnicas."]);
   if (s.has("cargado")) avisos.push(["Sin reacción mientras estés Cargado", "Tus técnicas de reacción y tus defensas quedan bloqueadas."]);
-  if (s.has("malherido")) avisos.push(["Malherido: necesitas cuidados", "La curación tiene un tope mientras sigas Malherido. Pide tratamiento; recuperar PG no elimina por sí solo la herida."]);
-  if (s.has("heridant")) avisos.push(["Herida No Tratada", "Busca un sanador y reposo. El tratamiento diario y el descanso importan aunque tengas PG."]);
+  if (s.has("malherido")) avisos.push(["Malherido: necesitas cuidados", "La curación tiene un tope mientras sigas Malherido. Pide tratamiento; recuperar puntos de vida no elimina por sí solo la herida."]);
+  if (s.has("heridant")) avisos.push(["Herida No Tratada", "Busca un sanador y reposo. El tratamiento diario y el descanso importan aunque tengas puntos de vida."]);
   const agotamiento = Number(actor?.system?.attributes?.exhaustion) || 0;
   if (agotamiento >= 4) avisos.push([`Agotamiento ${agotamiento}`, "No puedes gastar Verbe en negativo. Todavía puedes usar una técnica si tienes energía suficiente y tu estado te permite actuar."]);
   return avisos.length ? `<aside class="ev-avisos" aria-label="Tu estado">${avisos.map(([t, d]) => `<div role="status"><b><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> ${t}</b><p>${d}</p></div>`).join("")}</aside>` : "";

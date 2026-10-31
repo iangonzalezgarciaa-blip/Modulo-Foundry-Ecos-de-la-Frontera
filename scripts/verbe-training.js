@@ -1,8 +1,8 @@
 /** Mejoras con efecto verificable en los datos de la técnica, no por su nombre. */
 export const MEJORAS = {
-  dado: "+1 dado de daño o curación", verbe: "1 Verbe menos por uso", cd: "+1 al ataque o a la CD",
-  area: "Área o alcance ×1,5", rapida: "Reducir tiempo de activación", duracion: "+50 % de duración (máximo +1 minuto)",
-  contacto: "Usar a 3 m en vez de contacto", silenciosa: "Sin componente verbal", gestos: "Sin componente gestual",
+  dado: "+1 dado de daño o curación", verbe: "1 Verbe menos por uso", cd: "+1 al ataque o a la dificultad de la salvación",
+  area: "Aumentar área o alcance (hasta un 50 %)", rapida: "Reducir tiempo de activación", duracion: "+50 % de duración (máximo +1 minuto)",
+  contacto: "Usar a 3 m en vez de contacto", silenciosa: "Usar sin pronunciar palabras", gestos: "Usar sin hacer gestos",
   "sust-distancia": "Sustitución: objeto 1,5 m más lejos", "sust-control": "Sustitución: −1 al recargo total"
 };
 const TOPES = { dado: 3, verbe: 2, cd: 2, area: 2, rapida: 1, duracion: 1, contacto: 1, silenciosa: 1, gestos: 1, "sust-distancia": 2, "sust-control": 1, infusion: 1 };
