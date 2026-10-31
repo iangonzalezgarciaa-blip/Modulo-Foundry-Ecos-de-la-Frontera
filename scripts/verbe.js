@@ -9,6 +9,7 @@
  * Ningún nombre de linaje vive en este archivo: todo lo que depende del linaje sale de los datos.
  */
 
+import { VERSION_PROGRESION, NIVEL_GRADO, limiteEscalado, accesoObtencion, permisoCuota, cuotasPoder, pisoCosto, limiteDadosExtra, requisitoDote, validarConcentraciones, permisoTurno, gradoReplicas } from "./verbe-progression.js";
 import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
@@ -184,8 +185,35 @@ export const GRADO_TOPE = 11;
 const gradoDeNivel = n => Math.min(GRADO_TOPE, Number(D?.gradoMax?.[Math.clamp(n, 1, 20)]) || Math.min(9, Math.floor((n + 1) / 2)));
 export const gradoMax = actor => gradoDeNivel(nivelDe(actor));
 /** Las técnicas concedidas a mano siguen utilizándose a su grado base; elevarlas exige dominio de rama. */
-export const gradoUsable = (actor, meta) => Math.max(Number(meta.g) || 0,
-  Math.min(gradoMax(actor), rangoGrado(rangoDe(actor, meta.rama))));
+export const gradoUsable = (actor, meta) => {
+  if(!meta.id&&!meta.sube)return topeRama(actor,meta.rama);
+  const activas=dotesActivas(actor),nivel=nivelDe(actor);
+  let max=limiteEscalado(meta,{nivel,rangoMax:rangoGrado(rangoDe(actor,meta.rama)),profundo:Number(activas.includes('escalado-profundo'))+Number(efectosDotes(actor).some(e=>e.escaladoRama?.[meta.rama]))});
+  while(max>meta.g&&!accesoObtencion({...meta,g:max},{nivel,dotes:activas}).ok)max--;
+  return max;
+};
+const topeRama = (actor,rama) => Math.min(gradoMax(actor),rangoGrado(rangoDe(actor,rama)));
+const contextoDote = actor => ({estado:estado(actor),nivel:nivelDe(actor),conocidas:itemsTecnica(actor).map(i=>i.getFlag(MOD,F).id),naturalezas:[...natsDe(actor)],herencia:!!herenciaDe(actor),nombreDote:id=>D.dotes.find(d=>d.id===id)?.nombre,nombreTecnica:id=>tecnicaPorId(id,actor)?.n});
+const cacheBeneficios=new WeakMap(),indicesDote=new WeakMap();
+function beneficiosDotes(actor){
+  if(!D?.dotes||!actor)return {activas:[],efectos:[]};
+  const e=estado(actor)??{},ctx=contextoDote(actor),propias=Object.keys(e.cultivos??{}).filter(id=>e.cultivos[id].nivel>=3);
+  const clave=JSON.stringify([e.dotes,e.rangos,e.hitosShinobi,e.miradas,e.afinidad,e.trasplantes,e.cerrojos,e.fuerza,e.pactos,ctx.nivel,ctx.conocidas,ctx.naturalezas,ctx.herencia,propias]);
+  const cache=cacheBeneficios.get(actor);if(cache?.catalogo===D.dotes&&cache.clave===clave)return cache;
+  let indice=indicesDote.get(D.dotes);if(!indice){indice=new Map(D.dotes.map(d=>[d.id,d]));indicesDote.set(D.dotes,indice);}
+  const poseidas=new Set(e.dotes??[]),memo=new Map();
+  const probar=(id,camino=new Set())=>{
+    if(!poseidas.has(id)||camino.has(id))return false;if(memo.has(id))return memo.get(id);
+    const d=indice.get(id),r=d?.requisitos??{},visitadas=new Set([...camino,id]);
+    const ok=!!d&&requisitoDote(r,ctx).ok&&Object.keys(r.ramas??{}).every(rama=>ramaAbierta(actor,rama))&&(r.dotes??[]).every(p=>probar(p,visitadas))&&(!r.algunaDote?.length||r.algunaDote.some(p=>probar(p,visitadas)));
+    memo.set(id,ok);return ok;
+  };
+  const activas=[...poseidas].filter(id=>probar(id)),efectos=activas.map(id=>indice.get(id)?.efecto).filter(Boolean);
+  const resultado={catalogo:D.dotes,clave,activas,efectos};cacheBeneficios.set(actor,resultado);return resultado;
+}
+const doteActiva=(actor,d)=>beneficiosDotes(actor).activas.includes(d?.id);
+const dotesActivas=actor=>beneficiosDotes(actor).activas;
+const capacidadReplicas=actor=>gradoReplicas(dotesActivas(actor));
 /** El nivel de personaje que pide un grado de técnica. */
 export function nivelParaGrado(g) {
   for (let n = 1; n <= 20; n++) if (gradoDeNivel(n) >= g) return n;
@@ -211,7 +239,7 @@ function partirDon(txt) {
 }
 
 /** Los efectos automáticos de las dotes que tiene (vienen en los datos). */
-export const efectosDotes = actor => (estado(actor)?.dotes ?? []).map(id => D?.dotes?.find(d => d.id === id)?.efecto).filter(Boolean);
+export const efectosDotes = actor => beneficiosDotes(actor).efectos;
 const sumaEf = (actor, f) => efectosDotes(actor).reduce((t, ef) => t + (Number(f(ef)) || 0), 0);
 
 export function maxVerbe(actor) {
@@ -303,8 +331,12 @@ export const combosDe = actor => new Set(estado(actor)?.combos ?? []);
 function contextoShinobi(actor) {
   const activas=(actor?.effects??[]).filter(e=>!e.disabled).map(e=>e.getFlag(MOD,F)).filter(Boolean);
   return {estado:estado(actor)??{},herencia:herenciaDe(actor)?.req,cerrojoActivo:Math.max(0,...activas.map(e=>Number(e.cerrojo)||0)),
-    ojosAbiertos:activas.map(e=>e.ojo).filter(Boolean),modos:activas.map(e=>e.modo).filter(Boolean),
-    artefactos:(actor?.items??[]).filter(i=>i.system?.equipped).map(i=>i.getFlag(MOD,F)?.artefacto).filter(Boolean)};
+    ojosAbiertos:activas.map(e=>e.ojo).filter(Boolean),modos:activas.flatMap(e=>[e.modo,...(e.modosConcedidos??[])]).filter(Boolean),
+    limiteDesgaste:6+sumaEf(actor,ef=>ef.desgasteExtra),artefactos:(actor?.items??[]).filter(i=>i.system?.equipped).map(i=>i.getFlag(MOD,F)?.artefacto).filter(Boolean)};
+}
+function permisoAprendido(actor,meta){
+  const e=estado(actor);
+  return Number(e.progresionVersion)>=VERSION_PROGRESION&&meta.g>=6&&!e.poderesLegados?.includes(meta.id)?accesoObtencion(meta,{nivel:nivelDe(actor),dotes:dotesActivas(actor)}):{ok:true};
 }
 async function efectosShinobi(actor,item,uso) {
   const meta=item.getFlag(MOD,F), fuentes=(item.effects??[]).map(e=>e.toObject?e.toObject():foundry.utils.deepClone(e)).filter(e=>e.flags?.[MOD]?.[F]?.aplicarUsuario);
@@ -317,20 +349,21 @@ async function efectosShinobi(actor,item,uso) {
     if(grupo)for(const vieja of actor.effects.filter(e=>e.getFlag(MOD,F)?.grupoModo===grupo))await vieja.delete({ecosSinCierre:true});
     delete f._id;f.origin=item.uuid;f.duration??={};f.duration.startTime=game.time.worldTime;
     f.duration.startRound=game.combat?.round;f.duration.startTurn=game.combat?.turn;
-    const concentracion=actor.effects.find(e=>e.statuses?.has('concentrating'));
+    const concentraciones=actor.effects.filter(e=>e.statuses?.has('concentrating'));
+    const concentracion=concentraciones.find(e=>e.getFlag('dnd5e','item')?.id===item.id)??concentraciones.at(-1);
     if(item.system.properties?.has?.('concentration')||item.system.properties?.includes?.('concentration'))fl.deConcentracion=concentracion?.uuid??concentracion?.id??null;
     const [creado]=await actor.createEmbeddedDocuments('ActiveEffect',[f]);
     if(fl.deConcentracion&&concentracion?.addDependent)await concentracion.addDependent(creado);
   }
   if(meta.liberarReserva||meta.prestamo)await serializarActor(actor,async()=>{
-    const e=estado(actor), cantidad=meta.liberarReserva?Number(e.reservaSellada)||0:2*competencia(actor);
+    const e=estado(actor), cantidad=meta.liberarReserva?(meta.consumirReserva?0:Number(e.reservaSellada)||0):2*competencia(actor);
     await guardar(actor,{...cambiosRecuperacion(actor,cantidad),...(meta.liberarReserva?{reservaSellada:0}:{})});
   });
 }
 export function almacenarVerbe(actor,cantidad) {
   return serializarActor(actor,async()=>{
     if(!conoce(actor,'pulso-centenar-sello'))return rechazar('Primero aprende Sello del centenar.');
-    const e=estado(actor),r=depositoReserva({valor:e.valor,almacenado:e.reservaSellada,cantidad,nivel:nivelDe(actor)});
+    const e=estado(actor),r=depositoReserva({valor:e.valor,almacenado:e.reservaSellada,cantidad,nivel:nivelDe(actor),extra:sumaEf(actor,ef=>ef.depositoExtra?competencia(actor):0)});
     if(!r.ok)return rechazar(r.motivo);
     await guardar(actor,{valor:r.valor,reservaSellada:r.almacenado});return true;
   });
@@ -416,6 +449,8 @@ export function requisitos(actor, tec) {
   if (conoce(actor, tec.id)) return { ok: false, motivo: "Ya la sabe." };
   const acceso = accesoShinobi(tec.item?.flags?.[MOD]?.[F] ?? tec, contextoShinobi(actor), false);
   if (!acceso.ok) return acceso;
+  const obtencion=accesoObtencion(tec.item.flags[MOD][F],{nivel:nivelDe(actor),dotes:dotesActivas(actor)});
+  if(!obtencion.ok)return obtencion;
   if (tec.retirada) return { ok: false, motivo: "El DM retiró esta técnica del aprendizaje nuevo." };
   if (tec.nivelMin && nivelDe(actor) < tec.nivelMin) return { ok: false, motivo: `Pide nivel ${tec.nivelMin}.` };
   if (tec.previa && !conoce(actor, tec.previa)) return { ok: false, motivo: `Primero aprende ${tecnicaPorId(tec.previa,actor)?.n ?? tec.previa}.` };
@@ -470,7 +505,7 @@ export const afinidadDe = (actor, nat) => {
 };
 
 /** Dados de más que lleva una técnica en este actor (dominio de rama, afinidad, cultivo, dotes). */
-export function dadosExtra(actor, meta, infusion = null) {
+export function dadosExtraBrutos(actor, meta, infusion = null) {
   const e = estado(actor) ?? {};
   let n = Math.max(0, rangoDe(actor, meta.rama) - 1); // Experto +1, Maestro +2, Legendario +3, Mítico +4
   const nat = infusion || meta.nat;
@@ -481,6 +516,9 @@ export function dadosExtra(actor, meta, infusion = null) {
   n += sumaEf(actor, ef => (Number(ef.dados?.[meta.sec]) || 0) + (meta.sec !== meta.rama ? Number(ef.dados?.[meta.rama]) || 0 : 0));
   return n;
 }
+const bonoCDRama=(actor,meta)=>sumaEf(actor,ef=>(meta.rama===estado(actor)?.principal?Number(ef.cd?.principal)||0:0)+(Number(ef.cd?.[meta.rama])||0));
+const cdCultivo=(actor,t,cul)=>Math.min(2,(cul?.mejoras??[]).filter(m=>m==="cd").length+(Object.values(t.item.system.activities).some(a=>a.type==="save")?bonoCDRama(actor,t.item.flags[MOD][F]):0));
+export const dadosExtra=(actor,meta,infusion=null)=>Math.min(limiteDadosExtra(meta.g),dadosExtraBrutos(actor,meta,infusion));
 
 /** Efecto de Foundry puesto por la capa V (Despertar, Cerrojos, Ojo). */
 const efectoV = (actor, clave) => actor?.effects?.find(x => x.getFlag?.(MOD, F)?.[clave] !== undefined && !x.disabled) ?? null;
@@ -523,7 +561,7 @@ export function costoUso(actor, meta, grado, { infusion = null } = {}) {
     }
   }
   c += ajusteClima(nat, meta);
-  if (grado > 0) c = Math.max(1, c);
+  if (grado > 0) c = Math.max(pisoCosto(grado,D.costo), c);
   // Abrir un ojo cuesta 1 por minuto; quien lo lleva trasplantado paga el doble.
   if (meta.rama === "mirada") {
     if (/-abrir$/.test(meta.id)) c = Math.max(c, 1);
@@ -546,8 +584,13 @@ export function previsualizarUso(actor, meta, grado = Number(meta?.g) || 0, {rep
   const costo = costoUso(actor, meta, grado, { infusion: meta.infusion }) + extra;
   const acceso = accesoShinobi(meta, contextoShinobi(actor), true);
   if (!acceso.ok) return { ...acceso, costo };
-  if (replica && (grado>2 || !efectoV(actor,"replicas") || e.accionReplicaUsada)) return {ok:false,costo,motivo:"No hay acción de réplicas disponible o el grado supera 2."};
+  const aprendido=permisoAprendido(actor,meta);if(!aprendido.ok)return {...aprendido,costo};
+  if(grado>meta.g){const accesoElevado=accesoObtencion({...meta,g:grado},{nivel:nivelDe(actor),dotes:dotesActivas(actor)});if(!accesoElevado.ok)return {...accesoElevado,costo};}
+  const cuota=permisoCuota(grado,{nivel:nivelDe(actor),dotes:dotesActivas(actor),usados:e.cuotasPoder});
+  if(!cuota.ok)return {...cuota,costo};
+  if (replica && (grado>capacidadReplicas(actor) || !efectoV(actor,"replicas") || e.accionReplicaUsada)) return {ok:false,costo,motivo:"No hay acción de réplicas disponible o supera el grado permitido."};
   const item = itemsDe(actor, meta.id)[0];
+  const turno=permisoTurno(grado,{combate:game.combat?.started?(game.combat.id??"combate"):null,estado:e.turnoTecnicas,reaccion:item?.system.activation?.type==="reaction",replica});if(!turno.ok)return {...turno,costo};
   const permiso = evaluarGasto({ valor: Number(replica?e.reservaReplicas:e.valor) || 0, costo, limite: replica?0:limiteNegativo(actor), grado,
     gradoMaximo: gradoUsable(actor, meta), agotamiento: Number(actor.system?.attributes?.exhaustion) || 0,
     incapacitado: noPuedeActuar(actor), reaccion: item?.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R",
@@ -606,26 +649,28 @@ export function datosItem(actor, tec) {
     if (partes[0]?.number && tieneDote(actor, "naturaleza-afilada") && e.nats?.[0] && deNats(inf || meta.nat).includes(e.nats[0])) {
       partes[0].bonus = [partes[0].bonus, nivelDe(actor) >= 5 ? "@mod" : "max(1, floor(@mod / 2))"].filter(Boolean).join(" + ");
     }
-    const cd = mej.filter(m => m === "cd").length + sumaEf(actor, ef => (meta.rama === e.principal ? Number(ef.cd?.principal) || 0 : 0) + (Number(ef.cd?.[meta.rama]) || 0));
+    const ataqueCultivo=Math.min(2,mej.filter(m=>m==="cd").length);
+    const cd = Math.min(2,ataqueCultivo + bonoCDRama(actor,meta));
     if (tec.g === 0 && partes[0]?.number && !act.healing && efectosDotes(actor).some(ef => ef.dano0)) partes[0].bonus = [partes[0].bonus, "@mod"].filter(Boolean).join(" + ");
     const cura = efectosDotes(actor).map(ef => ef.cura?.[meta.rama]).filter(Boolean);
-    if (act.healing && cura.length) act.healing.bonus = [act.healing.bonus, ...cura].filter(Boolean).join(" + ");
+    if (act.healing && cura.length) act.healing.bonus = [act.healing.bonus, ...cura.map(v=>Number(meta.divisorDados)>1?`floor((${v}) / ${meta.divisorDados})`:v)].filter(Boolean).join(" + ");
     if (cd) {
       if (act.type === "save") act.save.dc = { calculation: "", formula: `8 + @prof + @abilities.${data.system.ability}.mod + ${cd}` };
-      if (act.type === "attack") act.attack.bonus = String(cd);
+      if (act.type === "attack") act.attack.bonus = String(ataqueCultivo);
     }
   }
   if (mej.includes("rapida")) {
     const a = data.system.activation;
-    if (a.type === "minute" || a.type === "hour") Object.assign(a, { type: "action", value: 1 });
-    else if (a.type === "action") Object.assign(a, { type: "bonus", value: 1 });
+    if (!meta.ritual&&["minute","hour"].includes(a.type)&&a.value>1) a.value=Math.ceil(a.value/2);
+    else if (!meta.ritual&&tec.g<=5&&a.type === "action") Object.assign(a, { type: "bonus", value: 1 });
   }
   aplicarCultivoUtilidad(data, mej);
   // Dotes de alcance y área
   const r0 = data.system.range;
   if (r0?.units === "m" && Number(r0.value) >= 9) {
     const x = efectosDotes(actor).reduce((t, ef) => t * (Number(ef.alcance) || 1), 1);
-    r0.value = Math.round(Number(r0.value) * x) + sumaEf(actor, ef => ef.alcanceRama?.[meta.rama]);
+    const factorRama=efectosDotes(actor).reduce((n,ef)=>Math.max(n,Number(ef.alcanceFactorRama?.[meta.rama])||1),1);
+    r0.value = Math.round(Number(r0.value) * x * factorRama) + sumaEf(actor, ef => ef.alcanceRama?.[meta.rama]);
   }
   const masArea = sumaEf(actor, ef => ef.area);
   if (masArea && data.system.target?.template?.size) data.system.target.template.size = Number(data.system.target.template.size) + masArea;
@@ -635,6 +680,15 @@ export function datosItem(actor, tec) {
     if (tpl?.size) tpl.size = Math.round(Number(tpl.size) * (1.5 ** grande) * 10) / 10;
     else if (data.system.range?.value) data.system.range.value = Math.round(Number(data.system.range.value) * (1.5 ** grande));
   }
+  const alcanceBase=Number(tec.item.system.range?.value)||0,areaBase=Number(tec.item.system.target?.template?.size)||0;
+  if(alcanceBase>0&&data.system.range?.units==='m')data.system.range.value=Math.min(data.system.range.value,Math.min(1500,alcanceBase*3));
+  if(areaBase>0)data.system.target.template.size=Math.min(data.system.target.template.size,areaBase*2);
+  const segundos=sys=>Number(sys?.duration?.value)*({round:6,minute:60,hour:3600,day:86400}[sys?.duration?.units]||0);
+  const originalSeg=segundos(tec.item.system),durSeg=segundos(data.system);
+  const extraSeg=originalSeg>=60?sumaEf(actor,ef=>ef.duracionRama?.[meta.rama]):0;
+  if(durSeg&&extraSeg){data.system.duration.units='minute';data.system.duration.value=(durSeg+extraSeg)/60;}
+  const finalSeg=segundos(data.system);
+  if(originalSeg>0&&finalSeg!==originalSeg)for(const ef of data.effects??[])if(Number(ef.duration?.seconds)===originalSeg)Object.assign(ef.duration,{seconds:finalSeg,rounds:Math.ceil(finalSeg/6)});
   if (inf) {
     data.name = `${tec.n} · ${nombreNat(inf)}`;
     for (const st of ESTADO_NAT[inf] ?? []) {
@@ -655,7 +709,8 @@ export function datosItem(actor, tec) {
   meta.infusion = inf;
   meta.cultivo = cul?.nivel ?? 0;
   data.system.description.value = (data.system.description.value ?? "") + notaPersonal(actor, tec, extra, inf, cul);
-  meta.firma = firma(JSON.stringify([data.name, data.system, data.effects]));
+  const {firma:anteriorFirma,...metadatos}=meta;
+  meta.firma = firma(JSON.stringify([data.name, data.system, data.effects,metadatos]));
   return data;
 }
 const idFijo = s => `${s.replace(/[^A-Za-z0-9]/g, "")}0000000000000000`.slice(0, 16);
@@ -663,7 +718,8 @@ const firma = s => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h <<
 
 function notaPersonal(actor, tec, extra, inf, cul) {
   const p = [];
-  if (extra) p.push(`+${extra} dado${extra > 1 ? "s" : ""} por rango, afinidad o cultivo`);
+  if (extra) p.push(`+${extra} dado${extra > 1 ? "s" : ""} por rango, afinidad o cultivo, dentro del tope de su grado`);
+  if(tec.id&&dadosExtraBrutos(actor,tec,inf)>limiteDadosExtra(tec.g))p.push("los dados adicionales exceden el tope; el DM puede reorientar el último cultivo sin volver a cobrar");
   if (inf) p.push(`infundida con ${nombreNat(inf)}`);
   if (cul?.nivel) p.push(`cultivada: ${NIVEL_CULTIVO[cul.nivel]}${cul.mejoras?.length ? ` (${cul.mejoras.map(m => MEJORAS[m] ?? `infusión fija: ${nombreNat(cul.infusionFija)}`).join(", ")})` : ""}`);
   p.push(`cuesta ${costoUso(actor, tec, tec.g, { infusion: inf })} Verbe`);
@@ -708,7 +764,7 @@ async function aprenderInterno(actor, tec, { gratis = false, nota = null, aproba
   if (!gratis) {
     const r = requisitos(actor, tec);
     if (!r.ok || r.probar) { aviso(r.motivo ?? "Primero debe descubrir esa naturaleza.", "warn"); return false; }
-    if (r.pideDM && !aprobado && !game.user.isGM) {
+    if (r.pideDM && !game.user.isGM) {
       return pedirAlDM(actor, "tecnica", { id: tec.id }, tec.n, `Pide: ${tec.req ?? ""}.`);
     }
   }
@@ -807,6 +863,12 @@ async function asegurarRasgos(actor) {
     await guardar(actor,{shinobiVersion:VERSION_SHINOBI,...(antiguaFatal?{cerrojos:8,compras:(e.compras??[]).map(c=>c.tipo==="cerrojo"&&c.datos?.n===7?{...c,datos:{...c.datos,n:8}}:c)}:{}),historial:hist(e,"Repertorio shinobi: compras conservadas; la antigua puerta fatal pasa a la octava.")});
     e=estado(actor);
   }
+  if(D.progresion&&(Number(e.progresionVersion)||0)<VERSION_PROGRESION&&soyGM()){
+    const usados={mayores:0,culminaciones:0,trascendentes:0};
+    for(const[id,gastado]of Object.entries(e.usosAltos??{}))if(gastado){const g=tecnicaPorId(id,actor)?.g??6;usados[g>=9?'culminaciones':'mayores']++;if(g===11)usados.trascendentes++;}
+    for(const k of Object.keys(usados))usados[k]=Math.max(usados[k],Number(e.cuotasPoder?.[k])||0);
+    await guardar(actor,{progresionVersion:VERSION_PROGRESION,poderesLegados:itemsTecnica(actor).filter(i=>i.getFlag(MOD,F)?.g>=6).map(i=>i.getFlag(MOD,F).id),cuotasPoder:usados,historial:hist(e,"Progresión 3.1: compras conservadas; nuevos aprendizajes altos requieren su senda. Usos altos previos cuentan hasta el siguiente largo.")});e=estado(actor);
+  }
   // Los dones del despertar: si falta alguno (despertó antes de la v1.2), se lo pone sin cobrar.
   const faltan = (D.innatos ?? []).filter(id => !(e.dotes ?? []).includes(id));
   if (faltan.length) {
@@ -867,11 +929,72 @@ export async function asegurarAEDotes(actor) {
 
 /** Una dote es también un rasgo en la hoja (las de nacimiento lo dicen). */
 async function rasgoDote(actor, dote) {
-  if (actor.items.some(i => i.getFlag(MOD, F)?.dote === dote.id)) return;
+  const actual=actor.items.find(i=>i.getFlag(MOD,F)?.dote===dote.id);
   const nace = (D.innatos ?? []).includes(dote.id);
-  await actor.createEmbeddedDocuments("Item", [{ name: dote.nombre, type: "feat", img: "systems/dnd5e/icons/svg/items/feature.svg",
-    system: { description: { value: `<p>${escH(dote.texto)}</p>${nace ? "<p><em>Del Verbe, de nacimiento: lo tiene todo el que despierta. Se mejora con Trazos en el panel (Mejorar → Dotes).</em></p>" : "<p><em>Dote del Verbe.</em></p>"}` } },
-    flags: { [MOD]: { [F]: { dote: dote.id } } } }]);
+  const p=dote.poder,aid=idFijo(`d${firma(dote.id)}actividad`),eid=idFijo(`d${firma(dote.id)}efecto`);
+  const data={ name:dote.nombre,type:'feat',img:'systems/dnd5e/icons/svg/items/feature.svg',effects:[],
+    system:{description:{value:`<p>${escH(dote.texto)}</p><p><b>Requisitos:</b> ${escH(requisitosDoteTexto(dote))}</p><p>${escH(dote.automatizacion??'Consulta las condiciones en mesa.')}</p>${nace?'<p>Del despertar, sin coste de Trazos.</p>':''}`}},flags:{[MOD]:{[F]:{dote:dote.id}}}};
+  if(p){
+    const act={_id:aid,name:dote.nombre,type:p.curacion?'heal':'utility',activation:{type:p.tiempo??'bonus',value:1,override:true},duration:{units:p.duracion?'round':'inst',value:p.duracion?p.duracion/6:null,override:true},range:{units:'self',override:true},target:{affects:{type:'self',count:'1'},template:{},override:true},effects:[],uses:{spent:0,recovery:[]},consumption:{targets:[{type:'itemUses',target:'',value:'1',scaling:{mode:'',formula:''}}],scaling:{allowed:false},spellSlot:false}};
+    if(p.curacion)act.healing={number:1,denomination:6,bonus:'',types:['healing'],custom:{enabled:false,formula:''},scaling:{mode:'',number:0,formula:''}};
+    else act.roll={formula:'',name:'',prompt:false,visible:false};
+    Object.assign(data.system,{uses:{max:'1',spent:Number(actual?.system.uses?.spent)||0,recovery:[{period:'lr',type:'recoverAll'}]},activities:{[aid]:act}});
+    if(p.ae?.length)data.effects=[{_id:eid,name:dote.nombre,transfer:false,disabled:false,duration:{seconds:p.duracion,rounds:p.duracion/6},changes:p.ae.map(([key,mode,value])=>({key,mode,value:String(value)})),flags:{[MOD]:{[F]:{shinobi:true,aplicarUsuario:true,grupoModo:`dote:${dote.id}`}}}}];
+    if(actor.system.attributes?.movement?.units==='ft')for(const ef of data.effects)for(const c of ef.changes)if(/^system\.attributes\.movement\./.test(c.key))c.value=String(Number(c.value)/.3);
+  }
+  const sig=firma(JSON.stringify([data.name,data.system.description,data.effects,dote.poder]));data.flags[MOD][F].firma=sig;
+  if(actual){if(actual.getFlag(MOD,F)?.firma!==sig){data._id=actual.id;await actor.updateEmbeddedDocuments('Item',[data],{diff:false});}}
+  else await actor.createEmbeddedDocuments('Item',[data]);
+}
+
+function requisitosDoteTexto(d){
+  if(!d.evolucion)return d.req||'Ninguno';
+  const r=d.requisitos??{},alguna=r.algunaDote?.length?(r.algunaDote.every(id=>id.endsWith('-4'))?'Leyenda de una rama':r.algunaDote.every(id=>id.endsWith('-3'))?'Maestría de una rama':'Una de las sendas previas'):null;
+  return [`nivel ${r.nivel??1}`,...Object.entries(r.ramas??{}).map(([id,n])=>`${nombreRama(id)} ${nombreRango(n)}`),...(r.dotes??[]).map(id=>D.dotes.find(x=>x.id===id)?.nombre??id),...(r.tecnicas??[]).map(id=>tecnicaPorId(id)?.n??id),r.hito?`Hito: ${r.hito.replaceAll('-',' ')}`:null,r.ojo?`Mirada, etapa ${r.ojo}`:null,alguna].filter(Boolean).join(' · ');
+}
+export async function usarDote(actor,id){
+  if(!editarActor(actor)||!tieneDote(actor,id))return false;
+  const item=actor.items.find(i=>i.getFlag(MOD,F)?.dote===id),acts=item?.system.activities;
+  const act=acts?.values?[...acts.values()][0]:Object.values(acts??{})[0];
+  if(!act?.use)return rechazar('Abre la actividad de la dote en tu hoja después de actualizar el mundo.');
+  return act.use();
+}
+function consumirDote(activity,usage,message,updates){
+  const item=activity.item,actor=item.actor,id=item.getFlag(MOD,F)?.dote,d=D.dotes.find(d=>d.id===id),e=estado(actor);
+  if(!d?.poder)return;
+  if(!editarActor(actor)||!e?.despierto||!tieneDote(actor,id)||!doteActiva(actor,d)||noPuedeActuar(actor))return false;
+  if(enSerie.ocupada(claveActor(actor))||(consumoPendiente(actor)&&consumoPendiente(actor).config!==usage))return false;
+  if(e.usosDote?.[id])return rechazar('Esa dote ya se usó desde el último Descanso Largo.','warn');
+  const p=d.poder,costo=Number(p.costo)||0;
+  if((p.soloVacio&&e.valor>0)||(p.combate&&!game.combat?.started)||(p.mitad&&e.valor>=maxVerbe(actor)/2))return rechazar('Todavía no se cumple el disparador de esa dote.','warn');
+  if(costo>0&&costo>Number(e.valor))return rechazar('La dote necesita energía positiva para pagar su coste.','warn');
+  if(usage.consume===false)return rechazar('Las dotes activables requieren registrar su consumo.','warn');
+  if(p.curacion&&actor.system.attributes.hp.value<=0)return false;
+  if(p.breve&&presupuestoBreveVerbe(actor,e.recCortos,1).cantidad===0)return rechazar('Agotó el presupuesto de recuperación breve hasta el próximo largo.','warn');
+  const nonce=foundry.utils.randomID();consumosPendientes.set(claveActor(actor),{config:usage,nonce,hasta:Date.now()+30000});
+  updates.actor??={};updates.actor[`flags.${MOD}.${F}.valor`]=(Number(e.valor)||0)-costo;
+  updates.actor[`flags.${MOD}.${F}.usosDote.${id}`]=true;updates.actor[`flags.${MOD}.${F}.ultimoUso`]=nonce;
+  usage.ecosDote={id,nonce,costo};return;
+}
+async function despuesDeDote(activity,usage){
+  const actor=activity.item.actor,v=usage.ecosDote,d=D.dotes.find(d=>d.id===v.id);
+  if(consumoPendiente(actor)?.nonce===v.nonce)consumosPendientes.delete(claveActor(actor));
+  if(d.poder.recupera)await serializarActor(actor,async()=>{
+    const datos=actor.getRollData?.()??{abilities:actor.system.abilities,details:actor.system.details,prof:competencia(actor)};datos.mod=modDe(actor,estado(actor).car);
+    const roll=await new Roll(d.poder.recupera,datos).evaluate(),r=recuperacionBreve(actor,Math.max(0,roll.total));
+    await guardar(actor,{valor:r.valor,recResto:r.recResto,recCortos:r.recCortos});
+    await roll.toMessage({speaker:ChatMessage.getSpeaker({actor}),flavor:`${d.nombre}: ${r.cantidad} puntos de recuperación; deuda a 2:1.`});
+  });
+  await efectosShinobi(actor,activity.item,{nonce:v.nonce});
+}
+function permisoConcentracion(actor,item,usage,grado){
+  if(!(item.system.properties?.has?.('concentration')||item.system.properties?.includes?.('concentration'))||usage.concentration?.begin===false)return {ok:true};
+  const terminar=Array.isArray(usage.concentration?.end)?usage.concentration.end:usage.concentration?.end?[usage.concentration.end]:[];
+  const existentes=actor.effects.filter(e=>!e.disabled&&e.statuses?.has('concentrating')).map(e=>{
+    const data=e.getFlag('dnd5e','item'),it=actor.items.get(data?.id),scaling=Number(e.getFlag('dnd5e','scaling'))||0;
+    return {id:e.id,grado:Number(it?.getFlag(MOD,F)?.g??it?.system.level??data?.data?.system?.level??11)+scaling};
+  });
+  return validarConcentraciones({existentes,terminar,grado,nivel:nivelDe(actor),doble:tieneDote(actor,'dos-hilos')});
 }
 
 /* ------------------------------------------------------------------ */
@@ -903,6 +1026,7 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
   try {
     const item = activity?.item;
     const meta = item?.getFlag?.(MOD, F);
+    if(meta?.dote)return consumirDote(activity,usageConfig,messageConfig,updates);
     if (!meta?.id) return;
     const actor = item.actor;
     if (!editarActor(actor)) return false;
@@ -919,19 +1043,26 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
     }
     const acceso = accesoShinobi(meta, contextoShinobi(actor), true);
     if (!acceso.ok) { aviso(acceso.motivo,"warn"); return false; }
+    const aprendido=permisoAprendido(actor,meta);if(!aprendido.ok){aviso(aprendido.motivo,"warn");return false;}
     const grado = meta.g + (Number(usageConfig?.scaling) || 0);
+    if(grado>meta.g){const accesoElevado=accesoObtencion({...meta,g:grado},{nivel:nivelDe(actor),dotes:dotesActivas(actor)});if(!accesoElevado.ok){aviso(accesoElevado.motivo,"warn");return false;}}
+    const cuota=permisoCuota(grado,{nivel:nivelDe(actor),dotes:dotesActivas(actor),usados:e.cuotasPoder});
+    if(!cuota.ok){aviso(cuota.motivo,"warn");return false;}
+    const concentracion=permisoConcentracion(actor,item,usageConfig,grado);
+    if(!concentracion.ok){aviso(concentracion.motivo,"warn");return false;}
     const fuerte = meta.fuerte ? extraContraFuerte(actor) : { extra: 0, quien: null };
     const costo = costoUso(actor, meta, grado, { infusion: meta.infusion }) + fuerte.extra;
     const replica = usageConfig?.ecosReplica === true;
-    if (replica && (grado > 2 || meta.dividirVerbe || meta.ritual || meta.liberarReserva || meta.prestamo || e.accionReplicaUsada || !efectoV(actor,"replicas") || Object.values(item.system.activities ?? {}).some(a=>a.type === "utility"))) { aviso("Las réplicas comparten una acción ofensiva, usan grado 0–2 y no duplican poderes o recursos especiales.","warn"); return false; }
+    if (replica && (grado > capacidadReplicas(actor) || meta.dividirVerbe || meta.ritual || meta.liberarReserva || meta.prestamo || e.accionReplicaUsada || !efectoV(actor,"replicas") || Object.values(item.system.activities ?? {}).some(a=>a.type === "utility"))) { aviso("Las réplicas comparten una acción ofensiva, respetan su límite de grado y no duplican poderes o recursos especiales.","warn"); return false; }
     const valor = Number(replica ? e.reservaReplicas : e.valor) || 0;
     const reaccion = item.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R";
-    const permiso = evaluarGasto({ valor, costo, limite: replica ? 0 : limiteNegativo(actor), grado, gradoMaximo: replica ? Math.min(2,gradoUsable(actor,meta)) : gradoUsable(actor, meta),
+    const turno=permisoTurno(grado,{combate:game.combat?.started?(game.combat.id??"combate"):null,estado:e.turnoTecnicas,reaccion,replica});if(!turno.ok){aviso(turno.motivo,"warn");return false;}
+    const permiso = evaluarGasto({ valor, costo, limite: replica ? 0 : limiteNegativo(actor), grado, gradoMaximo: replica ? Math.min(capacidadReplicas(actor),gradoUsable(actor,meta)) : gradoUsable(actor, meta),
       agotamiento: Number(actor.system?.attributes?.exhaustion) || 0, incapacitado: noPuedeActuar(actor),
       reaccion, puedeReaccionar: reaccionDisponible(actor), altoGastado: !!e.usosAltos?.[meta.id] });
     if (!permiso.ok) { aviso(permiso.motivo, "warn"); return false; }
     let nuevo = permiso.despues;
-    const pg = Number(meta.costoPG) || 0;
+    const pg = meta.costoPG?Math.max(1,Number(meta.costoPG)-sumaEf(actor,ef=>ef.costoPGMenos)):0;
     if (pg && Number(actor.system.attributes.hp.value) <= pg) { aviso(`Necesita más de ${pg} PG para pagar este esfuerzo sin caer.`,"warn"); return false; }
     const reparto = meta.dividirVerbe ? dividirReserva(valor,costo,Math.min(competencia(actor),Number(meta.copias)||1)) : null;
     if (reparto && reparto.porCuerpo < 1) { aviso("No queda energía positiva suficiente para repartir entre todos los cuerpos.","warn"); return false; }
@@ -939,6 +1070,8 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
     const nonce = foundry.utils.randomID();
     consumosPendientes.set(claveActor(actor), { config: usageConfig, nonce, hasta: Date.now() + 30000 });
     updates.actor ??= {};
+    if(turno.cambios)updates.actor[`flags.${MOD}.${F}.turnoTecnicas`]=turno.cambios;
+    for(const[k,v]of Object.entries(cuota.cambios))updates.actor[`flags.${MOD}.${F}.cuotasPoder.${k}`]=v;
     updates.actor[`flags.${MOD}.${F}.${replica ? "reservaReplicas" : "valor"}`] = nuevo;
     if (replica && game.combat?.started) updates.actor[`flags.${MOD}.${F}.accionReplicaUsada`] = true;
     if (reparto) { updates.actor[`flags.${MOD}.${F}.reservaReplicas`] = reparto.comprometido; updates.actor[`flags.${MOD}.${F}.lazoReplica`] = nonce; }
@@ -961,6 +1094,7 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
 }
 
 async function despuesDeUsar(activity, usageConfig) {
+  if(usageConfig?.ecosDote)return despuesDeDote(activity,usageConfig);
   const v = usageConfig?.ecosVerbe;
   if (!v) return;
   const item = activity.item;
@@ -1015,7 +1149,7 @@ async function ponerOjo(actor, ojo) {
   const etapa = Number(estado(actor).miradas?.[ojo]) || 1;
   const da = (m?.etapas ?? []).slice(0, etapa).map((t, i) => `<p><b>Etapa ${i + 1}:</b> ${escH(t)}</p>`).join("");
   await actor.createEmbeddedDocuments("ActiveEffect", [{ name: `${m?.nombre ?? "Ojo"} · abierto`, img: "systems/dnd5e/icons/svg/schools/divination.svg",
-    duration: { seconds: 60, rounds: 10 }, description: `${da}<p>Mantenerlo abierto cuesta 1 Verbe por minuto: vuelve a usar «Abrir».</p>`,
+    duration: { seconds: (tieneDote(actor,"parpado-firme")||efectosDotes(actor).some(ef=>ef.ojoMinutos)?120:60), rounds: (tieneDote(actor,"parpado-firme")||efectosDotes(actor).some(ef=>ef.ojoMinutos)?20:10) }, description: `${da}<p>Mantenerlo abierto exige volver a usar «Abrir» al vencer su duración.</p>`,
     flags: { [MOD]: { [F]: { ojo,shinobi:!!D.shinobi } } } }]);
 }
 
@@ -1042,7 +1176,7 @@ export function antesDelDano(config) {
 /** La recuperación larga es la referencia común para Respiro y Aliento. */
 export function recuperacionLargaVerbe(actor) {
   const frac = efectosDotes(actor).reduce((t, ef) => Math.max(t, Number(ef.rec?.largo) || 0), 0.5);
-  const base = Math.floor(maxVerbe(actor) * frac) + (tieneDote(actor, "aliento-soldado") ? competencia(actor) : 0);
+  const base = Math.floor(maxVerbe(actor) * frac) + (tieneDote(actor, "aliento-soldado") ? competencia(actor) : 0)+sumaEf(actor,ef=>ef.recLargoPlano);
   return Math.floor(base * (Number(herenciaDe(actor)?.recMult) || 1));
 }
 export const presupuestoBreveVerbe = (actor, usado = 0, cantidad = Infinity) => presupuestoCorto(Math.min(maxVerbe(actor), recuperacionLargaVerbe(actor)), usado, cantidad, tieneDote(actor, "sueno-reparador") ? 2 / 3 : 0.5);
@@ -1075,7 +1209,7 @@ async function alDescansarInterno(actor, result, config) {
     const breve = !largo ? recuperacionBreve(actor, rec) : null;
     const cambios = largo ? cambiosRecuperacion(actor, rec) : { valor: breve.valor, recResto: breve.recResto, recCortos: breve.recCortos };
     Object.assign(cambios, { reflejaUsada: false, reaccionUsada: false });
-    if (largo) Object.assign(cambios, { usosFamilia: Object.fromEntries(Object.keys(e.usosFamilia ?? {}).map(id => [id,false])), recCortos: 0, reservaUsada: false, despertarLibre: false, respiroUsado: false,
+    if (largo) Object.assign(cambios, { cuotasPoder:{mayores:0,culminaciones:0,trascendentes:0},usosDote:Object.fromEntries(Object.keys(e.usosDote??{}).map(k=>[k,false])),usosFamilia: Object.fromEntries(Object.keys(e.usosFamilia ?? {}).map(id => [id,false])), recCortos: 0, reservaUsada: false, despertarLibre: false, respiroUsado: false,
       usosAltos: Object.fromEntries(Object.keys(e.usosAltos ?? {}).map(id => [id, false])),
       cerrojosHoy: { ciclo: (Number(e.cerrojosHoy?.ciclo) || 0) + 1, veces: 0 } });
     await guardar(actor, cambios);
@@ -1203,15 +1337,18 @@ export function cumpleReqDote(actor, dote) {
   if (!dote?.id) return { ok: false, motivo: "La dote no existe." };
   const req = dote.req ?? "";
   const e = estado(actor) ?? {};
+  const declarado=requisitoDote(dote.requisitos,contextoDote(actor));if(!declarado.ok)return declarado;
+  const inactiva=(dote.requisitos?.dotes??[]).find(id=>!doteActiva(actor,D.dotes.find(x=>x.id===id)));if(inactiva)return {ok:false,motivo:`Primero activa todos los requisitos de ${D.dotes.find(x=>x.id===inactiva)?.nombre??inactiva}.`};
+  if(dote.requisitos?.algunaDote?.length&&!dote.requisitos.algunaDote.some(id=>tieneDote(actor,id)&&doteActiva(actor,D.dotes.find(x=>x.id===id))))return {ok:false,motivo:"Primero completa una de las sendas previas."};
   const natural = requisitoNatural(req, natsDe(actor));
   if (!natural.ok) return natural;
-  if (!req) return { ok: true };
+  if (!req) return declarado;
   const m = req.match(/nivel (\d+)/);
   if (m && nivelDe(actor) < Number(m[1])) return { ok: false, motivo: `Pide nivel ${m[1]}.` };
   if (/Control fino/.test(req) && !tieneDote(actor, "control-fino")) return { ok: false, motivo: "Pide Control fino del Verbe." };
   if (/Maestría del Control/.test(req) && !tieneDote(actor, "maestria-control")) return { ok: false, motivo: "Pide Maestría del Control." };
   if (/Naturaleza combinada/.test(req) && !tieneDote(actor, "naturaleza-combinada")) return { ok: false, motivo: "Pide Naturaleza combinada." };
-  const rama = req.match(/rama ([A-Za-zÁÉÍÓÚáéíóúñ]+)(?:, (Entrenado|Experto|Maestro))?/);
+  const rama = req.match(/rama ([A-Za-zÁÉÍÓÚáéíóúñ]+)(?:, (Entrenado|Experto|Maestro|Legendario|Mítico))?/);
   if (rama) {
     const id = D.ramas.find(x => x.nombre.toLowerCase() === rama[1].toLowerCase())?.id;
     const min = rama[2] ? D.rangos.findIndex(x => x.nombre === rama[2]) : 1;
@@ -1232,7 +1369,7 @@ export function cumpleReqDote(actor, dote) {
     const previa = D.dotes.find(x => x.id !== dote.id && x.nombre.toLowerCase() === parte);
     if (previa && !tieneDote(actor, previa.id)) return { ok: false, motivo: `Pide la dote ${previa.nombre}.` };
   }
-  return { ok: true, pideDM: /maestro|brazos|trasplantada|escuela|arte de familia/.test(req) };
+  return { ok: true, pideDM: declarado.pideDM || /maestro|brazos|trasplantada|escuela|arte de familia/.test(req) };
 }
 
 export function comprarDote(actor, ...args) { return serializarActor(actor, () => comprarDoteInterno(actor, ...args)); }
@@ -1243,7 +1380,7 @@ async function comprarDoteInterno(actor, id, { aprobado = false } = {}) {
   if (!req.ok) { aviso(req.motivo, "warn"); return false; }
   const { libres } = trazos(actor);
   if (libres < dote.trazos) return rechazar(`Cuesta ${dote.trazos} Trazos y tiene ${libres}.`, "warn");
-  if (req.pideDM && !aprobado && !game.user.isGM) return pedirAlDM(actor, "dote", { id }, `la dote ${dote.nombre}`, `${escH(dote.nombre)} (${dote.trazos} Trazos). Pide: ${escH(dote.req)}.`);
+  if (req.pideDM && !game.user.isGM) return pedirAlDM(actor, "dote", { id }, `la dote ${dote.nombre}`, `${escH(dote.nombre)} (${dote.trazos} Trazos). Pide: ${escH(dote.req)}.`);
   const e = estado(actor);
   const texto = `Dote ${dote.nombre} (${dote.trazos} Trazos)`;
   await guardar(actor, { dotes: [...(e.dotes ?? []), id], gastados: (Number(e.gastados) || 0) + dote.trazos, historial: hist(e, texto),
@@ -1289,7 +1426,7 @@ async function subirAfinidadInterno(actor, nat, { aprobado = false } = {}) {
   if (nivelDe(actor) < nivelMin) return rechazar(`Pide nivel ${nivelMin}.`, "warn");
   const { libres } = trazos(actor);
   if (libres < costo) return rechazar(`Cuesta ${costo} Trazos y tiene ${libres}.`, "warn");
-  if (!aprobado && !game.user.isGM) return pedirAlDM(actor, "afinidad", { nat }, `afinidad ${a === 1 ? "Entrenada" : "Maestra"} en ${NATS[nat]}`, `Pide un maestro de ${NATS[nat]}. Cuesta ${costo} Trazos.`);
+  if (!game.user.isGM) return pedirAlDM(actor, "afinidad", { nat }, `afinidad ${a === 1 ? "Entrenada" : "Maestra"} en ${NATS[nat]}`, `Pide un maestro de ${NATS[nat]}. Cuesta ${costo} Trazos.`);
   const texto = `Afinidad ${NATS[nat]} ${a === 1 ? "Entrenada" : "Maestra"} (${costo} Trazos)`;
   await guardar(actor, { afinidad: { [nat]: a + 1 }, gastados: (Number(e.gastados) || 0) + costo, historial: hist(e, texto),
     compras: compra(e, "afinidad", { nat, a: a + 1 }, costo, texto) });
@@ -1323,11 +1460,11 @@ async function cultivarInterno(actor, tecId, mejora, infusionFija = null) {
   const e = estado(actor);
   const cul = foundry.utils.deepClone(e.cultivos?.[tecId] ?? { nivel: 0, mejoras: [] });
   const gratis = Number(cul.pendiente) > 0;
-  const opcion = opcionesCultivo(base, cul, costoUso(actor, base, base.g)).find(o => o.id === mejora);
+  const opcion = opcionesCultivo(base, cul, costoUso(actor, base, base.g),{dados: dadosExtra(actor,base.item.flags[MOD][F]),tope:limiteDadosExtra(base.g),minimo:pisoCosto(base.g,D.costo),cdUsada:cdCultivo(actor,base,cul)}).find(o => o.id === mejora);
   if (!opcion?.ok) return rechazar(opcion?.motivo ?? "Esta mejora no tiene efecto en la técnica.");
   if (cul.nivel >= 3 && !gratis) return rechazar("Ya es Propia.");
   const cultivadas = Object.entries(e.cultivos ?? {}).filter(([id, c]) => c.nivel > 0 && !esDerivada(actor, id)).length;
-  if (cul.nivel === 0 && !esDerivada(actor, tecId) && cultivadas >= competencia(actor)) return rechazar(`Cultiva tantas técnicas como su competencia (${competencia(actor)}).`, "warn");
+  if (cul.nivel === 0 && !esDerivada(actor, tecId) && cultivadas >= competencia(actor)+sumaEf(actor,ef=>ef.cultivosExtra)) return rechazar(`Cultiva tantas técnicas como su competencia (${competencia(actor)}).`, "warn");
   if (mejora === "rapida" && cul.mejoras.includes("rapida")) return rechazar("La mejora de tiempo va una sola vez.", "warn");
   if (mejora === "infusion" && !infusionFija) return rechazar("Elige la naturaleza de la infusión fija.", "warn");
   const costo = opcion.costo;
@@ -1352,6 +1489,26 @@ export async function infundir(actor, tecId, nat) {
   if (nat && !natsDe(actor).has(nat) && !combosDe(actor).has(nat)) return rechazar("No tiene esa naturaleza.", "warn");
   await actor.update(nat ? { [`flags.${MOD}.${F}.infusiones.${tecId}`]: nat } : { [`flags.${MOD}.${F}.infusiones.-=${tecId}`]: null });
   await refrescar(actor);
+}
+
+export function reorientarCultivo(actor,tecId,mejora){
+  if(!game.user.isGM)return Promise.resolve(false);
+  return serializarActor(actor,async()=>{
+    const e=estado(actor),t=tecnicaPorId(tecId,actor),cul=foundry.utils.deepClone(e.cultivos?.[tecId]);
+    if(!t||!cul?.mejoras?.length||!MEJORAS[mejora])return false;
+    const compras=foundry.utils.deepClone(e.compras??[]),c=[...compras].reverse().find(c=>c.tipo==='cultivo'&&c.datos?.tecId===tecId);
+    if(!c)return rechazar('Falta el registro original del cultivo; revísalo en el historial antes de cambiarlo.');
+    const desde=cul.mejoras.lastIndexOf(c.datos.mejora);if(desde<0)return false;
+    cul.mejoras.splice(desde,1);
+    const meta=t.item.flags[MOD][F];
+    const brutos=dadosExtraBrutos(actor,meta)-Number(c.datos.mejora==='dado');
+    const opcion=opcionesCultivo(t,cul,costoUso(actor,meta,t.g),{dados:Math.min(limiteDadosExtra(t.g),brutos),tope:limiteDadosExtra(t.g),minimo:pisoCosto(t.g,D.costo),cdUsada:cdCultivo(actor,t,cul)}).find(o=>o.id===mejora);
+    if(!opcion?.ok)return rechazar(opcion?.motivo??'La mejora no es compatible.');
+    cul.mejoras.splice(desde,0,mejora);if(c.datos.mejora==='infusion')delete cul.infusionFija;
+    c.datos.mejora=mejora;c.texto=`Cultivo reorientado: ${t.n}, ${MEJORAS[mejora]} (${c.trazos} Trazos originales)`;
+    await guardar(actor,{cultivos:{[tecId]:cul},compras,historial:hist(e,`Reorienta ${t.n}: ${MEJORAS[mejora]}; sin nuevo cargo.`)});
+    await refrescar(actor);return true;
+  });
 }
 
 /** Monedas Antiguas: recuperar Verbe o volverlas Trazos (como mucho 2 por nivel). */
@@ -1415,7 +1572,7 @@ export function validarFormularioTecnica(actor, f) {
     const nivel = Number(estado(actor)?.cultivos?.[f.base]?.nivel) || 0;
     if (!base || !conoce(actor, f.base) || base.rama !== f.rama || nivel < (f.modo === "evolucion" ? 3 : 2)) duros.push("La técnica base no tiene el cultivo necesario.");
     if (!["variante", "evolucion"].includes(f.modo)) duros.push("El tipo de creación no es válido.");
-    max = Math.min(gradoUsable(actor, { rama: f.rama, g: 0 }), (base?.g ?? 0) + (f.modo === "evolucion" ? 3 : 2));
+    max = Math.min(topeRama(actor,f.rama), (base?.g ?? 0) + (f.modo === "evolucion" ? 3 : 2));
     if (Number(f.grado) < (base?.g ?? 0) + (f.modo === "evolucion" ? 1 : 0)) duros.push("El grado no corresponde a esa variante o evolución.");
   }
   if (!Number.isInteger(Number(f.grado)) || Number(f.grado) < 0 || Number(f.grado) > max) duros.push(`Puede crear hasta grado ${max}.`);
@@ -1866,7 +2023,7 @@ async function alQuitarEfecto(ef, opciones) {
 async function inicioDeTurno(combat) {
   const actor = combat?.combatant?.actor;
   if (!actor) return;
-  if (despierto(actor) && (estado(actor).reaccionUsada || estado(actor).accionReplicaUsada)) await guardar(actor, { reaccionUsada: false, accionReplicaUsada:false });
+  if (despierto(actor)) await guardar(actor, { reaccionUsada: false, accionReplicaUsada:false,turnoTecnicas:{combate:game.combat?.id??"combate",acciones:0,mayores:0} });
   for (const ef of actor.effects.filter(x => { const fl = x.getFlag(MOD, F);
     return fl && !fl.herencia && !fl.dotesAE && (Number(x.duration?.seconds) > 0 || Number(x.duration?.rounds) > 0); })) {
     const r = ef.duration?.remaining;
@@ -1890,7 +2047,10 @@ async function inicioDeTurno(combat) {
     const breve = recuperacionBreve(actor,roll.total);
     await guardar(actor,{valor:breve.valor,recResto:breve.recResto,recCortos:breve.recCortos});
     const valor = breve.valor;
-    aLaMesa(actor, "Verbe", `<p>${escH(actor.name)} recupera ${roll.total} de Verbe (${valor}).</p>`, { soloDueno: true });
+    aLaMesa(actor, "Verbe", `<p>${escH(actor.name)} obtiene ${breve.cantidad} puntos de recuperación de Verbe (${valor}); consume presupuesto breve.</p>`, { soloDueno: true });
+  }
+  if(tieneDote(actor,'respirar-mundo')&&(contextoShinobi(actor).modos.includes('sabio')||efectoV(actor,'quietud'))){
+    const breve=recuperacionBreve(actor,1);if(breve.cantidad)await guardar(actor,{valor:breve.valor,recResto:breve.recResto,recCortos:breve.recCortos});
   }
 }
 
@@ -2017,6 +2177,7 @@ export async function deshacer(actor, cid, { forzar = false } = {}) {
   const borrar = [];
   const cambios = {};
   if (c.tipo === "tecnica") {
+    cambios.poderesLegados=(e.poderesLegados??[]).filter(id=>id!==d.id);
     await quitarItems(actor, i => i.getFlag(MOD, F)?.id === d.id);
     if (e.cultivos?.[d.id]) borrar.push(`cultivos.${d.id}`);
     if (e.infusiones?.[d.id]) borrar.push(`infusiones.${d.id}`);
@@ -2088,6 +2249,7 @@ export async function rehacer(actor, { nat = false, principal = false } = {}) {
     if (!fl?.id) return false;
     return !regalos.has(fl.id) && tecnicaPorId(fl.id, actor)?.rama !== "mirada";
   });
+  e.poderesLegados=(e.poderesLegados??[]).filter(id=>conoce(actor,id));
   const quedan = (e.compras ?? []).filter(c => ["ojo", "moneda"].includes(c.tipo));
   const pr = principal ? null : e.principal;
   Object.assign(e, { rangos: pr ? { [pr]: 1 } : {}, ordenRamas: pr ? [pr] : [], principal: pr, dotes: [], afinidad: {}, cultivos: {}, infusiones: {},
@@ -2234,7 +2396,7 @@ const AYUDA = {
   verbe: "Tu reserva. Cada técnica gasta Verbe al usarla. Se recupera la mitad en un Descanso Largo en el Santuario. Respiro, Aliento y noches a la intemperie comparten un presupuesto breve de hasta la mitad de esa recuperación larga, renovado solo por un largo (Sueño reparador lo eleva hasta dos tercios). Sube sola con tu nivel.",
   trazos: "Tus puntos para crecer. Con ellos aprendes técnicas, subes rangos, compras dotes y cultivas. Ganas 4 por nivel, y a veces más por hitos de la historia o Monedas Antiguas. Lo que compras es para siempre.",
   car: "La característica con la que usas el Verbe. Da la CD de tus técnicas (8 + competencia + modificador), su bonificador de ataque y suma a tu reserva.",
-  grado: "Qué tan fuerte es una técnica, de 0 a 11 (como el nivel de un conjuro, con dos grados más arriba del 9). Tu grado máximo sube con tu nivel: grado 1 en el nivel 1, 2 en el 3, 3 en el 5… 9 en el 17, 10 en el 19 y 11 en el 20. En cada rama, además, llegas solo hasta lo que deja tu rango.",
+  grado: "Qué tan fuerte es una técnica, de 0 a 11 (como el nivel de un conjuro, con dos grados más arriba del 9). Tu grado máximo sube con tu nivel: grado 1 al nivel 1, 2 al 3, 3 al 5, 6 al 11, 8 al 16, 9 al 18, 10 al 19 y 11 al 20. En cada rama, además, llegas solo hasta lo que deja tu rango.",
   sobre: "Puedes gastar Verbe que no tienes: tu barra baja de 0 hasta la mitad de tu reserva en negativo. Cada técnica que usas en negativo te pide una salvación de CON (CD 10 + su grado); si fallas, ganas 1 Agotamiento. Lo que quede en negativo cuesta el doble de recuperar.",
   control: "Una habilidad nueva de tu hoja (con Sabiduría). Se tira para ganar un choque entre dos técnicas, romper un Velo, abrir los Cerrojos y no perderse en la Quietud. Se compra en Mejorar → Especialidades."
 };
@@ -2277,9 +2439,9 @@ ${tablaG(["Qué", "Trazos"], [["Técnica de grado 0", "1"], ["Técnica de grado 
     ["Cultivo: Pulida, Dominada, Propia", "1, 2 y 3"], ["Cerrojo", "su grado"], ["Crear una técnica", "grado + 1"]])}
 ${h2("tecnicas-y-grados", "Técnicas y grados")}
 <ul><li>Una técnica se usa como un conjuro: tiene acción, alcance, duración, ataque o salvación. Gasta Verbe en vez de un espacio.</li>
-<li>El <b>grado</b> (0 a 11) es como el nivel de un conjuro, con dos grados más arriba del 9. Tu grado máximo es (nivel + 1) ÷ 2 hasta el grado 9 (nivel 17); el nivel 19 llega al grado 10 y el 20 al 11. En cada rama llegas hasta lo que deja tu rango.</li>
+<li>El <b>grado</b> (0 a 11) es como el nivel de un conjuro, con dos grados más arriba del 9. El grado 6 llega al nivel 11; el 8 al 16, el 9 al 18, el 10 al 19 y el 11 al 20. Los aprendizajes altos también piden su senda de dotes y las ascensiones pertinentes. En cada rama llegas hasta lo que deja tu rango.</li>
 <li>Puedes usar una técnica a un grado mayor pagando el Verbe de ese grado, hasta el límite de tu nivel y rango de rama. Una técnica concedida por la historia conserva su grado base.</li>
-<li>Las de grado 0 casi no gastan, pero piden tener al menos 1 de Verbe. Cada técnica tiene un uso a grado 6 o más por Descanso Largo, incluido elevar una técnica de grado menor.</li>
+<li>Las de grado 0 casi no gastan, pero piden tener al menos 1 de Verbe. Cada técnica tiene un uso alto por Descanso Largo y comparte los cupos de mayores (6–8) o culminaciones (9–11). Grado 11: uno en total por largo. Elevar consume el mismo cupo; no copia poderes, blancos ni área.</li>
 <li>Componentes: <b>gestos</b> (una mano libre), <b>voz</b> (el silencio la impide) y <b>Concentración</b> (como en los conjuros).</li></ul>
 ${tablaG(["Grado", ...Array.from({ length: GRADO_TOPE + 1 }, (_, g) => String(g))], [["Verbe", ...Array.from({ length: GRADO_TOPE + 1 }, (_, g) => costoGrado(g))],
     ["Nivel", ...Array.from({ length: GRADO_TOPE + 1 }, (_, g) => String(nivelParaGrado(g)))]])}
@@ -2441,6 +2603,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       limpiarFiltros() { this.filtro = { rama: "", grado: "", nat: "", texto: "", solo: true, agrupar: "rama" }; this.abiertos = null; this.render(); },
       comoJugador() { this.comoJugador = !this.comoJugador; this.render(); },
       rango(ev, t) { correr(this, subirRango(this.actor, t.dataset.rama)); },
+      usarDote(ev,t) { correr(this,usarDote(this.actor,t.dataset.id)); },
+      reorientarDM() { correr(this,reorientarCultivo(this.actor,valorDe(this,"reorientarTecnica"),valorDe(this,"reorientarMejora"))); },
       usarReplica(ev,t) { correr(this,usarTecnica(this.actor,t.dataset.id,{replica:true})); },
       almacenar() { correr(this,almacenarVerbe(this.actor,Number(valorDe(this,"depositarVerbe")))); },
       cerrarReplicas() { const ef=efectoV(this.actor,"replicas");if(ef)correr(this,ef.delete()); },
@@ -2659,7 +2823,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       naturaleza: meta.infusion || t.nat ? nombreNat(meta.infusion || t.nat) : null,
       tiempo: TIEMPO_L[t.t] ?? t.t ?? "Ver ficha", alcance: t.alc ? alcanceL(t.alc) : "Ver ficha", area: t.area,
       referencia:t.origen?.nombre,
-      accionesExtra:!compra && Number(meta.g)<=2 && efectoV(a,"replicas") && Object.values(t.item.system.activities).some(x=>["attack","save","damage","heal"].includes(x.type)) ? `<button type="button" data-action="usarReplica" data-id="${escH(t.id)}" ${Number(e.reservaReplicas)<uso.costo||e.accionReplicaUsada?"disabled":""}>Usar desde réplica</button>`:"",
+      accionesExtra:!compra && Number(meta.g)<=capacidadReplicas(a) && efectoV(a,"replicas") && Object.values(t.item.system.activities).some(x=>["attack","save","damage","heal"].includes(x.type)) ? `<button type="button" data-action="usarReplica" data-id="${escH(t.id)}" ${Number(e.reservaReplicas)<uso.costo||e.accionReplicaUsada?"disabled":""}>Usar desde réplica</button>`:"",
       costo: uso.costo, trazos: compra ? t.trazos : null,
       accion: compra ? "aprender" : defensa ? "ficha" : "usar", boton: compra ? `${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Aprender"} · ${t.trazos} ${t.trazos === 1 ? "Trazo" : "Trazos"}` : defensa ? "Cómo usar esta defensa" : "Usar técnica",
       bloqueada: compra ? !r.ok || r.probar : !defensa && !uso.ok,
@@ -2697,7 +2861,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const conocidas = itemsTecnica(a).map(item => ({ item, t: tecnicaPorId(item.getFlag(MOD, F).id, a) })).filter(x => x.t);
     const lista = conocidas.filter(({ item, t }) => !f.texto || `${item.name} ${(t.alias ?? []).join(" ")} ${textoDe(t)}`.toLowerCase().includes(f.texto.toLowerCase()))
       .filter(({ item }) => !f.solo || previsualizarUso(a, item.getFlag(MOD, F)).ok);
-    return `${efectoV(a,"replicas")?`<div class="ev-instruccion"><span><b>Reserva repartida en réplicas: ${Number(estado(a).reservaReplicas)||0} Verbe</b>Una acción ofensiva conjunta por turno. «Usar desde réplica» gasta ese saldo y solo admite grado 0–2. Al disipar, se pierde el saldo restante.</span><button type="button" data-action="cerrarReplicas">Disipar réplicas</button></div>`:""}${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana habitual de dnd5e para confirmar el uso.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
+    const cupos=cuotasPoder(nivelDe(a),dotesActivas(a)),gastados=estado(a).cuotasPoder??{};
+    return `<div class="ev-instruccion"><span><b>Poderes entre Descansos Largos:</b> mayores (6–8): ${gastados.mayores||0}/${cupos.mayores}; culminaciones (9–11): ${gastados.culminaciones||0}/${cupos.culminaciones}; grado 11: ${gastados.trascendentes||0}/${cupos.trascendentes}. Elevar una técnica también consume su uso compartido.</span></div>${efectoV(a,"replicas")?`<div class="ev-instruccion"><span><b>Reserva repartida en réplicas: ${Number(estado(a).reservaReplicas)||0} Verbe</b>Una acción ofensiva conjunta por turno. «Usar desde réplica» gasta ese saldo y solo admite grado 0–${capacidadReplicas(a)}. Al disipar, se pierde el saldo restante.</span><button type="button" data-action="cerrarReplicas">Disipar réplicas</button></div>`:""}${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana habitual de dnd5e para confirmar el uso.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
       <div class="ev-instruccion"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span><b>Si afecta a otro, marca su token antes de usarla.</b> El alcance y las condiciones de cada técnica siguen contando.</span></div>
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar en mis técnicas</span><input type="search" data-filtro-uso="texto" placeholder="Nombre o efecto…" value="${escH(f.texto)}"></label><label><input type="checkbox" data-filtro-uso="solo" ${f.solo ? "checked" : ""}> Ocultar las bloqueadas por recursos o estado</label></div>
       ${lista.length ? `<div class="ev-tarjetas">${lista.map(({ t, item }) => this.#tarjeta(t, { item })).join("")}</div>` : `<div class="ev-vacio"><h3>${conocidas.length ? "Ninguna coincide con ese filtro" : "Tu primera técnica te espera"}</h3><p>${conocidas.length ? "Quita el filtro para ver los bloqueos y sus motivos." : "Aprende una técnica con Trazos. Después aparecerá aquí lista para usarla."}</p><button type="button" data-action="pestana" data-p="tienda">Ir a Aprender</button></div>`}`;
@@ -2837,7 +3002,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       ${opcionesNaturaleza(a,"combo").length ? `<p>Combina dos elementos conocidos: <select name="comboElegir">${opciones(opcionesNaturaleza(a,"combo").map(n=>[n,`${nombreNat(n)} (${D.combos[n].de.map(nombreNat).join(" + ")})`]), "")}</select> <button type="button" data-action="naturalezaExtra" data-tipo="combo">Abrir combinación</button></p>` : ""}
       <p>${combosDe(a).size ? `Combinaciones abiertas: ${[...combosDe(a)].map(nombreNat).join(", ")}. Todas sus técnicas aparecen en Aprender; las de mayor grado muestran sus requisitos.` : "Naturaleza combinada abre una combinación desde nivel 9 con maestro; Tercera naturaleza abre otro elemento desde nivel 7 con maestro. Una tercera naturaleza no concede por sí sola una combinación."}</p></section>
       <h3>Afinidad con tu naturaleza</h3><p class="ecos-nota">Qué tan bien manejas tu elemento. Entrenada: sus técnicas tiran 1 dado más y sus estados duran el doble. Maestra: 2 dados más, y quien falla contra ella no resiste su daño.</p><ul>${af || "<li>Primero elige tu naturaleza (Inicio).</li>"}</ul>
-      <section class="ev-naturalezas"><h3>Tradiciones y vínculos</h3><p>${(e.tradiciones??[]).map(id=>escH(D.tradicionesShinobi?.find(t=>t.id===id)?.nombre??id)).join(", ")||"El DM concede los aprendizajes secretos cuando los ganas en la historia."}</p>${e.vasija?.bestia?`<p>Bestia: ${escH(D.bestiasShinobi?.find(b=>b.id===e.vasija.bestia)?.nombre??e.vasija.bestia)} · vínculo ${e.vasija.vinculo}.</p>`:""}${conoce(a,"pulso-centenar-sello")?`<p>Sello del centenar: ${Number(e.reservaSellada)||0}/${2*nivelDe(a)} almacenados. <input name="depositarVerbe" type="number" min="1" value="1" style="width:5em"><button type="button" data-action="almacenar">Almacenar desde mi Verbe</button></p>`:""}</section>
+      <section class="ev-naturalezas"><h3>Tradiciones y vínculos</h3><p>${(e.tradiciones??[]).map(id=>escH(D.tradicionesShinobi?.find(t=>t.id===id)?.nombre??id)).join(", ")||"El DM concede los aprendizajes secretos cuando los ganas en la historia."}</p>${e.vasija?.bestia?`<p>Bestia: ${escH(D.bestiasShinobi?.find(b=>b.id===e.vasija.bestia)?.nombre??e.vasija.bestia)} · vínculo ${e.vasija.vinculo}.</p>`:""}${conoce(a,"pulso-centenar-sello")?`<p>Sello del centenar: ${Number(e.reservaSellada)||0}/${2*nivelDe(a)+sumaEf(a,ef=>ef.depositoExtra?competencia(a):0)} almacenados. <input name="depositarVerbe" type="number" min="1" value="1" style="width:5em"><button type="button" data-action="almacenar">Almacenar desde mi Verbe</button></p>`:""}</section>
       <h3>Control del Verbe ${ayuda("control")}</h3><p>${["Sin competencia", "Competente", "Pericia"][Math.min(2, ctl)]}. ${ctl < 2 ? `<button type="button" data-action="control" data-tooltip="${ctl === 0 ? "Sumas tu competencia a las pruebas de Control" : "Sumas el doble de tu competencia"}">${ctl === 0 ? "Volverte competente · 2 Trazos" : "Pericia · 3 Trazos (nivel 5)"}</button>` : ""}</p>
       <h3>Ocho Cerrojos</h3><p class="ecos-nota">Un estado de Cuerpo: pegas más fuerte y más rápido, pagando PG cada turno y Agotamiento al cerrar. <a class="ecos-verbe-guia" data-action="guia" data-s="siete-cerrojos"><i class="fa-solid fa-book-open"></i> Guía</a></p>
       <p>${cerr ? `Sabes hasta el ${cerr}.` : "No sabes ninguno."} ${sigC ? `<button type="button" data-action="aprenderCerrojo" data-tooltip="${escH(`${sigC.nombre}: ${sigC.da}. Grado ${sigC.grado}.`)}">Aprender el ${sigC.n} · ${escH(sigC.nombre)} · ${sigC.grado} Trazo${sigC.grado === 1 ? "" : "s"}</button>` : ""}</p>`;
@@ -2943,7 +3108,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         <tr>${f("Daño o curación", dano)}${f("Deja", deja)}</tr>
         <tr>${f("Usa", USA_TXT[(it?.flags?.[MOD]?.[F]?.usa) ?? "verbe"] ?? "")}${f("Sube", sube)}</tr>
         <tr>${f("Verbe por uso", verbes)}${f("Para aprender", `${t.trazos} Trazo${t.trazos === 1 ? "" : "s"}${t.rara ? " (rara: +1)" : ""}`)}</tr>
-        <tr>${f("Pide", pide)}${f("Puedes", conoce(a, t.id) ? "ya la sabes" : r.ok ? (r.probar ? "probarla" : "sí") : escH(r.motivo))}</tr>
+        <tr>${f("Pide", pide+(t.g>=6?` · ${t.g>=9?"Leyenda":"Maestría"} de ${nombreRama(t.rama)} para aprender${t.g>=10?" · Ascensión mítica":""}${t.g===11?" · Ascensión trascendente":""}`:""))}${f("Puedes", conoce(a, t.id) ? "ya la sabes" : r.ok ? (r.probar ? "probarla" : "sí") : escH(r.motivo))}</tr>
       </table>${act && act.type === "save" && t.g > 0 ? `<p class="ecos-nota">CD con tu Verbe: ${8 + competencia(a) + modDe(a, habilidadTecnica(a, it.flags?.[MOD]?.[F] ?? {}))}.</p>` : ""}
       ${t.fuerte ? `<p class="ecos-verbe-fuerte"><b>Contra alguien más fuerte:</b> ${escH(D.textoFuerte ?? "")}</p>` : ""}
       ${t.prog?.length ? `<div class="ecos-verbe-crece"><b>Crece</b><ul>${t.prog.map(x => `<li>${escH(x)}</li>`).join("")}</ul></div>` : ""}
@@ -2973,7 +3138,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       return `<details class="ecos-verbe-grupo" data-g="${k}" ${abierto ? "open" : ""}><summary><b>${escH(cat?.nombre ?? "Otras")}</b> <span>${escH(cat?.texto ?? "")} · ${ds.length}</span></summary>
         ${ds.map(({ d, tiene, r }) => {
           const faltan = Math.max(0, d.trazos - trazos(a).libres);
-          const btn = tiene ? `<span class='ecos-verbe-pill'>${d.innato ? "de nacimiento" : "la tienes"}</span>`
+          const btn = tiene ? `<span class='ecos-verbe-pill'>${d.innato ? "de nacimiento" : "la tienes"}</span>${d.poder?`<button type="button" data-action="usarDote" data-id="${escH(d.id)}" ${estado(a).usosDote?.[d.id]||!doteActiva(a,d)?"disabled":""}>${estado(a).usosDote?.[d.id]?"Usada hasta el largo":"Activar"}</button>`:""}`
             : r.ok ? `<button type="button" data-action="dote" data-id="${d.id}" ${faltan ? "disabled" : ""}>${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Comprar"} · ${d.trazos} Trazos</button><small>${faltan ? `Te faltan ${faltan} Trazos` : `Te quedarían ${trazos(a).libres - d.trazos} Trazos`}</small>`
               : `<span class="ecos-verbe-no">${escH(r.motivo)}</span>`;
           return `<details class="ecos-verbe-tec ${tiene ? "sabe" : r.ok ? "puede" : "no"}" data-id="${d.id}" data-tipo="dote"><summary>
@@ -2982,6 +3147,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         }).join("")}</details>`;
     }).join("");
     return `${intro("Mejoras permanentes del Verbe.", "Haz clic en una para verla entera. Se pagan una vez con Trazos y quedan como rasgos en tu hoja; las que piden un maestro van al DM.", "", "dotes")}
+      <div class="ev-instruccion"><span><b>Sendas:</b> Disciplina (3) → Especialista (7) → Maestría (11) → Leyenda (18). Grado 10 pide Ascensión mítica y 11 Ascensión trascendente; el DM concede sus pruebas de historia.</span></div>
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar una mejora</span><input type="search" data-filtro-dote="texto" placeholder="Nombre o beneficio…" value="${escH(f.texto)}"></label>
         <label><input type="checkbox" data-filtro-dote="solo" ${f.solo ? "checked" : ""}> Solo las que puedo comprar ahora</label></div>
       ${html || "<p>Nada con ese filtro.</p>"}`;
@@ -2993,8 +3159,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     if (!d) return "";
     const r = cumpleReqDote(a, d);
     const cat = (D.categoriasDote ?? []).find(x => x.id === d.cat);
-    return `<p class="texto">${escH(dotTexto(d))}</p>
-      <table class="ecos-verbe-ficha"><tr><th>Precio</th><td>${d.trazos} Trazos</td><th>Pide</th><td>${escH(d.req ?? "nada")}</td></tr>
+    return `<p class="texto">${escH(dotTexto(d))}</p><p class="ecos-nota">${escH(d.automatizacion??"Revisa con el DM las condiciones del beneficio.")}</p>
+      <table class="ecos-verbe-ficha"><tr><th>Precio</th><td>${d.trazos} Trazos</td><th>Pide</th><td>${escH(requisitosDoteTexto(d))}</td></tr>
         <tr><th>Tipo</th><td>${escH(cat?.nombre ?? "—")}</td><th>Puedes</th><td>${tieneDote(a, d.id) ? (d.innato ? "la tienes desde que despertaste" : "ya la tienes") : r.ok ? (r.pideDM ? "pedirla al DM" : "sí") : escH(r.motivo)}</td></tr></table>
       ${d.mejora?.length ? `<div class="ecos-verbe-mejora"><b>Se mejora con</b><ul>${d.mejora.map(x => `<li>${escH(x)}</li>`).join("")}</ul></div>` : ""}`;
   }
@@ -3009,7 +3175,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       const tec = tecnicaPorId(meta.id, a);
       if (!tec) return "";
       const cul = e.cultivos?.[meta.id] ?? { nivel: 0, mejoras: [] };
-      const opcionesEntrenar = opcionesCultivo(tec, cul, costoUso(a, meta, tec.g));
+      const opcionesEntrenar = opcionesCultivo(tec, cul, costoUso(a, meta, tec.g),{dados:dadosExtra(a,meta),tope:limiteDadosExtra(tec.g),minimo:pisoCosto(tec.g,D.costo),cdUsada:cdCultivo(a,tec,cul)});
       const activas = opcionesEntrenar.filter(o=>o.ok);
       const opc = activas.filter(o=>o.id !== "infusion").map(o=>[o.id,`${o.nombre} · ${o.costo} Trazos`]);
       if (activas.some(o=>o.id === "infusion")) for (const n of [...nats, ...combosDe(a)]) opc.push([`infusion:${n}`,`Infusión fija: ${nombreNat(n)} · ${activas.find(o=>o.id === "infusion").costo} Trazos`]);
@@ -3023,7 +3189,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       return `<tr><td><b>${escH(it.name)}</b><br><small>Grado ${tec.g} · ${NIVEL_CULTIVO[cul.nivel]}${cul.mejoras.length ? ` · ${cul.mejoras.map(m => MEJORAS[m] ?? "infusión fija").join(", ")}` : ""}${tec.base ? " · derivada" : ""}</small></td>
         <td>${acc}${der ? `<br>${der}` : ""}</td><td>${infSel}</td></tr>`;
     }).join("");
-    return `${intro("Entrena una técnica que ya sabes para que crezca.", `Cada técnica pasa por Pulida, Dominada y Propia. El selector solo ofrece mejoras con efecto en su forma. Coste: nivel de cultivo nuevo (1, 2 o 3), +1 por dado/CD/ahorro de Verbe o control de Sustitución; +2 por rapidez, componentes o infusión fija. El coste final aparece en cada opción. Puedes cultivar tantas técnicas como tu bonificador de competencia: ${competencia(a)} (llevas ${usadas}).`,
+    return `${intro("Entrena una técnica que ya sabes para que crezca.", `Cada técnica pasa por Pulida, Dominada y Propia. El selector solo ofrece mejoras con efecto en su forma. Coste: nivel de cultivo nuevo (1, 2 o 3), +1 por dado/CD/ahorro de Verbe o control de Sustitución; +2 por rapidez, componentes o infusión fija. El coste final aparece en cada opción. Puedes cultivar tantas técnicas como tu competencia más tus dotes: ${competencia(a)+sumaEf(a,ef=>ef.cultivosExtra)} (llevas ${usadas}).`,
       `<ul class="ecos-verbe-lista">${D.mejoras.map(m => `<li>${escH(m)}</li>`).join("")}</ul>
       <p>Dominada saca variantes; Propia evoluciona. <b>Infundir</b> le pone tu elemento a una técnica que hace daño: +2 Verbe por uso, sin Trazos.</p>`, "cultivo")}
       <table class="ecos-verbe-tabla"><thead><tr><th>Técnica</th><th>Cultivar</th><th>Infusión</th></tr></thead><tbody>${filas || "<tr><td colspan=\"3\">Todavía no sabes técnicas: apréndelas en Aprender.</td></tr>"}</tbody></table>
@@ -3057,6 +3223,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const cerradas = D.ramas.filter(r => !ramaAbierta(a, r.id)).map(r => [r.id, r.nombre]);
     const sec = (titulo, html, abierto = false) => `<details class="ecos-verbe-dmsec" ${abierto ? "open" : ""}><summary>${titulo}</summary>${html}</details>`;
     return `<p><button type="button" data-action="editorCatalogo"><i class="fa-solid fa-pen-nib"></i> Taller del DM · crear y publicar técnicas universales</button></p>${intro("Solo tú ves esta pestaña.", "Pedidos, Trazos, deshacer compras y cambios a mano. «Ver como el jugador» (arriba) muestra el panel tal como lo ve él.")}
+      ${sec("Reorientar un cultivo sin volver a cobrar",`<p>Tras cambiar el balance, puedes sustituir la última mejora registrada de una técnica conservando sus Trazos y nivel de cultivo.</p><select name="reorientarTecnica">${opciones(itemsTecnica(a).filter(i=>e.cultivos?.[i.getFlag(MOD,F)?.id]?.mejoras?.length).map(i=>[i.getFlag(MOD,F).id,i.name]),"")}</select><select name="reorientarMejora">${opciones(Object.entries(MEJORAS),"")}</select><button type="button" data-action="reorientarDM">Sustituir última mejora</button>`)}
       ${D.shinobi?sec("Repertorio shinobi: tradiciones, bestias y rituales",`
         <p>Tradición: <select name="shinobiTradicion">${opciones((D.tradicionesShinobi??[]).map(t=>[t.id,`${e.tradiciones?.includes(t.id)?"✓ ":""}${t.nombre}`]),"")}</select><button type="button" data-action="shinobiDM" data-campo="tradicion" data-de="shinobiTradicion">Conceder / retirar</button></p>
         <p>Hito: <select name="shinobiHito">${opciones((D.hitosShinobi??[]).map(h=>[h.id,`${e.hitosShinobi?.includes(h.id)?"✓ ":""}${h.nombre}`]),"")}</select><button type="button" data-action="shinobiDM" data-campo="hito" data-de="shinobiHito">Conceder / retirar</button></p>
@@ -3449,7 +3616,7 @@ Hooks.once("ready", async () => {
     return console.error(`${MOD} | capa V: no pude leer sus datos`, err);
   }
   const api = (game.modules.get(MOD).api ??= {});
-  api.verbe = { concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), despierto, estado, maxVerbe, trazos, refrescar, aprender,
+  api.verbe = { usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
     deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)

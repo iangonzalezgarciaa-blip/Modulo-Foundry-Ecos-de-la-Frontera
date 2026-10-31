@@ -1,0 +1,3159 @@
+{
+  "tecnicas": 754,
+  "dotes": 219,
+  "nuevas": 64,
+  "dotesDetalle": [
+    {
+      "id": "control-fino",
+      "nombre": "Control fino del Verbe",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "maestria-control",
+      "nombre": "Maestría del Control",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {},
+        "dotes": [
+          "control-fino"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "control-legendario",
+      "nombre": "Control legendario",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [
+          "maestria-control"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "reserva-profunda",
+      "nombre": "Reserva profunda",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "eco-sangre",
+      "nombre": "Eco de la sangre",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "fuerzas": [
+          "plena",
+          "media"
+        ],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "aliento-soldado",
+      "nombre": "Aliento de soldado",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "aguante-verbe",
+      "nombre": "Aguante del Verbe",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "meditador",
+      "nombre": "Meditador",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "quietud": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "veterano-quietud",
+      "nombre": "Veterano de la Quietud",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "quietud": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "naturaleza-combinada",
+      "nombre": "Naturaleza combinada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 9,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": true
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "tercera-naturaleza",
+      "nombre": "Tercera naturaleza",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": true
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "naturaleza-afilada",
+      "nombre": "Naturaleza afilada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "piel-naturaleza",
+      "nombre": "Piel de tu naturaleza",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "rama-segunda",
+      "nombre": "Rama segunda",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sellos-mente",
+      "nombre": "Sellos en la mente",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "cuatro-manos",
+      "nombre": "Cuatro manos",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": true
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sellos-rapidos",
+      "nombre": "Sellos rápidos",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "arma-tecnica",
+      "nombre": "Arma y técnica",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "tecnica-reserva",
+      "nombre": "Técnica de reserva",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sustitucion-refleja",
+      "nombre": "Sustitución refleja",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [
+          "forma-sustitucion"
+        ],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "golpe-verbe",
+      "nombre": "Golpe de Verbe",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "choque-perfecto",
+      "nombre": "Choque perfecto",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "pulso-largo",
+      "nombre": "Pulso largo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "concentracion-hierro",
+      "nombre": "Concentración de hierro",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "mente-hierro",
+      "nombre": "Mente de hierro",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "ojo-entrenado",
+      "nombre": "Ojo entrenado",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sentir-verbe",
+      "nombre": "Sentir el Verbe",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [
+          "innato-sentido"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "firma-oculta",
+      "nombre": "Firma oculta",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "andar-sin-huella",
+      "nombre": "Andar sin huella",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [
+          "forma-andar"
+        ],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "pergamino-guardado",
+      "nombre": "Pergamino guardado",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "sello": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "pacto-doble",
+      "nombre": "Pacto doble",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "pacto": 2
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "injerto-aceptado",
+      "nombre": "Injerto aceptado",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "trasplante": true,
+        "ojo": 1,
+        "dm": true
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "combinacion-dominada",
+      "nombre": "Combinación dominada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [
+          "naturaleza-combinada"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "elemento-complejo",
+      "nombre": "Elemento complejo",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [
+          "naturaleza-combinada"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "infusion-rapida",
+      "nombre": "Infusión rápida",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "afinidad": 2,
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "pareja-tecnica",
+      "nombre": "Pareja de técnica",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "juramento-casa",
+      "nombre": "Juramento de la casa",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": true
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "tecnica-firmada",
+      "nombre": "Técnica firmada",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "pozo-sin-fondo",
+      "nombre": "Pozo sin fondo",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {},
+        "dotes": [
+          "reserva-profunda"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "caudal-firme",
+      "nombre": "Caudal firme",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "respiro",
+      "nombre": "Respiro",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "sueno-reparador",
+      "nombre": "Sueño reparador",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "hijo-santuario",
+      "nombre": "Hijo del Santuario",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "templado",
+      "nombre": "Templado",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [
+          "aguante-verbe"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "mano-monedas",
+      "nombre": "Mano para las monedas",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "verbe-compartido",
+      "nombre": "Verbe compartido",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "ultima-gota",
+      "nombre": "Última gota",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "segundo-aliento",
+      "nombre": "Segundo aliento del Verbe",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "beber-aire",
+      "nombre": "Beber del aire",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "quietud": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "reserva-de-guerra",
+      "nombre": "Reserva de guerra",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "practica-control",
+      "nombre": "Práctica de Control",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "control-sereno",
+      "nombre": "Control sereno",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "leer-flujo",
+      "nombre": "Leer el flujo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "choque-lejano",
+      "nombre": "Choque desde lejos",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [
+          "choque-perfecto"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "romper-flujo",
+      "nombre": "Romper el flujo",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "contencion",
+      "nombre": "Contención",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "foco-principal",
+      "nombre": "Foco de la rama",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "punteria-verbe",
+      "nombre": "Puntería del Verbe",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "control-a-ciegas",
+      "nombre": "Control a ciegas",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [
+          "sentir-verbe"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "calma-combate",
+      "nombre": "Calma de combate",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "corazon-fuego",
+      "nombre": "Corazón de fuego",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 9,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "naturaleza": "fuego",
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "corazon-agua",
+      "nombre": "Corazón de agua",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "naturaleza": "agua",
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "corazon-viento",
+      "nombre": "Corazón de viento",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "naturaleza": "viento",
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "corazon-tierra",
+      "nombre": "Corazón de tierra",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "naturaleza": "tierra",
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "corazon-rayo",
+      "nombre": "Corazón de rayo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "naturaleza": "rayo",
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "estado-hondo",
+      "nombre": "Estado hondo",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 9,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "afinidad": 2,
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "maestro-cruces",
+      "nombre": "Maestro de cruces",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "minNaturalezas": 2,
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "arma-elemento",
+      "nombre": "Arma del elemento",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "infusion-doble",
+      "nombre": "Infusión doble",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {},
+        "dotes": [
+          "infusion-rapida"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "infusion-sostenida",
+      "nombre": "Infusión sostenida",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 9,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "afinidad": 2,
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "ciclo-a-favor",
+      "nombre": "Ciclo a favor",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sin-debilidad",
+      "nombre": "Sin debilidad",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 9,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "combinacion-preparada",
+      "nombre": "Combinación preparada",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [
+          "naturaleza-combinada"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "afinidad-natural",
+      "nombre": "Afinidad natural",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "tecnica-callada",
+      "nombre": "Técnica callada",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "alcance-largo",
+      "nombre": "Alcance largo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "area-ancha",
+      "nombre": "Área ancha",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "dos-hilos",
+      "nombre": "Dos hilos",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "empuje-grado",
+      "nombre": "Empuje de grado",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "tecnica-gemela",
+      "nombre": "Técnica gemela",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "trucos-afilados",
+      "nombre": "Trucos afilados",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "pergamino-rapido",
+      "nombre": "Pergamino rápido",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [
+          "pergamino-guardado"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "gesto-minimo",
+      "nombre": "Gesto mínimo",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "preparacion",
+      "nombre": "Preparación",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "arma-canalizadora",
+      "nombre": "Arma canalizadora",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "manos-rapidas",
+      "nombre": "Manos rápidas",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 9,
+        "ramas": {},
+        "dotes": [
+          "sellos-rapidos"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "puno-cargado",
+      "nombre": "Puño cargado",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "golpe-y-tecnica",
+      "nombre": "Golpe y técnica",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "rafaga",
+      "nombre": "Ráfaga",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "cazador-usuarios",
+      "nombre": "Cazador de usuarios",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "ojo-salvaje",
+      "nombre": "Ojo para lo salvaje",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "remate",
+      "nombre": "Remate",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "impulso-tactico",
+      "nombre": "Impulso táctico",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "cuerpo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "piel-dura",
+      "nombre": "Piel dura",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 9,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "dos-tiempos",
+      "nombre": "Dos tiempos",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sangre-fria",
+      "nombre": "Sangre fría",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "lluvia-larga",
+      "nombre": "Lluvia larga",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "hilo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "golpe-firme",
+      "nombre": "Golpe firme",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "castigo-del-verbe",
+      "nombre": "Castigo del Verbe",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sin-retroceso",
+      "nombre": "Sin retroceso",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sustitucion-amplia",
+      "nombre": "Sustitución amplia",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [
+          "forma-sustitucion"
+        ],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sustitucion-lejana",
+      "nombre": "Sustitución lejana",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [
+          "forma-sustitucion"
+        ],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sustitucion-trampa",
+      "nombre": "Sustitución con trampa",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [
+          "forma-sustitucion"
+        ],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "guardia-alta",
+      "nombre": "Guardia alta",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "reflejo-verbe",
+      "nombre": "Reflejo del Verbe",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "doble-reflejo",
+      "nombre": "Doble reflejo",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "esquivar-sin-verbe",
+      "nombre": "Esquivar sin Verbe",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "capa-verbe",
+      "nombre": "Capa de Verbe",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "caer-de-pie",
+      "nombre": "Caer de pie",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "guardia-del-otro",
+      "nombre": "Guardia del otro",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "memoria-tecnicas",
+      "nombre": "Memoria de técnicas",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sentir-lejos-dote",
+      "nombre": "Sentir más lejos",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [
+          "sentir-verbe"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "mente-clara",
+      "nombre": "Mente clara",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sueno-ligero",
+      "nombre": "Sueño ligero",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "ojo-tecnico",
+      "nombre": "Ojo técnico",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "silencio-interior",
+      "nombre": "Silencio interior",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "intuicion-verbe",
+      "nombre": "Intuición del Verbe",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "aguantar-dolor",
+      "nombre": "Aguantar el dolor",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "doble-fondo",
+      "nombre": "Doble fondo",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "velo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "forma-afilada",
+      "nombre": "Forma afilada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "forma": 2
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "replicas-tercas",
+      "nombre": "Réplicas tercas",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "forma": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "velo-sostenido",
+      "nombre": "Velo sostenido",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "velo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "cuerpo-hierro",
+      "nombre": "Cuerpo de hierro",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "cuerpo": 2
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "cerrojo-temprano",
+      "nombre": "Cerrojo temprano",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "cerrojo": 1,
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "tinta-propia",
+      "nombre": "Tinta propia",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "sello": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sello-firme",
+      "nombre": "Sello firme",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "sello": 2
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "llamado-rapido",
+      "nombre": "Llamado rápido",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "pacto": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "manos-tibias",
+      "nombre": "Manos tibias",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "pulso": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "hilo-largo",
+      "nombre": "Hilo largo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "hilo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "respirar-mundo",
+      "nombre": "Respirar el mundo",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "quietud": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "huella-fresca",
+      "nombre": "Huella fresca",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "rastro": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "parpado-firme",
+      "nombre": "Párpado firme",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "ojo": 1,
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sangre-callada",
+      "nombre": "Sangre callada",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "herencia": true,
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "heredero-arte",
+      "nombre": "Heredero del arte",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": true
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "aprendiz-muchos",
+      "nombre": "Aprendiz de muchos",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "discipulo",
+      "nombre": "Discípulo",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "maestro-tecnica",
+      "nombre": "Maestro de una técnica",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "propia": true,
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "raiz-de-rama",
+      "nombre": "Raíz de la rama",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "escuela-abierta",
+      "nombre": "Escuela abierta",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [
+          "juramento-casa"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "innato-sentido",
+      "nombre": "Sentido del Verbe",
+      "trazos": 0,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "innato-cuerpo",
+      "nombre": "Cuerpo despierto",
+      "trazos": 0,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "innato-cuerpo-2",
+      "nombre": "Cuerpo despierto II",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [
+          "innato-cuerpo"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "innato-cuerpo-3",
+      "nombre": "Cuerpo despierto III",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [
+          "innato-cuerpo-2"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "innato-aliento",
+      "nombre": "Aliento del Verbe",
+      "trazos": 0,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "innato-aliento-2",
+      "nombre": "Aliento del Verbe II",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [
+          "innato-aliento"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "innato-aliento-3",
+      "nombre": "Aliento del Verbe III",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [
+          "innato-aliento-2"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "innato-paso",
+      "nombre": "Paso del Verbe",
+      "trazos": 0,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "innato-paso-2",
+      "nombre": "Paso del Verbe II",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [
+          "innato-paso"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "innato-paso-3",
+      "nombre": "Paso del Verbe III",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [
+          "innato-paso-2"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "titiritero",
+      "nombre": "Titiritero",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "hilo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "titiritero-2",
+      "nombre": "Titiritero de oficio",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "hilo": 2
+        },
+        "dotes": [
+          "titiritero"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "titiritero-3",
+      "nombre": "Maestro titiritero",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "hilo": 3
+        },
+        "dotes": [
+          "titiritero-2"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "medico-verbe",
+      "nombre": "Médico del Verbe",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "pulso": 1
+        },
+        "dotes": [
+          "control-fino"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "medico-oficio",
+      "nombre": "Médico de oficio",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "pulso": 2
+        },
+        "dotes": [
+          "medico-verbe"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "cirujano-verbe",
+      "nombre": "Cirujano del Verbe",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "pulso": 3
+        },
+        "dotes": [
+          "medico-oficio"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "senda-forma-1",
+      "nombre": "Disciplina de Forma",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "forma": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-forma-2",
+      "nombre": "Forma precisa",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "forma": 2
+        },
+        "dotes": [
+          "senda-forma-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-forma-3",
+      "nombre": "Maestría de Forma",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "forma": 3
+        },
+        "dotes": [
+          "senda-forma-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-forma-4",
+      "nombre": "Leyenda de Forma",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "forma": 4
+        },
+        "dotes": [
+          "senda-forma-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-velo-1",
+      "nombre": "Disciplina de Velo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "velo": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-velo-2",
+      "nombre": "Velo paciente",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "velo": 2
+        },
+        "dotes": [
+          "senda-velo-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-velo-3",
+      "nombre": "Maestría de Velo",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "velo": 3
+        },
+        "dotes": [
+          "senda-velo-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-velo-4",
+      "nombre": "Leyenda de Velo",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "velo": 4
+        },
+        "dotes": [
+          "senda-velo-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-cuerpo-1",
+      "nombre": "Disciplina de Cuerpo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "cuerpo": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-cuerpo-2",
+      "nombre": "Cuerpo ligero",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "cuerpo": 2
+        },
+        "dotes": [
+          "senda-cuerpo-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-cuerpo-3",
+      "nombre": "Maestría de Cuerpo",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "cuerpo": 3
+        },
+        "dotes": [
+          "senda-cuerpo-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-cuerpo-4",
+      "nombre": "Leyenda de Cuerpo",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "cuerpo": 4
+        },
+        "dotes": [
+          "senda-cuerpo-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-mirada-1",
+      "nombre": "Disciplina de Mirada",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "mirada": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-mirada-2",
+      "nombre": "Mirada sostenida",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "mirada": 2
+        },
+        "dotes": [
+          "senda-mirada-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-mirada-3",
+      "nombre": "Maestría de Mirada",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "mirada": 3
+        },
+        "dotes": [
+          "senda-mirada-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-mirada-4",
+      "nombre": "Leyenda de Mirada",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "mirada": 4
+        },
+        "dotes": [
+          "senda-mirada-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-sello-1",
+      "nombre": "Disciplina de Sello",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "sello": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-sello-2",
+      "nombre": "Sello duradero",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "sello": 2
+        },
+        "dotes": [
+          "senda-sello-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-sello-3",
+      "nombre": "Maestría de Sello",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "sello": 3
+        },
+        "dotes": [
+          "senda-sello-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-sello-4",
+      "nombre": "Leyenda de Sello",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "sello": 4
+        },
+        "dotes": [
+          "senda-sello-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-pacto-1",
+      "nombre": "Disciplina de Pacto",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "pacto": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-pacto-2",
+      "nombre": "Contrato estable",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "pacto": 2
+        },
+        "dotes": [
+          "senda-pacto-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-pacto-3",
+      "nombre": "Maestría de Pacto",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "pacto": 3
+        },
+        "dotes": [
+          "senda-pacto-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-pacto-4",
+      "nombre": "Leyenda de Pacto",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "pacto": 4
+        },
+        "dotes": [
+          "senda-pacto-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-pulso-1",
+      "nombre": "Disciplina de Pulso",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "pulso": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-pulso-2",
+      "nombre": "Pulso medido",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "pulso": 2
+        },
+        "dotes": [
+          "senda-pulso-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-pulso-3",
+      "nombre": "Maestría de Pulso",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "pulso": 3
+        },
+        "dotes": [
+          "senda-pulso-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-pulso-4",
+      "nombre": "Leyenda de Pulso",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "pulso": 4
+        },
+        "dotes": [
+          "senda-pulso-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-hilo-1",
+      "nombre": "Disciplina de Hilo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "hilo": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-hilo-2",
+      "nombre": "Hilo preciso",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "hilo": 2
+        },
+        "dotes": [
+          "senda-hilo-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-hilo-3",
+      "nombre": "Maestría de Hilo",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "hilo": 3
+        },
+        "dotes": [
+          "senda-hilo-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-hilo-4",
+      "nombre": "Leyenda de Hilo",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "hilo": 4
+        },
+        "dotes": [
+          "senda-hilo-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-quietud-1",
+      "nombre": "Disciplina de Quietud",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "quietud": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-quietud-2",
+      "nombre": "Quietud estable",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "quietud": 2
+        },
+        "dotes": [
+          "senda-quietud-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-quietud-3",
+      "nombre": "Maestría de Quietud",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "quietud": 3
+        },
+        "dotes": [
+          "senda-quietud-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-quietud-4",
+      "nombre": "Leyenda de Quietud",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "quietud": 4
+        },
+        "dotes": [
+          "senda-quietud-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-rastro-1",
+      "nombre": "Disciplina de Rastro",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "rastro": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-rastro-2",
+      "nombre": "Rastro extendido",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "rastro": 2
+        },
+        "dotes": [
+          "senda-rastro-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-rastro-3",
+      "nombre": "Maestría de Rastro",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "rastro": 3
+        },
+        "dotes": [
+          "senda-rastro-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-rastro-4",
+      "nombre": "Leyenda de Rastro",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "rastro": 4
+        },
+        "dotes": [
+          "senda-rastro-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-sangre-1",
+      "nombre": "Disciplina de Sangre",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "sangre": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-sangre-2",
+      "nombre": "Cuerpo adaptado",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "sangre": 2
+        },
+        "dotes": [
+          "senda-sangre-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-sangre-3",
+      "nombre": "Maestría de Sangre",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "sangre": 3
+        },
+        "dotes": [
+          "senda-sangre-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-sangre-4",
+      "nombre": "Leyenda de Sangre",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "sangre": 4
+        },
+        "dotes": [
+          "senda-sangre-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-umbral-1",
+      "nombre": "Disciplina de Umbral",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "umbral": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-umbral-2",
+      "nombre": "Ancla estudiada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "umbral": 2
+        },
+        "dotes": [
+          "senda-umbral-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-umbral-3",
+      "nombre": "Maestría de Umbral",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "umbral": 3
+        },
+        "dotes": [
+          "senda-umbral-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-umbral-4",
+      "nombre": "Leyenda de Umbral",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "umbral": 4
+        },
+        "dotes": [
+          "senda-umbral-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-vasija-1",
+      "nombre": "Disciplina de Vasija",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {
+          "vasija": 1
+        }
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-vasija-2",
+      "nombre": "Vínculo sereno",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {
+          "vasija": 2
+        },
+        "dotes": [
+          "senda-vasija-1"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "senda-vasija-3",
+      "nombre": "Maestría de Vasija",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {
+          "vasija": 3
+        },
+        "dotes": [
+          "senda-vasija-2"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "senda-vasija-4",
+      "nombre": "Leyenda de Vasija",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 18,
+        "ramas": {
+          "vasija": 4
+        },
+        "dotes": [
+          "senda-vasija-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "ascension-mitica",
+      "nombre": "Ascensión mítica",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 19,
+        "algunaDote": [
+          "senda-forma-4",
+          "senda-velo-4",
+          "senda-cuerpo-4",
+          "senda-mirada-4",
+          "senda-sello-4",
+          "senda-pacto-4",
+          "senda-pulso-4",
+          "senda-hilo-4",
+          "senda-quietud-4",
+          "senda-rastro-4",
+          "senda-sangre-4",
+          "senda-umbral-4",
+          "senda-vasija-4"
+        ],
+        "hito": "prueba-mitica",
+        "dm": true
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "ascension-trascendente",
+      "nombre": "Ascensión trascendente",
+      "trazos": 5,
+      "requisitos": {
+        "nivel": 20,
+        "dotes": [
+          "ascension-mitica"
+        ],
+        "hito": "prueba-trascendente",
+        "dm": true
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "escalado-profundo",
+      "nombre": "Escalado profundo",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 11,
+        "algunaDote": [
+          "senda-forma-3",
+          "senda-velo-3",
+          "senda-cuerpo-3",
+          "senda-mirada-3",
+          "senda-sello-3",
+          "senda-pacto-3",
+          "senda-pulso-3",
+          "senda-hilo-3",
+          "senda-quietud-3",
+          "senda-rastro-3",
+          "senda-sangre-3",
+          "senda-umbral-3",
+          "senda-vasija-3"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "cultivo-versatil",
+      "nombre": "Cultivo versátil",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 5
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "sello-amplio",
+      "nombre": "Depósito organizado",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 9,
+        "tecnicas": [
+          "pulso-centenar-sello"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "formacion-disciplinada",
+      "nombre": "Formación disciplinada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 11,
+        "dotes": [
+          "senda-forma-3"
+        ],
+        "tecnicas": [
+          "forma-replica-solida"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "ojo-conservador",
+      "nombre": "Ojo conservador",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 11,
+        "ojo": 4
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "guardia-concentrada",
+      "nombre": "Guardia concentrada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "dotes": [
+          "concentracion-hierro"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "paso-ancla",
+      "nombre": "Paso del ancla",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "umbral": 1
+        }
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "reserva-estable",
+      "nombre": "Reserva estable",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 9,
+        "dotes": [
+          "reserva-profunda"
+        ]
+      },
+      "automatizacion": "Requisitos y beneficio registrados en el módulo."
+    },
+    {
+      "id": "coordinacion-consciente",
+      "nombre": "Coordinación consciente",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 11,
+        "dotes": [
+          "pareja-tecnica"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "pulso-compasivo",
+      "nombre": "Pulso compasivo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 5,
+        "dotes": [
+          "medico-verbe"
+        ]
+      },
+      "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    }
+  ],
+  "caminos": [
+    [
+      "mirada-aster-costillas",
+      "mirada-aster-guerrero",
+      "mirada-aster-armadura",
+      "mirada-aster-perfecto",
+      "mirada-aster-indra"
+    ],
+    [
+      "mirada-orbe-atraer",
+      "mirada-orbe-repeler",
+      "mirada-orbe-luna"
+    ],
+    [
+      "mirada-orbe-receptores",
+      "mirada-orbe-seis-cuerpos"
+    ],
+    [
+      "sangre-arcilla-c1",
+      "sangre-arcilla-c2",
+      "sangre-arcilla-c3",
+      "sangre-arcilla-c4",
+      "sangre-arcilla-cero"
+    ],
+    [
+      "pacto-rashomon",
+      "pacto-tres-rashomon",
+      "pacto-cinco-rashomon"
+    ],
+    [
+      "vasija-manto-uno",
+      "vasija-manto-dos",
+      "vasija-avatar",
+      "vasija-bomba"
+    ],
+    [
+      "vasija-kurama-chakra",
+      "vasija-kurama-amigo"
+    ],
+    [
+      "pulso-centenar-sello",
+      "pulso-centenar-liberar",
+      "pulso-renovacion-centenar"
+    ],
+    [
+      "quietud-mil-brazos",
+      "quietud-brazos-corona"
+    ],
+    [
+      "umbral-formula",
+      "umbral-raijin",
+      "umbral-raijin-largo"
+    ],
+    [
+      "umbral-grieta-planos",
+      "umbral-cambio-dimension"
+    ]
+  ],
+  "pasos": [
+    {
+      "nivel": 1,
+      "nombre": "Academia",
+      "grado": 1
+    },
+    {
+      "nivel": 5,
+      "nombre": "Chunin",
+      "grado": 3
+    },
+    {
+      "nivel": 11,
+      "nombre": "Jonin de élite",
+      "grado": 6
+    },
+    {
+      "nivel": 16,
+      "nombre": "Sannin",
+      "grado": 8
+    },
+    {
+      "nivel": 18,
+      "nombre": "Leyenda",
+      "grado": 9
+    },
+    {
+      "nivel": 19,
+      "nombre": "Mítico",
+      "grado": 10
+    },
+    {
+      "nivel": 20,
+      "nombre": "Trascendente",
+      "grado": 11
+    }
+  ]
+}

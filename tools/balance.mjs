@@ -23,9 +23,9 @@ for (const level of [1, 3, 5, 11, 17, 20]) for (const specialist of [false, true
 }
 lines.push('', '## Lectura para el diseño', '',
   '- El clima reduce el coste de grado 1 de 2 a 1: duplica su cantidad de usos con una reserva positiva. Se conserva la regla escrita, pero su efecto relativo debe medirse en los primeros encuentros.',
-  '- Los bonos de rango y afinidad mantienen competitiva una técnica baja. Su potencia por Verbe crece sin elevar el grado. Esa es una decisión de progresión conservada; no demuestra equivalencia con una clase de D&D sin Verbe.',
-  '- Elevar a grado 6 o más ya no permite repetir libremente una técnica baja: cada técnica consume su oportunidad de uso alto por Descanso Largo. Distintas técnicas conservan oportunidades distintas.',
-  '- Reducir costes con cultivo/dotes aumenta de nuevo la eficiencia de técnicas bajas; el mínimo general es 1, con excepciones explícitas como la reserva preparada. La deuda y sus salvaciones no se cuentan como usos seguros.',
+  '- Los bonos de rango y afinidad mantienen competitiva una técnica baja. Sus bonos ahora tienen un tope por grado y se reparten entre blancos múltiples; no demuestra equivalencia con una clase de D&D sin Verbe.',
+  '- Elevar a grado 6 o más ya no permite repetir libremente una técnica baja: cada técnica consume su oportunidad individual y un cupo compartido de poder alto por Descanso Largo. Todas consumen además el presupuesto compartido de su escala.',
+  '- Reducir costes con cultivo/dotes aumenta de nuevo la eficiencia de técnicas bajas; el mínimo depende del grado: mitad del coste tabulado hasta grado 5 y 70 % desde grado 6, redondeando arriba; la reserva preparada conserva su excepción diaria. La deuda y sus salvaciones no se cuentan como usos seguros.',
   '- Antes de ampliar clones, invocaciones o control: registrar turnos adicionales, reacciones negadas, concentraciones, salvaciones repetidas y recursos de la clase además del Verbe. No valorar un poder solo por sus dados.', '',
   '## Prueba de mesa necesaria para cerrar el balance', '',
   'En niveles 1, 3, 5, 11, 17 y 20, comparar marcial y lanzador, uno y varios enemigos, tres encuentros antes de descansar, Santuario e intemperie. Registrar daño/curación reales, turnos de control, reacciones, Verbe neto y minutos de arbitraje. Cambiar una variable por tanda y conservar el historial de personajes. El informe identifica sensibilidades; no certifica balance perfecto del catálogo.', '');

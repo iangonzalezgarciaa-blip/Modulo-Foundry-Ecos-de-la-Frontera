@@ -7,14 +7,14 @@ export const MEJORAS = {
 };
 const TOPES = { dado: 3, verbe: 2, cd: 2, area: 2, rapida: 1, duracion: 1, contacto: 1, silenciosa: 1, gestos: 1, "sust-distancia": 2, "sust-control": 1, infusion: 1 };
 const RECARGO = { dado: 1, verbe: 1, cd: 1, rapida: 2, silenciosa: 2, gestos: 2, "sust-control": 1, infusion: 2 };
-export function opcionesCultivo(tec, cultivo = {}, costoUso = Infinity) {
+export function opcionesCultivo(tec, cultivo = {}, costoUso = Infinity, {dados=0,tope=Infinity,minimo=1,cdUsada=0}={}) {
   const sys = tec.item?.system ?? {}, actos = Object.values(sys.activities ?? {}), mejoras = cultivo.mejoras ?? [];
   const dado = actos.some(a => (a.damage?.parts ?? (a.healing ? [a.healing] : [])).some(p => p.number > 0 && !p.custom?.enabled));
   const dano = actos.some(a => !a.healing && a.damage?.parts?.some(p => p.number > 0));
   const compatible = {
-    dado, verbe: tec.g > 0 && costoUso > 1, cd: actos.some(a => ["attack", "save"].includes(a.type)),
+    dado:dado&&dados<tope, verbe: tec.g > 0 && costoUso > minimo, cd: cdUsada<2&&actos.some(a => ["attack", "save"].includes(a.type)),
     area: Number(sys.target?.template?.size) > 0 || (sys.range?.units === "m" && Number(sys.range.value) > 0),
-    rapida: ["action", "minute", "hour"].includes(sys.activation?.type) && tec.t !== "R",
+    rapida: !tec.item?.flags?.['ecos-frontera']?.verbe?.ritual && tec.t !== "R" && ((sys.activation?.type==='action'&&tec.g<=5)||(['minute','hour'].includes(sys.activation?.type)&&Number(sys.activation.value)>1)),
     duracion: ["round", "minute", "hour"].includes(sys.duration?.units) && Number(sys.duration?.value) > 0,
     contacto: sys.range?.units === "touch" && tec.t !== "R",
     silenciosa: (sys.properties ?? []).includes("vocal"), gestos: (sys.properties ?? []).includes("somatic"),

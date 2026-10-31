@@ -11,11 +11,12 @@ jobs:
         with:
           node-version: '22'
       - run: npm run catalog:expand
-      - run: git diff --exit-code -- data/verbe.txt docs/REPERTORIO_SHINOBI.json docs/REPERTORIO_3.0.md
+      - run: git diff --exit-code -- data/verbe.txt docs/REPERTORIO_SHINOBI.json docs/REPERTORIO_3.0.md docs/DOTES_Y_OBTENCION.json
       - run: npm test
       - run: npm run check
       - run: npm run docs:catalog
       - run: npm run balance
       - run: npm run ui:preview
-      - run: git diff --exit-code -- docs/COBERTURA_CATALOGO.md docs/ESCENARIOS_BALANCE.md docs/PROGRESION_2.10.md docs/preview/interfaz.html
+      - run: npm run audit:balance
+      - run: git diff --exit-code -- docs/COBERTURA_CATALOGO.md docs/ESCENARIOS_BALANCE.md docs/PROGRESION_2.10.md docs/PROGRESION_3.1.md docs/AUDITORIA_3.1.md docs/preview/interfaz.html
       - run: npm run package

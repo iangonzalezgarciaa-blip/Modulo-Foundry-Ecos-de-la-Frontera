@@ -115,14 +115,14 @@ test('una reacción se consume una vez y vuelve al comienzo del turno', async ()
   await V._prueba.inicioDeTurno({ combatant: { actor: a } });
   assert.ok(V.defensasDisponibles(a).length);
 });
-test('la técnica baja elevada a grado 6 consume su uso alto, pero sigue disponible a grado 1', async () => {
-  const a = new MockActor(11, { valor: 50, rangos: { forma: 3 } });
-  assert.ok(await usar(a, 'fuego-aliento', 5));
+test('una técnica elevada a grado 6 consume su uso alto y sigue disponible a grado base', async () => {
+  const a = new MockActor(11, { valor: 50, rangos: { forma: 3 },dotes:['senda-forma-1','senda-forma-2','senda-forma-3'] });
+  assert.ok(await usar(a, 'fuego-gran-soplo', 3));
   assert.equal(V.estado(a).valor, 41);
-  assert.equal(await usar(a, 'fuego-aliento', 5), false);
-  assert.ok(await usar(a, 'fuego-aliento', 0));
+  assert.equal(await usar(a, 'fuego-gran-soplo', 3), false);
+  assert.ok(await usar(a, 'fuego-gran-soplo', 0));
   await V.alDescansar(a, {}, { type: 'long' });
-  assert.ok(await usar(a, 'fuego-aliento', 5));
+  assert.ok(await usar(a, 'fuego-gran-soplo', 3));
 });
 test('el escalado respeta el dominio de rama y rechaza valores fraccionarios', async () => {
   const a = new MockActor(11, { valor: 50, rangos: { forma: 0 }, principal: 'cuerpo' });

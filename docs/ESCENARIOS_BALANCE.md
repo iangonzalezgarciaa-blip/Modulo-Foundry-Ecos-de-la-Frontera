@@ -15,18 +15,18 @@ Técnica examinada: **Aliento de brasa**, grado 1. La media incluye solamente su
 | 5 | Repartido | 37 | Entrenado | 1 | 3 | 3d6 | 10.5 | 2 | 18 | 37 | 18/9 |
 | 5 | Especialista | 37 | Experto | 2 | 3 | 5d6 | 17.5 | 2 | 18 | 37 | 18/9 |
 | 11 | Repartido | 95 | Entrenado | 1 | 3 | 3d6 | 10.5 | 2 | 47 | 95 | 47/23 |
-| 11 | Especialista | 95 | Maestro | 3 | 6 | 7d6 | 24.5 | 2 | 47 | 95 | 47/23 |
+| 11 | Especialista | 95 | Maestro | 3 | 4 | 5d6 | 17.5 | 2 | 47 | 95 | 47/23 |
 | 17 | Repartido | 137 | Entrenado | 1 | 3 | 3d6 | 10.5 | 2 | 68 | 137 | 68/34 |
-| 17 | Especialista | 137 | Legendario | 3 | 9 | 8d6 | 28.0 | 2 | 68 | 137 | 68/34 |
+| 17 | Especialista | 137 | Maestro | 3 | 4 | 5d6 | 17.5 | 2 | 68 | 137 | 68/34 |
 | 20 | Repartido | 170 | Entrenado | 1 | 3 | 3d6 | 10.5 | 2 | 85 | 170 | 85/42 |
-| 20 | Especialista | 170 | Mítico | 3 | 11 | 9d6 | 31.5 | 2 | 85 | 170 | 85/42 |
+| 20 | Especialista | 170 | Mítico | 3 | 4 | 5d6 | 17.5 | 2 | 85 | 170 | 85/42 |
 
 ## Lectura para el diseño
 
 - El clima reduce el coste de grado 1 de 2 a 1: duplica su cantidad de usos con una reserva positiva. Se conserva la regla escrita, pero su efecto relativo debe medirse en los primeros encuentros.
-- Los bonos de rango y afinidad mantienen competitiva una técnica baja. Su potencia por Verbe crece sin elevar el grado. Esa es una decisión de progresión conservada; no demuestra equivalencia con una clase de D&D sin Verbe.
-- Elevar a grado 6 o más ya no permite repetir libremente una técnica baja: cada técnica consume su oportunidad de uso alto por Descanso Largo. Distintas técnicas conservan oportunidades distintas.
-- Reducir costes con cultivo/dotes aumenta de nuevo la eficiencia de técnicas bajas; el mínimo general es 1, con excepciones explícitas como la reserva preparada. La deuda y sus salvaciones no se cuentan como usos seguros.
+- Los bonos de rango y afinidad mantienen competitiva una técnica baja. Sus bonos ahora tienen un tope por grado y se reparten entre blancos múltiples; no demuestra equivalencia con una clase de D&D sin Verbe.
+- Elevar a grado 6 o más ya no permite repetir libremente una técnica baja: cada técnica consume su oportunidad individual y un cupo compartido de poder alto por Descanso Largo. Todas consumen además el presupuesto compartido de su escala.
+- Reducir costes con cultivo/dotes aumenta de nuevo la eficiencia de técnicas bajas; el mínimo depende del grado: mitad del coste tabulado hasta grado 5 y 70 % desde grado 6, redondeando arriba; la reserva preparada conserva su excepción diaria. La deuda y sus salvaciones no se cuentan como usos seguros.
 - Antes de ampliar clones, invocaciones o control: registrar turnos adicionales, reacciones negadas, concentraciones, salvaciones repetidas y recursos de la clase además del Verbe. No valorar un poder solo por sus dados.
 
 ## Prueba de mesa necesaria para cerrar el balance

@@ -40,7 +40,7 @@ test('un corto no renueva usos altos, Cerrojos ni poderes diarios',async()=>{
   assert.equal(V.estado(a).cerrojosHoy.veces,2);assert.equal(V.estado(a).despertarLibre,true);
 });
 test('Aliento solo recupera al gastar realmente un dado y no rebasa el presupuesto compartido',async()=>{
-  const a=new MockActor(1,{valor:0,dotes:['innato-aliento-2']});
+  const a=new MockActor(3,{valor:0,dotes:['innato-aliento','innato-aliento-2']});
   const hooks=events.get('dnd5e.rollHitDieV2');
   const preview={subject:a,updates:{actor:{},class:{}}};for(const fn of hooks)fn([],preview);
   assert.equal(preview.updates.actor['flags.ecos-frontera.verbe.valor'],undefined);

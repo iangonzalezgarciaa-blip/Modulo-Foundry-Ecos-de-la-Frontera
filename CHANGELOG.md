@@ -1,5 +1,17 @@
 # Cambios
 
+## 3.1.0 — Dotes, sendas y escalas de obtención
+
+- 64 dotes nuevas: 219 en total y 754 técnicas conservadas. Cuatro pasos por cada una de las trece ramas: Disciplina (nivel 3), Especialista (7), Maestría (11) y Leyenda (18), con beneficios propios. Doce mejoras generales incluyen ascensiones, cultivo, réplicas, depósito y acciones defensivas o curativas.
+- Grado 6 desde nivel 11 y Maestría de su senda; grado 8 desde 16; grado 9 desde 18 y Leyenda; grado 10 desde 19 y Ascensión mítica; grado 11 desde 20 y Ascensión trascendente. Las ascensiones necesitan pruebas de historia del DM. Once caminos concretos enlazan formas y técnicas fuertes con sus etapas anteriores.
+- Escalado numérico limitado a base +3, ampliable hasta +5 con especialización; respeta nivel, rango y senda. Dados extra limitados por grado, CD adicional máxima +2 y bonos de curación múltiple repartidos. Los descuentos conservan un mínimo del 50 % del coste en grados 1–5 y del 70 % en 6–11.
+- Usos compartidos de poderes mayores y culminaciones además del uso individual por técnica; solo una técnica de grado 11 por largo. Máximo dos técnicas de acción/AA y una de grado 6 o más por turno. Reacciones y formación de réplicas mantienen sus límites separados. No se conceden acciones adicionales por estos topes.
+- Actividades propias y usos diarios para las Maestrías, nuevas dotes activables y varias recuperaciones antiguas. Segundo aliento, Última gota, Beber del aire y Reserva de guerra consumen el presupuesto breve; los cortos no renuevan usos diarios. Respirar el mundo también respeta ese presupuesto.
+- Dos hilos comprueba la segunda Concentración y los efectos propios se ligan a la técnica correcta. El cultivo de rapidez no convierte rituales en acciones. Se limitan aumentos conjuntos de alcance y área, y se sincroniza la duración de efectos propios cuando corresponde.
+- Reparados los modos compuestos y el requisito de avatar de Corona. Renovación del centenar consume todo su depósito, mínimo 16 Verbe, sin devolverlo a la reserva ordinaria. Los requisitos de dotes antiguas quedan declarados y sus beneficios registrados se desactivan cuando dejan de cumplirse.
+- Migración sin cobros retrospectivos: se conservan compras y técnicas altas anteriores como legadas; respetan nivel y cupos actuales. Los usos ya gastados se contabilizan. El DM puede reorientar el último cultivo registrado sin nuevo cargo. Devolver dotes no habilita un atajo para los poderes nuevos.
+- Auditoría reproducible de las 754 técnicas en niveles 1–20, con perfiles normal y de tensión: 30.160 fichas. Pruebas de reglas, migraciones y actividad nativa simulada; publicación condicionada a Windows, validación y paquete. La comprobación en una partida real de Foundry sigue pendiente. Se mantiene el repositorio privado y el BAT con avisos.
+
 ## 3.0.0 — Repertorio shinobi y avisos de actualización
 
 - 754 técnicas: se conservan las 401 anteriores y se añaden 353 adaptaciones del estudio Naruto/Shippuden, 327 fuera de Forma. Nuevas ramas Umbral y Vasija; más genjutsu, taijutsu, sellado, marionetas, medicina, rastreo, senjutsu, ojos, contratos y huéspedes. Referencia original buscable, página, requisitos, límites y alcance de automatización por ficha.

@@ -49,6 +49,10 @@ export function validateCatalog(D) {
     if (!d.id || dotes.has(d.id)) errors.push(`Dote duplicada: ${d.id}`);
     dotes.add(d.id);
     if (!Number.isInteger(d.trazos) || d.trazos < 0) errors.push(`${d.id}: coste de dote inválido`);
+    for(const id of [...(d.requisitos?.dotes??[]),...(d.requisitos?.algunaDote??[])])if(!D.dotes.some(x=>x.id===id))errors.push(`${d.id}: dote previa inexistente ${id}`);
+    for(const id of d.requisitos?.tecnicas??[])if(!D.tecnicas.some(x=>x.id===id))errors.push(`${d.id}: técnica previa inexistente ${id}`);
+    if(d.requisitos?.nivel&&!Number.isInteger(d.requisitos.nivel)||d.requisitos?.nivel>20)errors.push(`${d.id}: nivel mínimo inválido`);
+    if(d.poder&&(!Number.isSafeInteger(d.poder.costo)||d.poder.costo<0))errors.push(`${d.id}: coste de activación inválido`);
   }
   for (let g = 0; g <= 11; g++) if (!Number.isSafeInteger(D.costo[g]) || D.costo[g] < 0) errors.push(`Coste inválido de grado ${g}`);
   return errors;

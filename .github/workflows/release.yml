@@ -36,8 +36,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: npm run catalog:expand
       - run: npm test
       - run: npm run check
+      - run: npm run docs:catalog
+      - run: npm run balance
+      - run: npm run ui:preview
+      - run: npm run audit:balance
+      - run: git diff --exit-code -- data/verbe.txt docs/
       - run: npm run package
       - name: Comprobar el paquete versionado
         run: git diff --exit-code -- releases/

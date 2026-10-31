@@ -18,8 +18,9 @@ for (const t of D.tecnicas) lines.push(`| \`${t.id}\` | ${esc(t.n)} | ${t.g} | $
 lines.push('', '## Dotes', '',
   'Campos mecánicos registrados: se consumen por distintos adaptadores del módulo. Su presencia no implica que todos los beneficios del texto se resuelvan automáticamente. «Texto/mesa» significa que no tiene un objeto `efecto` declarado.', '',
   '| ID | Nombre | Trazos | Requisitos | Campos de efecto |', '|---|---|---:|---|---|');
-for (const d of D.dotes) lines.push(`| \`${d.id}\` | ${esc(d.nombre ?? d.n)} | ${d.trazos} | ${esc(d.req)} | ${esc(Object.keys(d.efecto ?? {}).join(', ') || 'Texto/mesa')} |`);
+for (const d of D.dotes) lines.push(`| \`${d.id}\` | ${esc(d.nombre ?? d.n)} | ${d.trazos} | ${esc(d.req)} | ${esc([...Object.keys(d.efecto ?? {}),...(d.poder?['actividad propia']:[])].join(', ') || 'Texto/mesa')} |`);
 lines.push('', '## Automatización y alcance actual', '',
+  '- Sendas de dotes y ascensiones: acceso escalonado, topes de dados/CD, precio mínimo por grado y presupuestos compartidos de técnicas altas. Recuperaciones y dotes con actividad propia: coste y uso diario.',
   '- Reserva, deuda, reacciones, grados, compras y aprobaciones: adaptador del Verbe y reglas puras.',
   '- Cuerpo templado: CA y movimiento condicionados a la armadura.',
   '- Desequilibrado, Embarrado, Cargado y Helado: adaptadores de tiradas y estados. Metal requiere material declarado o marcador explícito y un único objetivo.',

@@ -90,7 +90,7 @@ const errores=validateCatalog(D);if(errores.length)throw Error(errores.join('\n'
 fs.writeFileSync(new URL('../docs/REPERTORIO_SHINOBI.json',import.meta.url),JSON.stringify({base:401,total:D.tecnicas.length,nuevas:definiciones.length,ramas:D.ramas.map(r=>({id:r.id,nombre:r.nombre,total:D.tecnicas.filter(t=>t.rama===r.id).length,nuevas:definiciones.filter(t=>t.rama===r.id).length})),reparaciones:D.shinobi.reparaciones,tecnicas:definiciones.map(t=>({id:t.id,referencia:t.origen,pagina:t.pagina,rama:t.rama,grado:t.g}))},null,2)+'\n');
 const informe=[
  '# Repertorio shinobi · 3.0.0','',
- `El catálogo reúne **${D.tecnicas.length} técnicas y ${D.dotes.length} dotes**. Conserva las 401 técnicas anteriores y añade ${definiciones.length}; ${definiciones.filter(t=>t.rama!=='forma').length} incorporaciones pertenecen a otras ramas. Los identificadores anteriores, personajes, monedas y Trazos se conservan.`, '',
+ `El catálogo reúne **${D.tecnicas.length} técnicas y ${D.dotes.filter(d=>!d.evolucion).length} dotes**. Conserva las 401 técnicas anteriores y añade ${definiciones.length}; ${definiciones.filter(t=>t.rama!=='forma').length} incorporaciones pertenecen a otras ramas. Los identificadores anteriores, personajes, monedas y Trazos se conservan.`, '',
  '| Rama | Anteriores | Nuevas | Total |','|---|---:|---:|---:|',
  ...D.ramas.map(r=>{const total=D.tecnicas.filter(t=>t.rama===r.id).length,nuevas=definiciones.filter(t=>t.rama===r.id).length;return `| ${r.nombre} | ${total-nuevas} | ${nuevas} | ${total} |`;}),'',
  '## Cómo usarlo sin leer un reglamento','',

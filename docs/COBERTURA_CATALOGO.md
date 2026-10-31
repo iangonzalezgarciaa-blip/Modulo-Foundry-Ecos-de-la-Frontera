@@ -1,10 +1,10 @@
-# Cobertura declarada del catálogo 3.0.0
+# Cobertura declarada del catálogo 3.1.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **754 técnicas y 155 dotes**.
+El catálogo reúne **754 técnicas y 219 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
@@ -799,22 +799,22 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `naturaleza-combinada` | Naturaleza combinada | 3 | nivel 9 y un maestro de esa combinación | Texto/mesa |
 | `tercera-naturaleza` | Tercera naturaleza | 4 | nivel 7 y un maestro | Texto/mesa |
 | `naturaleza-afilada` | Naturaleza afilada | 3 | — | Texto/mesa |
-| `piel-naturaleza` | Piel de tu naturaleza | 2 | — | Texto/mesa |
+| `piel-naturaleza` | Piel de tu naturaleza | 2 | nivel 5 | Texto/mesa |
 | `rama-segunda` | Rama segunda | 4 | nivel 5 | Texto/mesa |
-| `sellos-mente` | Sellos en la mente | 3 | — | Texto/mesa |
+| `sellos-mente` | Sellos en la mente | 3 | nivel 7 | Texto/mesa |
 | `cuatro-manos` | Cuatro manos | 2 | cuatro brazos | Texto/mesa |
 | `sellos-rapidos` | Sellos rápidos | 3 | — | Texto/mesa |
 | `arma-tecnica` | Arma y técnica | 3 | nivel 5 | Texto/mesa |
 | `tecnica-reserva` | Técnica de reserva | 3 | — | Texto/mesa |
 | `sustitucion-refleja` | Sustitución refleja | 2 | Sustitución | Texto/mesa |
 | `golpe-verbe` | Golpe de Verbe | 2 | — | Texto/mesa |
-| `choque-perfecto` | Choque perfecto | 2 | — | Texto/mesa |
+| `choque-perfecto` | Choque perfecto | 2 | nivel 3 | Texto/mesa |
 | `pulso-largo` | Pulso largo | 2 | — | Texto/mesa |
 | `concentracion-hierro` | Concentración de hierro | 2 | — | Texto/mesa |
 | `mente-hierro` | Mente de hierro | 2 | — | Texto/mesa |
 | `ojo-entrenado` | Ojo entrenado | 2 | — | Texto/mesa |
 | `sentir-verbe` | Sentir el Verbe | 2 | Sentido del Verbe | Texto/mesa |
-| `firma-oculta` | Firma oculta | 2 | — | Texto/mesa |
+| `firma-oculta` | Firma oculta | 2 | nivel 5 | Texto/mesa |
 | `andar-sin-huella` | Andar sin huella | 1 | Andar por muros | Texto/mesa |
 | `pergamino-guardado` | Pergamino guardado | 3 | rama Sello, Entrenado | Texto/mesa |
 | `pacto-doble` | Pacto doble | 3 | rama Pacto, Experto | Texto/mesa |
@@ -833,10 +833,10 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `templado` | Templado | 3 | Aguante del Verbe | sobreCD |
 | `mano-monedas` | Mano para las monedas | 1 | — | moneda |
 | `verbe-compartido` | Verbe compartido | 3 | — | Texto/mesa |
-| `ultima-gota` | Última gota | 2 | — | Texto/mesa |
-| `segundo-aliento` | Segundo aliento del Verbe | 3 | nivel 3 | Texto/mesa |
-| `beber-aire` | Beber del aire | 3 | rama Quietud, Entrenado | Texto/mesa |
-| `reserva-de-guerra` | Reserva de guerra | 2 | nivel 5 | Texto/mesa |
+| `ultima-gota` | Última gota | 2 | — | actividad propia |
+| `segundo-aliento` | Segundo aliento del Verbe | 3 | nivel 3 | actividad propia |
+| `beber-aire` | Beber del aire | 3 | rama Quietud, Entrenado | actividad propia |
+| `reserva-de-guerra` | Reserva de guerra | 2 | nivel 5 | actividad propia |
 | `practica-control` | Práctica de Control | 2 | — | control |
 | `control-sereno` | Control sereno | 2 | — | Texto/mesa |
 | `leer-flujo` | Leer el flujo | 2 | — | Texto/mesa |
@@ -845,18 +845,18 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `contencion` | Contención | 3 | — | Texto/mesa |
 | `foco-principal` | Foco de la rama | 3 | nivel 5 | cd |
 | `punteria-verbe` | Puntería del Verbe | 3 | nivel 5 | ae |
-| `control-a-ciegas` | Control a ciegas | 2 | Sentir el Verbe | Texto/mesa |
+| `control-a-ciegas` | Control a ciegas | 2 | Sentir el Verbe; nivel 7 | Texto/mesa |
 | `calma-combate` | Calma de combate | 2 | — | Texto/mesa |
-| `corazon-fuego` | Corazón de fuego | 2 | naturaleza Fuego | Texto/mesa |
+| `corazon-fuego` | Corazón de fuego | 2 | naturaleza Fuego; nivel 9 | Texto/mesa |
 | `corazon-agua` | Corazón de agua | 2 | naturaleza Agua | ae |
 | `corazon-viento` | Corazón de viento | 2 | naturaleza Viento | ae |
 | `corazon-tierra` | Corazón de tierra | 2 | naturaleza Tierra | Texto/mesa |
 | `corazon-rayo` | Corazón de rayo | 2 | naturaleza Rayo | ae |
-| `estado-hondo` | Estado hondo | 3 | afinidad Entrenada | Texto/mesa |
+| `estado-hondo` | Estado hondo | 3 | afinidad Entrenada; nivel 9 | Texto/mesa |
 | `maestro-cruces` | Maestro de cruces | 3 | dos naturalezas | Texto/mesa |
 | `arma-elemento` | Arma del elemento | 2 | — | Texto/mesa |
 | `infusion-doble` | Infusión doble | 4 | Infusión rápida; nivel 11 | Texto/mesa |
-| `infusion-sostenida` | Infusión sostenida | 3 | afinidad Entrenada | Texto/mesa |
+| `infusion-sostenida` | Infusión sostenida | 3 | afinidad Entrenada; nivel 9 | Texto/mesa |
 | `ciclo-a-favor` | Ciclo a favor | 2 | — | Texto/mesa |
 | `sin-debilidad` | Sin debilidad | 3 | nivel 9 | Texto/mesa |
 | `combinacion-preparada` | Combinación preparada | 2 | Naturaleza combinada | costo |
@@ -942,9 +942,74 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `medico-verbe` | Médico del Verbe | 2 | Control fino del Verbe; rama Pulso | ae |
 | `medico-oficio` | Médico de oficio | 3 | Médico del Verbe; rama Pulso, Experto; nivel 5 | dados, costo |
 | `cirujano-verbe` | Cirujano del Verbe | 4 | Médico de oficio; rama Pulso, Maestro; nivel 11 | Texto/mesa |
+| `senda-forma-1` | Disciplina de Forma | 2 | nivel 3; rama Forma, Entrenado | ae |
+| `senda-forma-2` | Forma precisa | 3 | Disciplina de Forma; nivel 7; rama Forma, Experto | escaladoRama |
+| `senda-forma-3` | Maestría de Forma | 4 | Forma precisa; nivel 11; rama Forma, Maestro | accesoMayor, actividad propia |
+| `senda-forma-4` | Leyenda de Forma | 5 | Maestría de Forma; nivel 18; rama Forma, Legendario | accesoLeyenda, mayorExtra |
+| `senda-velo-1` | Disciplina de Velo | 2 | nivel 3; rama Velo, Entrenado | ae |
+| `senda-velo-2` | Velo paciente | 3 | Disciplina de Velo; nivel 7; rama Velo, Experto | duracionRama |
+| `senda-velo-3` | Maestría de Velo | 4 | Velo paciente; nivel 11; rama Velo, Maestro | accesoMayor, actividad propia |
+| `senda-velo-4` | Leyenda de Velo | 5 | Maestría de Velo; nivel 18; rama Velo, Legendario | accesoLeyenda, mayorExtra |
+| `senda-cuerpo-1` | Disciplina de Cuerpo | 2 | nivel 3; rama Cuerpo, Entrenado | ae |
+| `senda-cuerpo-2` | Cuerpo ligero | 3 | Disciplina de Cuerpo; nivel 7; rama Cuerpo, Experto | ae |
+| `senda-cuerpo-3` | Maestría de Cuerpo | 4 | Cuerpo ligero; nivel 11; rama Cuerpo, Maestro | accesoMayor, actividad propia |
+| `senda-cuerpo-4` | Leyenda de Cuerpo | 5 | Maestría de Cuerpo; nivel 18; rama Cuerpo, Legendario | accesoLeyenda, mayorExtra |
+| `senda-mirada-1` | Disciplina de Mirada | 2 | nivel 3; rama Mirada, Entrenado | ae |
+| `senda-mirada-2` | Mirada sostenida | 3 | Disciplina de Mirada; nivel 7; rama Mirada, Experto | ojoMinutos |
+| `senda-mirada-3` | Maestría de Mirada | 4 | Mirada sostenida; nivel 11; rama Mirada, Maestro | accesoMayor, actividad propia |
+| `senda-mirada-4` | Leyenda de Mirada | 5 | Maestría de Mirada; nivel 18; rama Mirada, Legendario | accesoLeyenda, mayorExtra |
+| `senda-sello-1` | Disciplina de Sello | 2 | nivel 3; rama Sello, Entrenado | ae |
+| `senda-sello-2` | Sello duradero | 3 | Disciplina de Sello; nivel 7; rama Sello, Experto | duracionRama |
+| `senda-sello-3` | Maestría de Sello | 4 | Sello duradero; nivel 11; rama Sello, Maestro | accesoMayor, actividad propia |
+| `senda-sello-4` | Leyenda de Sello | 5 | Maestría de Sello; nivel 18; rama Sello, Legendario | accesoLeyenda, mayorExtra |
+| `senda-pacto-1` | Disciplina de Pacto | 2 | nivel 3; rama Pacto, Entrenado | ae |
+| `senda-pacto-2` | Contrato estable | 3 | Disciplina de Pacto; nivel 7; rama Pacto, Experto | duracionRama |
+| `senda-pacto-3` | Maestría de Pacto | 4 | Contrato estable; nivel 11; rama Pacto, Maestro | accesoMayor, actividad propia |
+| `senda-pacto-4` | Leyenda de Pacto | 5 | Maestría de Pacto; nivel 18; rama Pacto, Legendario | accesoLeyenda, mayorExtra |
+| `senda-pulso-1` | Disciplina de Pulso | 2 | nivel 3; rama Pulso, Entrenado | ae |
+| `senda-pulso-2` | Pulso medido | 3 | Disciplina de Pulso; nivel 7; rama Pulso, Experto | cura |
+| `senda-pulso-3` | Maestría de Pulso | 4 | Pulso medido; nivel 11; rama Pulso, Maestro | accesoMayor, actividad propia |
+| `senda-pulso-4` | Leyenda de Pulso | 5 | Maestría de Pulso; nivel 18; rama Pulso, Legendario | accesoLeyenda, mayorExtra |
+| `senda-hilo-1` | Disciplina de Hilo | 2 | nivel 3; rama Hilo, Entrenado | ae |
+| `senda-hilo-2` | Hilo preciso | 3 | Disciplina de Hilo; nivel 7; rama Hilo, Experto | alcanceRama |
+| `senda-hilo-3` | Maestría de Hilo | 4 | Hilo preciso; nivel 11; rama Hilo, Maestro | accesoMayor, actividad propia |
+| `senda-hilo-4` | Leyenda de Hilo | 5 | Maestría de Hilo; nivel 18; rama Hilo, Legendario | accesoLeyenda, mayorExtra |
+| `senda-quietud-1` | Disciplina de Quietud | 2 | nivel 3; rama Quietud, Entrenado | ae |
+| `senda-quietud-2` | Quietud estable | 3 | Disciplina de Quietud; nivel 7; rama Quietud, Experto | duracionRama |
+| `senda-quietud-3` | Maestría de Quietud | 4 | Quietud estable; nivel 11; rama Quietud, Maestro | accesoMayor, actividad propia |
+| `senda-quietud-4` | Leyenda de Quietud | 5 | Maestría de Quietud; nivel 18; rama Quietud, Legendario | accesoLeyenda, mayorExtra |
+| `senda-rastro-1` | Disciplina de Rastro | 2 | nivel 3; rama Rastro, Entrenado | ae |
+| `senda-rastro-2` | Rastro extendido | 3 | Disciplina de Rastro; nivel 7; rama Rastro, Experto | alcanceFactorRama |
+| `senda-rastro-3` | Maestría de Rastro | 4 | Rastro extendido; nivel 11; rama Rastro, Maestro | accesoMayor, actividad propia |
+| `senda-rastro-4` | Leyenda de Rastro | 5 | Maestría de Rastro; nivel 18; rama Rastro, Legendario | accesoLeyenda, mayorExtra |
+| `senda-sangre-1` | Disciplina de Sangre | 2 | nivel 3; rama Sangre, Entrenado | ae |
+| `senda-sangre-2` | Cuerpo adaptado | 3 | Disciplina de Sangre; nivel 7; rama Sangre, Experto | costoPGMenos |
+| `senda-sangre-3` | Maestría de Sangre | 4 | Cuerpo adaptado; nivel 11; rama Sangre, Maestro | accesoMayor, actividad propia |
+| `senda-sangre-4` | Leyenda de Sangre | 5 | Maestría de Sangre; nivel 18; rama Sangre, Legendario | accesoLeyenda, mayorExtra |
+| `senda-umbral-1` | Disciplina de Umbral | 2 | nivel 3; rama Umbral, Entrenado | ae |
+| `senda-umbral-2` | Ancla estudiada | 3 | Disciplina de Umbral; nivel 7; rama Umbral, Experto | alcanceFactorRama |
+| `senda-umbral-3` | Maestría de Umbral | 4 | Ancla estudiada; nivel 11; rama Umbral, Maestro | accesoMayor, actividad propia |
+| `senda-umbral-4` | Leyenda de Umbral | 5 | Maestría de Umbral; nivel 18; rama Umbral, Legendario | accesoLeyenda, mayorExtra |
+| `senda-vasija-1` | Disciplina de Vasija | 2 | nivel 3; rama Vasija, Entrenado | ae |
+| `senda-vasija-2` | Vínculo sereno | 3 | Disciplina de Vasija; nivel 7; rama Vasija, Experto | costo |
+| `senda-vasija-3` | Maestría de Vasija | 4 | Vínculo sereno; nivel 11; rama Vasija, Maestro | accesoMayor, actividad propia |
+| `senda-vasija-4` | Leyenda de Vasija | 5 | Maestría de Vasija; nivel 18; rama Vasija, Legendario | accesoLeyenda, mayorExtra |
+| `ascension-mitica` | Ascensión mítica | 4 | nivel 19 | accesoMitico |
+| `ascension-trascendente` | Ascensión trascendente | 5 | nivel 20 | accesoTrascendente |
+| `escalado-profundo` | Escalado profundo | 3 | nivel 11 | escaladoExtra |
+| `cultivo-versatil` | Cultivo versátil | 2 | nivel 5 | cultivosExtra |
+| `sello-amplio` | Depósito organizado | 3 | nivel 9 | depositoExtra |
+| `formacion-disciplinada` | Formación disciplinada | 3 | nivel 11 | replicasGrado |
+| `ojo-conservador` | Ojo conservador | 3 | nivel 11 | desgasteExtra |
+| `guardia-concentrada` | Guardia concentrada | 3 | nivel 7 | actividad propia |
+| `paso-ancla` | Paso del ancla | 2 | nivel 5 | actividad propia |
+| `reserva-estable` | Reserva estable | 3 | nivel 9 | recLargoPlano |
+| `coordinacion-consciente` | Coordinación consciente | 3 | nivel 11 | actividad propia |
+| `pulso-compasivo` | Pulso compasivo | 2 | nivel 5 | actividad propia |
 
 ## Automatización y alcance actual
 
+- Sendas de dotes y ascensiones: acceso escalonado, topes de dados/CD, precio mínimo por grado y presupuestos compartidos de técnicas altas. Recuperaciones y dotes con actividad propia: coste y uso diario.
 - Reserva, deuda, reacciones, grados, compras y aprobaciones: adaptador del Verbe y reglas puras.
 - Cuerpo templado: CA y movimiento condicionados a la armadura.
 - Desequilibrado, Embarrado, Cargado y Helado: adaptadores de tiradas y estados. Metal requiere material declarado o marcador explícito y un único objetivo.
