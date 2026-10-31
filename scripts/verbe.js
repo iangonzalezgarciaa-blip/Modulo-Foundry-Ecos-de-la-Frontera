@@ -11,7 +11,7 @@
 
 import { VERSION_PROGRESION, NIVEL_GRADO, limiteEscalado, accesoObtencion, permisoCuota, cuotasPoder, pisoCosto, limiteDadosExtra, requisitoDote, validarConcentraciones, permisoTurno, gradoReplicas } from "./verbe-progression.js";
 import { abrirReliquias } from "./relics.js";
-import {avanceTexto,efectoHTML,textoClaro,resolucionTexto,duracionTexto,referenciaHTML,glosarioHTML,escTexto,tablaSangreHTML} from "./verbe-reading.js";
+import {avanceTexto,efectoHTML,textoClaro,resolucionTexto,duracionTexto,referenciaHTML,glosarioHTML,escTexto,tablaSangreHTML,huellaTexto} from "./verbe-reading.js";
 import { tecnicaChocable, AYUDA_CHOQUE, PASOS_CHOQUE } from "./verbe-clash.js";
 import { donDivino, asegurarNotaPanteon } from "./verbe-divinity.js";
 import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
@@ -336,7 +336,7 @@ export const combosDe = actor => new Set(estado(actor)?.combos ?? []);
 
 function contextoShinobi(actor) {
   const activas=(actor?.effects??[]).filter(e=>!e.disabled).map(e=>e.getFlag(MOD,F)).filter(Boolean);
-  return {estado:estado(actor)??{},linaje:linajeDe(actor)?.id,nivel:nivelDe(actor),rangoSangre:rangoDon(actor,"sangre"),herencia:herenciaDe(actor)?.req,cerrojoActivo:Math.max(0,...activas.map(e=>Number(e.cerrojo)||0)),
+  return {etiquetas:D?.etiquetas??{},estado:estado(actor)??{},linaje:linajeDe(actor)?.id,nivel:nivelDe(actor),rangoSangre:rangoDon(actor,"sangre"),herencia:herenciaDe(actor)?.req,cerrojoActivo:Math.max(0,...activas.map(e=>Number(e.cerrojo)||0)),
     ojosAbiertos:activas.map(e=>e.ojo).filter(Boolean),modos:activas.flatMap(e=>[e.modo,...(e.modosConcedidos??[])]).filter(Boolean),
     limiteDesgaste:6+sumaEf(actor,ef=>ef.desgasteExtra),artefactos:(actor?.items??[]).filter(i=>i.system?.equipped).map(i=>i.getFlag(MOD,F)?.artefacto).filter(Boolean)};
 }
@@ -736,6 +736,12 @@ function notaPersonal(actor, tec, extra, inf, cul) {
 export async function refrescar(actor) {
   if (!actor?.isOwner) return;
   const datos = [];
+  for(const it of actor.items){const id=it.getFlag(MOD,F)?.artefacto,a=D.artefactosShinobi?.find(a=>a.id===id),c=D.identidad?.artefactos?.[id];
+    if(!a||!c)continue;const cambio={_id:it.id};
+    if(it.name!==a.nombre&&huellaTexto(it.name)===c.nombre)cambio.name=a.nombre;
+    if(huellaTexto(it.system?.description?.value??'')===c.descripcion)cambio['system.description.value']=`<p>${escH(a.texto)}</p><p>Reliquia de campaña. Sus técnicas se aprenden y pagan aparte; equiparla no otorga todas sus capacidades.</p>`;
+    if(Object.keys(cambio).length>1)datos.push(cambio);
+  }
   for (const it of itemsTecnica(actor)) {
     const tec = tecnicaPorId(it.getFlag(MOD, F).id, actor);
     if (!tec) continue;
@@ -2904,6 +2910,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       ${pregunta('¿Cuánto recupero al descansar?',`<dl class="ev-lectura-datos"><div><dt>Largo en Santuario</dt><dd>Ahora ofrece hasta ${largo} puntos de recuperación. Con tu saldo actual quedarías en ${santuario.valor} de Verbe.</dd></div><div><dt>Noche a la intemperie</dt><dd>Usa el presupuesto breve. Con tu saldo y los límites actuales quedarías en ${noche.valor} de Verbe.</dd></div><div><dt>Presupuesto breve compartido</dt><dd>Te quedan ${breve.restante} de ${limite.limite} puntos entre Descansos Largos. Lo comparten noches, Respiro, Aliento y recuperaciones que lo indiquen.</dd></div></dl><p>Las cifras anteriores ya tienen en cuenta tu personaje. Los puntos de recuperación pagan la deuda al doble: no siempre se convierten uno a uno en saldo.</p><p>Solo el Largo renueva este presupuesto y los poderes diarios. <b>Excepción concreta:</b> Sustitución refleja vuelve tras un Corto; eso no devuelve las técnicas altas ni todos los usos del personaje. Otras excepciones deben estar expresamente indicadas en su ficha.</p>`)}
       ${pregunta('¿Qué mejora me conviene buscar?',`<ul><li><b>Quiero otra herramienta:</b> busca una técnica en Aprender.</li><li><b>Quiero técnicas de mayor grado:</b> revisa nivel, rango y, desde grado 6, las dotes de senda.</li><li><b>Quiero mejorar una que ya conozco:</b> abre Mejorar → Entrenar técnicas. Ese entrenamiento también se llama cultivo.</li><li><b>Quiero un beneficio permanente:</b> revisa Mejorar → Dotes.</li><li><b>Quiero inventar algo:</b> Crear una técnica es opcional y requiere la aprobación del DM.</li></ul><p>Mira qué ganarás y cuántos Trazos quedarían. Puedes ahorrar puntos; no tienes que usar todas las opciones. Si compras algo por error, el DM puede deshacer la compra.</p>`)}
       ${pregunta('¿Qué son las sendas y las ascensiones?',`<p>Las sendas son cadenas de dotes de una especialidad. Se compran por orden: <b>Disciplina</b> desde nivel 3, <b>Especialista</b> desde 7, <b>Maestría</b> desde 11 y <b>Leyenda</b> desde 18. Los números son niveles de personaje, no precios ni rangos.</p><p>Grado 10 exige Ascensión mítica y grado 11 Ascensión trascendente. También requieren sus hitos de historia del DM. Alcanzar el nivel no entrega esas dotes ni las técnicas gratuitamente.</p>`)}
+      ${pregunta('¿Dónde están las herramientas nuevas de campaña?','<p>Pulsa Mesa Ecos en la cabecera de tu ficha o Ctrl + M. En Mi turno tienes accesos y recordatorios; Crear personaje te guía por elecciones e importadores; Buscar información consulta fuentes a las que tengas acceso. Dados 1 y 20 explica las tablas. El DM dispone de Dirección y Taller de NPC.</p>')}
       ${pregunta('¿Qué hago con una reliquia?',`<ol><li>El DM entrega y autoriza una copia de la reliquia.</li><li>Revisa su nivel mínimo y equípala. Las reliquias de nivel mínimo 9 o más también exigen sintonía.</li><li>Ábrela en el inventario y usa su actividad. Normalmente gasta un cargo, no Verbe.</li><li>Si es un ritual, el DM debe preparar un permiso para esa activación.</li></ol><p>Las copias de una familia comparten su límite; las mayores también comparten un único uso por Largo. Un consumible no vuelve por descansar. La clasificación de Made in Abyss no es un grado de técnica del Verbe.</p><p><b>Objetos que habilitan técnicas:</b> algunos poderes piden una reliquia concreta como requisito. Recibir ese objeto no enseña sus técnicas: se aprenden con Trazos y se usan con Verbe. Revisa la ficha para distinguirlos de los objetos con actividad propia del compendio.</p>`)}
       ${pregunta('¿Por qué sigo herido después de recuperar vida?',`<p>Recuperar puntos de vida no borra automáticamente Malherido ni Herida No Tratada. Necesitas el tratamiento y el reposo que indiquen sus reglas.</p><p>Si estás Acechado por la Muerte, no puedes tomar acciones, acciones adicionales ni reacciones. Pide ayuda y sigue las indicaciones del estado. El Santuario mejora el descanso; una noche fuera no equivale a un Largo en Santuario.</p>`)}
       ${pregunta('¿Qué significan las palabras y abreviaturas de la hoja?',glosarioHTML())}
@@ -3248,7 +3255,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const sec = (titulo, html, abierto = false) => `<details class="ecos-verbe-dmsec" ${abierto ? "open" : ""}><summary>${titulo}</summary>${html}</details>`;
     return `<p><button type="button" data-action="editorCatalogo"><i class="fa-solid fa-pen-nib"></i> Taller del DM · crear y publicar técnicas universales</button> <button type="button" data-action="panteonDM">Panteón y nota de lore (solo DM)</button> <button type="button" data-action="reliquiasDM">Compendio de reliquias</button></p>${intro("Solo tú ves esta pestaña.", "Para preparar una hoja: elige linaje y fuerza, decide si el jugador conoce ese origen y revisa el resultado con «Ver como el jugador». Ese botón oculta tus controles de administración. Las opciones de más abajo permiten conceder recursos, enseñar técnicas o deshacer compras.")}
       ${sec("Reorientar un cultivo sin volver a cobrar",`<p>Tras cambiar el balance, puedes sustituir la última mejora registrada de una técnica conservando sus Trazos y nivel de cultivo.</p><select name="reorientarTecnica">${opciones(itemsTecnica(a).filter(i=>e.cultivos?.[i.getFlag(MOD,F)?.id]?.mejoras?.length).map(i=>[i.getFlag(MOD,F).id,i.name]),"")}</select><select name="reorientarMejora">${opciones(Object.entries(MEJORAS),"")}</select><button type="button" data-action="reorientarDM">Sustituir última mejora</button>`)}
-      ${D.shinobi?sec("Repertorio shinobi: tradiciones, bestias y rituales",`
+      ${D.shinobi?sec("Archivo del Verbe: tradiciones, bestias y rituales",`
         <p>Tradición: <select name="shinobiTradicion">${opciones((D.tradicionesShinobi??[]).map(t=>[t.id,`${e.tradiciones?.includes(t.id)?"✓ ":""}${t.nombre}`]),"")}</select><button type="button" data-action="shinobiDM" data-campo="tradicion" data-de="shinobiTradicion">Conceder / retirar</button></p>
         <p>Hito: <select name="shinobiHito">${opciones((D.hitosShinobi??[]).map(h=>[h.id,`${e.hitosShinobi?.includes(h.id)?"✓ ":""}${h.nombre}`]),"")}</select><button type="button" data-action="shinobiDM" data-campo="hito" data-de="shinobiHito">Conceder / retirar</button></p>
         <p>Bestia: <select name="shinobiBestia"><option value="">Sin vínculo</option>${opciones((D.bestiasShinobi??[]).map(b=>[b.id,b.nombre]),e.vasija?.bestia??"")}</select> Vínculo <select name="shinobiVinculo">${opciones([[1,"1 · inestable"],[2,"2 · control"],[3,"3 · cooperación"]],e.vasija?.vinculo??1)}</select><button type="button" data-action="shinobiDM" data-campo="vasija" data-de="shinobiBestia">Guardar vínculo</button></p>

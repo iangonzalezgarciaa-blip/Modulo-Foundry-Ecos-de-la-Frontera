@@ -29,7 +29,7 @@ lines.push('', '## Automatización y alcance actual', '',
   '- Desequilibrado, Embarrado, Cargado y Helado: adaptadores de tiradas y estados. Metal requiere material declarado o marcador explícito y un único objetivo.',
   '- Agua/tierra apagan Ardiendo al aplicar sus estados; vencimiento temporal al inicio del turno.',
   '- Palma que cierra: tratamiento diario confirmado por el DM. Restaurar, Aliento para muchos, Rehacer y Mano que cierra todo: enlace con heridas. Mano que sostiene: estabilización.',
-  '- Repertorio shinobi: 353 incorporaciones con origen y página; tradiciones, herencias, ojos, modos, bestias y rituales con comprobaciones de acceso y consumo.',
+  '- Archivo del Verbe: 353 incorporaciones con nombres de Nimerios; tradiciones, herencias, ojos, modos, bestias y rituales con comprobaciones de acceso y consumo.',
   '- Clones físicos: reserva dividida y acción conjunta; Sello del centenar: depósito real; familias de usos, desgaste ocular y permisos rituales persistentes. Los modos propios aplican sus efectos y la regeneración marcada usa curación nativa por turno.',
   '- Invocaciones y títeres: perfiles y órdenes en mesa; no se crean actores ni tokens. Ilusiones, resurrección, cirugía, trasplantes, sacrificios, posiciones y beneficios condicionales conservan resolución del DM según su ficha.',
   '- Defensas con midi-qol: integración existente, pendiente de comprobar en Foundry con la versión instalada; críticos, áreas y posición de Sustitución requieren especial atención.', '');

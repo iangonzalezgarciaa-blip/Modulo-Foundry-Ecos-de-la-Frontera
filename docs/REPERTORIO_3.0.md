@@ -1,22 +1,22 @@
 # Repertorio shinobi · 3.0.0
 
-El catálogo reúne **754 técnicas y 155 dotes**. Conserva las 401 técnicas anteriores y añade 353; 327 incorporaciones pertenecen a otras ramas. Los identificadores anteriores, personajes, monedas y Trazos se conservan.
+El catálogo reúne **836 técnicas y 155 dotes**. Conserva las 401 técnicas anteriores y añade 353; 327 incorporaciones pertenecen a otras ramas. Los identificadores anteriores, personajes, monedas y Trazos se conservan.
 
 | Rama | Anteriores | Nuevas | Total |
 |---|---:|---:|---:|
 | Forma | 147 | 26 | 173 |
-| Velo | 35 | 14 | 49 |
-| Cuerpo | 27 | 37 | 64 |
-| Mirada | 22 | 33 | 55 |
-| Sello | 32 | 37 | 69 |
-| Pacto | 26 | 27 | 53 |
-| Pulso | 25 | 13 | 38 |
-| Hilo | 22 | 40 | 62 |
-| Quietud | 19 | 19 | 38 |
-| Rastro | 19 | 17 | 36 |
+| Velo | 39 | 14 | 53 |
+| Cuerpo | 29 | 37 | 66 |
+| Mirada | 26 | 33 | 59 |
+| Sello | 34 | 37 | 71 |
+| Pacto | 30 | 27 | 57 |
+| Pulso | 37 | 13 | 50 |
+| Hilo | 26 | 40 | 66 |
+| Quietud | 31 | 19 | 50 |
+| Rastro | 33 | 17 | 50 |
 | Sangre | 27 | 34 | 61 |
-| Umbral | 0 | 17 | 17 |
-| Vasija | 0 | 39 | 39 |
+| Umbral | 16 | 17 | 33 |
+| Vasija | 8 | 39 | 47 |
 
 ## Cómo usarlo sin leer un reglamento
 

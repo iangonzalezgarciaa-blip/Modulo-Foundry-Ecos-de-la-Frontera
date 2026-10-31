@@ -1,0 +1,98 @@
+# Identidad de Nimerios · 3.3
+
+Los nombres visibles, alias de búsqueda y referencias de las técnicas y reliquias usan el vocabulario de la campaña. Lethria sustituye al antiguo nombre de la guardiana de las despedidas; Namar Sin Rostro es el nombre del cazador sin rostro. El panteón conserva sus jerarquías. Los identificadores históricos se conservan exclusivamente para que las hojas mantengan compras, vínculos y autorizaciones.
+
+## Bestias vinculadas
+
+- Dunavar · una cola
+- Velisca · dos colas
+- Torvaneo · tres colas
+- Brontaro · cuatro colas
+- Auralmo · cinco colas
+- Nebruso · seis colas
+- Luminara · siete colas
+- Marebravo · ocho colas
+- Aurenox · nueve colas
+- Velkarion · receptáculo mayor
+- Pseudohuésped residual (Nimerios)
+
+## Reliquias
+
+- Dosel de Ilvarn
+- Lucero de Bolsillo
+- Velo de las Corrientes
+- Ganzúa del Pensamiento
+- Aliento de la Cisterna
+- Guata de la Nube Quieta
+- Brazo del Rescate
+- Cofre del Reposo
+- Cedazo de la Cantera
+- Veleta del Día Venidero
+- Llamador de Piedra Clara
+- Memoria de las Cuatro Estaciones
+- Pico de Cendra
+- Arca del Umbral Seguro
+- Ojo del Vigía Ausente
+- Segadora de Ceniza
+- Fuente de la Hondonada
+- Mano del Tercer Taller
+- Clavos del Porteador
+- Manto del León Marino
+- Hebra de Orun
+- Campana del Silencio Azul
+- Colmena de las Voces
+- Altar de la Última Orilla
+- Copa del Invierno
+- Dosel del Primer Faro
+- Títere de Escarcha
+- Cuna del Anhelo
+- Olla del Pliegue
+- Pasarela de las Auroras
+- Saco del Testimonio
+- Jabón de la Cantera
+- Misiva del Juramento
+- Carta de Ilarva
+- Arnés del Cargador
+- Lanzador de Semillas
+- Lanzador de Semillas Gemelas
+- Semillero de Rostros
+- Peonza del Aire Quieto
+- Cápsula del Estrépito
+- Enjambre de Luciérnagas
+- Aguja del Horizonte
+- Brújula de la Falla
+- Susurro de Piedra
+- Antifaz de los Mirlos
+- Lente del Escarabajo
+- Corazón de Resonancia
+- Acero del Velo Herido
+- Escalera de las Auroras
+- Rayo del Vigía Sepultado
+- Cámara del Lastre
+- Orbe del Huerto Hundido
+- Lingote de la Falla
+- Sombrero del Caminante Gris
+- Guantes del Taller Hundido
+- Casaca del Primer Descenso
+- Pantalones del Vado
+- Botas de la Galería
+- Lanzador del Taller Hundido
+- Arco del Pozo Sereno
+- Pico del Eco Seco
+- Hachuela del Cedral
+- Farol del sendero perdido
+- Aguja del pan compartido
+- Carrete de la última brisa
+- Cuenco de la marea cautiva
+- Martillo del puente exacto
+- Balanza de la deuda visible
+- Aguja de las dos orillas
+- Máscara del sueño quieto
+- Lente del norte que falta
+- Clavo del puesto abandonado
+- Campana de la aurora rota
+- Semilla del primer refugio
+- Llave de los nudos abiertos
+- Dintel de bolsillo
+- Piedra de la despedida serena
+- Espejo de la ley encendida

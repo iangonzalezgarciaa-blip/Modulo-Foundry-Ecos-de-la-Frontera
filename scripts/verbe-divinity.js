@@ -49,9 +49,9 @@ export async function asegurarNotaPanteon(D) {
   const ownership = {default:0};
   for (const u of game.users) if (!u.isGM) ownership[u.id]=0;
   if (Object.entries(ownership).some(([k,v])=>(diario.ownership?.[k]??0)!==v)) await diario.update({ownership},{diff:false,recursive:false});
-  let pagina = diario.pages.find(p=>p.getFlag('ecos-frontera','panteonRevision')===1);
+  let pagina = diario.pages.find(p=>p.getFlag('ecos-frontera','panteonRevision')===2);
   if (!pagina) [pagina] = await diario.createEmbeddedDocuments('JournalEntryPage',[{name:'Pendiente · actualizar panteón en los diarios de lore',type:'text',ownership,
-    text:{content:notaPanteonHTML(D),format:1},flags:{'ecos-frontera':{panteonRevision:1}}}]);
+    text:{content:notaPanteonHTML(D),format:1},flags:{'ecos-frontera':{panteonRevision:2}}}]);
   // También cierra cualquier permiso explícito de la página sin tocar sus ediciones.
   if (Object.entries(ownership).some(([k,v])=>(pagina.ownership?.[k]??0)!==v)) await pagina.update({ownership},{diff:false,recursive:false});
   return {diario,pagina};

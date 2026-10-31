@@ -1,26 +1,26 @@
-# Cobertura declarada del catálogo 3.2.1
+# Cobertura declarada del catálogo 3.3.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **778 técnicas y 219 dotes**.
+El catálogo reúne **860 técnicas y 219 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
 | Forma | 173 | 41 |
-| Velo | 49 | 20 |
-| Cuerpo | 64 | 23 |
-| Mirada | 55 | 26 |
-| Sello | 69 | 39 |
-| Pacto | 53 | 28 |
-| Pulso | 38 | 18 |
-| Hilo | 62 | 12 |
-| Quietud | 38 | 16 |
-| Rastro | 36 | 31 |
+| Velo | 53 | 24 |
+| Cuerpo | 66 | 25 |
+| Mirada | 59 | 30 |
+| Sello | 71 | 41 |
+| Pacto | 57 | 32 |
+| Pulso | 50 | 30 |
+| Hilo | 66 | 16 |
+| Quietud | 50 | 28 |
+| Rastro | 50 | 45 |
 | Sangre | 85 | 31 |
-| Umbral | 17 | 12 |
-| Vasija | 39 | 10 |
+| Umbral | 33 | 28 |
+| Vasija | 47 | 18 |
 
 ## Técnicas
 
@@ -493,7 +493,7 @@ El catálogo reúne **778 técnicas y 219 dotes**.
 | `quietud-esfera-sabia-mayor` | Gran esfera del equilibrio | 6 | quietud | attack | 0 |
 | `quietud-esfera-sabia-colosal` | Esfera colosal del equilibrio | 8 | quietud | attack | 0 |
 | `quietud-estrella-sabia` | Estrella del viento sabio | 8 | quietud | save | 0 |
-| `quietud-seis-caminos` | Quietud de los seis caminos | 10 | quietud | utility | 1 |
+| `quietud-seis-caminos` | Quietud de los sendas del firmamento | 10 | quietud | utility | 1 |
 | `quietud-estrella-colosal` | Estrella que cubre el cielo | 11 | quietud | save | 0 |
 | `rastro-ocultar-firma` | Silencio de la firma | 1 | rastro | utility | 1 |
 | `rastro-firma-aliados` | Reconocer al compañero | 2 | rastro | utility | 0 |
@@ -603,8 +603,8 @@ El catálogo reúne **778 técnicas y 219 dotes**.
 | `mirada-aster-perfecto` | Guardián perfecto | 10 | mirada | utility | 1 |
 | `mirada-aster-magatama` | Joyas del guardián | 7 | mirada | save | 0 |
 | `mirada-aster-arco` | Arco del guardián | 6 | mirada | attack | 0 |
-| `mirada-aster-indra` | Flecha del cielo de Indra | 11 | mirada | save | 0 |
-| `mirada-orbe-abrir` | Abrir el Ojo de los seis senderos | 0 | mirada | utility | 0 |
+| `mirada-aster-indra` | Flecha del cielo de Arvem | 11 | mirada | save | 0 |
+| `mirada-orbe-abrir` | Abrir el Ojo de los sendas del firmamento | 0 | mirada | utility | 0 |
 | `mirada-orbe-atraer` | Mano de la atracción | 4 | mirada | save | 0 |
 | `mirada-orbe-repeler` | Círculo de repulsión | 5 | mirada | save | 0 |
 | `mirada-orbe-absorber` | Palmas del sendero hambriento | 6 | mirada | utility | 0 |
@@ -679,7 +679,7 @@ El catálogo reúne **778 técnicas y 219 dotes**.
 | `vasija-prestamo` | Préstamo de la bestia | 2 | vasija | utility | 0 |
 | `vasija-manto-uno` | Manto de la primera cola | 3 | vasija | utility | 1 |
 | `vasija-manto-dos` | Manto de la segunda forma | 6 | vasija | utility | 1 |
-| `vasija-brazos` | Brazos del chakra viviente | 3 | vasija | utility | 0 |
+| `vasija-brazos` | Brazos del Verbe viviente | 3 | vasija | utility | 0 |
 | `vasija-parcial` | Rasgo de la bestia | 4 | vasija | utility | 1 |
 | `vasija-avatar` | Avatar de la bestia | 8 | vasija | utility | 1 |
 | `vasija-bomba` | Esfera de la bestia | 9 | vasija | save | 0 |
@@ -804,6 +804,88 @@ El catálogo reúne **778 técnicas y 219 dotes**.
 | `divino-seyra-nudo` | Nudo que retiene | 3 | sangre | save | 1 |
 | `divino-dhoren-dintel` | Dintel de guardia | 1 | sangre | utility | 1 |
 | `divino-dhoren-cerrar` | Cerrar el umbral | 3 | sangre | utility | 0 |
+| `vida-umbral-bolsillo-mensajero` | Bolsillo mensajero | 1 | umbral | utility | 0 |
+| `vida-umbral-maleta-ordenada` | Maleta ordenada | 1 | umbral | utility | 0 |
+| `vida-umbral-puente-bultos` | Puente de bultos | 2 | umbral | utility | 0 |
+| `vida-umbral-regreso-herramienta` | Regreso de la herramienta | 1 | umbral | utility | 0 |
+| `vida-umbral-baliza-campamento` | Baliza del campamento | 1 | umbral | utility | 0 |
+| `vida-umbral-sillon-rescate` | Sillón del rescate | 2 | umbral | utility | 0 |
+| `vida-umbral-mesa-desplegada` | Mesa desplegada | 1 | umbral | utility | 0 |
+| `vida-umbral-senda-porteador` | Senda del porteador | 2 | umbral | utility | 0 |
+| `vida-umbral-paso-tendido` | Paso del tendido | 2 | umbral | utility | 0 |
+| `vida-umbral-ventana-reparto` | Ventana del reparto | 3 | umbral | utility | 0 |
+| `vida-umbral-marca-inventario` | Marca del inventario | 1 | umbral | utility | 0 |
+| `vida-umbral-umbral-evacuacion` | Umbral de evacuación | 3 | umbral | utility | 0 |
+| `vida-umbral-bandeja-distante` | Bandeja distante | 1 | umbral | utility | 0 |
+| `vida-umbral-junta-carpintero` | Junta del carpintero | 2 | umbral | utility | 0 |
+| `vida-umbral-caja-seca` | Caja seca | 1 | umbral | utility | 0 |
+| `vida-umbral-correo-vado` | Correo del vado | 3 | umbral | utility | 0 |
+| `vida-rastro-mapa-olores` | Mapa de los olores | 1 | rastro | utility | 0 |
+| `vida-rastro-huella-carreta` | Huella de la carreta | 1 | rastro | utility | 0 |
+| `vida-rastro-cuenta-pasos` | Cuenta de los pasos | 0 | rastro | utility | 0 |
+| `vida-rastro-lectura-polvo` | Lectura del polvo | 1 | rastro | utility | 0 |
+| `vida-rastro-agua-vecina` | Agua vecina | 2 | rastro | utility | 0 |
+| `vida-rastro-ficha-ruta` | Ficha de la ruta | 1 | rastro | utility | 0 |
+| `vida-rastro-lupa-taller` | Lupa del taller | 1 | rastro | utility | 0 |
+| `vida-rastro-eco-caverna` | Eco de la caverna | 2 | rastro | utility | 0 |
+| `vida-rastro-lectura-viento` | Lectura del viento | 1 | rastro | utility | 0 |
+| `vida-rastro-registro-voz` | Registro de la voz | 2 | rastro | utility | 0 |
+| `vida-rastro-catalogo-hojas` | Catálogo de las hojas | 1 | rastro | utility | 0 |
+| `vida-rastro-rumbo-caravana` | Rumbo de la caravana | 2 | rastro | utility | 0 |
+| `vida-rastro-tinta-rastreadora` | Tinta rastreadora | 2 | rastro | utility | 0 |
+| `vida-rastro-archivo-simbolos` | Archivo de símbolos | 3 | rastro | utility | 0 |
+| `vida-pulso-manos-serenas` | Manos serenas | 1 | pulso | utility | 0 |
+| `vida-pulso-lectura-cansancio` | Lectura del cansancio | 1 | pulso | utility | 0 |
+| `vida-pulso-compresa-templada` | Compresa templada | 1 | pulso | utility | 0 |
+| `vida-pulso-venda-sujeta` | Venda sujeta | 1 | pulso | utility | 0 |
+| `vida-pulso-pulso-testigo` | Pulso testigo | 0 | pulso | utility | 0 |
+| `vida-pulso-guardia-camilla` | Guardia de la camilla | 2 | pulso | utility | 0 |
+| `vida-pulso-higiene-manos` | Higiene de las manos | 1 | pulso | utility | 0 |
+| `vida-pulso-voz-rescate` | Voz del rescate | 1 | pulso | utility | 0 |
+| `vida-pulso-asiento-dolor` | Asiento del dolor | 2 | pulso | utility | 0 |
+| `vida-pulso-pausa-muscular` | Pausa muscular | 1 | pulso | utility | 0 |
+| `vida-pulso-rutina-cuidados` | Rutina de los cuidados | 2 | pulso | utility | 0 |
+| `vida-pulso-ficha-paciente` | Ficha del paciente | 1 | pulso | utility | 0 |
+| `vida-quietud-sueno-amable` | Sueño amable | 1 | quietud | utility | 0 |
+| `vida-quietud-fogata-paciente` | Fogata paciente | 1 | quietud | utility | 0 |
+| `vida-quietud-ritmo-taller` | Ritmo del taller | 1 | quietud | utility | 0 |
+| `vida-quietud-silencio-lectura` | Silencio de lectura | 1 | quietud | utility | 0 |
+| `vida-quietud-mesa-serena` | Mesa serena | 2 | quietud | utility | 0 |
+| `vida-quietud-vigilia-compartida` | Vigilia compartida | 2 | quietud | utility | 0 |
+| `vida-quietud-respirar-polvo` | Respirar entre el polvo | 1 | quietud | utility | 0 |
+| `vida-quietud-memoria-receta` | Memoria de la receta | 1 | quietud | utility | 0 |
+| `vida-quietud-pausa-del-acuerdo` | Pausa del acuerdo | 2 | quietud | utility | 0 |
+| `vida-quietud-ritmo-remo` | Ritmo del remo | 2 | quietud | utility | 0 |
+| `vida-quietud-despedida-sosiego` | Despedida en sosiego | 1 | quietud | utility | 0 |
+| `vida-quietud-taza-paciente` | Taza paciente | 0 | quietud | utility | 0 |
+| `vida-vasija-saludo-huesped` | Saludo del huésped | 1 | vasija | utility | 0 |
+| `vida-vasija-olfato-hogar` | Olfato del hogar | 1 | vasija | utility | 0 |
+| `vida-vasija-manto-intemperie` | Manto de la intemperie | 2 | vasija | utility | 0 |
+| `vida-vasija-voz-visitante` | Voz del visitante | 1 | vasija | utility | 0 |
+| `vida-vasija-paso-compasado` | Paso compasado | 2 | vasija | utility | 0 |
+| `vida-vasija-memoria-vinculo` | Memoria del vínculo | 2 | vasija | utility | 0 |
+| `vida-vasija-cancion-refugio` | Canción del refugio | 1 | vasija | utility | 0 |
+| `vida-vasija-garra-taller` | Garra del taller | 2 | vasija | utility | 0 |
+| `vida-velo-cartel-luminoso` | Cartel luminoso | 1 | velo | utility | 0 |
+| `vida-velo-ensayo-escena` | Ensayo de la escena | 1 | velo | utility | 0 |
+| `vida-velo-vestuario-borrador` | Vestuario en borrador | 1 | velo | utility | 0 |
+| `vida-velo-cuento-lampara` | Cuento de la lámpara | 0 | velo | utility | 0 |
+| `vida-mirada-lectura-costura` | Lectura de la costura | 1 | mirada | utility | 0 |
+| `vida-mirada-margen-escriba` | Margen del escriba | 1 | mirada | utility | 0 |
+| `vida-mirada-luz-lector` | Luz del lector | 0 | mirada | utility | 0 |
+| `vida-mirada-escala-pintor` | Escala del pintor | 1 | mirada | utility | 0 |
+| `vida-pacto-recado-del-patio` | Recado del patio | 1 | pacto | utility | 0 |
+| `vida-pacto-guardia-del-huerto` | Guardia del huerto | 2 | pacto | utility | 0 |
+| `vida-pacto-taller-companero` | Taller compañero | 1 | pacto | utility | 0 |
+| `vida-pacto-ronda-del-campamento` | Ronda del campamento | 2 | pacto | utility | 0 |
+| `vida-hilo-costura-remiendo` | Costura del remiendo | 1 | hilo | utility | 0 |
+| `vida-hilo-nudo-porteador` | Nudo del porteador | 1 | hilo | utility | 0 |
+| `vida-hilo-tendedero-sutil` | Tendedero sutil | 1 | hilo | utility | 0 |
+| `vida-hilo-dedo-campanero` | Dedo del campanero | 1 | hilo | utility | 0 |
+| `vida-cuerpo-palma-estibador` | Palma del estibador | 1 | cuerpo | utility | 0 |
+| `vida-cuerpo-paso-danzante` | Paso del danzante | 1 | cuerpo | utility | 0 |
+| `vida-sello-sello-despensa` | Sello de la despensa | 1 | sello | utility | 0 |
+| `vida-sello-etiqueta-almacen` | Etiqueta del almacén | 0 | sello | utility | 0 |
 
 ## Dotes
 
@@ -1042,7 +1124,7 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 - Desequilibrado, Embarrado, Cargado y Helado: adaptadores de tiradas y estados. Metal requiere material declarado o marcador explícito y un único objetivo.
 - Agua/tierra apagan Ardiendo al aplicar sus estados; vencimiento temporal al inicio del turno.
 - Palma que cierra: tratamiento diario confirmado por el DM. Restaurar, Aliento para muchos, Rehacer y Mano que cierra todo: enlace con heridas. Mano que sostiene: estabilización.
-- Repertorio shinobi: 353 incorporaciones con origen y página; tradiciones, herencias, ojos, modos, bestias y rituales con comprobaciones de acceso y consumo.
+- Archivo del Verbe: 353 incorporaciones con nombres de Nimerios; tradiciones, herencias, ojos, modos, bestias y rituales con comprobaciones de acceso y consumo.
 - Clones físicos: reserva dividida y acción conjunta; Sello del centenar: depósito real; familias de usos, desgaste ocular y permisos rituales persistentes. Los modos propios aplican sus efectos y la regeneración marcada usa curación nativa por turno.
 - Invocaciones y títeres: perfiles y órdenes en mesa; no se crean actores ni tokens. Ilusiones, resurrección, cirugía, trasplantes, sacrificios, posiciones y beneficios condicionales conservan resolución del DM según su ficha.
 - Defensas con midi-qol: integración existente, pendiente de comprobar en Foundry con la versión instalada; críticos, áreas y posición de Sustitución requieren especial atención.

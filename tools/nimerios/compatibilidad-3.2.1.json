@@ -1,0 +1,3500 @@
+{
+  "tecnicas": {
+    "forma-punta": {
+      "nombre": "14:762ba90e",
+      "descripcion": "876:ce578d8b"
+    },
+    "forma-mano": {
+      "nombre": "13:3256bffb",
+      "descripcion": "943:1d57740"
+    },
+    "forma-brillo": {
+      "nombre": "6:288fc3f9",
+      "descripcion": "936:6897a599"
+    },
+    "forma-sustitucion": {
+      "nombre": "11:d4c33a1f",
+      "descripcion": "1830:e6ed068e"
+    },
+    "forma-replica": {
+      "nombre": "7:72349a9b",
+      "descripcion": "1280:789e636d"
+    },
+    "forma-transformacion": {
+      "nombre": "14:bb943c9f",
+      "descripcion": "1068:2c7cfbc9"
+    },
+    "forma-andar": {
+      "nombre": "15:a192ec2",
+      "descripcion": "1104:a6e2565b"
+    },
+    "forma-tres-puntas": {
+      "nombre": "11:cddc0de8",
+      "descripcion": "968:f1d8f322"
+    },
+    "forma-replicas": {
+      "nombre": "8:b0cfdb38",
+      "descripcion": "1241:de9438ac"
+    },
+    "forma-nudo": {
+      "nombre": "13:ddaf8a64",
+      "descripcion": "1004:d68e5c11"
+    },
+    "forma-paso": {
+      "nombre": "10:5cafab3a",
+      "descripcion": "883:7791d551"
+    },
+    "forma-replica-solida": {
+      "nombre": "14:f476237",
+      "descripcion": "1789:b5036da3"
+    },
+    "forma-granizo": {
+      "nombre": "16:4def2740",
+      "descripcion": "986:37adab86"
+    },
+    "forma-lanza": {
+      "nombre": "14:e2046c2c",
+      "descripcion": "1240:663b973"
+    },
+    "forma-doble": {
+      "nombre": "14:b30906dd",
+      "descripcion": "2167:9e8a6ed7"
+    },
+    "fuego-brasa": {
+      "nombre": "5:7e144a94",
+      "descripcion": "883:d321a6fd"
+    },
+    "fuego-soplo": {
+      "nombre": "14:c91b12ac",
+      "descripcion": "863:84a94e74"
+    },
+    "fuego-aliento": {
+      "nombre": "16:2e6df013",
+      "descripcion": "1086:c44b436c"
+    },
+    "fuego-humo": {
+      "nombre": "13:1537b254",
+      "descripcion": "1002:904396de"
+    },
+    "fuego-brasas": {
+      "nombre": "16:17f41d41",
+      "descripcion": "1121:9a85f1d0"
+    },
+    "fuego-fragua": {
+      "nombre": "15:2fc454d1",
+      "descripcion": "1224:58380953"
+    },
+    "fuego-gran-soplo": {
+      "nombre": "10:9977d448",
+      "descripcion": "1162:e5e19d60"
+    },
+    "fuego-muro": {
+      "nombre": "14:fd8db2c3",
+      "descripcion": "1265:53f3f523"
+    },
+    "fuego-serpiente": {
+      "nombre": "19:233ae7f5",
+      "descripcion": "1099:d5bd5b7c"
+    },
+    "fuego-horno": {
+      "nombre": "5:46fd699d",
+      "descripcion": "1364:ebb4e4d8"
+    },
+    "fuego-sol": {
+      "nombre": "9:990312ff",
+      "descripcion": "1419:3c9166f1"
+    },
+    "agua-chorro": {
+      "nombre": "6:21652a74",
+      "descripcion": "874:b07bc5a"
+    },
+    "agua-mano": {
+      "nombre": "12:3b5f0013",
+      "descripcion": "931:c335496a"
+    },
+    "agua-ola": {
+      "nombre": "3:24b7ce55",
+      "descripcion": "1165:90c3a0a9"
+    },
+    "agua-cortina": {
+      "nombre": "15:cf890a26",
+      "descripcion": "1092:da44a890"
+    },
+    "agua-prision": {
+      "nombre": "15:5348a8a4",
+      "descripcion": "1333:dd46ff13"
+    },
+    "agua-torrente": {
+      "nombre": "8:97a0ae40",
+      "descripcion": "1065:b3120ae6"
+    },
+    "agua-niebla": {
+      "nombre": "13:869718b4",
+      "descripcion": "1159:6991a7c1"
+    },
+    "agua-marea": {
+      "nombre": "5:ad935031",
+      "descripcion": "1194:f26c5ff"
+    },
+    "agua-vortice": {
+      "nombre": "7:4a7e85c7",
+      "descripcion": "1138:fa596ad8"
+    },
+    "agua-diluvio": {
+      "nombre": "7:6de5f3d9",
+      "descripcion": "1184:a5281d72"
+    },
+    "agua-mar": {
+      "nombre": "13:510270b",
+      "descripcion": "1393:8ef82786"
+    },
+    "viento-filo": {
+      "nombre": "14:be56b11b",
+      "descripcion": "871:8197933"
+    },
+    "viento-paso": {
+      "nombre": "15:db983b68",
+      "descripcion": "856:81f4c5d6"
+    },
+    "viento-palmada": {
+      "nombre": "17:55150f39",
+      "descripcion": "1140:d0b557e"
+    },
+    "viento-pies": {
+      "nombre": "14:c8755438",
+      "descripcion": "892:20496aab"
+    },
+    "viento-tajo": {
+      "nombre": "10:2bee8780",
+      "descripcion": "1223:7e75c033"
+    },
+    "viento-coraza": {
+      "nombre": "16:8e3ab229",
+      "descripcion": "1016:a9f9edb9"
+    },
+    "viento-muro": {
+      "nombre": "14:a927c8a2",
+      "descripcion": "1182:850f348b"
+    },
+    "viento-alas": {
+      "nombre": "14:eb937b52",
+      "descripcion": "1040:ffcba0e8"
+    },
+    "viento-torbellino": {
+      "nombre": "10:71346111",
+      "descripcion": "1294:8d4a2c17"
+    },
+    "viento-mil-cortes": {
+      "nombre": "10:4869da27",
+      "descripcion": "1155:3ca1a193"
+    },
+    "viento-huracan": {
+      "nombre": "7:7b354a3b",
+      "descripcion": "1450:bcb691db"
+    },
+    "tierra-guijarro": {
+      "nombre": "8:2f16b466",
+      "descripcion": "1011:6c065d2"
+    },
+    "tierra-barro": {
+      "nombre": "14:e3105dd",
+      "descripcion": "908:b280b958"
+    },
+    "tierra-escudo": {
+      "nombre": "16:328ef7f2",
+      "descripcion": "947:e8a50499"
+    },
+    "tierra-pozo": {
+      "nombre": "4:d9d8b653",
+      "descripcion": "1168:38ce2989"
+    },
+    "tierra-muro-barro": {
+      "nombre": "13:9294f7c1",
+      "descripcion": "1196:47b91669"
+    },
+    "tierra-puas": {
+      "nombre": "14:55ea9f63",
+      "descripcion": "1121:11c0ce48"
+    },
+    "tierra-mano": {
+      "nombre": "17:f580752f",
+      "descripcion": "1071:e1536bb5"
+    },
+    "tierra-erupcion": {
+      "nombre": "8:8589a1fa",
+      "descripcion": "1186:5ce541f4"
+    },
+    "tierra-cupula": {
+      "nombre": "16:1e8d598c",
+      "descripcion": "999:cf86b2cd"
+    },
+    "tierra-muralla": {
+      "nombre": "7:85feac71",
+      "descripcion": "1062:513bc4b4"
+    },
+    "tierra-remover": {
+      "nombre": "17:788dea9",
+      "descripcion": "1225:66f42d3e"
+    },
+    "tierra-quiebre": {
+      "nombre": "17:15cab1ad",
+      "descripcion": "1341:a8472fca"
+    },
+    "rayo-chispazo": {
+      "nombre": "8:95cfe576",
+      "descripcion": "951:297df732"
+    },
+    "rayo-aguja": {
+      "nombre": "13:4e5d3109",
+      "descripcion": "901:f2541875"
+    },
+    "rayo-arco": {
+      "nombre": "18:51158436",
+      "descripcion": "1139:1cfcea3f"
+    },
+    "rayo-carrera": {
+      "nombre": "15:ae773e99",
+      "descripcion": "907:acfc93a9"
+    },
+    "rayo-nervio": {
+      "nombre": "15:64f56e28",
+      "descripcion": "983:acb14e95"
+    },
+    "rayo-piel": {
+      "nombre": "15:aaa3d857",
+      "descripcion": "1143:a150fbbf"
+    },
+    "rayo-lanza": {
+      "nombre": "13:932d4f85",
+      "descripcion": "993:54ba70ec"
+    },
+    "rayo-descarga": {
+      "nombre": "8:5a1e4b47",
+      "descripcion": "1065:d035b37"
+    },
+    "rayo-llamar": {
+      "nombre": "14:38c2bce",
+      "descripcion": "1210:9ca3e15"
+    },
+    "rayo-salta": {
+      "nombre": "14:ea10bb42",
+      "descripcion": "1198:4ea9cc9b"
+    },
+    "rayo-cadena": {
+      "nombre": "14:3b3df96b",
+      "descripcion": "1351:1e877f9a"
+    },
+    "rayo-cielo": {
+      "nombre": "17:3bc6df9a",
+      "descripcion": "1515:848a9c01"
+    },
+    "escarcha-lanzas": {
+      "nombre": "15:4241c33a",
+      "descripcion": "1032:51f4444d"
+    },
+    "escarcha-ataud": {
+      "nombre": "14:5f80ded3",
+      "descripcion": "1223:c66ada12"
+    },
+    "raiz-raices": {
+      "nombre": "15:47e62079",
+      "descripcion": "1102:56d92f92"
+    },
+    "raiz-bosque": {
+      "nombre": "13:10b104e1",
+      "descripcion": "1151:e4ddffb7"
+    },
+    "magma-lluvia": {
+      "nombre": "14:e1c19d17",
+      "descripcion": "1083:7dba8d5c"
+    },
+    "magma-rio": {
+      "nombre": "12:305daf79",
+      "descripcion": "1220:94a6d2dd"
+    },
+    "vapor-nube": {
+      "nombre": "14:e2505313",
+      "descripcion": "1146:a07b1334"
+    },
+    "vapor-cuerpo": {
+      "nombre": "15:6a7d8040",
+      "descripcion": "1013:6eea7ba6"
+    },
+    "ceniza-nube": {
+      "nombre": "14:38114dd0",
+      "descripcion": "1030:d62706ed"
+    },
+    "ceniza-estallido": {
+      "nombre": "15:219697d8",
+      "descripcion": "1070:7a99e770"
+    },
+    "tormenta-ojo": {
+      "nombre": "15:7908f3e0",
+      "descripcion": "1136:b0c09e1a"
+    },
+    "tormenta-gran": {
+      "nombre": "13:c56e7e45",
+      "descripcion": "1350:5a561ae6"
+    },
+    "hierro-atraer": {
+      "nombre": "15:db5a3208",
+      "descripcion": "991:b0436aa8"
+    },
+    "hierro-lluvia": {
+      "nombre": "16:5f7937d2",
+      "descripcion": "1066:f91603a8"
+    },
+    "corriente-salto": {
+      "nombre": "19:831708fc",
+      "descripcion": "1080:324578eb"
+    },
+    "corriente-mar": {
+      "nombre": "13:77c05a0b",
+      "descripcion": "1274:40f6abae"
+    },
+    "destello-destello": {
+      "nombre": "8:c838fa45",
+      "descripcion": "1059:12e5bc4c"
+    },
+    "destello-lanza": {
+      "nombre": "12:6c60588f",
+      "descripcion": "1080:c5d55ff5"
+    },
+    "arena-ataud": {
+      "nombre": "14:8398caab",
+      "descripcion": "1147:5d0ef3b2"
+    },
+    "arena-tormenta": {
+      "nombre": "17:a3c42e17",
+      "descripcion": "1047:56275f85"
+    },
+    "madera-estacas": {
+      "nombre": "7:616e6b0f",
+      "descripcion": "984:187a5866"
+    },
+    "madera-muro": {
+      "nombre": "15:48137f05",
+      "descripcion": "1122:f1e140ef"
+    },
+    "velo-susurro": {
+      "nombre": "13:a465d5c3",
+      "descripcion": "940:bcad010a"
+    },
+    "velo-punzada": {
+      "nombre": "7:9c170f2e",
+      "descripcion": "941:e937981f"
+    },
+    "velo-romper": {
+      "nombre": "14:90d8c79b",
+      "descripcion": "1161:9d1d09ea"
+    },
+    "velo-miedo": {
+      "nombre": "16:4970a2f7",
+      "descripcion": "1320:39e47738"
+    },
+    "velo-parpados": {
+      "nombre": "17:5a804f83",
+      "descripcion": "1097:b1012e68"
+    },
+    "velo-imagen": {
+      "nombre": "12:d923e47b",
+      "descripcion": "1052:96e27a97"
+    },
+    "velo-amigo": {
+      "nombre": "12:8e7ddf51",
+      "descripcion": "1067:107f2903"
+    },
+    "velo-ojos": {
+      "nombre": "13:a316b17d",
+      "descripcion": "1268:9c1c6282"
+    },
+    "velo-cadenas": {
+      "nombre": "15:157eabbc",
+      "descripcion": "1215:ec2322fa"
+    },
+    "velo-no-estar": {
+      "nombre": "8:da4d36a5",
+      "descripcion": "1061:1f6c7746"
+    },
+    "velo-pesadilla": {
+      "nombre": "19:c6647237",
+      "descripcion": "1191:f4617476"
+    },
+    "velo-escenario": {
+      "nombre": "9:a613136a",
+      "descripcion": "1097:374519a8"
+    },
+    "velo-patron": {
+      "nombre": "6:ad3d9ccd",
+      "descripcion": "1017:b9f31702"
+    },
+    "velo-perseguidor": {
+      "nombre": "18:63fbeb4e",
+      "descripcion": "1159:b4d544c0"
+    },
+    "velo-revuelta": {
+      "nombre": "14:9e554302",
+      "descripcion": "1165:ec6c130b"
+    },
+    "velo-mano": {
+      "nombre": "16:e1803ea1",
+      "descripcion": "1222:1ad93043"
+    },
+    "velo-habitacion": {
+      "nombre": "25:66ef58fc",
+      "descripcion": "1348:e48f0bd1"
+    },
+    "velo-paso-falso": {
+      "nombre": "10:fec0d455",
+      "descripcion": "967:11b7be20"
+    },
+    "velo-dolor": {
+      "nombre": "14:8adfca8f",
+      "descripcion": "1094:aee42514"
+    },
+    "velo-devolver": {
+      "nombre": "16:7c81845b",
+      "descripcion": "1069:6babe4f6"
+    },
+    "velo-espejos": {
+      "nombre": "17:fcf8b456",
+      "descripcion": "1041:31e36ba0"
+    },
+    "velo-noche": {
+      "nombre": "16:174781f",
+      "descripcion": "1339:5fe342e0"
+    },
+    "cuerpo-golpe-hondo": {
+      "nombre": "11:a1e0acfa",
+      "descripcion": "966:8e60e855"
+    },
+    "cuerpo-impulso": {
+      "nombre": "7:79de8b82",
+      "descripcion": "915:9984e501"
+    },
+    "cuerpo-postura": {
+      "nombre": "13:bcdb65ac",
+      "descripcion": "917:1d6b6904"
+    },
+    "cuerpo-martillo": {
+      "nombre": "17:13144b1b",
+      "descripcion": "1004:6a1a5cb7"
+    },
+    "cuerpo-aguantar": {
+      "nombre": "17:fbb4eb76",
+      "descripcion": "1025:3d67e6e3"
+    },
+    "cuerpo-lluvia": {
+      "nombre": "15:cd5496e3",
+      "descripcion": "857:a206f792"
+    },
+    "cuerpo-patada": {
+      "nombre": "16:cc86af2a",
+      "descripcion": "1042:86cbbb07"
+    },
+    "cuerpo-ligero": {
+      "nombre": "13:3ee0e52d",
+      "descripcion": "947:ade0f0f4"
+    },
+    "cuerpo-remolino": {
+      "nombre": "19:771c481b",
+      "descripcion": "903:b1019967"
+    },
+    "cuerpo-pleno": {
+      "nombre": "11:80c18a7e",
+      "descripcion": "1133:31707393"
+    },
+    "cuerpo-veloz": {
+      "nombre": "12:ec4445bd",
+      "descripcion": "1056:6826e020"
+    },
+    "cuerpo-cerrado": {
+      "nombre": "14:a6dd0245",
+      "descripcion": "906:e4b380aa"
+    },
+    "cuerpo-terremoto": {
+      "nombre": "18:cc0ba8c4",
+      "descripcion": "1076:f7fc162d"
+    },
+    "cuerpo-ultimo": {
+      "nombre": "24:5cfc586a",
+      "descripcion": "1383:fb57d42d"
+    },
+    "mirada-aster-abrir": {
+      "nombre": "25:bd1b9ae2",
+      "descripcion": "979:b44918b"
+    },
+    "mirada-ikkra-abrir": {
+      "nombre": "22:27a4d110",
+      "descripcion": "1097:f9172433"
+    },
+    "mirada-nocta-abrir": {
+      "nombre": "23:325a3206",
+      "descripcion": "977:e4458c97"
+    },
+    "mirada-madre-abrir": {
+      "nombre": "27:edea0b49",
+      "descripcion": "981:58dc3c26"
+    },
+    "mirada-aster-leer": {
+      "nombre": "13:b1af3693",
+      "descripcion": "1029:d57ae2d8"
+    },
+    "mirada-aster-copiar": {
+      "nombre": "6:afccd5e7",
+      "descripcion": "1307:138ea041"
+    },
+    "mirada-aster-encadena": {
+      "nombre": "19:1f1d14c9",
+      "descripcion": "1018:72ece682"
+    },
+    "mirada-ikkra-lejos": {
+      "nombre": "11:5673a91",
+      "descripcion": "1037:4e1f8644"
+    },
+    "mirada-ikkra-cortar": {
+      "nombre": "15:614b577d",
+      "descripcion": "1171:8f5ff883"
+    },
+    "mirada-nocta-arropar": {
+      "nombre": "7:4ede13b8",
+      "descripcion": "1023:9227797e"
+    },
+    "mirada-nocta-dormir": {
+      "nombre": "20:132f4d9b",
+      "descripcion": "1126:1628ae41"
+    },
+    "mirada-madre-voz": {
+      "nombre": "16:a25555f8",
+      "descripcion": "1046:4ac95b1c"
+    },
+    "mirada-madre-mandar": {
+      "nombre": "22:9c25fc45",
+      "descripcion": "1104:acca1a64"
+    },
+    "sello-guardar": {
+      "nombre": "7:291705dd",
+      "descripcion": "1001:2bc8dc0f"
+    },
+    "sello-marca": {
+      "nombre": "11:48d272de",
+      "descripcion": "999:1a23f63e"
+    },
+    "sello-ruptura": {
+      "nombre": "16:db440ab4",
+      "descripcion": "1151:6a2148c2"
+    },
+    "sello-cierre": {
+      "nombre": "15:def9aa05",
+      "descripcion": "963:b2e776de"
+    },
+    "sello-alarma": {
+      "nombre": "15:488f8f15",
+      "descripcion": "922:f73dc41f"
+    },
+    "sello-barrera-menor": {
+      "nombre": "13:ba344ec3",
+      "descripcion": "1134:93350652"
+    },
+    "sello-silencio": {
+      "nombre": "17:7fa44a9f",
+      "descripcion": "921:8fba4abd"
+    },
+    "sello-corte": {
+      "nombre": "14:828eed5e",
+      "descripcion": "1109:64c1ac65"
+    },
+    "sello-soltar": {
+      "nombre": "6:6440d0e8",
+      "descripcion": "1123:82f6081f"
+    },
+    "sello-regreso": {
+      "nombre": "17:57b0d08b",
+      "descripcion": "1314:a8d77283"
+    },
+    "sello-cauce": {
+      "nombre": "23:d8aff422",
+      "descripcion": "1044:482d4ea0"
+    },
+    "sello-circulo": {
+      "nombre": "17:f62d2b2d",
+      "descripcion": "1024:b600002"
+    },
+    "sello-barrera": {
+      "nombre": "7:ea94734a",
+      "descripcion": "1106:ab001257"
+    },
+    "sello-encierro": {
+      "nombre": "17:93ae6308",
+      "descripcion": "1389:57685c14"
+    },
+    "sello-recipiente": {
+      "nombre": "20:28d21623",
+      "descripcion": "1408:f5ccc394"
+    },
+    "sello-peso": {
+      "nombre": "13:1ece2f12",
+      "descripcion": "1018:1851af0c"
+    },
+    "sello-traba": {
+      "nombre": "14:4cf9f7d5",
+      "descripcion": "928:467cc705"
+    },
+    "sello-encierro-menor": {
+      "nombre": "23:3f3a15cd",
+      "descripcion": "1112:1cfc3e4a"
+    },
+    "sello-absorbe": {
+      "nombre": "17:b823382b",
+      "descripcion": "1018:8d575dd1"
+    },
+    "sello-esquinas": {
+      "nombre": "24:824e01c6",
+      "descripcion": "1279:188b62b9"
+    },
+    "pacto-sentir": {
+      "nombre": "15:359abb18",
+      "descripcion": "903:4425ce2b"
+    },
+    "pacto-sentidos": {
+      "nombre": "18:cda492d",
+      "descripcion": "937:ee403205"
+    },
+    "pacto-invocar": {
+      "nombre": "17:3a66d65d",
+      "descripcion": "1329:bacdfccd"
+    },
+    "pacto-mensajero": {
+      "nombre": "17:9fabe87d",
+      "descripcion": "936:442ce5c5"
+    },
+    "pacto-juntos": {
+      "nombre": "13:dc3ba807",
+      "descripcion": "1032:6264b3d"
+    },
+    "pacto-llamado": {
+      "nombre": "17:1537ca45",
+      "descripcion": "888:736c2931"
+    },
+    "pacto-forma": {
+      "nombre": "16:a0efbb7a",
+      "descripcion": "1037:378686d4"
+    },
+    "pacto-mayor": {
+      "nombre": "15:70873a2d",
+      "descripcion": "1312:daf63cf1"
+    },
+    "pacto-libelulas": {
+      "nombre": "18:3743923f",
+      "descripcion": "999:42b9a4b"
+    },
+    "pacto-polillas": {
+      "nombre": "12:9cf5c98d",
+      "descripcion": "1025:9d24ee6e"
+    },
+    "pacto-cuervos": {
+      "nombre": "14:d3d80bab",
+      "descripcion": "1100:14456980"
+    },
+    "pacto-tejones": {
+      "nombre": "7:6d6cc6a1",
+      "descripcion": "973:25969d8c"
+    },
+    "pacto-osos": {
+      "nombre": "14:a1a983ae",
+      "descripcion": "1002:76105360"
+    },
+    "pacto-lechuzas": {
+      "nombre": "15:48386ed9",
+      "descripcion": "992:87eb1252"
+    },
+    "pulso-sostener": {
+      "nombre": "17:319dd845",
+      "descripcion": "878:ebbf1afc"
+    },
+    "pulso-gris": {
+      "nombre": "10:24a1468e",
+      "descripcion": "1006:df34a12a"
+    },
+    "pulso-escuchar": {
+      "nombre": "18:4e31970c",
+      "descripcion": "989:68137dd3"
+    },
+    "pulso-cerrar": {
+      "nombre": "16:9b566795",
+      "descripcion": "1546:8d530b1b"
+    },
+    "pulso-amarga": {
+      "nombre": "12:b43f7a9d",
+      "descripcion": "1005:860394dc"
+    },
+    "pulso-restaurar": {
+      "nombre": "9:dea9007a",
+      "descripcion": "947:27045b03"
+    },
+    "pulso-filo": {
+      "nombre": "13:ff3f7bbb",
+      "descripcion": "1232:ac207c5c"
+    },
+    "pulso-cien": {
+      "nombre": "12:c241cb8",
+      "descripcion": "1114:8332f6d5"
+    },
+    "pulso-devolver": {
+      "nombre": "19:89406bdf",
+      "descripcion": "1035:bb9ebad3"
+    },
+    "pulso-beber": {
+      "nombre": "14:13468bc6",
+      "descripcion": "1078:c0e80215"
+    },
+    "pulso-plaga": {
+      "nombre": "5:aedb6274",
+      "descripcion": "1056:df84fd71"
+    },
+    "pulso-muchos": {
+      "nombre": "19:8aea8b60",
+      "descripcion": "1028:7f6b9578"
+    },
+    "pulso-cirugia": {
+      "nombre": "7:1e45a197",
+      "descripcion": "1094:c7307297"
+    },
+    "pulso-rehacer": {
+      "nombre": "7:8332f28f",
+      "descripcion": "1068:f7875065"
+    },
+    "pulso-pudrir": {
+      "nombre": "6:a1e25ebf",
+      "descripcion": "1276:55b9ed49"
+    },
+    "pulso-volver-hacer": {
+      "nombre": "14:e43841c7",
+      "descripcion": "1382:aa7fb57a"
+    },
+    "pulso-ofrenda": {
+      "nombre": "7:4e8c0c5e",
+      "descripcion": "1172:63cdcd5c"
+    },
+    "hilo-vuelve": {
+      "nombre": "15:f0a49ee2",
+      "descripcion": "968:7aa9773"
+    },
+    "hilo-hilo": {
+      "nombre": "13:1ba3f0be",
+      "descripcion": "933:dfcedb45"
+    },
+    "hilo-agujas": {
+      "nombre": "16:6bcb90fa",
+      "descripcion": "1012:468f74c"
+    },
+    "hilo-ata": {
+      "nombre": "12:ef0905de",
+      "descripcion": "1091:9fe1910"
+    },
+    "hilo-marioneta": {
+      "nombre": "20:7bc7e284",
+      "descripcion": "1276:aa092c72"
+    },
+    "hilo-telarana": {
+      "nombre": "17:365cd209",
+      "descripcion": "1023:4a077a7e"
+    },
+    "hilo-tres": {
+      "nombre": "11:318fe818",
+      "descripcion": "919:f1742a81"
+    },
+    "hilo-suspendida": {
+      "nombre": "15:40edc78c",
+      "descripcion": "1114:2ccaeb02"
+    },
+    "hilo-lluvia": {
+      "nombre": "15:f9074d9",
+      "descripcion": "1148:79eacb1f"
+    },
+    "hilo-guerra": {
+      "nombre": "19:469e596e",
+      "descripcion": "1244:3293675d"
+    },
+    "hilo-jaula": {
+      "nombre": "14:4bc280ec",
+      "descripcion": "1102:4de3af21"
+    },
+    "hilo-viva": {
+      "nombre": "14:5dd219db",
+      "descripcion": "1391:9c110fd0"
+    },
+    "hilo-mil": {
+      "nombre": "9:5d2be08",
+      "descripcion": "1188:a18f1bd6"
+    },
+    "quietud-respirar": {
+      "nombre": "21:ca2d5549",
+      "descripcion": "1176:859f4f3a"
+    },
+    "quietud-quieto": {
+      "nombre": "21:52e8dda0",
+      "descripcion": "921:4cba7bbb"
+    },
+    "quietud-calma": {
+      "nombre": "5:ceed65f5",
+      "descripcion": "988:a2c8890f"
+    },
+    "quietud-golpe": {
+      "nombre": "15:4e0d2f7a",
+      "descripcion": "1030:493a1968"
+    },
+    "quietud-raiz": {
+      "nombre": "16:bcb137e5",
+      "descripcion": "962:a2e66575"
+    },
+    "quietud-dar": {
+      "nombre": "18:6ea4f261",
+      "descripcion": "1079:871e166a"
+    },
+    "quietud-vivo": {
+      "nombre": "14:832a2249",
+      "descripcion": "1021:d7d18655"
+    },
+    "quietud-estado": {
+      "nombre": "17:694dc6b",
+      "descripcion": "1596:9f31cc44"
+    },
+    "quietud-empuja": {
+      "nombre": "15:882dc2fb",
+      "descripcion": "1035:cf5ffa27"
+    },
+    "quietud-tierra": {
+      "nombre": "20:6f8b66bc",
+      "descripcion": "989:d12fa9cb"
+    },
+    "quietud-bosque": {
+      "nombre": "20:8817a0f8",
+      "descripcion": "1276:d2bd3b26"
+    },
+    "quietud-uno": {
+      "nombre": "16:f5a83349",
+      "descripcion": "1316:f575bf0"
+    },
+    "rastro-cerca": {
+      "nombre": "12:a6f8d556",
+      "descripcion": "1100:5859a264"
+    },
+    "rastro-pulso": {
+      "nombre": "12:2ac56ffd",
+      "descripcion": "911:c047cace"
+    },
+    "rastro-firma": {
+      "nombre": "5:e52536d0",
+      "descripcion": "909:6b3ea1a2"
+    },
+    "rastro-leer": {
+      "nombre": "15:3d2987a9",
+      "descripcion": "948:cca06d32"
+    },
+    "rastro-seguir": {
+      "nombre": "16:1c7c66d8",
+      "descripcion": "984:722db26a"
+    },
+    "rastro-instinto": {
+      "nombre": "8:4154bbff",
+      "descripcion": "896:29317cad"
+    },
+    "rastro-lejos": {
+      "nombre": "12:f3e2bf8d",
+      "descripcion": "1153:c36a75f1"
+    },
+    "rastro-esconde": {
+      "nombre": "18:60f9ec98",
+      "descripcion": "956:7517576d"
+    },
+    "rastro-valle": {
+      "nombre": "15:d30f6a35",
+      "descripcion": "1121:a355d3be"
+    },
+    "rastro-hallar": {
+      "nombre": "6:ce23cfe1",
+      "descripcion": "954:2fdcf2ae"
+    },
+    "rastro-traves": {
+      "nombre": "12:83ac89b3",
+      "descripcion": "1018:920b4d26"
+    },
+    "rastro-entero": {
+      "nombre": "15:60d560a3",
+      "descripcion": "1329:8e1586d1"
+    },
+    "sangre-eco": {
+      "nombre": "6:ba073db5",
+      "descripcion": "1168:f379635"
+    },
+    "sangre-paso": {
+      "nombre": "7:72b73201",
+      "descripcion": "1045:800d714e"
+    },
+    "sangre-voz": {
+      "nombre": "6:1d82cb91",
+      "descripcion": "1133:e8238251"
+    },
+    "sangre-senorio": {
+      "nombre": "19:5a27b468",
+      "descripcion": "1231:a17f2f7f"
+    },
+    "sangre-despertar": {
+      "nombre": "20:b2bbc62f",
+      "descripcion": "1117:875d84b0"
+    },
+    "sangre-thalos-marea": {
+      "nombre": "14:fae40d4b",
+      "descripcion": "1169:f66e5efb"
+    },
+    "sangre-thalos-dar": {
+      "nombre": "11:c1b1d321",
+      "descripcion": "895:9cb40e31"
+    },
+    "sangre-ignis-punto": {
+      "nombre": "19:7f18def",
+      "descripcion": "1044:c4fcf052"
+    },
+    "sangre-ignis-cubo": {
+      "nombre": "18:6cf1cba0",
+      "descripcion": "1365:48986cc2"
+    },
+    "sangre-varro-lanza": {
+      "nombre": "13:5158886b",
+      "descripcion": "915:d1d4fa96"
+    },
+    "sangre-varro-coraza": {
+      "nombre": "15:9de19ae6",
+      "descripcion": "929:606bec10"
+    },
+    "sangre-varro-bosque": {
+      "nombre": "16:f0b920c4",
+      "descripcion": "1198:b88971b3"
+    },
+    "sangre-vhaeros-endurecer": {
+      "nombre": "9:3e192f7a",
+      "descripcion": "977:f225fd1b"
+    },
+    "sangre-vhaeros-aliento": {
+      "nombre": "16:9de31d14",
+      "descripcion": "1127:1d5c0ce4"
+    },
+    "sangre-vhaeros-amanecer": {
+      "nombre": "8:8a74134b",
+      "descripcion": "1317:3cb1f12"
+    },
+    "familia-sombra-ata": {
+      "nombre": "14:6b40c8a0",
+      "descripcion": "1160:b546e153"
+    },
+    "familia-sombra-aprieta": {
+      "nombre": "18:ccf64524",
+      "descripcion": "1167:fc6beb4c"
+    },
+    "familia-crecer": {
+      "nombre": "6:baf50f43",
+      "descripcion": "1121:9e6b023a"
+    },
+    "familia-gigante": {
+      "nombre": "7:661b00e6",
+      "descripcion": "1150:c4ae2714"
+    },
+    "familia-mente-leer": {
+      "nombre": "13:3ba3e0f3",
+      "descripcion": "952:c5382430"
+    },
+    "familia-mente-saltar": {
+      "nombre": "19:8cdca3fa",
+      "descripcion": "1382:a03c5d2"
+    },
+    "familia-enjambre-nube": {
+      "nombre": "16:4ff0684a",
+      "descripcion": "1209:92c601f5"
+    },
+    "familia-enjambre-comer": {
+      "nombre": "24:55cdf80c",
+      "descripcion": "1023:3c7c1ab7"
+    },
+    "familia-colmillo": {
+      "nombre": "21:a843244c",
+      "descripcion": "1155:4aac339d"
+    },
+    "familia-colmillo-doble": {
+      "nombre": "14:5792ed8e",
+      "descripcion": "1099:bf9990f"
+    },
+    "familia-tinta-dibujo": {
+      "nombre": "15:3dd7a72b",
+      "descripcion": "1260:2100cae3"
+    },
+    "familia-tinta-ave": {
+      "nombre": "12:1f86c22c",
+      "descripcion": "942:7ba10b89"
+    },
+    "forma-esfera": {
+      "nombre": "14:9291f6fb",
+      "descripcion": "1227:c5347e24"
+    },
+    "forma-esfera-mayor": {
+      "nombre": "12:c61cc761",
+      "descripcion": "1299:38782e3b"
+    },
+    "forma-paso-doble": {
+      "nombre": "10:706ea912",
+      "descripcion": "938:f60c75ce"
+    },
+    "forma-cuerda": {
+      "nombre": "15:628fbd44",
+      "descripcion": "1105:9aca9df8"
+    },
+    "forma-bala": {
+      "nombre": "13:45a1adea",
+      "descripcion": "1058:411b436d"
+    },
+    "forma-cupula": {
+      "nombre": "15:edffec3b",
+      "descripcion": "1067:9656dac4"
+    },
+    "fuego-dedos": {
+      "nombre": "14:605ffe3c",
+      "descripcion": "895:580d617"
+    },
+    "fuego-cola": {
+      "nombre": "13:31945c75",
+      "descripcion": "953:47e6089"
+    },
+    "fuego-anillo": {
+      "nombre": "15:5530c0a3",
+      "descripcion": "1043:ff5566a1"
+    },
+    "fuego-saeta": {
+      "nombre": "14:871f02ed",
+      "descripcion": "1000:4139ec27"
+    },
+    "fuego-humo-negro": {
+      "nombre": "10:12f09493",
+      "descripcion": "1217:c77a350c"
+    },
+    "fuego-fauces": {
+      "nombre": "15:b4bb748d",
+      "descripcion": "1504:26431a5f"
+    },
+    "agua-gota": {
+      "nombre": "11:e31cf88c",
+      "descripcion": "906:4c6c1b53"
+    },
+    "agua-latigo": {
+      "nombre": "14:5e29a3c",
+      "descripcion": "974:85c48bf6"
+    },
+    "agua-espejo": {
+      "nombre": "14:ca65071a",
+      "descripcion": "1043:8e208d77"
+    },
+    "agua-fauces-rio": {
+      "nombre": "14:b06cbf6b",
+      "descripcion": "1172:f10d3372"
+    },
+    "agua-burbuja": {
+      "nombre": "7:4d68d9e6",
+      "descripcion": "1031:da1f5bb1"
+    },
+    "agua-cascada": {
+      "nombre": "7:36ce05a9",
+      "descripcion": "1393:bc57ecbf"
+    },
+    "viento-silbido": {
+      "nombre": "7:e5ca9f27",
+      "descripcion": "921:d85cd25b"
+    },
+    "viento-bala": {
+      "nombre": "12:84ee5359",
+      "descripcion": "960:e302079b"
+    },
+    "viento-remolino": {
+      "nombre": "21:e01108dd",
+      "descripcion": "1042:d70b9da9"
+    },
+    "viento-vacio": {
+      "nombre": "5:c2803e11",
+      "descripcion": "1099:3f258f75"
+    },
+    "viento-dispersar": {
+      "nombre": "9:f33afa28",
+      "descripcion": "1122:14643859"
+    },
+    "viento-filo-creciente": {
+      "nombre": "14:74b27ccd",
+      "descripcion": "1262:16675cd3"
+    },
+    "tierra-puno": {
+      "nombre": "14:3eb4824",
+      "descripcion": "901:13599314"
+    },
+    "tierra-parapeto": {
+      "nombre": "8:ec5d6945",
+      "descripcion": "1037:8a0928eb"
+    },
+    "tierra-cienaga": {
+      "nombre": "7:91d10c81",
+      "descripcion": "1248:994ecf22"
+    },
+    "tierra-pilares": {
+      "nombre": "7:a6563b5",
+      "descripcion": "1101:126cad38"
+    },
+    "tierra-coraza": {
+      "nombre": "14:4a5ecae1",
+      "descripcion": "1100:254a5788"
+    },
+    "tierra-montana": {
+      "nombre": "15:5f287ebe",
+      "descripcion": "1335:ae59c059"
+    },
+    "rayo-estatica": {
+      "nombre": "8:19c364c5",
+      "descripcion": "945:df823a97"
+    },
+    "rayo-colmillo": {
+      "nombre": "18:53cce8cc",
+      "descripcion": "955:cbe09061"
+    },
+    "rayo-red": {
+      "nombre": "13:e2827aba",
+      "descripcion": "1061:e43511cf"
+    },
+    "rayo-pulso": {
+      "nombre": "15:9784f194",
+      "descripcion": "1053:f643d1c4"
+    },
+    "rayo-trueno-cae": {
+      "nombre": "14:ccd0d954",
+      "descripcion": "1088:8d0d6c0d"
+    },
+    "rayo-cuerpo": {
+      "nombre": "14:b28b68af",
+      "descripcion": "1436:da9fbb23"
+    },
+    "escarcha-espejos": {
+      "nombre": "16:b371bfba",
+      "descripcion": "1188:4f301907"
+    },
+    "madera-casa": {
+      "nombre": "14:4ddd2970",
+      "descripcion": "1051:96fc234f"
+    },
+    "magma-puno": {
+      "nombre": "13:bb222920",
+      "descripcion": "952:425e7dde"
+    },
+    "vapor-geiser": {
+      "nombre": "6:7f803ece",
+      "descripcion": "1029:15bf1d4d"
+    },
+    "hierro-arena": {
+      "nombre": "15:99690d6a",
+      "descripcion": "1081:81342dbc"
+    },
+    "tormenta-lanza": {
+      "nombre": "17:e971c5f4",
+      "descripcion": "1189:4e04f8e0"
+    },
+    "corriente-anguilas": {
+      "nombre": "8:b6df80e3",
+      "descripcion": "1003:ad3a2797"
+    },
+    "arena-ola": {
+      "nombre": "12:ab2bb31b",
+      "descripcion": "1195:384739c5"
+    },
+    "velo-ruido": {
+      "nombre": "11:6b2a25db",
+      "descripcion": "903:4f47bfc7"
+    },
+    "velo-cansancio": {
+      "nombre": "9:d23209ba",
+      "descripcion": "1091:ce034c2"
+    },
+    "velo-sin-rostro": {
+      "nombre": "10:c27f7130",
+      "descripcion": "899:5b025d1a"
+    },
+    "velo-tiempo-lento": {
+      "nombre": "12:e0455c6f",
+      "descripcion": "1082:3375f8d6"
+    },
+    "velo-herida": {
+      "nombre": "13:4fe6603f",
+      "descripcion": "1058:5e86b08e"
+    },
+    "velo-hacia-dentro": {
+      "nombre": "18:d834fd94",
+      "descripcion": "1085:4ad95ffd"
+    },
+    "velo-ciudad": {
+      "nombre": "12:814aa592",
+      "descripcion": "1208:28ed3654"
+    },
+    "velo-reino": {
+      "nombre": "15:7575b722",
+      "descripcion": "1446:f8aad92"
+    },
+    "cuerpo-guardia": {
+      "nombre": "17:20581bde",
+      "descripcion": "913:dc30d103"
+    },
+    "cuerpo-codazo": {
+      "nombre": "6:befb561b",
+      "descripcion": "1032:89a434f4"
+    },
+    "cuerpo-salto": {
+      "nombre": "15:224032bf",
+      "descripcion": "898:b6d284cc"
+    },
+    "cuerpo-presa": {
+      "nombre": "14:d95722a1",
+      "descripcion": "1078:ac58ca44"
+    },
+    "cuerpo-instinto": {
+      "nombre": "17:f2e2aa89",
+      "descripcion": "927:68181973"
+    },
+    "cuerpo-cien-pasos": {
+      "nombre": "10:fac4566c",
+      "descripcion": "1242:341b2bdb"
+    },
+    "cuerpo-espiral": {
+      "nombre": "16:6099a848",
+      "descripcion": "1036:6bd91be0"
+    },
+    "cuerpo-golpe-lejano": {
+      "nombre": "17:e172195b",
+      "descripcion": "1003:23116260"
+    },
+    "sello-estalla": {
+      "nombre": "17:cfce24ac",
+      "descripcion": "1095:856178cf"
+    },
+    "sello-ancla": {
+      "nombre": "5:e7e58a98",
+      "descripcion": "1115:42f33195"
+    },
+    "sello-bodega": {
+      "nombre": "6:823c8339",
+      "descripcion": "929:5bfbb6ea"
+    },
+    "sello-espejo": {
+      "nombre": "12:64d1f31a",
+      "descripcion": "1009:7b84405e"
+    },
+    "sello-grilletes": {
+      "nombre": "18:b082f044",
+      "descripcion": "950:76aacc10"
+    },
+    "sello-vuelta": {
+      "nombre": "15:58c57fc1",
+      "descripcion": "982:4ab1ee74"
+    },
+    "sello-pulso-detenido": {
+      "nombre": "24:daefc014",
+      "descripcion": "1166:6933d3c1"
+    },
+    "pacto-montura": {
+      "nombre": "7:3818144f",
+      "descripcion": "916:62ebdd3a"
+    },
+    "pacto-escudo-vivo": {
+      "nombre": "11:c3b70b5e",
+      "descripcion": "928:aaab848"
+    },
+    "pacto-ojos": {
+      "nombre": "15:fdcdc6ee",
+      "descripcion": "907:b2ed287c"
+    },
+    "pacto-rugido": {
+      "nombre": "17:73104de3",
+      "descripcion": "949:2cb80eb9"
+    },
+    "pacto-fusion": {
+      "nombre": "20:fa8cba51",
+      "descripcion": "1178:f202c116"
+    },
+    "pulso-quitar-dolor": {
+      "nombre": "15:84e7fea8",
+      "descripcion": "885:d51b9ab1"
+    },
+    "pulso-sacar-veneno": {
+      "nombre": "15:32359b35",
+      "descripcion": "1153:4f016c0d"
+    },
+    "pulso-cura-lejos": {
+      "nombre": "16:6b07fab5",
+      "descripcion": "997:43fc5ab7"
+    },
+    "pulso-nervio": {
+      "nombre": "16:e434cb24",
+      "descripcion": "1024:dd28c1e2"
+    },
+    "pulso-golpe-dentro": {
+      "nombre": "16:3512e7d7",
+      "descripcion": "1129:8bcf48f7"
+    },
+    "pulso-regenerar": {
+      "nombre": "9:5516cea2",
+      "descripcion": "1130:33bb794a"
+    },
+    "hilo-dardo": {
+      "nombre": "13:726a44da",
+      "descripcion": "902:10551915"
+    },
+    "hilo-trampa": {
+      "nombre": "15:24b506f2",
+      "descripcion": "939:b4606f43"
+    },
+    "hilo-abanico": {
+      "nombre": "16:9eb1ddc5",
+      "descripcion": "1032:6cfa3018"
+    },
+    "hilo-cubre": {
+      "nombre": "19:e2051caf",
+      "descripcion": "946:7b401f1a"
+    },
+    "hilo-en-el-otro": {
+      "nombre": "16:5f17f4f0",
+      "descripcion": "990:35dc9ec3"
+    },
+    "hilo-espiral": {
+      "nombre": "16:96e44091",
+      "descripcion": "1040:16f10f92"
+    },
+    "hilo-cien-armas": {
+      "nombre": "10:a6883d64",
+      "descripcion": "1297:90ff3905"
+    },
+    "quietud-escuchar": {
+      "nombre": "18:759b32cd",
+      "descripcion": "887:b874ccdf"
+    },
+    "quietud-sin-peso": {
+      "nombre": "13:781f4f7b",
+      "descripcion": "922:317e80b0"
+    },
+    "quietud-puno-mundo": {
+      "nombre": "23:9de6afc7",
+      "descripcion": "1056:fc8016e2"
+    },
+    "quietud-mundo-cura": {
+      "nombre": "13:a73ff26e",
+      "descripcion": "992:cac52875"
+    },
+    "quietud-sentirlo-todo": {
+      "nombre": "13:831f7833",
+      "descripcion": "951:33ba6f40"
+    },
+    "rastro-marcar": {
+      "nombre": "15:826b59c9",
+      "descripcion": "893:9000108a"
+    },
+    "rastro-eco-lugar": {
+      "nombre": "13:61652878",
+      "descripcion": "922:55230b60"
+    },
+    "rastro-anticipar": {
+      "nombre": "9:1baab5a4",
+      "descripcion": "957:8435ef96"
+    },
+    "rastro-cazar": {
+      "nombre": "14:4e4f1dda",
+      "descripcion": "914:e15662da"
+    },
+    "rastro-red": {
+      "nombre": "15:6ef672a4",
+      "descripcion": "1261:39e5926"
+    },
+    "familia-sombra-imita": {
+      "nombre": "16:2e448b96",
+      "descripcion": "1096:e3e68bc4"
+    },
+    "familia-mano-gigante": {
+      "nombre": "12:27726d95",
+      "descripcion": "899:113497e4"
+    },
+    "familia-voz-mente": {
+      "nombre": "15:855d2579",
+      "descripcion": "893:77c8feac"
+    },
+    "familia-tinta-bestia": {
+      "nombre": "15:dd536c6c",
+      "descripcion": "987:dba98d8b"
+    },
+    "familia-enjambre-escudo": {
+      "nombre": "18:3ad3cfd7",
+      "descripcion": "1067:93e780f7"
+    },
+    "mirada-ennia-abrir": {
+      "nombre": "21:b06ede3f",
+      "descripcion": "975:3cd72ac"
+    },
+    "mirada-moneta-abrir": {
+      "nombre": "26:8dbfe425",
+      "descripcion": "980:ff656bd0"
+    },
+    "mirada-ahnkree-abrir": {
+      "nombre": "25:54aeea8f",
+      "descripcion": "979:54ca3f0c"
+    },
+    "mirada-ennia-coser": {
+      "nombre": "15:efcab93b",
+      "descripcion": "1081:93f4494f"
+    },
+    "mirada-ennia-cerrar": {
+      "nombre": "17:c5f29210",
+      "descripcion": "1111:5d2fda40"
+    },
+    "mirada-moneta-pesar": {
+      "nombre": "14:cc1581c0",
+      "descripcion": "1005:564eb94d"
+    },
+    "mirada-moneta-equilibrar": {
+      "nombre": "10:facc1c8d",
+      "descripcion": "1130:479350af"
+    },
+    "mirada-ahnkree-devolver": {
+      "nombre": "19:9d69047a",
+      "descripcion": "1064:e240ad71"
+    },
+    "mirada-ahnkree-llamar": {
+      "nombre": "20:2d22999b",
+      "descripcion": "1235:5db45f60"
+    },
+    "sangre-bastio-plantarse": {
+      "nombre": "9:8f660a9",
+      "descripcion": "1016:ad88aa1d"
+    },
+    "sangre-bastio-puesto": {
+      "nombre": "18:abecae17",
+      "descripcion": "1042:df9274e9"
+    },
+    "sangre-bastio-muro": {
+      "nombre": "16:67304963",
+      "descripcion": "1272:4dde1dda"
+    },
+    "sangre-orun-cielo": {
+      "nombre": "13:1f987070",
+      "descripcion": "1023:150eaca6"
+    },
+    "sangre-orun-presagio": {
+      "nombre": "8:fa64c42f",
+      "descripcion": "1026:e5345de5"
+    },
+    "sangre-orun-estrella": {
+      "nombre": "16:3fd90a47",
+      "descripcion": "1268:ca75d793"
+    },
+    "sangre-verde-brote": {
+      "nombre": "5:ebbad431",
+      "descripcion": "1011:4cc3e690"
+    },
+    "sangre-verde-raices": {
+      "nombre": "18:5e9beaa5",
+      "descripcion": "1130:c4720057"
+    },
+    "sangre-verde-bosque": {
+      "nombre": "16:9f457b14",
+      "descripcion": "1230:75beab36"
+    },
+    "sangre-cendra-brasa": {
+      "nombre": "5:7e144a94",
+      "descripcion": "998:4da07e8b"
+    },
+    "sangre-cendra-horno": {
+      "nombre": "20:28739348",
+      "descripcion": "1013:7f72134c"
+    },
+    "sangre-cendra-hogar": {
+      "nombre": "5:a3965312",
+      "descripcion": "1034:ea8700d8"
+    },
+    "fuego-fragua-mundo": {
+      "nombre": "16:b32b04f",
+      "descripcion": "1552:7b0d1d97"
+    },
+    "agua-ola-valle": {
+      "nombre": "22:561875da",
+      "descripcion": "1475:1f6a2fdc"
+    },
+    "viento-cielo-partido": {
+      "nombre": "13:55fac228",
+      "descripcion": "1468:b457caa1"
+    },
+    "tierra-cordillera": {
+      "nombre": "10:5aaf4ba2",
+      "descripcion": "1528:f24be1b"
+    },
+    "rayo-lanza-trueno": {
+      "nombre": "16:4d9053f",
+      "descripcion": "1411:3ce61eac"
+    },
+    "forma-ultima": {
+      "nombre": "12:3ec4f55d",
+      "descripcion": "1371:13192d26"
+    },
+    "velo-mundo-entero": {
+      "nombre": "21:bf8ee9c8",
+      "descripcion": "1548:6c5e276d"
+    },
+    "velo-sueno-sin-fin": {
+      "nombre": "23:de167ac5",
+      "descripcion": "1458:5e08eb4d"
+    },
+    "cuerpo-parte-montanas": {
+      "nombre": "24:789c23b9",
+      "descripcion": "1400:2d249c85"
+    },
+    "cuerpo-sin-techo": {
+      "nombre": "16:ad458778",
+      "descripcion": "1416:412908f0"
+    },
+    "sello-valle": {
+      "nombre": "15:78e7355b",
+      "descripcion": "1575:d4659413"
+    },
+    "sello-nombre": {
+      "nombre": "16:85180314",
+      "descripcion": "1434:4b25ef6d"
+    },
+    "pacto-linaje-entero": {
+      "nombre": "16:ed417ffe",
+      "descripcion": "1376:50632e79"
+    },
+    "pacto-ser-linaje": {
+      "nombre": "14:a8d89adb",
+      "descripcion": "1409:5c9d56a6"
+    },
+    "pulso-cierra-todo": {
+      "nombre": "20:72694583",
+      "descripcion": "1288:2717d69a"
+    },
+    "pulso-volver-muerte": {
+      "nombre": "19:ae3c0461",
+      "descripcion": "1473:23a58553"
+    },
+    "hilo-red-cielo": {
+      "nombre": "13:5fb4d45f",
+      "descripcion": "1399:60918103"
+    },
+    "hilo-ultimo-titiritero": {
+      "nombre": "20:a845eb2",
+      "descripcion": "1414:ef9a24eb"
+    },
+    "quietud-mundo-presta": {
+      "nombre": "15:2da598e2",
+      "descripcion": "1336:70a2622e"
+    },
+    "quietud-ser-valle": {
+      "nombre": "12:9824ce26",
+      "descripcion": "1351:13b09b64"
+    },
+    "rastro-ver-todo": {
+      "nombre": "17:f6f70cb",
+      "descripcion": "1331:176bb9e6"
+    },
+    "rastro-hilo-vida": {
+      "nombre": "20:58e83d16",
+      "descripcion": "1524:e3412497"
+    },
+    "velo-lugar-falso": {
+      "nombre": "15:a52b4ba8",
+      "descripcion": "1325:8707be9c"
+    },
+    "velo-doble-escenario": {
+      "nombre": "21:17e5ccac",
+      "descripcion": "1291:398e4219"
+    },
+    "velo-estacas-sonadas": {
+      "nombre": "19:c4a449b2",
+      "descripcion": "1377:eca570fa"
+    },
+    "velo-cuervos-sonados": {
+      "nombre": "22:8a103bf9",
+      "descripcion": "1287:677e3f54"
+    },
+    "velo-flauta-cautiva": {
+      "nombre": "23:efbfbf3e",
+      "descripcion": "1288:cc46c713"
+    },
+    "velo-coro-sabio": {
+      "nombre": "17:3b35b86a",
+      "descripcion": "1626:6dcccd1e"
+    },
+    "velo-almeja-espejismo": {
+      "nombre": "22:6385711",
+      "descripcion": "1279:53c07132"
+    },
+    "velo-salir-flujo": {
+      "nombre": "26:63c7cad0",
+      "descripcion": "1302:40cbf53c"
+    },
+    "velo-desorden-mental": {
+      "nombre": "18:434bf597",
+      "descripcion": "1319:3cad86d5"
+    },
+    "velo-enlace-grupo": {
+      "nombre": "22:4ce7d820",
+      "descripcion": "1247:d7ab435c"
+    },
+    "velo-transmision-mente": {
+      "nombre": "15:78486d9b",
+      "descripcion": "1236:440b80de"
+    },
+    "velo-retorno-mente": {
+      "nombre": "18:642fcccb",
+      "descripcion": "1195:d529c4f0"
+    },
+    "velo-sueno-corporeo": {
+      "nombre": "20:772c7396",
+      "descripcion": "1435:d95a97e1"
+    },
+    "cuerpo-sombra-danzante": {
+      "nombre": "20:594a2e7",
+      "descripcion": "1207:e921d241"
+    },
+    "cuerpo-combo-leon": {
+      "nombre": "14:365e847a",
+      "descripcion": "1236:8d428f78"
+    },
+    "cuerpo-combo-replicas": {
+      "nombre": "19:8e660649",
+      "descripcion": "1212:e304387e"
+    },
+    "cuerpo-loto-frontal": {
+      "nombre": "16:1a562d8f",
+      "descripcion": "1207:d747aea5"
+    },
+    "cuerpo-loto-inverso": {
+      "nombre": "24:6d67c2af",
+      "descripcion": "1215:f118fdb2"
+    },
+    "cuerpo-pavo-alba": {
+      "nombre": "17:8eb63d26",
+      "descripcion": "1448:7f97046a"
+    },
+    "cuerpo-tigre-mediodia": {
+      "nombre": "18:c3c723c9",
+      "descripcion": "1455:8e94a9ef"
+    },
+    "cuerpo-elefante-ocaso": {
+      "nombre": "18:8a8f1e6d",
+      "descripcion": "1442:16a7478c"
+    },
+    "cuerpo-noche-ultima": {
+      "nombre": "24:8c79936",
+      "descripcion": "1472:5e2452d5"
+    },
+    "cuerpo-puno-ebrio": {
+      "nombre": "19:45f1badf",
+      "descripcion": "1233:47720aa7"
+    },
+    "cuerpo-arhat": {
+      "nombre": "14:8661849f",
+      "descripcion": "1204:14c6cd09"
+    },
+    "cuerpo-lariat-rayo": {
+      "nombre": "18:b8d4aadc",
+      "descripcion": "1194:47f8e75f"
+    },
+    "cuerpo-palma-vacio": {
+      "nombre": "15:adc4ccc7",
+      "descripcion": "1208:66b77aed"
+    },
+    "cuerpo-doble-palma": {
+      "nombre": "18:2ad73547",
+      "descripcion": "1238:733204b0"
+    },
+    "cuerpo-sesenta-cuatro": {
+      "nombre": "23:f8a1cd8b",
+      "descripcion": "1293:b4345f6e"
+    },
+    "cuerpo-ciento-veintiocho": {
+      "nombre": "24:51f09bcd",
+      "descripcion": "1384:7337f480"
+    },
+    "cuerpo-rotacion-palmas": {
+      "nombre": "16:718e0697",
+      "descripcion": "1216:8ae5e7c8"
+    },
+    "cuerpo-leones-gemelos": {
+      "nombre": "28:c9bd8024",
+      "descripcion": "1223:799e0c1a"
+    },
+    "cuerpo-palma-rompe": {
+      "nombre": "26:ba46f18c",
+      "descripcion": "1207:3bf6c6a9"
+    },
+    "cuerpo-guardian-cauces": {
+      "nombre": "31:98469743",
+      "descripcion": "1244:446651a9"
+    },
+    "cuerpo-expansion-parcial": {
+      "nombre": "15:6c95e907",
+      "descripcion": "1193:7bf7c342"
+    },
+    "cuerpo-tanque-carne": {
+      "nombre": "16:3fc2538a",
+      "descripcion": "1254:3c7cbdbe"
+    },
+    "cuerpo-tanque-espinas": {
+      "nombre": "20:705d0964",
+      "descripcion": "1186:bb6b21b2"
+    },
+    "cuerpo-mariposa": {
+      "nombre": "20:37aa94cf",
+      "descripcion": "1375:d5892df9"
+    },
+    "cuerpo-bombardeo-mariposa": {
+      "nombre": "22:73a54788",
+      "descripcion": "1409:d59fefb2"
+    },
+    "pulso-regeneracion-prevista": {
+      "nombre": "17:5cbd9bc",
+      "descripcion": "1321:d993c9a1"
+    },
+    "pulso-centenar-sello": {
+      "nombre": "18:19a0709f",
+      "descripcion": "1249:4c76f879"
+    },
+    "pulso-centenar-liberar": {
+      "nombre": "19:81709ad",
+      "descripcion": "1289:c29ca3cc"
+    },
+    "pulso-creacion-renovacion": {
+      "nombre": "18:ef5a9159",
+      "descripcion": "1538:4b26486a"
+    },
+    "pulso-renovacion-centenar": {
+      "nombre": "23:e23ab5b8",
+      "descripcion": "1632:79a1ad50"
+    },
+    "pulso-curacion-red": {
+      "nombre": "28:2070b37",
+      "descripcion": "1413:752f3fbb"
+    },
+    "pulso-regeneracion-colectiva": {
+      "nombre": "23:a2d4bc71",
+      "descripcion": "1555:f144e4c"
+    },
+    "pulso-don-vida": {
+      "nombre": "22:83baa58a",
+      "descripcion": "1521:13898a08"
+    },
+    "pulso-espiritu-libre": {
+      "nombre": "25:bf0e4bfa",
+      "descripcion": "1393:ff24a365"
+    },
+    "pulso-don-celulas": {
+      "nombre": "22:7a803268",
+      "descripcion": "1242:b171047"
+    },
+    "pulso-mordida-sanadora": {
+      "nombre": "23:5f00e644",
+      "descripcion": "1187:b83ff5d7"
+    },
+    "pulso-nervios-desorden": {
+      "nombre": "23:2d466061",
+      "descripcion": "1301:72e6e41f"
+    },
+    "quietud-kata-sapo": {
+      "nombre": "13:ed1e971c",
+      "descripcion": "1178:cab1e124"
+    },
+    "quietud-golpe-sapo": {
+      "nombre": "14:b3c6fb68",
+      "descripcion": "1213:83607db2"
+    },
+    "quietud-modo-sapo": {
+      "nombre": "16:bd6be240",
+      "descripcion": "1242:2578f431"
+    },
+    "quietud-modo-serpiente": {
+      "nombre": "23:116e22bd",
+      "descripcion": "1246:9afd943a"
+    },
+    "quietud-dragon-blanco": {
+      "nombre": "21:16109f39",
+      "descripcion": "1380:1df30076"
+    },
+    "quietud-materia-despierta": {
+      "nombre": "21:5f02532a",
+      "descripcion": "1414:c2b19f3c"
+    },
+    "quietud-modo-bosque": {
+      "nombre": "26:956b22c9",
+      "descripcion": "1420:15a55d57"
+    },
+    "quietud-puertas-dios": {
+      "nombre": "29:863bd598",
+      "descripcion": "1418:f1fd86ac"
+    },
+    "quietud-mil-brazos": {
+      "nombre": "23:81911e7f",
+      "descripcion": "1524:3343ef6b"
+    },
+    "quietud-brazos-corona": {
+      "nombre": "24:24d52452",
+      "descripcion": "1433:6aefbb66"
+    },
+    "quietud-aceite-viento-fuego": {
+      "nombre": "23:4c8403e7",
+      "descripcion": "1386:c253c999"
+    },
+    "quietud-agujas-cabello": {
+      "nombre": "23:e6162b82",
+      "descripcion": "1234:20f05484"
+    },
+    "quietud-esfera-sabia": {
+      "nombre": "21:71720e03",
+      "descripcion": "1226:9e4bad8e"
+    },
+    "quietud-esfera-sabia-mayor": {
+      "nombre": "26:e577d47",
+      "descripcion": "1354:94711d45"
+    },
+    "quietud-esfera-sabia-colosal": {
+      "nombre": "29:bf606e40",
+      "descripcion": "1359:8e822d26"
+    },
+    "quietud-estrella-sabia": {
+      "nombre": "25:e9c06859",
+      "descripcion": "1384:5c60a1ae"
+    },
+    "quietud-seis-caminos": {
+      "nombre": "27:4c66f607",
+      "descripcion": "1459:a504f844"
+    },
+    "quietud-estrella-colosal": {
+      "nombre": "27:43d57466",
+      "descripcion": "1442:186f755d"
+    },
+    "rastro-ocultar-firma": {
+      "nombre": "20:1acf54c4",
+      "descripcion": "1239:4b9592d9"
+    },
+    "rastro-firma-aliados": {
+      "nombre": "22:a9c48e65",
+      "descripcion": "1200:c1513080"
+    },
+    "rastro-ojo-interior": {
+      "nombre": "22:c1b15198",
+      "descripcion": "1250:237c49c4"
+    },
+    "rastro-lluvia-atenta": {
+      "nombre": "18:d4b28db3",
+      "descripcion": "1238:35013d8f"
+    },
+    "rastro-campo-tacto": {
+      "nombre": "25:96637522",
+      "descripcion": "1215:4934269f"
+    },
+    "rastro-emocion-oscura": {
+      "nombre": "23:da565126",
+      "descripcion": "1336:336510d7"
+    },
+    "rastro-ojo-arena": {
+      "nombre": "19:a49fe1a8",
+      "descripcion": "1253:75c1d7d3"
+    },
+    "rastro-arena-sensible": {
+      "nombre": "27:d9f57f1a",
+      "descripcion": "1183:e9b63f61"
+    },
+    "rastro-insecto-rastreador": {
+      "nombre": "19:e2e0f96b",
+      "descripcion": "1173:84fa3779"
+    },
+    "rastro-olfato-cazador": {
+      "nombre": "19:fba49750",
+      "descripcion": "1226:67ce0e58"
+    },
+    "rastro-vista-compartida": {
+      "nombre": "21:c7c6df40",
+      "descripcion": "1383:86011bfb"
+    },
+    "rastro-sensor-carmesí": {
+      "nombre": "23:39e37d4e",
+      "descripcion": "1216:f86a5bba"
+    },
+    "rastro-camuflaje-perfecto": {
+      "nombre": "30:c8f3ca75",
+      "descripcion": "1364:44423646"
+    },
+    "rastro-diagnostico-distancia": {
+      "nombre": "23:a45acced",
+      "descripcion": "1235:dee4f6b5"
+    },
+    "rastro-resonancia-barrera": {
+      "nombre": "19:66e77d9",
+      "descripcion": "1232:adab712a"
+    },
+    "hilo-cuervo": {
+      "nombre": "23:7bee6fd6",
+      "descripcion": "1325:49ea72dd"
+    },
+    "hilo-hormiga": {
+      "nombre": "21:ec250b6",
+      "descripcion": "1274:9773268d"
+    },
+    "hilo-salamandra": {
+      "nombre": "24:309fe972",
+      "descripcion": "1251:622cced2"
+    },
+    "hilo-caja-negra": {
+      "nombre": "25:155f2a11",
+      "descripcion": "1284:72b98c6b"
+    },
+    "hilo-diez-marionetas": {
+      "nombre": "23:2f80661c",
+      "descripcion": "1580:7a739631"
+    },
+    "hilo-cien-marionetas": {
+      "nombre": "17:c4becfbb",
+      "descripcion": "1548:5cc0b709"
+    },
+    "hilo-marioneta-humana": {
+      "nombre": "32:b1e0ca45",
+      "descripcion": "1536:5f8834d7"
+    },
+    "hilo-tercer-herrero": {
+      "nombre": "29:9bb91588",
+      "descripcion": "1488:67c3642e"
+    },
+    "hilo-cuerpo-artificial": {
+      "nombre": "23:e612c057",
+      "descripcion": "1393:c314ae9"
+    },
+    "hilo-recubrir-viento": {
+      "nombre": "26:13336063",
+      "descripcion": "1210:7eb08f67"
+    },
+    "hilo-pergaminos-gemelos": {
+      "nombre": "25:9e0e0460",
+      "descripcion": "1211:27fec24a"
+    },
+    "hilo-agujas-sombra": {
+      "nombre": "25:22799d1d",
+      "descripcion": "1224:bfcba6c5"
+    },
+    "hilo-hilos-sombra": {
+      "nombre": "21:7447df6f",
+      "descripcion": "1247:1b43229f"
+    },
+    "hilo-costura-sombra": {
+      "nombre": "19:74a2740",
+      "descripcion": "1203:9e0a4e10"
+    },
+    "hilo-dibujos-escuadra": {
+      "nombre": "22:a7a88ea0",
+      "descripcion": "1273:3bc0aa81"
+    },
+    "hilo-samehada-beber": {
+      "nombre": "25:11138787",
+      "descripcion": "1269:804db02f"
+    },
+    "hilo-samehada-fusion": {
+      "nombre": "22:51b6be39",
+      "descripcion": "1372:232e05de"
+    },
+    "hilo-decapitadora": {
+      "nombre": "20:276ef9d3",
+      "descripcion": "1195:3395a7c0"
+    },
+    "hilo-espada-gemela": {
+      "nombre": "19:8b4a431f",
+      "descripcion": "1189:52cf219"
+    },
+    "hilo-colmillos-rayo": {
+      "nombre": "23:83586fb4",
+      "descripcion": "1144:dd23b227"
+    },
+    "hilo-espada-explosiva": {
+      "nombre": "30:d4d84690",
+      "descripcion": "1193:c128a82b"
+    },
+    "hilo-aguja-cose": {
+      "nombre": "23:c0ad08bd",
+      "descripcion": "1253:f78bab87"
+    },
+    "hilo-rompedefensas": {
+      "nombre": "16:ad0cc325",
+      "descripcion": "1219:7e473cb5"
+    },
+    "hilo-kusanagi": {
+      "nombre": "20:e8956d6",
+      "descripcion": "1167:d5e90a81"
+    },
+    "hilo-gunbai": {
+      "nombre": "20:13e7864f",
+      "descripcion": "1223:51c13bf0"
+    },
+    "hilo-basho-fuego": {
+      "nombre": "28:377837a7",
+      "descripcion": "1258:abb4c5c0"
+    },
+    "hilo-totsuka": {
+      "nombre": "32:ecc645aa",
+      "descripcion": "1511:928ae00e"
+    },
+    "hilo-yata": {
+      "nombre": "33:c389e7e1",
+      "descripcion": "1471:7d8d2d95"
+    },
+    "sello-cuatro-simbolos": {
+      "nombre": "28:bf8153d7",
+      "descripcion": "1517:39938461"
+    },
+    "sello-ocho-trigramas": {
+      "nombre": "27:1085f3b0",
+      "descripcion": "1494:e763e361"
+    },
+    "sello-cinco-elementos": {
+      "nombre": "24:ca154c3e",
+      "descripcion": "1302:62a1953f"
+    },
+    "sello-desatar-cinco": {
+      "nombre": "24:997012a5",
+      "descripcion": "1217:4386ce83"
+    },
+    "sello-confinar-maldicion": {
+      "nombre": "25:32db098b",
+      "descripcion": "1331:61e3f7d9"
+    },
+    "sello-guardar-llama": {
+      "nombre": "29:777c7e4e",
+      "descripcion": "1237:696d84b6"
+    },
+    "sello-cosecha-espiritus": {
+      "nombre": "29:9fcc0736",
+      "descripcion": "1511:e2989872"
+    },
+    "sello-sello-ultimo": {
+      "nombre": "34:6aa677b5",
+      "descripcion": "1478:99fb2e14"
+    },
+    "sello-torii": {
+      "nombre": "27:e787d78b",
+      "descripcion": "1430:d5a6ea07"
+    },
+    "sello-cadenas-adamantinas": {
+      "nombre": "30:e2c4956e",
+      "descripcion": "1358:86a87121"
+    },
+    "sello-violeta-cuatro": {
+      "nombre": "22:a231ba2",
+      "descripcion": "1435:145f2bc5"
+    },
+    "sello-soles-rojos": {
+      "nombre": "18:ad77b424",
+      "descripcion": "1500:42d1ef72"
+    },
+    "sello-soles-seis": {
+      "nombre": "28:2066a67e",
+      "descripcion": "1454:96ac849f"
+    },
+    "sello-cinco-talismanes": {
+      "nombre": "30:1598760b",
+      "descripcion": "1368:30d04271"
+    },
+    "sello-cuatro-direcciones": {
+      "nombre": "31:43d4e87e",
+      "descripcion": "1489:231137ea"
+    },
+    "sello-marca-cielo": {
+      "nombre": "23:4d5c0a6e",
+      "descripcion": "1247:ee82b611"
+    },
+    "sello-marca-tierra": {
+      "nombre": "26:7cd60ef8",
+      "descripcion": "1220:e6bd7c3c"
+    },
+    "sello-marca-segunda": {
+      "nombre": "30:29d0f886",
+      "descripcion": "1447:b4ef3354"
+    },
+    "sello-jaula-pajaro": {
+      "nombre": "26:c7b17287",
+      "descripcion": "1491:487915d8"
+    },
+    "sello-lengua-cerrada": {
+      "nombre": "30:805a781a",
+      "descripcion": "1466:6779d9f3"
+    },
+    "sello-palabra-calabaza": {
+      "nombre": "31:3e82251b",
+      "descripcion": "1518:9af888c5"
+    },
+    "sello-cuerda-palabra": {
+      "nombre": "28:8c5c3c6b",
+      "descripcion": "1258:5acbdec9"
+    },
+    "sello-hoja-palabra": {
+      "nombre": "28:d8c63f41",
+      "descripcion": "1213:f13ddbc1"
+    },
+    "sello-vasija-llamada": {
+      "nombre": "22:de7d2aa5",
+      "descripcion": "1495:3fa4ce49"
+    },
+    "sello-alma-segador": {
+      "nombre": "26:92b3dd8d",
+      "descripcion": "1483:eeb9bd8f"
+    },
+    "sello-liberar-segador": {
+      "nombre": "28:b73c477f",
+      "descripcion": "1473:72462964"
+    },
+    "pacto-sapo-caida": {
+      "nombre": "21:c04d80bf",
+      "descripcion": "1257:cbedd5ee"
+    },
+    "pacto-estomago-sapo": {
+      "nombre": "29:d80025ab",
+      "descripcion": "1406:7182646e"
+    },
+    "pacto-rashomon": {
+      "nombre": "24:cabe8461",
+      "descripcion": "1272:a41259bc"
+    },
+    "pacto-tres-rashomon": {
+      "nombre": "30:245b9e80",
+      "descripcion": "1473:c63d2076"
+    },
+    "pacto-cinco-rashomon": {
+      "nombre": "31:236e272c",
+      "descripcion": "1483:54ebf0b1"
+    },
+    "pacto-serpientes-manos": {
+      "nombre": "18:e8450f0d",
+      "descripcion": "1221:c7b41c44"
+    },
+    "pacto-muchas-serpientes": {
+      "nombre": "26:adde3839",
+      "descripcion": "1215:8abfa7f4"
+    },
+    "pacto-mandara": {
+      "nombre": "23:e2a7ceaa",
+      "descripcion": "1368:8bf550f"
+    },
+    "pacto-jauria-tierra": {
+      "nombre": "21:ebdb6865",
+      "descripcion": "1270:345ae010"
+    },
+    "pacto-enma-baston": {
+      "nombre": "27:24994dbf",
+      "descripcion": "1217:74267cd4"
+    },
+    "pacto-halcon": {
+      "nombre": "17:84476893",
+      "descripcion": "1271:57048b74"
+    },
+    "pacto-tortuga": {
+      "nombre": "22:a334ae69",
+      "descripcion": "1240:f9d4e65"
+    },
+    "pacto-comadreja": {
+      "nombre": "21:12e15482",
+      "descripcion": "1207:dd786bd9"
+    },
+    "pacto-salamandra-veneno": {
+      "nombre": "21:4988d1eb",
+      "descripcion": "1203:d3a86535"
+    },
+    "pacto-babosa-fragmentos": {
+      "nombre": "28:facc84e5",
+      "descripcion": "1256:af00fd20"
+    },
+    "pacto-abejas": {
+      "nombre": "20:a65de195",
+      "descripcion": "1257:cab4cb52"
+    },
+    "pacto-insectos-esfera": {
+      "nombre": "20:5b39ce66",
+      "descripcion": "1267:8f1ce078"
+    },
+    "pacto-insectos-senuelo": {
+      "nombre": "21:edce4c24",
+      "descripcion": "1245:de010475"
+    },
+    "pacto-atraer-insectos": {
+      "nombre": "25:d286e67f",
+      "descripcion": "1156:761315c9"
+    },
+    "pacto-insectos-crecen": {
+      "nombre": "28:77fd6b0b",
+      "descripcion": "1416:808e808d"
+    },
+    "pacto-nano-insectos": {
+      "nombre": "20:4a5a55a2",
+      "descripcion": "1426:19daad3f"
+    },
+    "pacto-cuatro-patas": {
+      "nombre": "20:2f6ce6b2",
+      "descripcion": "1179:296995b"
+    },
+    "pacto-colmillos-giro": {
+      "nombre": "19:c225559",
+      "descripcion": "1219:bddfe0fb"
+    },
+    "pacto-lobo-doble": {
+      "nombre": "23:8b0790d1",
+      "descripcion": "1245:5dbfa4b7"
+    },
+    "pacto-gran-colmillo": {
+      "nombre": "26:b31bdab6",
+      "descripcion": "1436:b7016854"
+    },
+    "pacto-reanimacion": {
+      "nombre": "24:49525924",
+      "descripcion": "1560:82bdb4d5"
+    },
+    "pacto-perro-divisible": {
+      "nombre": "27:368eec12",
+      "descripcion": "1468:4a81c66a"
+    },
+    "mirada-aster-luna": {
+      "nombre": "20:e5e9e6b2",
+      "descripcion": "1526:e35233a5"
+    },
+    "mirada-aster-llama-negra": {
+      "nombre": "20:640748bd",
+      "descripcion": "1440:afae714"
+    },
+    "mirada-aster-forma-llama": {
+      "nombre": "23:3e880e8a",
+      "descripcion": "1392:a35069f8"
+    },
+    "mirada-aster-voluntad": {
+      "nombre": "27:c7d5b536",
+      "descripcion": "1560:498ee5e4"
+    },
+    "mirada-aster-izanagi": {
+      "nombre": "25:62de92db",
+      "descripcion": "1575:8b4a0e96"
+    },
+    "mirada-aster-izanami": {
+      "nombre": "23:a0b6aac1",
+      "descripcion": "1559:f3f25626"
+    },
+    "mirada-aster-costillas": {
+      "nombre": "22:f98c5d35",
+      "descripcion": "1232:400584b9"
+    },
+    "mirada-aster-guerrero": {
+      "nombre": "18:768f8ee4",
+      "descripcion": "1495:a3102ab0"
+    },
+    "mirada-aster-armadura": {
+      "nombre": "18:487b553a",
+      "descripcion": "1462:5df841e9"
+    },
+    "mirada-aster-perfecto": {
+      "nombre": "17:f3967bd8",
+      "descripcion": "1514:d5cd1e2d"
+    },
+    "mirada-aster-magatama": {
+      "nombre": "18:c80624e3",
+      "descripcion": "1359:66739870"
+    },
+    "mirada-aster-arco": {
+      "nombre": "17:292b47f8",
+      "descripcion": "1342:3ddd7ba4"
+    },
+    "mirada-aster-indra": {
+      "nombre": "25:703b908a",
+      "descripcion": "1514:7a5513f6"
+    },
+    "mirada-orbe-abrir": {
+      "nombre": "33:a1d4b928",
+      "descripcion": "1241:449e5f1"
+    },
+    "mirada-orbe-atraer": {
+      "nombre": "20:3e39a2c6",
+      "descripcion": "1261:5fb465d6"
+    },
+    "mirada-orbe-repeler": {
+      "nombre": "20:b9da8144",
+      "descripcion": "1226:dd9d7c17"
+    },
+    "mirada-orbe-absorber": {
+      "nombre": "29:84727365",
+      "descripcion": "1532:52d2e3dc"
+    },
+    "mirada-orbe-asura": {
+      "nombre": "28:ca007973",
+      "descripcion": "1359:13ccb5d7"
+    },
+    "mirada-orbe-proyectiles": {
+      "nombre": "32:e2f17638",
+      "descripcion": "1380:5126dbfd"
+    },
+    "mirada-orbe-humano": {
+      "nombre": "23:15757e8f",
+      "descripcion": "1438:d468598c"
+    },
+    "mirada-orbe-animal": {
+      "nombre": "31:f198c6f6",
+      "descripcion": "1427:a0007f6"
+    },
+    "mirada-orbe-naraka": {
+      "nombre": "28:7141b5ec",
+      "descripcion": "1522:2a701c06"
+    },
+    "mirada-orbe-receptores": {
+      "nombre": "17:d2919c3d",
+      "descripcion": "1221:4f004b09"
+    },
+    "mirada-orbe-seis-cuerpos": {
+      "nombre": "28:7673a099",
+      "descripcion": "1528:b1c2e153"
+    },
+    "mirada-orbe-luna": {
+      "nombre": "25:3e4de2df",
+      "descripcion": "1534:9a2547ab"
+    },
+    "mirada-orbe-retorno": {
+      "nombre": "28:64c71e61",
+      "descripcion": "1546:4043eb11"
+    },
+    "mirada-orbe-estatua": {
+      "nombre": "28:d4f5b3f",
+      "descripcion": "1471:87dbf240"
+    },
+    "mirada-orbe-limbo": {
+      "nombre": "25:a9cf3bbc",
+      "descripcion": "1517:ee231596"
+    },
+    "mirada-orbe-domar-bestia": {
+      "nombre": "29:ff474f57",
+      "descripcion": "1462:c20d6f5e"
+    },
+    "mirada-carmesi-abrir": {
+      "nombre": "20:3730c08a",
+      "descripcion": "1180:7820ca5b"
+    },
+    "mirada-carmesi-ilusion": {
+      "nombre": "28:6f0305e9",
+      "descripcion": "1220:830bb735"
+    },
+    "mirada-carmesi-sangre": {
+      "nombre": "26:9d5176ac",
+      "descripcion": "1429:d50c7dac"
+    },
+    "mirada-brasa-abrir": {
+      "nombre": "31:6f6e00b5",
+      "descripcion": "1186:79552d26"
+    },
+    "sangre-varro-sauce": {
+      "nombre": "20:436a1683",
+      "descripcion": "1198:322a64cc"
+    },
+    "sangre-varro-camelia": {
+      "nombre": "19:fb77ac7b",
+      "descripcion": "1213:c9c9f122"
+    },
+    "sangre-varro-alerce": {
+      "nombre": "16:f2b22636",
+      "descripcion": "1221:6cedaa98"
+    },
+    "sangre-varro-clematide": {
+      "nombre": "21:ecd74a83",
+      "descripcion": "1211:7bf46390"
+    },
+    "sangre-fluyente-agua": {
+      "nombre": "27:5e820adc",
+      "descripcion": "1264:1bdbf436"
+    },
+    "sangre-fluyente-bala": {
+      "nombre": "21:8659bdcf",
+      "descripcion": "1165:9030c91"
+    },
+    "sangre-fluyente-vapor": {
+      "nombre": "24:c677e64f",
+      "descripcion": "1519:c53fd9cd"
+    },
+    "sangre-mutable-despertar": {
+      "nombre": "28:c65fdf89",
+      "descripcion": "1225:43ac727e"
+    },
+    "sangre-mutable-propulsion": {
+      "nombre": "19:854b07b4",
+      "descripcion": "1153:f40a6336"
+    },
+    "sangre-gemelo-fusion": {
+      "nombre": "23:f8d603a7",
+      "descripcion": "1408:6cf0ac1"
+    },
+    "sangre-humo-cuerpo": {
+      "nombre": "14:7ebed5dd",
+      "descripcion": "1243:ef3cc79"
+    },
+    "sangre-detonacion-contacto": {
+      "nombre": "16:b2015d5f",
+      "descripcion": "1180:bf1b2927"
+    },
+    "sangre-arcilla-c1": {
+      "nombre": "27:576126d8",
+      "descripcion": "1204:227f19e9"
+    },
+    "sangre-arcilla-c2": {
+      "nombre": "26:57f9c398",
+      "descripcion": "1266:49cc7dc0"
+    },
+    "sangre-arcilla-c3": {
+      "nombre": "27:624fe0c9",
+      "descripcion": "1425:5244d929"
+    },
+    "sangre-arcilla-c4": {
+      "nombre": "24:48bcaee2",
+      "descripcion": "1458:845a7862"
+    },
+    "sangre-arcilla-cero": {
+      "nombre": "26:9f0544ab",
+      "descripcion": "1467:cd449293"
+    },
+    "sangre-calor-esferas": {
+      "nombre": "22:286b0f94",
+      "descripcion": "1352:77810843"
+    },
+    "sangre-magnetismo-lluvia": {
+      "nombre": "23:f6e03855",
+      "descripcion": "1205:927f3513"
+    },
+    "sangre-magnetismo-forma": {
+      "nombre": "26:261c7429",
+      "descripcion": "1182:7d92a476"
+    },
+    "sangre-magnetismo-espinas": {
+      "nombre": "23:fb2cbb95",
+      "descripcion": "1328:a29611ca"
+    },
+    "sangre-magnetismo-oro": {
+      "nombre": "22:65846aa5",
+      "descripcion": "1356:1b0016d9"
+    },
+    "hilo-papel-danza": {
+      "nombre": "25:19329fb9",
+      "descripcion": "1243:a670c764"
+    },
+    "hilo-papel-replica": {
+      "nombre": "16:5671fdae",
+      "descripcion": "1168:c2c05ee8"
+    },
+    "hilo-papel-oceano": {
+      "nombre": "28:5ec017b1",
+      "descripcion": "1497:9c7381f2"
+    },
+    "sangre-corazones-fibras": {
+      "nombre": "24:2bdfda6d",
+      "descripcion": "1428:93ad43e2"
+    },
+    "sangre-jashin": {
+      "nombre": "28:9ba20f63",
+      "descripcion": "1578:889d1e3e"
+    },
+    "sangre-transferir-cuerpo": {
+      "nombre": "22:448edaee",
+      "descripcion": "1529:21d1709f"
+    },
+    "sangre-esporas": {
+      "nombre": "26:8af0ac96",
+      "descripcion": "1259:e3a8bd0"
+    },
+    "sangre-efimera": {
+      "nombre": "18:7c0a3123",
+      "descripcion": "1340:e32b36a0"
+    },
+    "sangre-mu-dividir": {
+      "nombre": "20:c79411cf",
+      "descripcion": "1451:d93ee72"
+    },
+    "sangre-cristal-armadura": {
+      "nombre": "25:d10318b1",
+      "descripcion": "1206:10372e72"
+    },
+    "sangre-cristal-dragon": {
+      "nombre": "17:2b62ad17",
+      "descripcion": "1369:311043cb"
+    },
+    "sangre-cristal-laberinto": {
+      "nombre": "20:e0fa9a2a",
+      "descripcion": "1387:92306f81"
+    },
+    "umbral-formula": {
+      "nombre": "28:a1e3c2c0",
+      "descripcion": "1250:f9510521"
+    },
+    "umbral-raijin": {
+      "nombre": "17:58a4e1d8",
+      "descripcion": "1265:221012ba"
+    },
+    "umbral-raijin-largo": {
+      "nombre": "26:2ce57a99",
+      "descripcion": "1461:da06f80e"
+    },
+    "umbral-segundo-paso": {
+      "nombre": "26:96b73f14",
+      "descripcion": "1400:8694a7d3"
+    },
+    "umbral-intercambio-doble": {
+      "nombre": "25:b361a4c",
+      "descripcion": "1370:4ed5f5b2"
+    },
+    "umbral-barrera-traslado": {
+      "nombre": "29:156de21e",
+      "descripcion": "1487:86041098"
+    },
+    "umbral-inversa": {
+      "nombre": "29:5d95a45c",
+      "descripcion": "1202:2219fa18"
+    },
+    "umbral-kamui-derecho": {
+      "nombre": "26:48648548",
+      "descripcion": "1507:37fba7a6"
+    },
+    "umbral-kamui-izquierdo": {
+      "nombre": "29:b5ff7cbf",
+      "descripcion": "1488:b893fbe8"
+    },
+    "umbral-kamui-puerta": {
+      "nombre": "26:d926b655",
+      "descripcion": "1502:8f178bc9"
+    },
+    "umbral-kamui-shuriken": {
+      "nombre": "22:9c6e1081",
+      "descripcion": "1430:2d0dd482"
+    },
+    "umbral-kamui-corte": {
+      "nombre": "27:dba76ac6",
+      "descripcion": "1409:ccd5ec2f"
+    },
+    "umbral-intercambio-ojo": {
+      "nombre": "23:195690d",
+      "descripcion": "1501:ed067051"
+    },
+    "umbral-grieta-planos": {
+      "nombre": "23:b7efe668",
+      "descripcion": "1489:52064e88"
+    },
+    "umbral-cambio-dimension": {
+      "nombre": "29:8c75475a",
+      "descripcion": "1508:a5b36377"
+    },
+    "umbral-bolsillo": {
+      "nombre": "22:dd859333",
+      "descripcion": "1254:b6207896"
+    },
+    "umbral-evacuar": {
+      "nombre": "20:3041ebef",
+      "descripcion": "1525:256a7e09"
+    },
+    "vasija-voz": {
+      "nombre": "28:62957b96",
+      "descripcion": "1213:420f987e"
+    },
+    "vasija-prestamo": {
+      "nombre": "21:8322a9e",
+      "descripcion": "1342:6fbcbe2a"
+    },
+    "vasija-manto-uno": {
+      "nombre": "24:1236ccbb",
+      "descripcion": "1228:14da8040"
+    },
+    "vasija-manto-dos": {
+      "nombre": "25:3d153048",
+      "descripcion": "1483:c00c3ab1"
+    },
+    "vasija-brazos": {
+      "nombre": "26:282b251f",
+      "descripcion": "1220:fcc1de93"
+    },
+    "vasija-parcial": {
+      "nombre": "18:656e7cef",
+      "descripcion": "1293:a7c23548"
+    },
+    "vasija-avatar": {
+      "nombre": "19:e971d4f6",
+      "descripcion": "1516:b389526b"
+    },
+    "vasija-bomba": {
+      "nombre": "19:358e44d5",
+      "descripcion": "1433:c8ae63ef"
+    },
+    "vasija-transferir": {
+      "nombre": "27:5a9cddc0",
+      "descripcion": "1224:2cfe567c"
+    },
+    "vasija-regeneracion": {
+      "nombre": "29:d0529763",
+      "descripcion": "1501:f74b65e7"
+    },
+    "vasija-kurama-chakra": {
+      "nombre": "30:8f66bae9",
+      "descripcion": "1457:8344d557"
+    },
+    "vasija-kurama-amigo": {
+      "nombre": "26:bab7862e",
+      "descripcion": "1473:52ec31fe"
+    },
+    "vasija-modo-combinado": {
+      "nombre": "21:633a13c5",
+      "descripcion": "1464:36291377"
+    },
+    "vasija-shukaku-sello": {
+      "nombre": "27:fe4746d5",
+      "descripcion": "1365:5f57f38"
+    },
+    "vasija-matatabi-azul": {
+      "nombre": "22:8fbacdf9",
+      "descripcion": "1337:2c755872"
+    },
+    "vasija-isobu-coral": {
+      "nombre": "23:e9c4bb9b",
+      "descripcion": "1359:a08f8422"
+    },
+    "vasija-songoku-lava": {
+      "nombre": "29:54de1a33",
+      "descripcion": "1341:795a581f"
+    },
+    "vasija-kokuo-vapor": {
+      "nombre": "26:5c42fb18",
+      "descripcion": "1349:2a704e41"
+    },
+    "vasija-saiken-acido": {
+      "nombre": "24:a648dd13",
+      "descripcion": "1357:24fd0481"
+    },
+    "vasija-chomei-alas": {
+      "nombre": "23:5196e0cd",
+      "descripcion": "1202:62f5a46"
+    },
+    "vasija-gyuki-tinta": {
+      "nombre": "23:1bf999f3",
+      "descripcion": "1194:94d083a"
+    },
+    "vasija-gyuki-tentaculos": {
+      "nombre": "28:13535904",
+      "descripcion": "1354:cca535ab"
+    },
+    "vasija-juubi-bomba": {
+      "nombre": "28:97995e75",
+      "descripcion": "1463:d6cb5db9"
+    },
+    "vasija-arbol": {
+      "nombre": "23:79b9d79a",
+      "descripcion": "1396:b3d9fb82"
+    },
+    "vasija-gudodama": {
+      "nombre": "30:52ba1650",
+      "descripcion": "1499:e9aa13e0"
+    },
+    "vasija-gudodama-golpe": {
+      "nombre": "29:bab0094a",
+      "descripcion": "1352:3b7f3f40"
+    },
+    "vasija-nueve-estrellas": {
+      "nombre": "27:1a30cf62",
+      "descripcion": "1469:3bcf4bcc"
+    },
+    "vasija-estrella-lava": {
+      "nombre": "30:2d0d8d3a",
+      "descripcion": "1442:4220b088"
+    },
+    "vasija-esfera-magnetica": {
+      "nombre": "28:57102b97",
+      "descripcion": "1396:3ba816b4"
+    },
+    "vasija-creacion-todas": {
+      "nombre": "19:baa3bb50",
+      "descripcion": "1529:320b7f4f"
+    },
+    "vasija-sol-luna": {
+      "nombre": "24:b18f7690",
+      "descripcion": "1516:1e9fa4f1"
+    },
+    "vasija-huesos-finales": {
+      "nombre": "25:6f1eb98e",
+      "descripcion": "1494:a6363fd7"
+    },
+    "vasija-ochenta-punos": {
+      "nombre": "30:2c52cff4",
+      "descripcion": "1447:424c7652"
+    },
+    "vasija-esfera-expansiva": {
+      "nombre": "26:a2474b4a",
+      "descripcion": "1479:2d967fcb"
+    },
+    "vasija-bosque-primordial": {
+      "nombre": "27:a7188c21",
+      "descripcion": "1501:44ae3141"
+    },
+    "vasija-cabello-primordial": {
+      "nombre": "28:d87c088a",
+      "descripcion": "1360:d1c77796"
+    },
+    "vasija-sora": {
+      "nombre": "28:f8ffcaaf",
+      "descripcion": "1224:df6c5d2d"
+    },
+    "vasija-sincronizar-isobu": {
+      "nombre": "32:790d033d",
+      "descripcion": "1226:ded8e57a"
+    },
+    "forma-estrella-viento": {
+      "nombre": "27:c99d35bd",
+      "descripcion": "1425:51099a6d"
+    },
+    "forma-esfera-viento": {
+      "nombre": "31:fe1bebc",
+      "descripcion": "1182:d5e7568"
+    },
+    "cuerpo-dos-esferas": {
+      "nombre": "22:38107f9f",
+      "descripcion": "1184:9d3fb9b"
+    },
+    "hilo-esferas-orbitales": {
+      "nombre": "19:320d20ac",
+      "descripcion": "1326:56f3cc17"
+    },
+    "cuerpo-mil-esferas": {
+      "nombre": "33:5389d3c6",
+      "descripcion": "1391:56c35769"
+    },
+    "cuerpo-chidori": {
+      "nombre": "20:856627f5",
+      "descripcion": "1267:ce7a7078"
+    },
+    "cuerpo-raikiri": {
+      "nombre": "19:cde7e385",
+      "descripcion": "1193:2c3dd02f"
+    },
+    "hilo-agujas-rayo": {
+      "nombre": "22:7895dd66",
+      "descripcion": "1178:e8899bd7"
+    },
+    "forma-circo-tormenta": {
+      "nombre": "26:60047949",
+      "descripcion": "1258:2149f8dc"
+    },
+    "forma-colmillo-tormenta": {
+      "nombre": "29:d1e391e6",
+      "descripcion": "1428:4957d4fa"
+    },
+    "forma-burbuja-transporte": {
+      "nombre": "19:e4acd831",
+      "descripcion": "1209:42531cfb"
+    },
+    "forma-burbuja-trampa": {
+      "nombre": "20:a862732f",
+      "descripcion": "1197:27fdee16"
+    },
+    "forma-burbuja-estalla": {
+      "nombre": "19:448754e5",
+      "descripcion": "1228:76fb9240"
+    },
+    "rastro-clima-yota": {
+      "nombre": "23:fea677c0",
+      "descripcion": "1317:34b26965"
+    },
+    "pulso-fuka": {
+      "nombre": "21:209813f8",
+      "descripcion": "1495:660cac4a"
+    },
+    "quietud-tsuchigumo": {
+      "nombre": "30:bf962818",
+      "descripcion": "1478:981cafd4"
+    },
+    "sangre-estrella-pavo": {
+      "nombre": "28:184df0d3",
+      "descripcion": "1358:8417dfe0"
+    },
+    "hilo-raiga": {
+      "nombre": "29:6d8612ae",
+      "descripcion": "1330:7e291fbb"
+    },
+    "sangre-amachi": {
+      "nombre": "33:d2005bf6",
+      "descripcion": "1222:cd8be91c"
+    },
+    "sello-limelight": {
+      "nombre": "26:6ca3336c",
+      "descripcion": "1487:26f2ce8f"
+    },
+    "forma-clon-agua": {
+      "nombre": "24:168d0655",
+      "descripcion": "1272:371ce605"
+    },
+    "forma-clon-tierra": {
+      "nombre": "26:6602b6ea",
+      "descripcion": "1260:399da8d6"
+    },
+    "forma-clon-madera": {
+      "nombre": "26:e7acdfd7",
+      "descripcion": "1274:b14aec7c"
+    },
+    "forma-clon-rayo": {
+      "nombre": "24:1fe0f270",
+      "descripcion": "1336:435f6fe4"
+    },
+    "forma-clon-cuervos": {
+      "nombre": "31:baa51f4f",
+      "descripcion": "1243:fdcaf9aa"
+    },
+    "forma-clon-arena": {
+      "nombre": "25:fe662b78",
+      "descripcion": "1241:72a69fd5"
+    },
+    "rastro-camuflaje": {
+      "nombre": "23:837aff02",
+      "descripcion": "1186:3372221f"
+    },
+    "cuerpo-nudos-libres": {
+      "nombre": "20:223cb7b7",
+      "descripcion": "1210:9868caf1"
+    },
+    "cuerpo-cuerpo-flexible": {
+      "nombre": "16:696dcd32",
+      "descripcion": "1257:56754bd1"
+    },
+    "hilo-cuerpo-prestado": {
+      "nombre": "29:118fce3a",
+      "descripcion": "1202:87dd4bb3"
+    },
+    "cuerpo-rostro-prestado": {
+      "nombre": "28:e077bfc9",
+      "descripcion": "1327:fc0d4304"
+    },
+    "forma-esfera-colosal": {
+      "nombre": "22:ece0078a",
+      "descripcion": "1309:12e9f290"
+    },
+    "vasija-esfera-bestia": {
+      "nombre": "26:cff02e32",
+      "descripcion": "1344:6d27f67d"
+    },
+    "sello-arena-escudo": {
+      "nombre": "24:bec24ed8",
+      "descripcion": "1282:6a34bd04"
+    },
+    "sello-arena-armadura": {
+      "nombre": "17:486dc00a",
+      "descripcion": "1241:5b6dc0c5"
+    },
+    "sello-arena-funeral": {
+      "nombre": "19:eabc5985",
+      "descripcion": "1249:ec977e73"
+    },
+    "sello-arena-mausoleo": {
+      "nombre": "25:4644e5c7",
+      "descripcion": "1382:e0e19a1d"
+    },
+    "sello-arena-vuelo": {
+      "nombre": "19:4b6e5e40",
+      "descripcion": "1183:4e612c9"
+    },
+    "cuerpo-peso-ligero": {
+      "nombre": "24:271ed06b",
+      "descripcion": "1224:54a5bec8"
+    },
+    "cuerpo-peso-extremo": {
+      "nombre": "23:3aa2f934",
+      "descripcion": "1347:e5a6969"
+    },
+    "cuerpo-ligereza-grupo": {
+      "nombre": "26:c1547999",
+      "descripcion": "1388:c704b8a9"
+    },
+    "velo-luna-infinita": {
+      "nombre": "25:1d50dc5c",
+      "descripcion": "1542:b0861a8"
+    },
+    "hilo-cuerda-relampago": {
+      "nombre": "24:30ab6a7",
+      "descripcion": "1376:9904ac17"
+    },
+    "sangre-cristal-prision": {
+      "nombre": "24:1d2b3832",
+      "descripcion": "1219:3c1d0347"
+    },
+    "forma-ola-aceitosa": {
+      "nombre": "24:52ec136c",
+      "descripcion": "1358:c181c9a2"
+    },
+    "forma-espiral-espacial": {
+      "nombre": "25:7e683060",
+      "descripcion": "1344:8393b217"
+    },
+    "forma-agua-tiburon": {
+      "nombre": "23:a68de1b1",
+      "descripcion": "1174:b3382fb4"
+    },
+    "forma-agua-cinco-tiburones": {
+      "nombre": "23:da7e5d6a",
+      "descripcion": "1197:e51d88e4"
+    },
+    "forma-agua-tiburon-mayor": {
+      "nombre": "28:24cf9d22",
+      "descripcion": "1406:6065be06"
+    },
+    "forma-agua-filo-presion": {
+      "nombre": "23:ab65b9e9",
+      "descripcion": "1189:43f7739e"
+    },
+    "forma-agua-adhesiva": {
+      "nombre": "26:275cb45c",
+      "descripcion": "1214:9be2909b"
+    },
+    "forma-agua-prision-movil": {
+      "nombre": "28:2bbb5ac6",
+      "descripcion": "1441:9dd62c38"
+    },
+    "forma-tierra-golem": {
+      "nombre": "16:229e1790",
+      "descripcion": "1289:3eaa3a59"
+    },
+    "forma-tierra-rocas-cierre": {
+      "nombre": "27:14a177b2",
+      "descripcion": "1408:afefd5cc"
+    },
+    "forma-tierra-prision-absorbe": {
+      "nombre": "28:24e2e8fb",
+      "descripcion": "1459:6e421d1f"
+    },
+    "hilo-rayo-bestia": {
+      "nombre": "27:c7492c94",
+      "descripcion": "1208:831fe34e"
+    },
+    "hilo-rayo-pantera": {
+      "nombre": "27:6a13e96a",
+      "descripcion": "1329:27e24611"
+    },
+    "hilo-viento-red": {
+      "nombre": "24:263fdf90",
+      "descripcion": "1190:33638efc"
+    },
+    "sello-madera-dragon": {
+      "nombre": "26:9caf1b4a",
+      "descripcion": "1396:8d21123f"
+    },
+    "hilo-madera-coloso": {
+      "nombre": "18:f300a219",
+      "descripcion": "1513:fae6da60"
+    },
+    "sello-madera-prision": {
+      "nombre": "26:b30221de",
+      "descripcion": "1222:be8e12c9"
+    },
+    "sello-madera-raices": {
+      "nombre": "18:23dca450",
+      "descripcion": "1198:86765cc5"
+    },
+    "sello-madera-bosque": {
+      "nombre": "20:d320d05e",
+      "descripcion": "1515:34d16e40"
+    },
+    "sello-madera-flores": {
+      "nombre": "29:53c8139b",
+      "descripcion": "1423:f3ff428a"
+    },
+    "forma-magma-corrosivo": {
+      "nombre": "24:58afeddd",
+      "descripcion": "1197:50eb1fec"
+    },
+    "cuerpo-magma-coraza": {
+      "nombre": "25:2ebd451d",
+      "descripcion": "1345:d6f3a892"
+    },
+    "cuerpo-vapor-presion": {
+      "nombre": "30:a61cbdaa",
+      "descripcion": "1160:6f94137a"
+    },
+    "divino-madre-raices": {
+      "nombre": "18:a73d345e",
+      "descripcion": "1306:1f47130c"
+    },
+    "divino-madre-abrazo": {
+      "nombre": "24:1a7ae731",
+      "descripcion": "1312:e1038022"
+    },
+    "divino-madre-sendero": {
+      "nombre": "17:9bf19de7",
+      "descripcion": "1464:4a2d8fba"
+    },
+    "divino-madre-santuario": {
+      "nombre": "21:e3b8f994",
+      "descripcion": "1433:bcfd5de"
+    },
+    "divino-madre-voz": {
+      "nombre": "17:8b8edb14",
+      "descripcion": "1544:469678da"
+    },
+    "divino-madre-caminos": {
+      "nombre": "20:4b5ab9ce",
+      "descripcion": "1591:fca6c14c"
+    },
+    "divino-madre-jardin": {
+      "nombre": "23:d5029f00",
+      "descripcion": "1476:c77e544c"
+    },
+    "divino-nerys-escarcha": {
+      "nombre": "19:e6abb6a3",
+      "descripcion": "1181:2d36b08"
+    },
+    "divino-nerys-canto": {
+      "nombre": "15:4416f6a",
+      "descripcion": "1309:502f72a4"
+    },
+    "divino-nerys-aurora": {
+      "nombre": "20:f4f709ed",
+      "descripcion": "1396:c3bcc4f3"
+    },
+    "divino-ashka-pluma": {
+      "nombre": "22:f977b614",
+      "descripcion": "1197:ed9eb6e0"
+    },
+    "divino-ashka-alas": {
+      "nombre": "24:54742bdd",
+      "descripcion": "1198:3e2b89ee"
+    },
+    "divino-ashka-tormenta": {
+      "nombre": "24:b2bb99c1",
+      "descripcion": "1417:a7046c93"
+    },
+    "divino-thalos-abismo": {
+      "nombre": "20:4a3b48f5",
+      "descripcion": "1392:26976499"
+    },
+    "divino-ignis-ley": {
+      "nombre": "23:41d6c97e",
+      "descripcion": "1424:d06b3038"
+    },
+    "divino-orun-fragmento": {
+      "nombre": "28:c0c79d7b",
+      "descripcion": "1436:953c31a9"
+    },
+    "divino-gracefeel-lumbre": {
+      "nombre": "19:e0c368e0",
+      "descripcion": "1319:3100b74a"
+    },
+    "divino-gracefeel-farol": {
+      "nombre": "22:b1e5e7d8",
+      "descripcion": "1273:d24fc7c2"
+    },
+    "divino-cazador-marca": {
+      "nombre": "17:d700855d",
+      "descripcion": "1283:2904b6fc"
+    },
+    "divino-cazador-flecha": {
+      "nombre": "22:72a78a7a",
+      "descripcion": "1219:79afd197"
+    },
+    "divino-seyra-lazo": {
+      "nombre": "15:b8e82f23",
+      "descripcion": "1278:65d893bf"
+    },
+    "divino-seyra-nudo": {
+      "nombre": "16:c1c3e94c",
+      "descripcion": "1276:a0609f11"
+    },
+    "divino-dhoren-dintel": {
+      "nombre": "17:49c13c3",
+      "descripcion": "1260:9c34c8eb"
+    },
+    "divino-dhoren-cerrar": {
+      "nombre": "16:fcdf9a",
+      "descripcion": "1324:cf787ef"
+    }
+  },
+  "reliquias": {
+    "mia-scaled-umbrella": {
+      "nombre": "20:74903714",
+      "descripcion": "1865:805e52e1"
+    },
+    "mia-sun-sphere": {
+      "nombre": "12:901e9478",
+      "descripcion": "1852:92b16c7e"
+    },
+    "mia-fog-weave": {
+      "nombre": "16:117e2542",
+      "descripcion": "1912:2f7925d1"
+    },
+    "mia-gentle-knock": {
+      "nombre": "12:28b8ce0c",
+      "descripcion": "1886:f206974c"
+    },
+    "mia-mermaid-burp": {
+      "nombre": "16:554ecbf2",
+      "descripcion": "1856:8d37576c"
+    },
+    "mia-princess-bosom": {
+      "nombre": "16:6033e5d6",
+      "descripcion": "1855:710955a1"
+    },
+    "mia-far-caress": {
+      "nombre": "14:44e9b056",
+      "descripcion": "2019:a097d51a"
+    },
+    "mia-forgetter": {
+      "nombre": "17:bd906f2f",
+      "descripcion": "1926:6493fb38"
+    },
+    "mia-gold-shaker": {
+      "nombre": "19:59bcb7ae",
+      "descripcion": "1854:646838dc"
+    },
+    "mia-tomorrow-signal": {
+      "nombre": "16:7ea67d45",
+      "descripcion": "1913:3f20f12e"
+    },
+    "mia-white-whistle": {
+      "nombre": "14:583ddc2a",
+      "descripcion": "2169:981b0cd6"
+    },
+    "mia-mythographer": {
+      "nombre": "9:a01dc989",
+      "descripcion": "1873:8e237c51"
+    },
+    "mia-blaze-reap": {
+      "nombre": "13:9d24c124",
+      "descripcion": "1948:f8b004ea"
+    },
+    "mia-curse-warding-box": {
+      "nombre": "24:455da814",
+      "descripcion": "2396:89f75e99"
+    },
+    "mia-ghost-seek": {
+      "nombre": "25:76bd8a7f",
+      "descripcion": "1934:fabe4214"
+    },
+    "mia-grim-reaper": {
+      "nombre": "17:d21c7680",
+      "descripcion": "2023:3d1139ce"
+    },
+    "mia-nil-fount": {
+      "nombre": "17:13d29bc8",
+      "descripcion": "1891:f03d372f"
+    },
+    "mia-third-works": {
+      "nombre": "14:9c5abf08",
+      "descripcion": "2009:c14109e8"
+    },
+    "mia-thousand-men-pins": {
+      "nombre": "24:d487d888",
+      "descripcion": "2046:8ed27df9"
+    },
+    "mia-deep-sea-lion": {
+      "nombre": "34:118165ed",
+      "descripcion": "2341:ed3384e1"
+    },
+    "mia-star-thread": {
+      "nombre": "12:18a82a1d",
+      "descripcion": "2181:4899218d"
+    },
+    "mia-unheard-bell": {
+      "nombre": "17:7dccf06d",
+      "descripcion": "2409:94c6d762"
+    },
+    "mia-zoaholic": {
+      "nombre": "8:1e69f8f4",
+      "descripcion": "2399:d71bcdf5"
+    },
+    "mia-altar-of-the-absolute-boundary": {
+      "nombre": "29:5e523e89",
+      "descripcion": "2485:8f8e36f4"
+    },
+    "mia-apsenti": {
+      "nombre": "19:689afc15",
+      "descripcion": "1961:4d78ee3f"
+    },
+    "mia-canopy-unto-dawn": {
+      "nombre": "19:9b9b19a4",
+      "descripcion": "2159:973503c6"
+    },
+    "mia-cold-fantoccini": {
+      "nombre": "22:d0d4fe1f",
+      "descripcion": "2302:852f5669"
+    },
+    "mia-cradle-of-desire": {
+      "nombre": "14:d84f6825",
+      "descripcion": "2424:46bf9ea4"
+    },
+    "mia-crumple-pot": {
+      "nombre": "15:5c4223f0",
+      "descripcion": "2009:ed9833c8"
+    },
+    "mia-gangway": {
+      "nombre": "17:d5028686",
+      "descripcion": "2172:52abc458"
+    },
+    "mia-gorebag": {
+      "nombre": "16:e4cd3848",
+      "descripcion": "1916:1aed63b4"
+    },
+    "mia-hard-scrub": {
+      "nombre": "16:ee1d0a60",
+      "descripcion": "1864:92df8885"
+    },
+    "mia-immutable-letter": {
+      "nombre": "15:1ab54e65",
+      "descripcion": "2262:8b94ddd7"
+    },
+    "mia-lyza-s-letter": {
+      "nombre": "13:26f216f9",
+      "descripcion": "1944:e0eb514c"
+    },
+    "mia-muscle-dress": {
+      "nombre": "16:5ef69fbb",
+      "descripcion": "2015:a8267235"
+    },
+    "mia-popple-gun": {
+      "nombre": "12:7f0b86c9",
+      "descripcion": "2155:7ee575a9"
+    },
+    "mia-double-pop-blaster": {
+      "nombre": "26:3abaeb8",
+      "descripcion": "2325:fa3c3a22"
+    },
+    "mia-ripe-thing": {
+      "nombre": "20:63a7f1a5",
+      "descripcion": "2324:5273cc29"
+    },
+    "mia-rock-top": {
+      "nombre": "13:4a074f95",
+      "descripcion": "1822:45083d6e"
+    },
+    "mia-shaker": {
+      "nombre": "19:19b77d27",
+      "descripcion": "2116:d65cac8"
+    },
+    "mia-shiny-swarm": {
+      "nombre": "24:aa67a61",
+      "descripcion": "1995:ba16ac82"
+    },
+    "mia-sparagmos": {
+      "nombre": "15:49f59a7a",
+      "descripcion": "2169:a27cb3de"
+    },
+    "mia-star-compass": {
+      "nombre": "15:486b8755",
+      "descripcion": "1928:e35865b1"
+    },
+    "mia-wonder-wordless": {
+      "nombre": "15:2d6af93e",
+      "descripcion": "1917:98a2e3e5"
+    },
+    "mia-feather-mask": {
+      "nombre": "17:c586e42",
+      "descripcion": "2011:17df5754"
+    },
+    "mia-insect-eye": {
+      "nombre": "14:e3e98c11",
+      "descripcion": "1997:b8823a1f"
+    },
+    "mia-life-reverberating-stone": {
+      "nombre": "30:7b94ba9",
+      "descripcion": "2238:4271f4d1"
+    },
+    "mia-curse-steel": {
+      "nombre": "18:4c448bee",
+      "descripcion": "2195:98b40095"
+    },
+    "mia-stairway-of-light": {
+      "nombre": "15:f6ea53e5",
+      "descripcion": "2226:41d09be2"
+    },
+    "mia-incinerator": {
+      "nombre": "24:b77a823b",
+      "descripcion": "2422:2b7c4b5c"
+    },
+    "mia-cartridges": {
+      "nombre": "17:701d52d3",
+      "descripcion": "2401:9dfc84b9"
+    },
+    "juego-fruitful-orb": {
+      "nombre": "15:8eaa247e",
+      "descripcion": "1853:f48db82c"
+    },
+    "juego-relic-material": {
+      "nombre": "20:385b5413",
+      "descripcion": "1858:370c7249"
+    },
+    "juego-relic-hats": {
+      "nombre": "20:1cacb27d",
+      "descripcion": "1982:c7edd652"
+    },
+    "juego-relic-gloves": {
+      "nombre": "19:9033dc79",
+      "descripcion": "1985:7ef36f8a"
+    },
+    "juego-relic-garbs": {
+      "nombre": "19:b7716d02",
+      "descripcion": "1983:c078105"
+    },
+    "juego-relic-pants": {
+      "nombre": "22:ee08c9ff",
+      "descripcion": "1986:7eeafa6a"
+    },
+    "juego-relic-shoes": {
+      "nombre": "19:fdd56734",
+      "descripcion": "1983:587e79ad"
+    },
+    "juego-relic-guns": {
+      "nombre": "25:45dd5a2",
+      "descripcion": "1987:22a3c605"
+    },
+    "juego-relic-bows": {
+      "nombre": "16:61747637",
+      "descripcion": "1978:27610c94"
+    },
+    "juego-relic-pickaxes": {
+      "nombre": "16:f6625eef",
+      "descripcion": "1986:6b290fe4"
+    },
+    "juego-relic-hatchets": {
+      "nombre": "17:fed92013",
+      "descripcion": "1987:4331c964"
+    },
+    "nimerios-farol-ilvarn": {
+      "nombre": "25:b083ee2b",
+      "descripcion": "1569:f6170483"
+    },
+    "nimerios-aguja-cendra": {
+      "nombre": "24:db5b2753",
+      "descripcion": "1578:e2e555b"
+    },
+    "nimerios-carrete-ashka": {
+      "nombre": "26:f8b6a02b",
+      "descripcion": "1604:9fa8ff7a"
+    },
+    "nimerios-cuenco-thalos": {
+      "nombre": "26:7df8c99d",
+      "descripcion": "1665:e37803bd"
+    },
+    "nimerios-martillo-varro": {
+      "nombre": "26:52a0df49",
+      "descripcion": "1597:9ab03c5f"
+    },
+    "nimerios-balanza-moneta": {
+      "nombre": "27:8f724dab",
+      "descripcion": "1673:ba1deeb"
+    },
+    "nimerios-aguja-ennia": {
+      "nombre": "24:d5ac931a",
+      "descripcion": "1678:7faa73c1"
+    },
+    "nimerios-mascara-nocta": {
+      "nombre": "24:892c5834",
+      "descripcion": "1678:9054daf9"
+    },
+    "nimerios-lente-orun": {
+      "nombre": "25:72bf6eab",
+      "descripcion": "1653:bdab0dec"
+    },
+    "nimerios-clavo-bastio": {
+      "nombre": "27:d10d0a3c",
+      "descripcion": "1663:75107f72"
+    },
+    "nimerios-campana-nerys": {
+      "nombre": "25:7a22dbb8",
+      "descripcion": "1842:405935a2"
+    },
+    "nimerios-semilla-maethra": {
+      "nombre": "26:8f401273",
+      "descripcion": "1804:4bb78371"
+    },
+    "nimerios-llave-seyra": {
+      "nombre": "27:49a7157c",
+      "descripcion": "1566:b657a157"
+    },
+    "nimerios-dintel-dhoren": {
+      "nombre": "18:cc331146",
+      "descripcion": "1648:a437f2b"
+    },
+    "nimerios-piedra-gracefeel": {
+      "nombre": "29:f194a759",
+      "descripcion": "1861:76d23795"
+    },
+    "nimerios-espejo-ignis": {
+      "nombre": "26:c0b1cd96",
+      "descripcion": "1853:eb46cf3c"
+    }
+  },
+  "artefactos": {
+    "samehada": {
+      "nombre": "8:6adc04af",
+      "descripcion": "321:fcd36d3f"
+    },
+    "kubikiribocho": {
+      "nombre": "13:3a1c05f6",
+      "descripcion": "321:fcd36d3f"
+    },
+    "hiramekarei": {
+      "nombre": "11:8cbd0527",
+      "descripcion": "321:fcd36d3f"
+    },
+    "kiba": {
+      "nombre": "4:1afdcc80",
+      "descripcion": "321:fcd36d3f"
+    },
+    "shibuki": {
+      "nombre": "7:1b185648",
+      "descripcion": "321:fcd36d3f"
+    },
+    "nuibari": {
+      "nombre": "7:871270ab",
+      "descripcion": "321:fcd36d3f"
+    },
+    "kabutowari": {
+      "nombre": "10:d15888ac",
+      "descripcion": "321:fcd36d3f"
+    },
+    "kusanagi": {
+      "nombre": "8:ad67d1a0",
+      "descripcion": "321:fcd36d3f"
+    },
+    "gunbai": {
+      "nombre": "6:589500bf",
+      "descripcion": "321:fcd36d3f"
+    },
+    "bashosen": {
+      "nombre": "8:d65b7de0",
+      "descripcion": "321:fcd36d3f"
+    },
+    "totsuka": {
+      "nombre": "17:75bef987",
+      "descripcion": "321:fcd36d3f"
+    },
+    "yata": {
+      "nombre": "14:67a34f21",
+      "descripcion": "321:fcd36d3f"
+    },
+    "benihisago": {
+      "nombre": "10:f2cbf410",
+      "descripcion": "321:fcd36d3f"
+    },
+    "kokinjo": {
+      "nombre": "7:30a7bc80",
+      "descripcion": "321:fcd36d3f"
+    },
+    "shichiseiken": {
+      "nombre": "12:2d10b682",
+      "descripcion": "321:fcd36d3f"
+    },
+    "kohaku": {
+      "nombre": "15:357bdbf2",
+      "descripcion": "321:fcd36d3f"
+    },
+    "marioneta-kazekage": {
+      "nombre": "29:6844d4ac",
+      "descripcion": "321:fcd36d3f"
+    }
+  }
+}

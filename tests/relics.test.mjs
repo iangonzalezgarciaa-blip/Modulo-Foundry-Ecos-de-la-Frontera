@@ -16,7 +16,7 @@ test('78 perfiles documentados, de juego y propios, con actividades y cargos nat
   for(const a of Object.values(r.item.system.activities)){assert.equal(a.activation.override,true);assert.equal(a.target.override,true);assert.equal(a.consumption.spellSlot,false);assert.equal(a.consumption.targets[0].type,'itemUses');assert.equal(a.consumption.scaling.allowed,false);}
   assert.ok(!r.item.flags['ecos-frontera'].verbe);assert.equal(r.item.flags['ecos-frontera'].reliquia.autorizada,false);
  }
- assert.ok(D.reliquias.some(r=>r.original==='Immutable Letter'));assert.ok(D.reliquias.some(r=>r.original==="Lyza's Letter"));
+ assert.ok(D.reliquias.some(r=>r.nombre==='Misiva del Juramento'));assert.ok(D.reliquias.some(r=>r.nombre==='Carta de Ilarva'));assert.ok(D.reliquias.every(r=>r.original===null));
  assert.equal(D.reliquias.some(r=>r.original==='Reg'),false);assert.match(ficha('mia-gold-shaker').texto,/No crea oro/);
 });
 test('autorizar, equipar, sintonizar y nivel son condiciones efectivas',()=>{
@@ -82,4 +82,10 @@ test('una nota personalizada del DM no se sustituye por el texto nuevo del catá
  i.system.description.value+='<p>Nota privada de mi campaña y condiciones propias.</p>';
  assert.equal(R.cambiosTextoReliquia(i),null);
  game.user=game.users.get('player');return R.actualizarTextosReliquias().then(n=>assert.equal(n,0));
+});
+test('el nombre antiguo reconocido migra sin borrar una nota personalizada ni alterar cargas',()=>{
+ const a=new MockActor(20),i=equipar(a,'mia-sun-sphere');
+ i.name='Esfera solar';i.system.description.value+='<p>Mi nota privada.</p>';i.system.uses.spent=1;
+ const c=R.cambiosTextoReliquia(i);assert.deepEqual(c,{name:'Lucero de Bolsillo'});assert.equal(i.system.uses.spent,1);assert.match(i.system.description.value,/Mi nota privada/);
+ i.name='El farol de mi abuelo';assert.equal(R.cambiosTextoReliquia(i),null);
 });

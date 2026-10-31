@@ -1,8 +1,8 @@
 {
   "id": "ecos-frontera",
   "title": "Ecos de la frontera · Reglas de la casa",
-  "description": "Reglas de Ecos de la frontera para dnd5e: supervivencia, oficios, economía y El Verbe, con 778 técnicas, 219 dotes, sendas de especialización, progresión hasta grado 11 y 78 perfiles de reliquias.",
-  "version": "3.2.1",
+  "description": "Reglas de Ecos de la frontera para dnd5e: supervivencia, oficios, economía y El Verbe, con 860 técnicas, 219 dotes, 78 reliquias de Nimerios, mesa de campaña, buscador local, creación guiada y taller de NPC.",
+  "version": "3.3.0",
   "url": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera",
   "authors": [
     {
@@ -53,6 +53,11 @@
         "id": "monks-tokenbar",
         "type": "module",
         "reason": "Salvaciones pedidas por midi y XP por enemigos derrotados"
+      },
+      {
+        "id": "plutonium",
+        "type": "module",
+        "reason": "Importación opcional en la creación guiada y el taller de NPC"
       }
     ]
   },

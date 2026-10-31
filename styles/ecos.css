@@ -616,3 +616,33 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
   .ev-lectura-datos > div, .ev-glosario > div { grid-template-columns: 1fr; gap: .2rem; }
 }
 @container panel-verbe (max-width: 730px) { .ecos-editor-catalogo .ev-editor-grid { grid-template-columns: minmax(0,1fr); } }
+
+/* Mesa de campaña: contraste suave, tareas visibles y un solo área de desplazamiento. */
+.ecos-mesa { --em-fondo:#eeeadf; --em-papel:#fffdf7; --em-texto:#292d33; --em-borde:#c7c2b5; --em-acento:#70551f; color:var(--em-texto); }
+.ecos-mesa .window-content { padding:0; overflow:hidden; background:var(--em-fondo); color:var(--em-texto); }
+.ecos-mesa .em-marco { display:flex; flex-direction:column; height:100%; min-height:0; font-size:14px; line-height:1.55; }
+.ecos-mesa h1,.ecos-mesa h2,.ecos-mesa h3 { color:var(--em-texto); font-family:inherit; border:0; line-height:1.3; }
+.ecos-mesa h1 { font-size:23px; margin:0 0 5px; }.ecos-mesa h2 {font-size:21px}.ecos-mesa h3 {font-size:17px}
+.ecos-mesa p { margin:8px 0 14px; max-width:82ch; }.ecos-mesa label {display:grid;gap:5px;font-weight:600;min-width:0}
+.ecos-mesa input,.ecos-mesa select,.ecos-mesa textarea {background:var(--em-papel);color:var(--em-texto);border:1px solid var(--em-borde);border-radius:5px;min-height:34px;width:100%;font:inherit;padding:5px 8px}
+.ecos-mesa textarea {min-height:100px;resize:vertical}.ecos-mesa input[type=checkbox]{width:auto;min-height:0}
+.ecos-mesa button {width:auto;flex:0 1 auto;min-height:34px;padding:6px 12px;background:var(--em-papel);color:var(--em-texto);border:1px solid var(--em-borde);border-radius:5px;white-space:normal;line-height:1.4;font:inherit;box-shadow:none;}
+.ecos-mesa button:hover,.ecos-mesa button:focus-visible {background:#e7dfc8;outline:2px solid var(--em-acento);outline-offset:1px}
+.ecos-mesa button[aria-current=page],.ecos-mesa button[aria-pressed=true] {background:#363b43;color:#fff;border-color:#363b43}
+.ecos-mesa button:disabled {opacity:.55;cursor:wait}.ecos-mesa .em-cabecera {display:flex;justify-content:space-between;gap:18px;padding:22px 24px 12px;border-bottom:1px solid var(--em-borde)}
+.ecos-mesa .em-cabecera label {min-width:180px;max-width:280px}.ecos-mesa .em-cabecera p {margin:0;color:#555b63;font-size:13px}
+.ecos-mesa .em-tabs {display:flex;gap:6px;flex-wrap:wrap;padding:10px 24px;border-bottom:1px solid var(--em-borde)}
+.ecos-mesa .em-contenido {flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:22px 24px 30px;scrollbar-gutter:stable}
+.ecos-mesa .em-pie {font-size:11px;color:#60646a;padding:7px 24px;border-top:1px solid var(--em-borde)}
+.ecos-mesa section {padding:16px 0;border-bottom:1px solid var(--em-borde)}.ecos-mesa .em-resumen {display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:18px 0}
+.ecos-mesa .em-resumen>div {display:grid;padding:14px;background:var(--em-papel);border:1px solid var(--em-borde);border-radius:7px}.ecos-mesa .em-resumen b {font-size:24px}.ecos-mesa .em-resumen span {font-size:12px;color:#5a6068}
+.ecos-mesa .em-fila {display:flex;gap:9px;flex-wrap:wrap;align-items:end;margin:12px 0}.ecos-mesa .em-fila label {flex:1;min-width:170px}
+.ecos-mesa .em-tarjeta {padding:14px 16px;background:var(--em-papel);border:1px solid var(--em-borde);border-radius:7px;margin:12px 0;overflow-wrap:anywhere}.ecos-mesa .em-tarjeta h3 {margin:0 0 4px}.ecos-mesa .em-tarjeta button {margin:6px 6px 0 0}
+.ecos-mesa .em-etiqueta {font-size:12px;color:var(--em-acento)}.ecos-mesa .em-aviso,.ecos-mesa .em-previa {padding:14px 16px;border-left:4px solid #9c7c37;background:#f8f3e3;border-radius:4px;margin:15px 0}
+.ecos-mesa .em-rejilla {display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:13px;margin:18px 0}.ecos-mesa .em-check {display:flex;align-items:center;gap:8px;font-weight:400;margin:12px 0}
+.ecos-mesa .em-pasos {padding-left:25px}.ecos-mesa .em-pasos>li {padding:13px 0;border-bottom:1px solid var(--em-borde)}.ecos-mesa .em-pasos button {margin:8px}
+.ecos-mesa .em-tabla {overflow:auto;width:100%}.ecos-mesa table {width:100%;border-collapse:collapse;background:var(--em-papel)}.ecos-mesa th,.ecos-mesa td {padding:9px 11px;text-align:left;border:1px solid var(--em-borde)}
+.ecos-mesa details {border:1px solid var(--em-borde);border-radius:6px;background:var(--em-papel);padding:14px;margin:12px 0}.ecos-mesa summary {cursor:pointer;font-weight:700}.ecos-mesa details li {margin:9px 0}
+.ecos-mesa-acceso {flex:0 0 auto!important;width:auto!important;margin-inline:8px!important;font-size:12px!important;padding:2px 8px!important;min-height:24px;}
+.ecos-azar {border-left:3px solid #9c7c37;padding:8px 12px}.ecos-azar button {margin:4px}.ecos-azar-estado {font-size:12px}
+@media(max-width:680px){.ecos-mesa .em-cabecera {flex-direction:column}.ecos-mesa .em-cabecera label {max-width:none}.ecos-mesa .em-contenido,.ecos-mesa .em-tabs,.ecos-mesa .em-cabecera {padding-left:14px;padding-right:14px}}

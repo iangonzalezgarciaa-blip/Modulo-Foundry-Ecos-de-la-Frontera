@@ -33,7 +33,7 @@ export function validateCatalog(D) {
       if(acceso.ojo&&!D.miradas.some(m=>m.id===acceso.ojo.id&&m.etapas.length>=acceso.ojo.etapa))errors.push(`${t.id}: ojo o etapa inexistentes`);
       if(t.previa&&!D.tecnicas.some(x=>x.id===t.previa))errors.push(`${t.id}: previa inexistente`);
       if(!['inst','round','minute','hour','day'].includes(t.item.system.duration.units))errors.push(`${t.id}: unidad de duración inválida`);
-      if(!t.origen?.nombre||!Number.isInteger(t.origen.pagina)||t.origen.pagina<7||t.origen.pagina>44)errors.push(`${t.id}: referencia del estudio inválida`);
+      if(!t.origen?.nombre||(!D.identidad&&(!Number.isInteger(t.origen.pagina)||t.origen.pagina<7||t.origen.pagina>44)))errors.push(`${t.id}: referencia inválida`);
     }
     for (const a of activities) {
       if (a.consumption?.spellSlot) errors.push(`${t.id}: consume espacios de conjuro`);

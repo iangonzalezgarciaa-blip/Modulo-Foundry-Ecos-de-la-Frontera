@@ -1,0 +1,653 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Mesa Ecos · revisión 3.3</title><style>body{margin:0;background:#2c3037;font-family:system-ui,sans-serif;padding:18px}*{box-sizing:border-box}button,select{cursor:pointer}[hidden]{display:none!important}.preview-nota{color:#eee;text-align:center;font-size:13px;margin:0 0 14px}.ecos-mesa{height:calc(100vh - 70px);max-width:1040px;margin:auto;background:#eeeadf;border-radius:10px;overflow:hidden}.em-contenido{background:#eeeadf}/* Ecos de la frontera · tarjetas del chat y diálogos */
+.ecos-card {
+  border: 1px solid #7a1f1f;
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: rgba(122, 31, 31, 0.07);
+}
+.ecos-card h3 {
+  margin: 0 0 4px;
+  padding-bottom: 2px;
+  font-size: 1.05em;
+  border-bottom: 1px solid rgba(122, 31, 31, 0.35);
+}
+.ecos-card p { margin: 0.25em 0; }
+.ecos-card.ecos-secreto { border-color: #2f4f7a; background: rgba(47, 79, 122, 0.10); }
+.ecos-card.ecos-secreto h3 { border-bottom-color: rgba(47, 79, 122, 0.4); }
+.ecos-card.ecos-muerte { border-color: #111; background: rgba(0, 0, 0, 0.12); }
+.ecos-card.ecos-santuario { border-color: #3b6b3b; background: rgba(59, 107, 59, 0.10); }
+.ecos-card.ecos-intemperie { border-color: #6b4f2a; background: rgba(107, 79, 42, 0.10); }
+.ecos-card .ecos-botones { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.ecos-card .ecos-botones button { flex: 1 1 auto; font-size: 0.9em; line-height: 1.8; }
+.ecos-nota { font-size: 0.85em; opacity: 0.8; }
+
+.ecos-dialogo p { margin: 0.35em 0; }
+.ecos-dialogo .ecos-tabla { width: 100%; margin: 0.4em 0; border-collapse: collapse; }
+.ecos-dialogo .ecos-tabla th { width: 34%; text-align: left; vertical-align: top; padding: 3px 6px 3px 0; }
+.ecos-dialogo .ecos-tabla td { padding: 3px 0; }
+.ecos-dialogo .ecos-tabla select { width: 100%; }
+.ecos-dialogo .ecos-check { display: block; margin: 0.45em 0; }
+.ecos-dialogo .ecos-check input { vertical-align: middle; margin-right: 4px; }
+
+/* Guía "Para recuperarse" */
+.ecos-card .ecos-guia { margin-top: 6px; padding-top: 4px; border-top: 1px dashed rgba(122, 31, 31, 0.45); font-size: 0.9em; }
+.ecos-card .ecos-guia ul { margin: 2px 0 0; padding-left: 1.1em; }
+.ecos-card .ecos-guia li { margin: 2px 0; }
+
+/* Oficios */
+.ecos-card.ecos-trabajo { border-color: #6b4f2a; background: rgba(107, 79, 42, 0.08); }
+.ecos-card.ecos-trabajo h3 { border-bottom-color: rgba(107, 79, 42, 0.45); }
+.ecos-card.ecos-trabajo.ecos-desastre { border-color: #7a1f1f; background: rgba(122, 31, 31, 0.10); }
+.ecos-card.ecos-trabajo.ecos-fallo { border-color: #8a6a2a; }
+.ecos-card.ecos-trabajo.ecos-bueno { border-color: #3b6b3b; background: rgba(59, 107, 59, 0.10); }
+.ecos-card.ecos-trabajo.ecos-excelente { border-color: #b8860b; background: rgba(218, 165, 32, 0.15); box-shadow: 0 0 6px rgba(218, 165, 32, 0.45); }
+.ecos-card.ecos-trabajo p:first-of-type i { opacity: 0.85; }
+.ecos-oficio .ecos-info-cab { margin-top: 0.5em; }
+.ecos-oficio .ecos-info-prueba { font-size: 0.92em; padding: 3px 6px; border-left: 3px solid #6b4f2a; background: rgba(107, 79, 42, 0.08); }
+.ecos-oficio select { width: 100%; }
+.ecos-oficio details { margin-top: 0.4em; }
+.window-header .ecos-cabecera { width: auto; min-width: 0; padding: 0 8px; gap: 4px; display: inline-flex; align-items: center; font-size: var(--font-size-12, 12px); border-radius: 4px; flex: none; }
+.window-header .ecos-cabecera span { font-family: var(--font-body, inherit); }
+
+.ecos-oficio .ecos-prevision { font-size: 0.92em; margin: 0.4em 0; padding: 4px 6px; border-radius: 4px; background: rgba(59, 107, 59, 0.10); }
+.ecos-barra { font-family: monospace; letter-spacing: -1px; color: #6b4f2a; }
+.ecos-card.ecos-trabajo.ecos-tienda { border-color: #8a6a2a; background: rgba(218, 165, 32, 0.08); }
+
+/* Mercadillo */
+.ecos-mercadillo .ecos-tiendas { display: flex; flex-direction: column; gap: 4px; max-height: 60vh; overflow-y: auto; margin: 6px 0; }
+.ecos-mercadillo .ecos-tienda { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border: 1px solid rgba(107, 79, 42, 0.45); border-radius: 6px; cursor: pointer; background: rgba(107, 79, 42, 0.06); }
+.ecos-mercadillo .ecos-tienda:hover { background: rgba(218, 165, 32, 0.18); }
+.ecos-mercadillo .ecos-tienda.cerrada { opacity: 0.55; }
+.ecos-mercadillo .ecos-tienda img { width: 40px; height: 40px; object-fit: cover; border: none; border-radius: 4px; flex: none; }
+.ecos-mercadillo .ecos-tienda-txt { flex: 1; line-height: 1.25; }
+.ecos-mercadillo .ecos-puerta { flex: none; width: 32px; line-height: 1.6; }
+.ecos-desc { font-size: 0.8em; padding: 0 4px; border-radius: 3px; }
+.ecos-desc.ok { background: rgba(59, 107, 59, 0.25); }
+.ecos-desc.mal { background: rgba(122, 31, 31, 0.25); }
+
+/* Prestigio en la hoja del PJ */
+.ecos-prestigio { margin: 6px 0; padding: 6px 8px; border: 1px solid var(--dnd5e-color-gold, #9f9275); border-radius: 6px; background: rgba(255, 255, 255, 0.04); }
+.ecos-prestigio h4 { margin: 0 0 4px; font-size: var(--font-size-13, 13px); text-transform: uppercase; letter-spacing: 0.05em; border: none; }
+.ecos-prestigio ul { list-style: none; margin: 0; padding: 0; }
+.ecos-prestigio li { display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 2px 0; border-bottom: 1px dotted rgba(127, 127, 127, 0.35); }
+.ecos-prestigio li:last-child { border-bottom: none; }
+.ecos-prestigio .ecos-pres-nombre { font-size: 0.85em; line-height: 1.15; }
+.ecos-prestigio .ecos-pres-nombre small { opacity: 0.75; }
+.ecos-prestigio .ecos-pres-valor { display: inline-flex; align-items: center; gap: 2px; flex: none; }
+.ecos-prestigio .ecos-pres-num { font-size: 1.15em; min-width: 1.5em; text-align: center; }
+.ecos-prestigio .ecos-pres-btn { width: 20px; height: 20px; min-height: 0; padding: 0; line-height: 1; font-size: 0.9em; }
+.ecos-prestigio .ecos-pres-val { width: 3em; height: 20px; text-align: center; padding: 0; }
+.ecos-prestigio .ecos-pres-nuevo { width: 100%; margin-top: 4px; font-size: 0.85em; }
+.ecos-prestigio .ecos-pres-oficios { margin: 4px 0 0; font-size: 0.8em; opacity: 0.8; }
+
+/* Vestuario (botón del token) */
+.ecos-vestuario .ecos-ropas { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; max-height: 60vh; overflow-y: auto; margin: 6px 0; }
+.ecos-vestuario .ecos-ropa { position: relative; margin: 0; padding: 4px; border: 2px solid transparent; border-radius: 8px; cursor: pointer; text-align: center; background: rgba(127, 127, 127, 0.08); }
+.ecos-vestuario .ecos-ropa:hover { border-color: rgba(218, 165, 32, 0.6); }
+.ecos-vestuario .ecos-ropa.activa { border-color: #b8860b; box-shadow: 0 0 6px rgba(218, 165, 32, 0.5); }
+.ecos-vestuario .ecos-ropa img { width: 88px; height: 88px; object-fit: contain; border: none; }
+.ecos-vestuario .ecos-ropa figcaption { font-size: 0.85em; line-height: 1.2; word-break: break-word; }
+.ecos-vestuario .ecos-ropa-quitar { position: absolute; top: 2px; right: 4px; opacity: 0.6; }
+.ecos-vestuario .ecos-ropa-quitar:hover { opacity: 1; color: #a33; }
+.ecos-vestuario .ecos-ropa-gm { display: flex; gap: 6px; }
+.ecos-vestuario .ecos-ropa-gm button { flex: 1; }
+.ecos-vestuario .ecos-vacio { opacity: 0.75; font-style: italic; }
+
+/* Panel de estados */
+#ecos-panel-estados { position: fixed; top: 8px; right: 320px; z-index: 60; display: flex; flex-direction: column; gap: 4px; max-width: 220px; pointer-events: none; }
+#ecos-panel-estados .ecos-panel-nombre { align-self: flex-end; font-size: 11px; color: #eee; text-shadow: 0 0 3px #000; opacity: 0.85; }
+#ecos-panel-estados .ecos-estado { pointer-events: auto; display: flex; align-items: center; gap: 6px; padding: 3px 8px 3px 3px; border-radius: 18px; background: rgba(20, 16, 12, 0.78); border: 1px solid rgba(218, 165, 32, 0.45); color: #f2e8d5; font-size: 12px; line-height: 1.15; }
+#ecos-panel-estados .ecos-estado img { width: 28px; height: 28px; border: none; border-radius: 50%; flex: none; background: rgba(255, 255, 255, 0.08); }
+#ecos-panel-estados .ecos-estado small { display: block; opacity: 0.75; font-size: 10px; }
+
+/* Panel del DM */
+.ecos-panel-dm .window-content { padding: 8px 10px; gap: 6px; }
+.ecos-panel-dm .ecos-panel-estado { margin: 0 0 4px; padding: 4px 8px; border-radius: 6px; font-size: 0.9em; background: rgba(107, 79, 42, 0.15); border: 1px solid rgba(218, 165, 32, 0.35); }
+.ecos-panel-dm section h3 { margin: 6px 0 4px; font-size: 0.95em; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid rgba(218, 165, 32, 0.35); }
+.ecos-panel-dm .ecos-panel-botones { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
+.ecos-panel-dm .ecos-panel-botones button { display: flex; align-items: center; gap: 6px; justify-content: flex-start; padding: 4px 8px; line-height: 1.6; font-size: 0.95em; }
+.ecos-panel-dm .ecos-panel-botones button i { width: 1.2em; text-align: center; }
+.ecos-panel-dm .ecos-panel-botones button.activo { border-color: #3b6b3b; background: rgba(59, 107, 59, 0.25); }
+
+/* Guía de la barra */
+.ecos-guia-barra .ecos-guia-grupo { margin: 2px 0; padding: 2px 6px; border: 1px solid rgba(127, 127, 127, 0.3); border-radius: 6px; }
+.ecos-guia-barra summary { cursor: pointer; }
+.ecos-guia-barra summary .ecos-check { display: inline-block; margin: 0.2em 0; }
+.ecos-guia-barra summary .ecos-nota { margin-left: 1.6em; }
+.ecos-guia-barra ul { list-style: none; margin: 2px 0 4px 1.2em; padding: 0; }
+.ecos-guia-barra li { margin: 2px 0; }
+.ecos-guia-barra li .ecos-check { display: inline-block; margin: 0; }
+.ecos-guia-barra li .ecos-nota { display: block; margin-left: 1.6em; }
+.ecos-guia-barra { max-height: 65vh; overflow-y: auto; }
+.ecos-zonas .form-footer { flex-wrap: wrap; }
+.ecos-zonas .form-footer button { flex: 1 1 45%; }
+
+/* Mega menú (v2.1) */
+.ecos-mega .window-content { padding: 8px 10px; gap: 6px; overflow-y: auto; }
+.ecos-mega .ecos-mega-barra { display: flex; gap: 6px; align-items: center; position: sticky; top: -8px; z-index: 2; padding: 6px 0; background: var(--color-cool-5, rgba(20, 16, 12, 0.95)); }
+.ecos-mega .ecos-mega-buscar { flex: 1; min-width: 0; }
+.ecos-mega .ecos-mega-barra button { flex: none; width: auto; white-space: nowrap; padding: 2px 10px; }
+.ecos-mega .ecos-mega-barra button.activo { border-color: #3b6b3b; background: rgba(59, 107, 59, 0.25); }
+.ecos-mega .ecos-mega-seccion > h3 { margin: 10px 0 0; font-size: 1em; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid rgba(218, 165, 32, 0.35); }
+.ecos-mega .ecos-mega-seccion > .ecos-nota { margin: 2px 0 6px; }
+.ecos-mega .ecos-mega-grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 8px; align-items: start; }
+.ecos-mega .ecos-mega-tarjeta { padding: 6px 8px; border: 1px solid rgba(127, 127, 127, 0.35); border-radius: 8px; background: rgba(107, 79, 42, 0.08); }
+.ecos-mega .ecos-mega-tarjeta.activo { border-color: rgba(218, 165, 32, 0.7); }
+.ecos-mega .ecos-mega-tarjeta header { display: flex; gap: 8px; align-items: flex-start; }
+.ecos-mega .ecos-mega-texto { flex: 1; min-width: 0; }
+.ecos-mega .ecos-mega-texto h4 { margin: 0; font-size: 1em; font-weight: bold; border: none; }
+.ecos-mega .ecos-mega-texto p { margin: 2px 0; font-size: 0.9em; }
+.ecos-mega .ecos-mega-fuera { margin: 4px 0 0; font-style: italic; }
+.ecos-mega ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.ecos-mega .ecos-mega-herr { display: flex; gap: 6px; align-items: center; font-size: 0.92em; }
+.ecos-mega .ecos-mega-herr > span { flex: 1; min-width: 0; }
+.ecos-mega .ecos-mega-usar { flex: none; width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+.ecos-mega .ecos-mega-usar.grande { width: 36px; height: 36px; font-size: 1.15em; }
+.ecos-mega .ecos-mega-pin { flex: none; width: 24px; height: 24px; padding: 0; line-height: 1; opacity: 0.45; border-color: transparent; background: none; }
+.ecos-mega .ecos-mega-pin.activo { opacity: 1; color: #daa520; }
+.ecos-mega [hidden] { display: none !important; }
+/* v2.2 · Encuentros por plantilla */
+.ecos-card.ecos-encuentro { border-color: #6b3a2a; background: rgba(107, 58, 42, 0.08); }
+.ecos-card.ecos-encuentro h3 { border-bottom-color: rgba(107, 58, 42, 0.4); }
+.ecos-card .ecos-enc-lista { margin: 4px 0 2px; padding-left: 1.2em; }
+.ecos-card .ecos-enc-lista li { margin: 2px 0; }
+.ecos-card .ecos-enc-lista .ecos-nota { display: inline; }
+.ecos-card a.ecos-ficha { cursor: pointer; font-weight: bold; text-decoration: underline dotted; }
+.ecos-card a.ecos-ficha:hover { text-shadow: 0 0 6px rgba(218, 165, 32, 0.6); }
+
+/* Relojes del valle (v2.6.4) */
+.ecos-relojes .window-content { padding: 8px 10px; gap: 6px; }
+.ecos-relojes .ecos-reloj { margin: 0 0 6px; padding: 6px 8px; border: 1px solid rgba(218, 165, 32, 0.35); border-radius: 6px; }
+.ecos-relojes .ecos-reloj header { display: flex; align-items: center; gap: 6px; }
+.ecos-relojes .ecos-reloj header b { flex: 1; }
+.ecos-relojes .ecos-reloj-cuenta { font-weight: bold; min-width: 3.2em; text-align: right; }
+.ecos-relojes .ecos-reloj header button { flex: 0 0 28px; width: 28px; height: 24px; line-height: 1; padding: 0; }
+.ecos-relojes .ecos-casillas { display: flex; gap: 3px; margin: 4px 0; }
+.ecos-relojes .ecos-casillas span { flex: 1; height: 9px; border-radius: 2px; border: 1px solid rgba(127, 127, 127, 0.55); }
+.ecos-relojes .ecos-casillas span.lleno { background: #a8322d; border-color: #a8322d; }
+.ecos-relojes p { margin: 2px 0; font-size: 0.92em; }
+.ecos-relojes .ecos-reloj-sig { opacity: 0.85; }
+.ecos-relojes .ecos-reloj-nota { opacity: 0.75; font-size: 0.88em; }
+.ecos-relojes a[data-action] { cursor: pointer; text-decoration: underline dotted; }
+
+/* Capa V: barra, panel y tarjetas */
+.ecos-card.ecos-verbe-chat { border-color: #2d5f9e; background: rgba(45, 123, 224, 0.08); }
+.ecos-card.ecos-verbe-chat h3 { border-bottom-color: rgba(45, 123, 224, 0.4); }
+.ecos-verbe-bloque { margin: 4px 0 6px; cursor: pointer; }
+.ecos-verbe-barra { position: relative; height: 18px; border-radius: 4px; background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(45, 123, 224, 0.7); overflow: hidden; }
+.ecos-verbe-barra > div { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #1d4f9a, #3d8bef); transition: width 0.3s; }
+.ecos-verbe-barra.negativo { border-color: #8a1f3b; }
+.ecos-verbe-barra.negativo > div { background: linear-gradient(90deg, #5a1026, #a8324f); }
+.ecos-verbe-barra > span { position: relative; display: block; text-align: center; line-height: 16px; font-size: 11px; font-weight: bold; color: #fff; text-shadow: 0 0 3px #000; }
+.ecos-verbe-barra.grande { height: 24px; margin: 4px 0 8px; }
+.ecos-verbe-barra.grande > span { line-height: 22px; font-size: 13px; }
+.ecos-verbe-panel .window-content { padding: 0; display: flex; flex-direction: column; }
+.ecos-verbe-tabs { display: flex; gap: 2px; padding: 6px 8px 0; border-bottom: 1px solid rgba(127, 127, 127, 0.35); flex: none; }
+.ecos-verbe-tabs a { padding: 4px 10px; border-radius: 4px 4px 0 0; cursor: pointer; opacity: 0.75; }
+.ecos-verbe-tabs a.activa { opacity: 1; font-weight: bold; background: rgba(45, 123, 224, 0.15); border-bottom: 2px solid #3d8bef; }
+.ecos-verbe-cuerpo { padding: 8px 10px; overflow-y: auto; flex: 1; }
+.ecos-verbe-cuerpo h3 { margin: 10px 0 4px; font-size: 1em; border-bottom: 1px solid rgba(127, 127, 127, 0.35); }
+.ecos-verbe-cuerpo button { width: auto; line-height: 1.6; padding: 0 8px; font-size: 0.9em; }
+.ecos-verbe-cuerpo select { width: auto; max-width: 100%; }
+.ecos-verbe-datos { width: 100%; border-collapse: collapse; margin: 4px 0 8px; }
+.ecos-verbe-datos th { width: 28%; text-align: left; vertical-align: top; padding: 3px 6px 3px 0; opacity: 0.85; }
+.ecos-verbe-datos td { padding: 3px 0; }
+.ecos-verbe-elegir { padding: 6px 8px; border-left: 3px solid #3d8bef; background: rgba(45, 123, 224, 0.10); border-radius: 0 4px 4px 0; }
+.ecos-verbe-rama { margin: 6px 0; padding: 6px 8px; border: 1px solid rgba(127, 127, 127, 0.35); border-radius: 6px; }
+.ecos-verbe-rama.cerrada { opacity: 0.55; }
+.ecos-verbe-rama header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ecos-verbe-rama header > span { flex: 1; font-size: 0.9em; opacity: 0.85; }
+.ecos-verbe-rama .ecos-nota { margin: 4px 0; }
+.ecos-verbe-dones { margin: 2px 0 0; padding-left: 1.1em; font-size: 0.88em; }
+.ecos-verbe-dones li { opacity: 0.6; }
+.ecos-verbe-dones li.tiene { opacity: 1; }
+.ecos-verbe-pill { display: inline-block; padding: 0 6px; border-radius: 8px; font-size: 0.8em; background: rgba(45, 123, 224, 0.25); }
+.ecos-verbe-no { font-size: 0.82em; opacity: 0.7; }
+.ecos-verbe-filtros { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 4px; }
+.ecos-verbe-filtros input[type="search"] { width: 140px; }
+.ecos-verbe-tabla { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+.ecos-verbe-tabla td, .ecos-verbe-tabla th { padding: 4px 4px; vertical-align: top; border-bottom: 1px dotted rgba(127, 127, 127, 0.35); }
+.ecos-verbe-tabla td.gr { text-align: center; width: 2.5em; font-weight: bold; }
+.ecos-verbe-tabla tr.tiene { background: rgba(45, 123, 224, 0.08); }
+.ecos-verbe-tabla small { opacity: 0.75; }
+.ecos-verbe-form label { display: block; margin: 0.35em 0; }
+.ecos-verbe-form select, .ecos-verbe-form input[type="number"] { width: auto; }
+.ecos-verbe-form input[name="nombre"], .ecos-verbe-form textarea { width: 100%; }
+.ecos-verbe-form fieldset { margin: 4px 0; padding: 4px 8px; border: 1px solid rgba(127, 127, 127, 0.35); border-radius: 6px; }
+/* Despertar: el catálogo se consulta dentro de la ventana, sin empujar sus botones fuera de pantalla. */
+.ecos-verbe-despertar { max-width: calc(100vw - 2rem); max-height: calc(100vh - 2rem); max-height: calc(100dvh - 2rem); }
+.ecos-verbe-despertar .window-content,
+.ecos-verbe-despertar .dialog-form,
+.ecos-verbe-despertar .dialog-content { min-height: 0; }
+.ecos-verbe-despertar .dialog-form { overflow: hidden; }
+.ecos-verbe-despertar .dialog-content { overflow-y: auto; }
+.ecos-verbe-despertar .ecos-verbe-form { max-height: 70vh; overflow-y: auto; scrollbar-gutter: stable; }
+.ecos-verbe-despertar .ecos-verbe-form select { max-width: 100%; }
+.ecos-verbe-despertar .ecos-verbe-consulta {
+  max-height: min(40vh, 26rem); overflow-y: auto; overscroll-behavior-y: contain;
+  scrollbar-gutter: stable; overflow-wrap: anywhere; padding: .5rem;
+}
+.ecos-verbe-nota { font-size: 0.88em; opacity: 0.85; }
+
+/* Capa V v1.1: cabecera, pasos, tienda y dotes */
+.ecos-verbe-cabpanel { display: flex; gap: 10px; align-items: center; padding: 8px 10px 4px; flex: none; }
+.ecos-verbe-trazos { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 92px; padding: 4px 8px; border-radius: 8px; border: 2px solid rgba(127, 127, 127, 0.5); }
+.ecos-verbe-trazos.hay { border-color: #c9a227; background: rgba(218, 165, 32, 0.12); }
+.ecos-verbe-trazos .n { font-size: 26px; font-weight: bold; line-height: 1; }
+.ecos-verbe-trazos .t { font-size: 11px; opacity: 0.85; text-align: center; }
+.ecos-verbe-res { flex: 1; min-width: 0; }
+.ecos-verbe-res small { opacity: 0.8; }
+.ecos-verbe-dmbar { margin: 0 10px 4px; padding: 3px 8px; border-radius: 4px; background: rgba(47, 79, 122, 0.15); font-size: 0.85em; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex: none; }
+.ecos-verbe-dmbar button { width: auto; line-height: 1.4; padding: 0 6px; font-size: 0.95em; }
+.ecos-verbe-dmbar button.activo { background: rgba(218, 165, 32, 0.35); }
+.ecos-verbe-tabs a.dm { color: #6f8fc4; }
+.ecos-verbe-intro { margin: 0 0 8px; padding: 6px 8px; border-left: 3px solid #3d8bef; background: rgba(45, 123, 224, 0.07); border-radius: 0 4px 4px 0; }
+.ecos-verbe-intro p { margin: 0; }
+.ecos-verbe-intro details { margin-top: 4px; font-size: 0.92em; }
+.ecos-verbe-guia { cursor: pointer; white-space: nowrap; font-size: 0.9em; }
+.ecos-verbe-ayuda { cursor: help; opacity: 0.7; font-size: 0.85em; }
+.ecos-verbe-lista { margin: 4px 0; padding-left: 1.2em; }
+.ecos-verbe-lista li { margin: 2px 0; }
+.ecos-verbe-paso { display: flex; gap: 8px; margin: 6px 0; padding: 6px 8px; border: 1px solid rgba(127, 127, 127, 0.35); border-radius: 6px; }
+.ecos-verbe-paso .num { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #3d8bef; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.ecos-verbe-paso.hecho { opacity: 0.75; }
+.ecos-verbe-paso.hecho .num { background: #3b6b3b; }
+.ecos-verbe-paso > div:last-child { flex: 1; min-width: 0; }
+.ecos-verbe-eleccion p { margin: 4px 0; }
+.ecos-verbe-desc { margin: 4px 0; padding: 6px 8px; border-radius: 4px; background: rgba(127, 127, 127, 0.08); font-size: 0.92em; }
+.ecos-verbe-desc p { margin: 2px 0; }
+.ecos-verbe-glosario dt { font-weight: bold; margin-top: 4px; }
+.ecos-verbe-glosario dd { margin: 0 0 2px 1em; }
+.ecos-verbe-dmsec { margin: 4px 0; border: 1px solid rgba(47, 79, 122, 0.4); border-radius: 6px; padding: 2px 8px; }
+.ecos-verbe-dmsec > summary { cursor: pointer; font-weight: bold; padding: 2px 0; }
+details.ecos-verbe-grupo { margin: 6px 0; border: 1px solid rgba(127, 127, 127, 0.35); border-radius: 6px; }
+details.ecos-verbe-grupo > summary { cursor: pointer; padding: 4px 8px; background: rgba(127, 127, 127, 0.1); border-radius: 6px; }
+details.ecos-verbe-grupo > summary span { font-size: 0.85em; opacity: 0.8; margin-left: 6px; }
+details.ecos-verbe-tec { border-top: 1px dotted rgba(127, 127, 127, 0.35); }
+details.ecos-verbe-tec > summary { display: flex; align-items: center; gap: 8px; padding: 3px 8px; cursor: pointer; list-style: none; }
+details.ecos-verbe-tec > summary::-webkit-details-marker { display: none; }
+details.ecos-verbe-tec > summary:hover { background: rgba(45, 123, 224, 0.08); }
+details.ecos-verbe-tec .gr { flex: none; min-width: 2.4em; text-align: center; font-weight: bold; border-radius: 4px; padding: 0 4px; background: rgba(45, 123, 224, 0.18); }
+details.ecos-verbe-tec .nom { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2; }
+details.ecos-verbe-tec .nom small { opacity: 0.75; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+details.ecos-verbe-tec .vb { flex: none; font-size: 0.85em; opacity: 0.85; }
+details.ecos-verbe-tec .acc { flex: none; max-width: 40%; text-align: right; }
+details.ecos-verbe-tec .acc button { width: auto; line-height: 1.6; padding: 0 8px; }
+details.ecos-verbe-tec.sabe .gr { background: rgba(59, 107, 59, 0.35); }
+details.ecos-verbe-tec.no { opacity: 0.8; }
+details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
+.ecos-verbe-ficha-cont { padding: 4px 10px 8px 3.2em; font-size: 0.92em; }
+.ecos-verbe-ficha-cont .texto { margin: 2px 0 6px; }
+.ecos-verbe-ficha { width: 100%; border-collapse: collapse; }
+.ecos-verbe-ficha th { text-align: left; white-space: nowrap; padding: 2px 6px 2px 0; opacity: 0.8; vertical-align: top; width: 1%; }
+.ecos-verbe-ficha td { padding: 2px 8px 2px 0; vertical-align: top; }
+
+/* v2.7: dinero en el chat, descansos con Dados de Golpe, clima y motivos de los relojes */
+.ecos-card.ecos-dinero { border-color: #8a6a2a; background: rgba(218, 165, 32, 0.07); font-size: 0.95em; }
+.ecos-card.ecos-dinero h3 { border-bottom-color: rgba(138, 106, 42, 0.4); }
+.ecos-card.ecos-clima { border-color: #3d6b8a; background: rgba(61, 107, 138, 0.08); }
+.ecos-card.ecos-clima h3 { border-bottom-color: rgba(61, 107, 138, 0.45); }
+.ecos-card.ecos-clima .ecos-guia { border-top-color: rgba(61, 107, 138, 0.45); }
+.window-header .ecos-cabecera.ecos-descansos { padding: 0 6px; }
+.window-header .ecos-cabecera.ecos-descansos.activo { color: #7fbf7f; }
+.ecos-gastar-dg .window-content, .ecos-ajustes-descansos .window-content, .ecos-clima-dm .window-content { padding: 8px 10px; }
+.ecos-gastar-dg .ecos-dg-botones { display: flex; flex-direction: column; gap: 4px; margin: 6px 0; }
+.ecos-gastar-dg .ecos-dg-botones button { text-align: left; }
+.ecos-ajustes-descansos .ecos-tabla th { width: 38%; }
+.ecos-ajustes-descansos .ecos-tabla td select { width: auto; max-width: 100%; }
+.ecos-ajustes-descansos h3 { margin: 10px 0 4px; font-size: 1.05em; }
+.ecos-lista-desc { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow-y: auto; }
+.ecos-lista-desc li { display: flex; align-items: center; gap: 6px; padding: 2px 0; border-bottom: 1px dotted rgba(127, 127, 127, 0.3); }
+.ecos-lista-desc li a { flex: 0 0 auto; font-weight: bold; cursor: pointer; }
+.ecos-lista-desc li .ecos-nota { flex: 1; }
+.ecos-lista-desc li button { flex: 0 0 26px; width: 26px; height: 22px; line-height: 1; padding: 0; }
+.ecos-ajustes-descansos .ecos-botones, .ecos-gastar-dg .ecos-botones, .ecos-clima-dm .ecos-botones { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.ecos-ajustes-descansos .ecos-botones button, .ecos-gastar-dg .ecos-botones button, .ecos-clima-dm .ecos-botones button { flex: 1 1 auto; }
+.ecos-clima-dm .ecos-clima-hoy { padding: 4px 8px; border: 1px solid rgba(61, 107, 138, 0.45); border-radius: 6px; background: rgba(61, 107, 138, 0.06); }
+.ecos-clima-dm .ecos-clima-hoy h3 { margin: 2px 0; font-size: 1.05em; }
+.ecos-clima-dm .ecos-clima-hoy ul, .ecos-clima-dm .ecos-clima-vista ul { margin: 2px 0 4px; padding-left: 1.2em; }
+.ecos-clima-dm h3 { margin: 8px 0 2px; font-size: 1em; }
+.ecos-clima-dm .ecos-tabla select { width: auto; }
+.ecos-clima-dm p button { width: auto; line-height: 1.6; padding: 0 6px; margin-left: 4px; }
+.ecos-relojes .ecos-reloj-motivos { margin: 3px 0 0; font-size: 0.9em; }
+.ecos-relojes .ecos-reloj-motivos summary { cursor: pointer; opacity: 0.85; }
+.ecos-relojes .ecos-reloj-motivos summary a { margin-left: 6px; opacity: 0.7; }
+.ecos-relojes .ecos-reloj-motivos ul { margin: 0 0 3px; padding-left: 1.2em; }
+.ecos-relojes .ecos-reloj-motivos li { margin: 1px 0; }
+.ecos-relojes p.ecos-motivo-sube { color: #b5503f; }
+.ecos-relojes p.ecos-motivo-frena { color: #8a7a3a; }
+.ecos-relojes p.ecos-motivo-baja { color: #4f8a4f; }
+.ecos-motivos-form label { display: block; margin: 4px 0; }
+.ecos-motivos-form textarea { width: 100%; font-size: 0.92em; }
+/* Capa V v1.2: crece, se mejora con y lo que cuesta contra alguien más fuerte */
+.ecos-verbe-crece, .ecos-verbe-mejora { margin: 4px 0; padding: 3px 8px; border-left: 3px solid rgba(218, 165, 32, 0.55); font-size: 0.9em; }
+.ecos-verbe-mejora { border-left-color: rgba(79, 138, 79, 0.6); }
+.ecos-verbe-crece ul, .ecos-verbe-mejora ul { margin: 2px 0; padding-left: 1.2em; }
+.ecos-verbe-crece li, .ecos-verbe-mejora li { margin: 1px 0; }
+.ecos-verbe-fuerte { margin: 4px 0; padding: 3px 8px; border-left: 3px solid rgba(168, 50, 45, 0.6); font-size: 0.9em; }
+
+/* Panel 2.9: inicio guiado y repertorio de juego. Los colores siempre van acompañados de texto. */
+.ecos-verbe-panel {
+  --ev-fondo: #f3eee2; --ev-papel: #fffcf4; --ev-tinta: #292724; --ev-suave: #655d50;
+  --ev-linea: #d7ceba; --ev-acento: #443d32; --ev-acento-texto: #fff; --ev-agua: #eee7d8;
+  --ev-oro: #775719; --ev-oro-fondo: #f7efd9; --ev-alerta: #85401e; --ev-alerta-fondo: #fff0df;
+  --ev-bloqueo: #7d3636;
+}
+.theme-dark .ecos-verbe-panel, .ecos-verbe-panel.theme-dark {
+  --ev-fondo: #1f2023; --ev-papel: #2a2c30; --ev-tinta: #f2eee2; --ev-suave: #c4bfb1;
+  --ev-linea: #535159; --ev-acento: #ead9a4; --ev-acento-texto: #252525; --ev-agua: #373530;
+  --ev-oro: #ead18b; --ev-oro-fondo: #3d3523; --ev-alerta: #ffc593; --ev-alerta-fondo: #422e23;
+  --ev-bloqueo: #ffb8b3;
+}
+.ecos-verbe-panel .window-content {
+  background: var(--ev-fondo); color: var(--ev-tinta); font-size: 14px; line-height: 1.45;
+  container-type: inline-size; container-name: panel-verbe; min-height: 0;
+}
+.ecos-verbe-panel button, .ecos-verbe-panel input, .ecos-verbe-panel select { font: inherit; }
+.ecos-verbe-panel button { color: var(--ev-tinta); background: var(--ev-papel); border: 1px solid var(--ev-linea); border-radius: 7px; cursor: pointer; }
+.ecos-verbe-panel button:hover:not(:disabled) { border-color: var(--ev-acento); background: var(--ev-agua); box-shadow: none; }
+.ecos-verbe-panel button:disabled { cursor: not-allowed; opacity: .65; }
+.ecos-verbe-panel :is(button, summary, input, select, a):focus-visible { outline: 3px solid var(--ev-acento); outline-offset: 3px; }
+.ecos-verbe-panel input:not([type="checkbox"]), .ecos-verbe-panel select { background: var(--ev-papel); color: var(--ev-tinta); border: 1px solid var(--ev-linea); border-radius: 6px; min-height: 36px; padding: 5px 8px; }
+.ecos-verbe-panel input[type="checkbox"] { accent-color: var(--ev-acento); }
+.ecos-verbe-panel .ecos-verbe-cabpanel { display: grid; grid-template-columns: 1.05fr 1.3fr .9fr; gap: 22px; padding: 20px; align-items: center; background: var(--ev-papel); margin: 0; border-bottom: 1px solid var(--ev-linea); }
+.ecos-verbe-panel .ev-identidad { display: flex; flex-direction: column; min-width: 0; gap: 4px; }
+.ecos-verbe-panel .ev-identidad strong { font-size: 24px; font-family: Georgia, serif; line-height: 1.15; overflow-wrap: anywhere; }
+.ecos-verbe-panel .ev-kicker { font-size: 10px; letter-spacing: .13em; font-weight: 750; color: var(--ev-acento); }
+.ecos-verbe-panel .ev-identidad small { color: var(--ev-suave); font-size: 12px; }
+.ecos-verbe-panel .ecos-verbe-trazos { border: 1px solid var(--ev-linea); border-radius: 10px; min-width: 0; padding: 10px 8px; gap: 2px; }
+.ecos-verbe-panel .ecos-verbe-trazos.hay { background: var(--ev-oro-fondo); color: var(--ev-oro); border-color: color-mix(in srgb, var(--ev-oro) 32%, transparent); }
+.ecos-verbe-panel .ecos-verbe-trazos .n { font-size: 30px; }
+.ecos-verbe-panel .ecos-verbe-trazos .t { font-size: 12px; opacity: 1; }
+.ecos-verbe-panel .ecos-verbe-trazos small { font-size: 10px; text-align: center; }
+.ecos-verbe-panel .ev-recurso-titulo { display: flex; flex-direction: column; gap: 3px; }
+.ecos-verbe-panel .ev-recurso-titulo b { display: flex; align-items: center; gap: 5px; }
+.ecos-verbe-panel .ev-recurso-titulo b span { margin-left: auto; font-variant-numeric: tabular-nums; }
+.ecos-verbe-panel .ev-recurso-titulo small { font-size: 10px; letter-spacing: .08em; color: var(--ev-suave); }
+.ecos-verbe-panel .ecos-verbe-barra.grande { height: 9px; margin: 7px 0; background: var(--ev-agua); border: 0; border-radius: 20px; }
+.ecos-verbe-panel .ecos-verbe-barra > div { background: var(--ev-acento); }
+.ecos-verbe-panel .ecos-verbe-barra.negativo > div { background: var(--ev-alerta); }
+.ecos-verbe-panel .ecos-verbe-res > small { color: var(--ev-suave); font-size: 11px; opacity: 1; }
+.ecos-verbe-panel .ecos-verbe-tabs { padding: 8px 12px; gap: 4px; background: var(--ev-papel); border-color: var(--ev-linea); flex-wrap: wrap; }
+.ecos-verbe-panel .ecos-verbe-tabs button { flex: 1 1 auto; width: auto; min-height: 38px; padding: 6px 10px; border-color: transparent; background: transparent; font-size: 13px; }
+.ecos-verbe-panel .ecos-verbe-tabs button i { margin-right: 4px; }
+.ecos-verbe-panel .ecos-verbe-tabs button.activa { background: var(--ev-agua); border-color: var(--ev-linea); color: var(--ev-acento); font-weight: 750; }
+.ecos-verbe-panel .ecos-verbe-cuerpo { padding: 20px; min-height: 0; }
+.ecos-verbe-panel .ecos-verbe-cuerpo :is(h2, h3) { color: var(--ev-tinta); border: 0; }
+.ecos-verbe-panel .ecos-verbe-cuerpo h2 { font: 600 27px/1.2 Georgia, serif; margin: 5px 0 12px; }
+.ecos-verbe-panel .ecos-verbe-cuerpo h3 { font-size: 17px; margin: 6px 0; }
+.ecos-verbe-panel .ecos-verbe-cuerpo p { margin: 6px 0 12px; }
+.ecos-verbe-panel .ecos-verbe-cuerpo button { min-height: 36px; padding: 6px 10px; font-size: 13px; line-height: 1.3; white-space: normal; }
+.ecos-verbe-panel button.ev-principal { background: var(--ev-acento); border-color: var(--ev-acento); color: var(--ev-acento-texto); font-weight: 700; }
+.ecos-verbe-panel button.ev-principal:hover:not(:disabled) { filter: brightness(.93); background: var(--ev-acento); color: var(--ev-acento-texto); }
+.ecos-verbe-panel .ev-progreso { display: flex; list-style: none; margin: 0 0 18px; padding: 0; gap: 8px; }
+.ecos-verbe-panel .ev-progreso li { display: flex; align-items: center; gap: 6px; flex: 1; font-size: 11px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-progreso li > span { width: 24px; height: 24px; border: 1px solid var(--ev-linea); border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--ev-papel); }
+.ecos-verbe-panel .ev-progreso .actual { color: var(--ev-acento); font-weight: 750; }
+.ecos-verbe-panel .ev-progreso .actual > span { background: var(--ev-acento); color: var(--ev-acento-texto); }
+.ecos-verbe-panel .ev-progreso .hecho > span { background: var(--ev-agua); color: var(--ev-acento); }
+.ecos-verbe-panel .ev-bienvenida { padding: 20px; background: var(--ev-papel); border: 1px solid var(--ev-linea); border-radius: 12px; margin-bottom: 18px; }
+.ecos-verbe-panel .ev-bienvenida > p { color: var(--ev-suave); max-width: 74ch; }
+.ecos-verbe-panel .ev-elecciones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.ecos-verbe-panel .ev-eleccion { display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 7px; padding: 15px; min-height: 155px; }
+.ecos-verbe-panel .ev-eleccion strong { font-size: 18px; }
+.ecos-verbe-panel .ev-eleccion b { font-size: 12px; }
+.ecos-verbe-panel .ev-eleccion small { font-size: 12px; line-height: 1.5; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-eleccion > span:last-child { color: var(--ev-acento); font-size: 11px; font-weight: 700; margin-top: auto; }
+.ecos-verbe-panel .ev-eleccion .ev-elemento { font-size: 27px; line-height: 1; color: var(--ev-acento); }
+.ecos-verbe-panel .ev-eleccion.fuego .ev-elemento { color: #b6542b; }
+.ecos-verbe-panel .ev-eleccion.rayo .ev-elemento { color: var(--ev-oro); }
+.ecos-verbe-panel .ev-eleccion.agua .ev-elemento { color: #3985ad; }
+.ecos-verbe-panel .ev-tarjetas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.ecos-verbe-panel .ev-bienvenida .ev-tarjetas { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.ecos-verbe-panel .ev-tecnica { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--ev-linea); border-radius: 10px; background: var(--ev-papel); padding: 16px; }
+.ecos-verbe-panel .ev-tecnica.riesgo { border-color: var(--ev-alerta); }
+.ecos-verbe-panel .ev-tec-top { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 9px; }
+.ecos-verbe-panel .ev-etiqueta { border-radius: 5px; padding: 3px 6px; background: var(--ev-agua); color: var(--ev-acento); font-size: 10px; font-weight: 700; }
+.ecos-verbe-panel .ev-etiqueta.suave { background: var(--ev-fondo); color: var(--ev-suave); }
+.ecos-verbe-panel .ev-tecnica h3 { font: 600 21px/1.2 Georgia, serif; overflow-wrap: anywhere; }
+.ecos-verbe-panel .ev-texto-tecnica { font-size: 13px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-tec-datos { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 11px; margin: 2px 0 10px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-costes { display: flex; flex-wrap: wrap; gap: 14px; padding: 10px 0; border-block: 1px solid var(--ev-linea); font-size: 12px; margin-top: auto; }
+.ecos-verbe-panel .ev-costes > span { display: block; }
+.ecos-verbe-panel .ev-costes b { font-size: 20px; color: var(--ev-acento); }
+.ecos-verbe-panel .ev-costes small { display: block; color: var(--ev-suave); font-size: 10px; }
+.ecos-verbe-panel .ev-tecnica footer { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.ecos-verbe-panel .ev-tecnica footer button { flex: 1; font-size: 12px; }
+.ecos-verbe-panel p.ev-disponibilidad { color: var(--ev-acento); font-size: 12px; margin: 10px 0 5px; }
+.ecos-verbe-panel p.ev-disponibilidad.bloqueada { color: var(--ev-bloqueo); }
+.ecos-verbe-panel p.ev-disponibilidad.riesgo { color: var(--ev-alerta); }
+.ecos-verbe-panel .ev-nota { font-size: 12px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-acciones { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+.ecos-verbe-panel .ev-mini-pasos { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 18px 0 12px; font-size: 12px; }
+.ecos-verbe-panel .ev-mini-pasos b { display: inline-grid; place-items: center; background: var(--ev-agua); color: var(--ev-acento); width: 22px; height: 22px; border-radius: 50%; margin-right: 3px; }
+.ecos-verbe-panel .ev-estadisticas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 15px 0; }
+.ecos-verbe-panel .ev-estadisticas > div { display: flex; flex-direction: column; gap: 5px; border: 1px solid var(--ev-linea); border-radius: 8px; padding: 13px; background: var(--ev-papel); }
+.ecos-verbe-panel .ev-estadisticas small { color: var(--ev-suave); font-size: 11px; }
+.ecos-verbe-panel .ev-estadisticas b { font-size: 26px; line-height: 1.1; }
+.ecos-verbe-panel .ev-estadisticas span { font-size: 11px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-ficha-personal, .ecos-verbe-panel .ev-filtros-extra { border: 1px solid var(--ev-linea); border-radius: 8px; padding: 10px 12px; margin: 12px 0; background: var(--ev-papel); }
+.ecos-verbe-panel summary { cursor: pointer; min-height: 28px; }
+.ecos-verbe-panel .ev-ficha-personal > summary { font-weight: 650; }
+.ecos-verbe-panel .ev-reponer { background: var(--ev-oro-fondo); border: 1px solid var(--ev-linea); border-radius: 8px; padding: 14px; margin: 15px 0; display: flex; gap: 15px; }
+.ecos-verbe-panel .ev-reponer > div { flex: 1; min-width: 0; }
+.ecos-verbe-panel .ev-reponer p { font-size: 12px; color: var(--ev-suave); }
+.ecos-verbe-panel .ev-reponer button { margin-bottom: 6px; }
+.ecos-verbe-panel .ev-reponer small { display: block; font-size: 11px; }
+.ecos-verbe-panel .ev-titulo-pagina { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.ecos-verbe-panel .ev-titulo-pagina p { color: var(--ev-suave); }
+.ecos-verbe-panel .ev-contador { font-size: 11px; white-space: nowrap; background: var(--ev-agua); color: var(--ev-acento); padding: 6px 9px; border-radius: 20px; }
+.ecos-verbe-panel .ev-instruccion { display: flex; gap: 10px; align-items: center; padding: 12px; background: var(--ev-agua); border-radius: 8px; font-size: 12px; color: var(--ev-acento); margin-bottom: 12px; }
+.ecos-verbe-panel .ev-instruccion > i { font-size: 24px; }
+.ecos-verbe-panel .ev-instruccion b { display: block; }
+.ecos-verbe-panel .ecos-verbe-filtros { gap: 10px; padding: 10px 0; margin: 0; }
+.ecos-verbe-panel .ecos-verbe-filtros label { color: var(--ev-suave); font-size: 12px; }
+.ecos-verbe-panel .ev-busqueda { flex: 1 1 220px; display: flex; flex-direction: column; gap: 4px; }
+.ecos-verbe-panel .ecos-verbe-filtros .ev-busqueda input { width: 100%; }
+.ecos-verbe-panel .ev-vacio { border: 1px dashed var(--ev-linea); border-radius: 10px; background: var(--ev-papel); text-align: center; padding: 28px 20px; margin-top: 16px; }
+.ecos-verbe-panel .ev-vacio p { color: var(--ev-suave); }
+.ecos-verbe-panel .ev-avisos { display: grid; gap: 8px; margin-bottom: 14px; }
+.ecos-verbe-panel .ev-avisos > div { padding: 12px; border-radius: 8px; color: var(--ev-alerta); border: 1px solid color-mix(in srgb, var(--ev-alerta) 40%, transparent); background: var(--ev-alerta-fondo); }
+.ecos-verbe-panel .ev-avisos p { font-size: 12px; margin: 4px 0 0; }
+.ecos-verbe-panel .ev-contraste-recursos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
+.ecos-verbe-panel .ev-contraste-recursos > div { background: var(--ev-agua); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 3px; color: var(--ev-acento); }
+.ecos-verbe-panel .ev-contraste-recursos span { font-size: 12px; }
+.ecos-verbe-panel .ev-preguntas details { border-bottom: 1px solid var(--ev-linea); padding: 12px 2px; }
+.ecos-verbe-panel .ev-preguntas summary { font-weight: 650; }
+.ecos-verbe-panel .ev-preguntas p { color: var(--ev-suave); line-height: 1.65; max-width: 80ch; }
+.ecos-verbe-panel .ev-subnav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
+.ecos-verbe-panel .ev-subnav [aria-current="page"] { border-color: var(--ev-acento); background: var(--ev-agua); color: var(--ev-acento); }
+.ecos-verbe-panel .ecos-verbe-intro { background: var(--ev-agua); border-color: var(--ev-acento); padding: 12px; border-radius: 8px; }
+.ecos-verbe-panel .ecos-verbe-intro a { color: var(--ev-acento); text-decoration: underline; }
+.ecos-verbe-panel .ecos-nota { opacity: 1; color: var(--ev-suave); }
+.ecos-verbe-panel details.ecos-verbe-grupo { background: var(--ev-papel); border-color: var(--ev-linea); border-radius: 9px; margin: 14px 0; }
+.ecos-verbe-panel details.ecos-verbe-grupo > summary { padding: 12px; background: var(--ev-agua); }
+.ecos-verbe-panel details.ecos-verbe-tec { border-color: var(--ev-linea); }
+.ecos-verbe-panel details.ecos-verbe-tec > summary { padding: 12px; gap: 10px; align-items: center; }
+.ecos-verbe-panel details.ecos-verbe-tec > summary:hover { background: var(--ev-fondo); }
+.ecos-verbe-panel details.ecos-verbe-tec .gr { font-size: 10px; min-width: 55px; padding: 5px; background: var(--ev-agua); color: var(--ev-acento); }
+.ecos-verbe-panel details.ecos-verbe-tec .nom { gap: 5px; }
+.ecos-verbe-panel details.ecos-verbe-tec .nom > b { font-size: 15px; }
+.ecos-verbe-panel details.ecos-verbe-tec .nom small { color: var(--ev-suave); opacity: 1; }
+.ecos-verbe-panel details.ecos-verbe-tec .nom .ev-efecto-breve { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
+.ecos-verbe-panel details.ecos-verbe-tec .vb { text-align: right; color: var(--ev-acento); opacity: 1; font-size: 12px; }
+.ecos-verbe-panel details.ecos-verbe-tec .vb small, .ecos-verbe-panel details.ecos-verbe-tec .acc small { display: block; font-size: 10px; margin-top: 4px; color: var(--ev-suave); opacity: 1; }
+.ecos-verbe-panel details.ecos-verbe-tec.no { opacity: 1; }
+.ecos-verbe-panel .ecos-verbe-no { opacity: 1; color: var(--ev-bloqueo); }
+.ecos-verbe-panel .ecos-verbe-rama { background: var(--ev-papel); padding: 14px; margin: 12px 0; border-color: var(--ev-linea); }
+.ecos-verbe-panel .ecos-verbe-rama.cerrada { opacity: 1; background: var(--ev-fondo); }
+.ecos-verbe-panel .ecos-verbe-rama .ev-dones { margin-top: 8px; color: var(--ev-suave); }
+.ecos-verbe-panel .ecos-verbe-dones li { opacity: 1; margin: 8px 0; }
+.ecos-verbe-panel .ecos-verbe-dmbar { display: block; padding: 7px 12px; margin: 0; background: var(--ev-oro-fondo); font-size: 12px; }
+.ecos-verbe-panel .ecos-verbe-dmbar > div { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; padding-top: 5px; }
+@container panel-verbe (max-width: 730px) {
+  .ecos-verbe-panel .ecos-verbe-cabpanel { grid-template-columns: 1.4fr 1fr; gap: 12px; padding: 14px; }
+  .ecos-verbe-panel .ev-identidad { grid-column: 1 / -1; }
+  .ecos-verbe-panel .ev-identidad strong { font-size: 22px; }
+  .ecos-verbe-panel .ev-bienvenida .ev-tarjetas { grid-template-columns: 1fr; }
+  .ecos-verbe-panel .ev-bienvenida { padding: 15px; }
+  .ecos-verbe-panel .ecos-verbe-cuerpo { padding: 14px; }
+  .ecos-verbe-panel details.ecos-verbe-tec > summary { flex-wrap: wrap; }
+  .ecos-verbe-panel details.ecos-verbe-tec .nom { flex-basis: 55%; }
+  .ecos-verbe-panel details.ecos-verbe-tec .acc { max-width: 100%; margin-left: auto; }
+  .ecos-verbe-panel .ev-reponer { flex-direction: column; }
+}
+@container panel-verbe (max-width: 520px) {
+  .ecos-verbe-panel .ev-elecciones, .ecos-verbe-panel .ev-tarjetas, .ecos-verbe-panel .ev-contraste-recursos { grid-template-columns: 1fr; }
+  .ecos-verbe-panel .ev-progreso { flex-wrap: wrap; }
+  .ecos-verbe-panel .ev-progreso li { flex: 1 1 40%; }
+  .ecos-verbe-panel .ev-estadisticas { grid-template-columns: 1fr; }
+  .ecos-verbe-panel .ev-estadisticas > div { display: grid; grid-template-columns: 1fr auto; }
+  .ecos-verbe-panel .ev-estadisticas span { grid-column: 1 / -1; }
+  .ecos-verbe-panel .ev-titulo-pagina { flex-direction: column; }
+  .ecos-verbe-panel .ecos-verbe-ficha-cont { padding: 12px; overflow-x: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ecos-verbe-panel *, .ecos-verbe-panel *::before, .ecos-verbe-panel *::after { transition: none !important; animation: none !important; }
+}
+
+/* v2.7: el menú del DM y el de los jugadores, con la explicación a la vista */
+.ecos-panel-dm .ecos-panel-botones button { align-items: flex-start; text-align: left; line-height: 1.25; padding: 5px 8px; min-height: 2.9em; }
+.ecos-panel-dm .ecos-panel-botones button i { margin-top: 2px; }
+.ecos-panel-dm .ecos-panel-et { display: flex; flex-direction: column; min-width: 0; }
+.ecos-panel-dm .ecos-panel-et b { font-weight: 600; }
+.ecos-panel-dm .ecos-panel-et small { font-size: 0.78em; opacity: 0.75; white-space: normal; }
+.ecos-menu-jugador .ecos-panel-botones { grid-template-columns: 1fr; }
+
+/* v2.7.2: un solo Menú del DM con pestañas, el botón Ecos de cada hoja y los elementos del clima */
+.ecos-panel-dm.ecos-mega .window-content { overflow-y: auto; }
+.ecos-panel-dm .ecos-pestanas { display: flex; flex-wrap: wrap; gap: 4px; margin: 2px 0 4px; position: sticky; top: 34px; z-index: 2; padding: 2px 0 4px; background: var(--color-cool-5, rgba(20, 16, 12, 0.95)); }
+.ecos-panel-dm .ecos-pestanas button { flex: 1 1 auto; width: auto; white-space: nowrap; padding: 2px 8px; line-height: 1.8; font-size: 0.92em; }
+.ecos-panel-dm .ecos-pestanas button.activo { border-color: rgba(218, 165, 32, 0.8); background: rgba(218, 165, 32, 0.18); }
+.ecos-panel-dm .ecos-pestana[hidden], .ecos-panel-dm [hidden] { display: none !important; }
+.ecos-panel-dm .ecos-panel-botones button { min-height: 3.4em; }
+.ecos-panel-dm .ecos-panel-et small { font-size: 0.82em; opacity: 0.8; }
+.ecos-panel-dm .ecos-botones { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+.ecos-panel-dm .ecos-botones button { flex: 0 1 auto; width: auto; white-space: nowrap; padding: 2px 10px; line-height: 1.8; }
+.ecos-panel-dm .ecos-botones button.activo { border-color: #3b6b3b; background: rgba(59, 107, 59, 0.25); }
+.ecos-panel-dm .ecos-hojas { list-style: none; margin: 4px 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.ecos-panel-dm .ecos-hoja-fila { display: flex; align-items: center; gap: 8px; padding: 3px 6px; border: 1px solid rgba(127, 127, 127, 0.3); border-radius: 6px; }
+.ecos-panel-dm .ecos-hoja-fila img { width: 32px; height: 32px; border: none; border-radius: 4px; object-fit: cover; flex: none; }
+.ecos-panel-dm .ecos-hoja-nombre { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ecos-panel-dm .ecos-hoja-nombre a { font-weight: 600; cursor: pointer; }
+.ecos-panel-dm .ecos-hoja-nombre small { opacity: 0.75; font-size: 0.82em; }
+.ecos-panel-dm .ecos-hoja-chips { display: flex; flex-wrap: wrap; gap: 3px; justify-content: flex-end; }
+.ecos-chip { width: auto; flex: none; padding: 0 8px; line-height: 1.7; font-size: 0.85em; border-radius: 12px; opacity: 0.65; }
+.ecos-chip.activo { opacity: 1; border-color: #3b6b3b; background: rgba(59, 107, 59, 0.3); }
+.ecos-fn-aviso { margin: 4px 0; padding: 3px 8px; border-left: 3px solid rgba(218, 165, 32, 0.7); background: rgba(218, 165, 32, 0.08); }
+.ecos-panel-dm .ecos-ajustes { list-style: none; margin: 4px 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.ecos-panel-dm .ecos-ajuste { display: flex; gap: 10px; align-items: flex-start; padding: 4px 6px; border-bottom: 1px solid rgba(127, 127, 127, 0.2); }
+.ecos-panel-dm .ecos-ajuste > div:first-child { flex: 1; min-width: 0; }
+.ecos-panel-dm .ecos-ajuste p { margin: 2px 0 0; }
+.ecos-panel-dm .ecos-ajuste-control { flex: none; max-width: 45%; }
+.ecos-panel-dm .ecos-ajuste-control select, .ecos-panel-dm .ecos-ajuste-control input[type="text"] { width: 16em; max-width: 100%; }
+.ecos-menu-jugador .ecos-panel-botones { grid-template-columns: repeat(3, 1fr); }
+/* Las funciones de una hoja */
+.ecos-funciones .window-content { padding: 8px 10px; gap: 6px; overflow-y: auto; }
+.ecos-funciones .ecos-fn { display: flex; gap: 10px; align-items: flex-start; padding: 6px 8px; border: 1px solid rgba(127, 127, 127, 0.35); border-radius: 8px; }
+.ecos-funciones .ecos-fn.activo { border-color: rgba(59, 107, 59, 0.8); background: rgba(59, 107, 59, 0.1); }
+.ecos-funciones .ecos-fn-control { flex: none; width: 9.5em; }
+.ecos-funciones .ecos-fn-sw { width: 100%; line-height: 1.8; padding: 0 6px; white-space: nowrap; }
+.ecos-funciones .ecos-fn-sw.activo { border-color: #3b6b3b; background: rgba(59, 107, 59, 0.3); }
+.ecos-funciones .ecos-fn-texto { flex: 1; min-width: 0; }
+.ecos-funciones .ecos-fn-texto h4 { margin: 0 0 2px; font-size: 1em; font-weight: bold; border: none; }
+.ecos-funciones .ecos-fn-texto p { margin: 2px 0; font-size: 0.92em; }
+.ecos-funciones .ecos-fn-texto ul { margin: 2px 0; padding-left: 1.2em; font-size: 0.88em; }
+.ecos-funciones .ecos-botones { display: flex; flex-wrap: wrap; gap: 4px; }
+.ecos-funciones .ecos-botones button { flex: 1 1 auto; width: auto; line-height: 1.8; }
+.window-header .ecos-cabecera.ecos-funciones-cab.activo { color: #8fd18f; }
+/* Los elementos del día en la tarjeta del clima */
+.ecos-card .ecos-clima-elementos p { margin: 3px 0; }
+.ecos-card .ecos-clima-elementos .ecos-elem-mas { color: #2f7a3f; }
+.ecos-card .ecos-clima-elementos .ecos-elem-menos { color: #a33a2c; }
+.ecos-card .ecos-clima-elementos .ecos-nota { color: inherit; opacity: 0.8; }
+
+/* El botón nativo de Foundry puede fijar altura y alineación: las tarjetas necesitan altura intrínseca. */
+.ecos-verbe-panel .ecos-verbe-cuerpo button.ev-eleccion {
+  height: auto; width: 100%; max-width: none; min-width: 0; min-height: 180px;
+  display: grid; grid-template-rows: auto auto 1fr auto; gap: 9px; padding: 16px;
+  text-align: left; white-space: normal; overflow-wrap: anywhere; align-items: start;
+  align-content: stretch; justify-content: stretch; line-height: 1.45; margin: 0;
+}
+.ecos-verbe-panel .ev-eleccion > * { min-width: 0; margin: 0; height: auto; width: auto; }
+.ecos-verbe-panel .ev-eleccion strong { line-height: 1.25; }
+.ecos-verbe-panel .ev-elecciones { align-items: stretch; }
+.ecos-verbe-panel .ev-naturalezas { padding: 14px; border: 1px solid var(--ev-linea); border-radius: 8px; background: var(--ev-papel); margin: 12px 0; }
+.ecos-verbe-panel .ev-naturalezas .ecos-botones { flex-wrap: wrap; }
+@container panel-verbe (max-width: 730px) {
+  .ecos-verbe-panel .ev-elecciones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container panel-verbe (max-width: 520px) {
+  .ecos-verbe-panel .ev-elecciones { grid-template-columns: minmax(0, 1fr); }
+}
+
+.ecos-editor-catalogo .window-content { overflow-y: auto; }
+.ecos-editor-catalogo .ev-editor-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.ecos-editor-catalogo fieldset { min-width: 0; border: 1px solid var(--ev-linea); border-radius: 8px; padding: 12px; }
+.ecos-editor-catalogo label:not(.ecos-check) { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.ecos-editor-catalogo textarea { width: 100%; background: var(--ev-papel); color: var(--ev-tinta); min-height: 130px; resize: vertical; }
+.ecos-editor-catalogo .ev-editor-preview { padding: 12px; margin: 12px 0; border: 1px solid var(--ev-linea); border-radius: 8px; }
+
+/* Lectura guiada: la instrucción principal y las condiciones se recorren por bloques. */
+.ev-lectura { line-height: 1.65; overflow-wrap: anywhere; }
+.ev-lectura h3 { margin: 1.1em 0 .4em; }
+.ev-lectura p, .ev-lectura li { max-width: 85ch; }
+.ev-lectura li + li { margin-top: .55em; }
+.ev-lectura details { margin: .8em 0; }
+.ev-lectura summary { cursor: pointer; font-weight: 600; }
+.ev-lectura-datos, .ev-glosario { margin: .8rem 0; }
+.ev-lectura-datos > div, .ev-glosario > div { display: grid; grid-template-columns: minmax(8rem, 1fr) minmax(0, 3fr); gap: .7rem; padding: .65rem 0; border-bottom: 1px solid var(--ev-linea, #8a817844); }
+.ev-lectura-datos dt, .ev-glosario dt { font-weight: 650; }
+.ev-lectura-datos dd, .ev-glosario dd { margin: 0; line-height: 1.6; }
+.ecos-verbe-panel .ev-efecto-completo { font-size: 13px; line-height: 1.6; margin-bottom: 10px; }
+.ecos-verbe-panel .ev-efecto-completo summary { font-weight: 600; cursor: pointer; }
+.ecos-verbe-panel .ev-efecto-completo p { margin: .65em 0; }
+.ecos-verbe-panel .ev-pasos-lectura { padding-left: 1.5rem; }
+.ecos-verbe-panel .ev-pasos-lectura li { margin: .85rem 0; max-width: 80ch; line-height: 1.65; }
+.ecos-verbe-panel .ev-preguntas li, .ecos-verbe-panel .ev-bienvenida li { line-height: 1.65; margin-bottom: .55em; }
+.ecos-verbe-panel .ev-limites-poder { padding: 12px; margin-bottom: 12px; border: 1px solid var(--ev-linea); border-radius: 8px; }
+.ecos-verbe-panel .ev-limites-poder summary { cursor: pointer; font-weight: 600; }
+.ecos-verbe-panel .ev-datos-avanzados > summary { padding: .6rem 0; font-weight: 600; cursor: pointer; }
+.ecos-verbe-panel .ev-contraste-recursos p { margin: .35rem 0; }
+.ecos-verbe-panel .gr small { display: block; font-size: 10px; font-weight: 400; }
+.ecos-reliquias [data-reliquia-ficha] { border-bottom: 1px solid var(--ev-linea); padding: .8rem 0; }
+.ecos-reliquias [data-reliquia-ficha] > summary { font-weight: 600; cursor: pointer; }
+@media (max-width: 600px) {
+  .ev-lectura-datos > div, .ev-glosario > div { grid-template-columns: 1fr; gap: .2rem; }
+}
+@container panel-verbe (max-width: 730px) { .ecos-editor-catalogo .ev-editor-grid { grid-template-columns: minmax(0,1fr); } }
+
+/* Mesa de campaña: contraste suave, tareas visibles y un solo área de desplazamiento. */
+.ecos-mesa { --em-fondo:#eeeadf; --em-papel:#fffdf7; --em-texto:#292d33; --em-borde:#c7c2b5; --em-acento:#70551f; color:var(--em-texto); }
+.ecos-mesa .window-content { padding:0; overflow:hidden; background:var(--em-fondo); color:var(--em-texto); }
+.ecos-mesa .em-marco { display:flex; flex-direction:column; height:100%; min-height:0; font-size:14px; line-height:1.55; }
+.ecos-mesa h1,.ecos-mesa h2,.ecos-mesa h3 { color:var(--em-texto); font-family:inherit; border:0; line-height:1.3; }
+.ecos-mesa h1 { font-size:23px; margin:0 0 5px; }.ecos-mesa h2 {font-size:21px}.ecos-mesa h3 {font-size:17px}
+.ecos-mesa p { margin:8px 0 14px; max-width:82ch; }.ecos-mesa label {display:grid;gap:5px;font-weight:600;min-width:0}
+.ecos-mesa input,.ecos-mesa select,.ecos-mesa textarea {background:var(--em-papel);color:var(--em-texto);border:1px solid var(--em-borde);border-radius:5px;min-height:34px;width:100%;font:inherit;padding:5px 8px}
+.ecos-mesa textarea {min-height:100px;resize:vertical}.ecos-mesa input[type=checkbox]{width:auto;min-height:0}
+.ecos-mesa button {width:auto;flex:0 1 auto;min-height:34px;padding:6px 12px;background:var(--em-papel);color:var(--em-texto);border:1px solid var(--em-borde);border-radius:5px;white-space:normal;line-height:1.4;font:inherit;box-shadow:none;}
+.ecos-mesa button:hover,.ecos-mesa button:focus-visible {background:#e7dfc8;outline:2px solid var(--em-acento);outline-offset:1px}
+.ecos-mesa button[aria-current=page],.ecos-mesa button[aria-pressed=true] {background:#363b43;color:#fff;border-color:#363b43}
+.ecos-mesa button:disabled {opacity:.55;cursor:wait}.ecos-mesa .em-cabecera {display:flex;justify-content:space-between;gap:18px;padding:22px 24px 12px;border-bottom:1px solid var(--em-borde)}
+.ecos-mesa .em-cabecera label {min-width:180px;max-width:280px}.ecos-mesa .em-cabecera p {margin:0;color:#555b63;font-size:13px}
+.ecos-mesa .em-tabs {display:flex;gap:6px;flex-wrap:wrap;padding:10px 24px;border-bottom:1px solid var(--em-borde)}
+.ecos-mesa .em-contenido {flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:22px 24px 30px;scrollbar-gutter:stable}
+.ecos-mesa .em-pie {font-size:11px;color:#60646a;padding:7px 24px;border-top:1px solid var(--em-borde)}
+.ecos-mesa section {padding:16px 0;border-bottom:1px solid var(--em-borde)}.ecos-mesa .em-resumen {display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:18px 0}
+.ecos-mesa .em-resumen>div {display:grid;padding:14px;background:var(--em-papel);border:1px solid var(--em-borde);border-radius:7px}.ecos-mesa .em-resumen b {font-size:24px}.ecos-mesa .em-resumen span {font-size:12px;color:#5a6068}
+.ecos-mesa .em-fila {display:flex;gap:9px;flex-wrap:wrap;align-items:end;margin:12px 0}.ecos-mesa .em-fila label {flex:1;min-width:170px}
+.ecos-mesa .em-tarjeta {padding:14px 16px;background:var(--em-papel);border:1px solid var(--em-borde);border-radius:7px;margin:12px 0;overflow-wrap:anywhere}.ecos-mesa .em-tarjeta h3 {margin:0 0 4px}.ecos-mesa .em-tarjeta button {margin:6px 6px 0 0}
+.ecos-mesa .em-etiqueta {font-size:12px;color:var(--em-acento)}.ecos-mesa .em-aviso,.ecos-mesa .em-previa {padding:14px 16px;border-left:4px solid #9c7c37;background:#f8f3e3;border-radius:4px;margin:15px 0}
+.ecos-mesa .em-rejilla {display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:13px;margin:18px 0}.ecos-mesa .em-check {display:flex;align-items:center;gap:8px;font-weight:400;margin:12px 0}
+.ecos-mesa .em-pasos {padding-left:25px}.ecos-mesa .em-pasos>li {padding:13px 0;border-bottom:1px solid var(--em-borde)}.ecos-mesa .em-pasos button {margin:8px}
+.ecos-mesa .em-tabla {overflow:auto;width:100%}.ecos-mesa table {width:100%;border-collapse:collapse;background:var(--em-papel)}.ecos-mesa th,.ecos-mesa td {padding:9px 11px;text-align:left;border:1px solid var(--em-borde)}
+.ecos-mesa details {border:1px solid var(--em-borde);border-radius:6px;background:var(--em-papel);padding:14px;margin:12px 0}.ecos-mesa summary {cursor:pointer;font-weight:700}.ecos-mesa details li {margin:9px 0}
+.ecos-mesa-acceso {flex:0 0 auto!important;width:auto!important;margin-inline:8px!important;font-size:12px!important;padding:2px 8px!important;min-height:24px;}
+.ecos-azar {border-left:3px solid #9c7c37;padding:8px 12px}.ecos-azar button {margin:4px}.ecos-azar-estado {font-size:12px}
+@media(max-width:680px){.ecos-mesa .em-cabecera {flex-direction:column}.ecos-mesa .em-cabecera label {max-width:none}.ecos-mesa .em-contenido,.ecos-mesa .em-tabs,.ecos-mesa .em-cabecera {padding-left:14px;padding-right:14px}}
+</style><p class="preview-nota">Vista de revisión · personajes ficticios · cambia de pestaña para revisar el HTML real. Las acciones se ejecutan dentro de Foundry.</p><div class="ecos-mesa" data-vista="turno" ><div class="em-marco"><header class="em-cabecera"><div><h1>Tu mesa, a mano</h1><p>Elige una tarea. Cada herramienta explica qué hace y qué debes confirmar en mesa.</p></div><label>Ficha activa<select name="actor"><option value="">Sin ficha</option><option value="Actor.demo-pj" selected>Ari del Vado</option><option value="Actor.demo-npc" >Vigilante del paso</option></select></label></header><nav class="em-tabs" aria-label="Herramientas de campaña"><button type="button" data-em="tab" data-id="turno" aria-current="page">Mi turno</button><button type="button" data-em="tab" data-id="crear" >Crear personaje</button><button type="button" data-em="tab" data-id="buscar" >Buscar información</button><button type="button" data-em="tab" data-id="azar" >Dados 1 y 20</button><button type="button" data-em="tab" data-id="dm" >Dirección</button><button type="button" data-em="tab" data-id="npc" >Taller de NPC</button></nav><main class="em-contenido"><h2>Ari del Vado · lo esencial</h2><div class="em-resumen"><div><b>18 / 24</b><span>Puntos de vida</span></div><div><b>10</b><span>Clase de armadura</span></div><div><b>9 m</b><span>Movimiento</span></div><div><b>18 / 26</b><span>Verbe disponible</span></div></div><p><b>Estados:</b> Sin estados registrados. <b>Concentración:</b> Revisa los efectos de tu ficha si mantienes un poder.</p>
+   <section><h3>Mi lista del turno</h3><p>Recordatorio personal; no concede ni consume acciones del sistema. Se renueva al comenzar tu turno propio; fuera de combate puedes limpiarlo.</p><div class="em-fila"><button type="button" data-em="marcar" data-id="accion" aria-pressed="false">Acción</button><button type="button" data-em="marcar" data-id="adicional" aria-pressed="false">Acción adicional</button><button type="button" data-em="marcar" data-id="reaccion" aria-pressed="false">Reacción</button><button type="button" data-em="marcar" data-id="movimiento" aria-pressed="false">Movimiento</button><button type="button" data-em="limpiar">Limpiar lista</button></div></section>
+   <section><h3>Tus accesos frecuentes</h3><div class="em-fila"><button type="button" data-em="hoja">Abrir ficha</button><button type="button" data-em="verbe">Abrir Verbe</button><button type="button" data-em="compendios">Abrir compendios</button></div><p>Añade hasta ocho técnicas, conjuros, armas o rasgos para encontrarlos sin recorrer toda la ficha.</p><label>Añadir acceso<select name="favorito"></select></label><button type="button" data-em="favorito">Añadir a mis accesos</button></section>
+   <section><h3>Tirada rápida</h3><p>El sistema abre su diálogo normal con tus bonificadores, ventaja y visibilidad.</p><div class="em-fila"><label>Habilidad<select name="habilidad"><option value="prc" >Percepción</option><option value="ath" >Atletismo</option><option value="sur" >Supervivencia</option></select></label><button type="button" data-em="skill">Tirar habilidad</button><label>Característica<select name="caracteristica"><option value="str" >Fuerza</option><option value="dex" >Destreza</option><option value="con" >Constitución</option><option value="int" >Inteligencia</option><option value="wis" selected>Sabiduría</option><option value="cha" >Carisma</option></select></label><button type="button" data-em="save">Salvación</button><button type="button" data-em="ability">Prueba de característica</button></div></section>
+   <section><h3>Mi siguiente paso</h3><label>Recordatorio de la ficha<textarea name="nota" maxlength="2000"></textarea></label><p>Lo pueden leer quienes tengan acceso a esta ficha. Guarda aquí objetivos o recordatorios que quieras compartir.</p><button type="button" data-em="nota">Guardar recordatorio</button></section></main><footer class="em-pie">Ecos · Foundry 13 · D&D 5e. Las fichas y las reglas del sistema siguen resolviendo las tiradas.</footer></div></div><div class="ecos-mesa" data-vista="crear" hidden><div class="em-marco"><header class="em-cabecera"><div><h1>Tu mesa, a mano</h1><p>Elige una tarea. Cada herramienta explica qué hace y qué debes confirmar en mesa.</p></div><label>Ficha activa<select name="actor"><option value="">Sin ficha</option><option value="Actor.demo-pj" selected>Ari del Vado</option><option value="Actor.demo-npc" >Vigilante del paso</option></select></label></header><nav class="em-tabs" aria-label="Herramientas de campaña"><button type="button" data-em="tab" data-id="turno" >Mi turno</button><button type="button" data-em="tab" data-id="crear" aria-current="page">Crear personaje</button><button type="button" data-em="tab" data-id="buscar" >Buscar información</button><button type="button" data-em="tab" data-id="azar" >Dados 1 y 20</button><button type="button" data-em="tab" data-id="dm" >Dirección</button><button type="button" data-em="tab" data-id="npc" >Taller de NPC</button></nav><main class="em-contenido"><h2>Un personaje, paso a paso</h2><p>Primero crea o elige una ficha de personaje. Después importa una elección cada vez y completa los diálogos de avance del sistema o Plutonium. No compres dos veces la misma clase o especie.</p><div class="em-fila"><label>Nombre de una ficha nueva<input name="nombrePj" maxlength="100" placeholder="Ejemplo: Liria del Vado"></label><button type="button" data-em="crearPj">Crear ficha vacía</button></div><ol class="em-pasos"><li><b>✓ Nombre e idea</b><p>Ficha elegida: Ari del Vado. Anota origen, un vínculo y un motivo para viajar.</p></li><li><b>Clase y nivel</b><button type="button" data-em="importar" data-id="class">Elegir con Plutonium</button></li><li><b>Especie</b><button type="button" data-em="importar" data-id="race">Elegir con Plutonium</button></li><li><b>Trasfondo</b><button type="button" data-em="importar" data-id="background">Elegir con Plutonium</button></li><li><b>Características</b><p>Reparte valores con el método acordado con tu DM. El orden estándar disponible aquí es 15, 14, 13, 12, 10 y 8, una vez cada uno. Especie, trasfondo y otros avances se resuelven en sus importadores; no sumes sus mejoras dos veces.</p><button type="button" data-em="caracteristicas">Repartir valores estándar</button> <button type="button" data-em="caracteristicasRevisadas">Marcar características revisadas</button></li><li><b>Equipo inicial</b><button type="button" data-em="importar" data-id="item">Elegir con Plutonium</button></li><li><b>Revisión con el DM</b><p>Abre la ficha y comprueba nivel, PG, competencias, equipo, avances pendientes y recursos. El Verbe y el linaje los concede el DM según la campaña.</p><button type="button" data-em="hoja">Abrir ficha</button> <button type="button" data-em="revision">Aprobar revisión inicial</button></li></ol><p class="em-aviso">Plutonium gestiona sus fuentes, permisos e importaciones. Este asistente abre su importador existente; no cambia sus ajustes ni desbloquea funciones de suscripción. Al terminar una importación, pulsa «Revisar progreso».</p><button type="button" data-em="refrescar">Revisar progreso</button></main><footer class="em-pie">Ecos · Foundry 13 · D&D 5e. Las fichas y las reglas del sistema siguen resolviendo las tiradas.</footer></div></div><div class="ecos-mesa" data-vista="buscar" hidden><div class="em-marco"><header class="em-cabecera"><div><h1>Tu mesa, a mano</h1><p>Elige una tarea. Cada herramienta explica qué hace y qué debes confirmar en mesa.</p></div><label>Ficha activa<select name="actor"><option value="">Sin ficha</option><option value="Actor.demo-pj" selected>Ari del Vado</option><option value="Actor.demo-npc" >Vigilante del paso</option></select></label></header><nav class="em-tabs" aria-label="Herramientas de campaña"><button type="button" data-em="tab" data-id="turno" >Mi turno</button><button type="button" data-em="tab" data-id="crear" >Crear personaje</button><button type="button" data-em="tab" data-id="buscar" aria-current="page">Buscar información</button><button type="button" data-em="tab" data-id="azar" >Dados 1 y 20</button><button type="button" data-em="tab" data-id="dm" >Dirección</button><button type="button" data-em="tab" data-id="npc" >Taller de NPC</button></nav><main class="em-contenido"><h2>Asistente de consulta de campaña</h2><p>Busca palabras, nombres y fragmentos en diarios, fichas y objetos que puedas leer. El DM consulta también todo el catálogo del Verbe. Los resultados citan de dónde salen; este buscador local no inventa respuestas.</p><form data-form-buscar><label>Qué buscas<input name="consulta" value="campamento" maxlength="160" placeholder="Por ejemplo: descanso santuario, Maethra, transporte"></label><label class="em-check"><input type="checkbox" name="packs">Incluir nombres de compendios visibles (hasta 40 por búsqueda)</label><button type="submit" data-em="buscar">Buscar en la campaña</button></form><p>Resultados de ejemplo. Cada uno enlaza su fuente en Foundry.</p><article class="em-tarjeta"><h3>Baliza del campamento</h3><p class="em-etiqueta">Técnica · umbral</p><p>Marcas una piedra durante un minuto. Durante ocho horas conoces su dirección aproximada dentro de 1 km y en el mismo plano. No revela distancia exacta, amenazas ni rutas transitables. Solo una baliza propia activa. Límites: Una ventaja del mismo tipo no se acu…</p><button type="button" data-em="resultado" data-id="0">Abrir fuente</button></article><article class="em-tarjeta"><h3>Ronda del campamento</h3><p class="em-etiqueta">Técnica · pacto</p><p>Tu pacto presente recorre durante diez minutos una ruta visible de hasta 18 m con sus sentidos normales. Informa lo que percibe según su capacidad; no atraviesa obstáculos, crea turnos ni actúa como explorador infalible. Límites: Una ventaja del mismo tipo no …</p><button type="button" data-em="resultado" data-id="1">Abrir fuente</button></article><article class="em-tarjeta"><h3>Sueño amable</h3><p class="em-etiqueta">Técnica · quietud</p><p>… hora un voluntario dormido oye atenuados los ruidos ordinarios de tu campamento. No duerme por obligación, no queda sordo a una alarma clara y no obtiene beneficios de descanso antes de tiempo. Límites: Una ventaja del mismo tipo no se acumula con otra ventaj…</p><button type="button" data-em="resultado" data-id="2">Abrir fuente</button></article></main><footer class="em-pie">Ecos · Foundry 13 · D&D 5e. Las fichas y las reglas del sistema siguen resolviendo las tiradas.</footer></div></div><div class="ecos-mesa" data-vista="azar" hidden><div class="em-marco"><header class="em-cabecera"><div><h1>Tu mesa, a mano</h1><p>Elige una tarea. Cada herramienta explica qué hace y qué debes confirmar en mesa.</p></div><label>Ficha activa<select name="actor"><option value="">Sin ficha</option><option value="Actor.demo-pj" selected>Ari del Vado</option><option value="Actor.demo-npc" >Vigilante del paso</option></select></label></header><nav class="em-tabs" aria-label="Herramientas de campaña"><button type="button" data-em="tab" data-id="turno" >Mi turno</button><button type="button" data-em="tab" data-id="crear" >Crear personaje</button><button type="button" data-em="tab" data-id="buscar" >Buscar información</button><button type="button" data-em="tab" data-id="azar" aria-current="page">Dados 1 y 20</button><button type="button" data-em="tab" data-id="dm" >Dirección</button><button type="button" data-em="tab" data-id="npc" >Taller de NPC</button></nav><main class="em-contenido"><h2>Qué pasa con un 1 o un 20</h2><p>Se usa el primer d20 válido de cada criatura en cada turno global de combate. Un área con varias tiradas de la misma criatura cuenta una vez. Fuera de combate solo se propone un resultado por criatura cada diez minutos de juego, para tareas significativas que valida el DM. El 1 o el 20 de una habilidad o salvación conserva el éxito o fracaso normal de la prueba. Los ataques conservan su crítico normal, sin daño crítico adicional de esta tabla. Se excluyen muerte, iniciativa, Concentración y tiradas de Control de un choque. Los efectos no se acumulan, no quitan turnos, destruyen equipo ni causan daño o recuperaciones de recursos. El DM puede descartar una propuesta que no encaje. Los efectos de un turno vencen al terminar el siguiente turno propio y se retiran al acabar el combate; el texto de CA puede indicar un final anterior.</p><p>Se propone una fila aleatoria de 1d8 en el chat. El DM puede aprobarla o descartarla. Solo los cambios de CA o velocidad se aplican como efectos; los ajustes a una prueba concreta y los resultados narrativos se acuerdan y anotan en mesa. No hay daño, curaciones, Verbe gratis o pérdida de acciones.</p><p><b>Escala actual:</b> nivel 3. Bonificación o penalización breve máxima: 1. Velocidad: 1,5 m. Un resultado sustituye al anterior de estas tablas.</p><details><summary>Ataque</summary><h3>1 · Contratiempos</h3><ol><li><b>Guardia abierta.</b> Hasta el inicio de tu próximo turno, tu CA baja 1.</li><li><b>Paso inseguro.</b> En tu próximo turno tu velocidad de caminar baja 1,5 m, como mínimo a 1,5 m.</li><li><b>Ruido del impacto.</b> Tu intento produce un ruido claramente audible. El DM decide quién puede oírlo; no crea enemigos.</li><li><b>Agarre incómodo.</b> Antes de tu próximo ataque debes recolocar el arma o tus manos usando tu interacción gratuita con objeto. Si no puedes, el DM permite soltar un objeto; nunca destruye equipo.</li><li><b>Lectura del adversario.</b> El objetivo entiende tu intención inmediata. La siguiente prueba tuya de Engaño contra él antes del final de tu próximo turno recibe −1.</li><li><b>Retroceso breve.</b> Puedes elegir permanecer en tu espacio o retroceder 1,5 m a un espacio seguro, visible y sin peligro. El DM resuelve el movimiento normal y posibles ataques de oportunidad; nunca obliga a caer.</li><li><b>Molestia pasajera.</b> La próxima prueba de habilidad de Fuerza o Destreza que hagas antes del final de tu siguiente turno recibe −1. No afecta ataques ni salvaciones.</li><li><b>Tensión revelada.</b> El DM describe una apertura o señal de cansancio. Un enemigo que pueda verla sabe que esa maniobra te costó esfuerzo; no obtiene un ataque, acción o daño gratis.</li></ol><h3>20 · Oportunidades</h3><ol><li><b>Guardia firme.</b> Hasta el inicio de tu próximo turno tu CA aumenta 1.</li><li><b>Paso decidido.</b> En tu próximo turno tu velocidad de caminar aumenta 1,5 m. No concede movimiento inmediato ni evita ataques de oportunidad.</li><li><b>Lectura del terreno.</b> El DM señala una cobertura o apoyo que ya puedas percibir. Aprovecharlo sigue requiriendo movimiento y acciones normales.</li><li><b>Maniobra clara.</b> Un aliado que te vea entiende tu intención inmediata. No obtiene acciones, daño o ventaja automática.</li><li><b>Pulso firme.</b> Tu siguiente prueba de habilidad para mantener el equilibrio antes del final de tu próximo turno recibe +1.</li><li><b>Rastro del adversario.</b> Reconoces un detalle de equipo o estilo que el objetivo haya mostrado. No revela estadísticas, resistencias o secretos no observables.</li><li><b>Control del espacio.</b> Puedes dar una indicación breve a un aliado que te oiga. El DM ofrece una opción de posición segura visible, sin mover tokens automáticamente.</li><li><b>Ánimo sereno.</b> Puedes describir un gesto de seguridad sin coste adicional. El próximo chequeo de Interpretación o Persuasión sobre este enfrentamiento dentro de diez minutos recibe +1.</li></ol></details><details><summary>Salvación</summary><h3>1 · Contratiempos</h3><ol><li><b>Equilibrio precario.</b> En tu próximo turno tu velocidad de caminar baja 1,5 m, como mínimo a 1,5 m.</li><li><b>Defensa forzada.</b> Hasta el inicio de tu próximo turno, tu CA baja 1. No añade daño al efecto que originó la salvación.</li><li><b>Atención dividida.</b> Tu próxima prueba de Percepción antes del final de tu siguiente turno recibe −1.</li><li><b>Señal evidente.</b> Tu reacción al peligro es visible o audible para quien pueda percibirte. No revela criaturas ocultas por sí sola ni altera el resultado de la salvación.</li><li><b>Gesto incómodo.</b> Tu próxima prueba de Acrobacias o Atletismo antes del final de tu siguiente turno recibe −1.</li><li><b>Respiración entrecortada.</b> Hablas con dificultad hasta el inicio de tu siguiente turno. Puedes comunicar frases cortas y lanzar conjuros con normalidad; no añade Silencio o Incapacitado.</li><li><b>Rastro del peligro.</b> Queda en ti una señal no dañina del efecto hasta que la limpies durante un minuto. No impone estados ni nuevas tiradas.</li><li><b>Posición comprometida.</b> El DM señala una cobertura o apoyo que debes volver a evaluar. No pierde su protección hasta que las reglas normales o un cambio real del escenario lo indiquen.</li></ol><h3>20 · Oportunidades</h3><ol><li><b>Defensa medida.</b> Hasta el inicio de tu próximo turno tu CA aumenta 1.</li><li><b>Pie seguro.</b> En tu próximo turno tu velocidad de caminar aumenta 1,5 m. No concede desplazamiento inmediato.</li><li><b>Comprender el peligro.</b> El DM describe una señal del peligro que acabas de percibir. No revela estadísticas ni elimina efectos ya aplicados.</li><li><b>Aviso oportuno.</b> Puedes advertir de viva voz a un aliado que te oiga. No cambia una salvación ya tirada ni concede ventaja automática.</li><li><b>Control recuperado.</b> Tu próxima prueba de Acrobacias o Atletismo antes del final de tu siguiente turno recibe +1.</li><li><b>Atención despierta.</b> Tu próxima prueba de Percepción antes del final de tu siguiente turno recibe +1.</li><li><b>Ruta advertida.</b> Reconoces un paso seguro visible que el DM señala. Recorrerlo usa tu movimiento normal.</li><li><b>Serenidad compartida.</b> Un aliado que te perciba entiende una señal de calma. No elimina miedo, encantamiento, Concentración ni otros estados.</li></ol></details><details><summary>Prueba en combate</summary><h3>1 · Contratiempos</h3><ol><li><b>Apoyo inestable.</b> En tu próximo turno tu velocidad de caminar baja 1,5 m, como mínimo a 1,5 m.</li><li><b>Herramienta desplazada.</b> La herramienta que usas queda a tu alcance en un apoyo seguro si lo hay. Recuperarla usa tu interacción normal; no se pierde ni se rompe.</li><li><b>Detalle anunciado.</b> Alguien que pueda percibirte nota qué tarea intentabas hacer. No conoce información que no pudiera percibir.</li><li><b>Preparación incompleta.</b> La siguiente prueba de habilidad para esa misma tarea, antes del final de tu próximo turno, recibe −1. No afecta ataques o salvaciones.</li><li><b>Pequeño retraso.</b> La tarea necesita un detalle adicional que puedes completar con una interacción normal o durante el minuto siguiente. No consume otra acción de combate.</li><li><b>Señal confusa.</b> Un aliado que te vea pide aclaración de tu intención. Puedes responder normalmente; no le quita acciones ni altera su siguiente tirada.</li><li><b>Guardia distraída.</b> Hasta el inicio de tu próximo turno tu CA baja 1.</li><li><b>Rastro de actividad.</b> Dejas una señal de tu trabajo que el DM describe. No produce daño, recursos gastados ni una alarma automática.</li></ol><h3>20 · Oportunidades</h3><ol><li><b>Trabajo bien dispuesto.</b> Tu siguiente prueba de habilidad sobre la misma tarea antes del final de tu próximo turno recibe +1.</li><li><b>Herramienta a mano.</b> Dejas una herramienta propia a tu alcance. Usarla conserva su coste normal de interacción y acción.</li><li><b>Pista visible.</b> El DM señala un detalle de la tarea que puedas percibir ahora. No concede éxito ni información secreta automática.</li><li><b>Guardia cuidadosa.</b> Hasta el inicio de tu próximo turno tu CA aumenta 1.</li><li><b>Ayuda comprensible.</b> Explicas en una frase cómo podría ayudar un aliado. La acción Ayudar conserva todos sus requisitos.</li><li><b>Paso preparado.</b> En tu próximo turno tu velocidad de caminar aumenta 1,5 m.</li><li><b>Claridad de intención.</b> El objetivo de una conversación entiende tu propuesta. Su opinión y voluntad siguen siendo propias.</li><li><b>Procedimiento recordado.</b> Recuerdas una preparación útil ya conocida para esta tarea. Aplicarla conserva su tiempo, materiales y pruebas normales.</li></ol></details><details><summary>Prueba fuera de combate</summary><h3>1 · Contratiempos</h3><ol><li><b>Tiempo extra.</b> La tarea tarda hasta un minuto adicional o un 10 % de su duración normal, el menor de ambos. No rompe por sí solo un plazo importante.</li><li><b>Limpieza necesaria.</b> Queda suciedad o desorden pequeño. Un minuto y medios ordinarios bastan para corregirlo; no destruye materiales ni contamina alimentos.</li><li><b>Pregunta incómoda.</b> Una persona presente puede pedir una aclaración. Responder o negarte sigue siendo tu decisión; no impone hostilidad ni confesiones.</li><li><b>Huella del intento.</b> Dejas una señal perceptible de la tarea. Detectarla requiere las condiciones y pruebas normales.</li><li><b>Medida repetida.</b> Antes de repetir exactamente esta tarea necesitas un minuto para revisar el procedimiento. No habilita repetir una prueba que el DM considera definitiva.</li><li><b>Dato incompleto.</b> El DM ofrece una pista parcial que ya podrías percibir y señala qué falta comprobar. No transforma un fracaso en éxito ni fabrica información falsa obligatoria.</li><li><b>Pequeña distracción.</b> Tu próxima prueba de habilidad sobre esta misma tarea en los siguientes diez minutos recibe −1. No afecta ataques o salvaciones.</li><li><b>Bulto mal colocado.</b> Un objeto propio usado en la tarea queda en un lugar seguro que puedas recuperar. No desaparece, se rompe ni se entrega a un enemigo.</li></ol><h3>20 · Oportunidades</h3><ol><li><b>Tiempo aprovechado.</b> Si la tarea tiene éxito, ahorras hasta un minuto o un 10 % de su duración normal, el menor. No reduce tiempos de descanso, fabricación o aprendizaje reglados.</li><li><b>Orden ejemplar.</b> Terminas con herramientas y materiales propios ordenados. No crea objetos ni ahorra componentes consumidos por las reglas.</li><li><b>Detalle útil.</b> El DM ofrece un detalle adicional perceptible de la tarea. No obliga a revelar un secreto ni una solución completa.</li><li><b>Buena disposición.</b> Una persona que ya esté dispuesta a escucharte aprecia tu cuidado. No queda Hechizada ni acepta demandas automáticamente.</li><li><b>Preparación acertada.</b> La próxima prueba de habilidad sobre esta misma tarea dentro de diez minutos recibe +1.</li><li><b>Explicación clara.</b> Puedes explicar a un compañero lo que realmente has aprendido. Comprenderlo no concede competencias, idiomas ni acceso a técnicas.</li><li><b>Recuerdo preciso.</b> Recuerdas un dato de la escena que hayas percibido; el DM lo confirma o indica qué falta comprobar.</li><li><b>Camino despejado.</b> Reconoces una comodidad o acceso ordinario ya visible que facilita organizar la siguiente tarea. No crea recursos, tesoros o rutas secretas.</li></ol></details></main><footer class="em-pie">Ecos · Foundry 13 · D&D 5e. Las fichas y las reglas del sistema siguen resolviendo las tiradas.</footer></div></div><div class="ecos-mesa" data-vista="dm" hidden><div class="em-marco"><header class="em-cabecera"><div><h1>Tu mesa, a mano</h1><p>Elige una tarea. Cada herramienta explica qué hace y qué debes confirmar en mesa.</p></div><label>Ficha activa<select name="actor"><option value="">Sin ficha</option><option value="Actor.demo-pj" selected>Ari del Vado</option><option value="Actor.demo-npc" >Vigilante del paso</option></select></label></header><nav class="em-tabs" aria-label="Herramientas de campaña"><button type="button" data-em="tab" data-id="turno" >Mi turno</button><button type="button" data-em="tab" data-id="crear" >Crear personaje</button><button type="button" data-em="tab" data-id="buscar" >Buscar información</button><button type="button" data-em="tab" data-id="azar" >Dados 1 y 20</button><button type="button" data-em="tab" data-id="dm" aria-current="page">Dirección</button><button type="button" data-em="tab" data-id="npc" >Taller de NPC</button></nav><main class="em-contenido"><h2>Control de la sesión</h2><p>Consulta el grupo sin abrir cada ficha. Los valores son los que el sistema ha calculado, incluidos sus efectos activos.</p><div class="em-tabla"><table><thead><tr><th>Personaje</th><th>PG</th><th>CA</th><th>Percepción pasiva</th><th>Agotamiento</th><th>Verbe</th></tr></thead><tbody><tr><th><button type="button" data-em="actorDM" data-id="demo-pj">Ari del Vado</button></th><td>18/24</td><td>10</td><td>13</td><td>0</td><td>18</td></tr></tbody></table></div><section><h3>Cuaderno privado del DM</h3><p>Guarda objetivos de escena, pistas pendientes, voces y vínculos. Se crea un diario con acceso exclusivo del DM. No se publica en ajustes que reciban los jugadores.</p><button type="button" data-em="cuaderno">Abrir o crear cuaderno privado</button></section><section><h3>Revisar efectos del módulo</h3><p>Selecciona una ficha y consulta sus efectos de Ecos. Puedes retirar un efecto que haya quedado pendiente; la ficha conserva sus demás efectos, cargas y estados del sistema.</p><p>Sin efectos de Ecos en la ficha elegida.</p></section><section><h3>Preparar una variante de NPC</h3><p>El taller crea perfiles por rol, conserva los objetos importados y muestra los cambios antes de guardarlos.</p><button type="button" data-em="tab" data-id="npc">Abrir taller de NPC</button></section></main><footer class="em-pie">Ecos · Foundry 13 · D&D 5e. Las fichas y las reglas del sistema siguen resolviendo las tiradas.</footer></div></div><div class="ecos-mesa" data-vista="npc" hidden><div class="em-marco"><header class="em-cabecera"><div><h1>Tu mesa, a mano</h1><p>Elige una tarea. Cada herramienta explica qué hace y qué debes confirmar en mesa.</p></div><label>Ficha activa<select name="actor"><option value="">Sin ficha</option><option value="Actor.demo-pj" selected>Ari del Vado</option><option value="Actor.demo-npc" >Vigilante del paso</option></select></label></header><nav class="em-tabs" aria-label="Herramientas de campaña"><button type="button" data-em="tab" data-id="turno" >Mi turno</button><button type="button" data-em="tab" data-id="crear" >Crear personaje</button><button type="button" data-em="tab" data-id="buscar" >Buscar información</button><button type="button" data-em="tab" data-id="azar" >Dados 1 y 20</button><button type="button" data-em="tab" data-id="dm" >Dirección</button><button type="button" data-em="tab" data-id="npc" aria-current="page">Taller de NPC</button></nav><main class="em-contenido"><h2>Taller de NPC de Nimerios</h2><p>Importa una criatura con Plutonium o usa un NPC ya existente como base. El taller adapta PG, CA, velocidad y una rutina ofensiva alternativa al rol elegido. Conserva el equipo, rasgos, conjuros y acciones importadas; sus poderes especiales deben revisarse antes del combate.</p><div class="em-fila"><button type="button" data-em="importar" data-id="creature">Importar criatura con Plutonium</button><button type="button" data-em="refrescar">Actualizar lista</button></div><div class="em-rejilla"><label>Ficha base<select name="npcBase"><option value="">Crear sin base</option><option value="demo-npc" selected>Vigilante del paso</option></select></label><label>Nombre de la variante<input name="npcNombre" maxlength="100" value="Guardián del vado gris"></label><label>Valor de desafío orientativo<input name="npcVd" type="number" min="0" max="20" step="0.125" value="3"></label><label>Rol<select name="npcRol"><option value="guardian" selected>Guardián</option><option value="hostigador" >Hostigador</option><option value="tirador" >Tirador</option><option value="místico" >Místico</option><option value="apoyo" >Apoyo</option><option value="civil" >Civil</option></select></label><label>Entorno<input name="npcEntorno" maxlength="300" value="Arcegris"></label><label>Motivación<input name="npcMotivacion" maxlength="600" value="Mantener abierto el paso"></label><label>Vínculo con la campaña<input name="npcVinculo" maxlength="600" value="Protege la caravana de una antigua deuda"></label><label>Guardar como<select name="npcCopiar"><option value="si">Una copia nueva y privada</option><option value="no" >Actualizar la ficha base</option></select></label></div><label class="em-check"><input type="checkbox" name="npcCurar" >Poner PG al máximo (si no, conserva la proporción actual)</label><button type="button" data-em="preverNpc">Preparar vista previa</button><section class="em-previa"><h3>Antes de guardar · Guardián del vado gris</h3><div class="em-tabla"><table><thead><tr><th>Campo</th><th>Base</th><th>Propuesta</th></tr></thead><tbody><tr><th>PG máximos</th><td>40</td><td>72</td></tr><tr><th>CA fija</th><td>13</td><td>14</td></tr><tr><th>Velocidad</th><td>9</td><td>9 m</td></tr><tr><th>Rutina alternativa</th><td>Acciones importadas conservadas</td><td>1 ataque(s), +5, 5d6 por impacto</td></tr></tbody></table></div><p>Perfil orientativo de campaña, no una certificación de valor de desafío. El daño por ronda supone que todos los ataques de la rutina impactan. Resistencias, control, áreas, magia, técnicas del Verbe y acciones importadas requieren revisión del DM.</p><p><b>Destino:</b> copia nueva privada. <b>Motivación:</b> Mantener abierto el paso. <b>Vínculo:</b> Protege la caravana de una antigua deuda.</p><button type="button" data-em="guardarNpc">Guardar esta propuesta</button></section><p>La vista previa debe regenerarse si cambias alguna elección. No reimporta fuentes ni modifica tokens que ya estén colocados. Una actualización del original guarda los valores anteriores para deshacerla una vez.</p></main><footer class="em-pie">Ecos · Foundry 13 · D&D 5e. Las fichas y las reglas del sistema siguen resolviendo las tiradas.</footer></div></div><script>document.addEventListener('click',e=>{const b=e.target.closest('[data-em]');if(!b)return;e.preventDefault();if(b.dataset.em==='tab'){for(const v of document.querySelectorAll('[data-vista]'))v.hidden=v.dataset.vista!==b.dataset.id;}else{const p=document.querySelector('.preview-nota');p.textContent='Acción de demostración. Abre Mesa Ecos dentro de Foundry para usar esta función.';}});document.addEventListener('submit',e=>e.preventDefault());</script></html>

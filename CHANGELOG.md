@@ -1,3 +1,16 @@
+# Historial de cambios
+
+## 3.3.0 — 2026-10-31
+
+- Identidad de Nimerios para nombres visibles, alias y referencias de técnicas, entidades y reliquias. Conserva identificadores, vínculos, compras, autorizaciones y cargas. Las reliquias y artefactos entregados migran nombres generados conocidos y conservan personalizaciones del DM. Nueva página privada para revisar el panteón sin reemplazar el lore escrito.
+- 82 técnicas originales de vida cotidiana y rol: Umbral +16, Rastro +14, Pulso +12, Quietud +12, Vasija +8, Velo/Mirada/Pacto/Hilo +4 cada una, Cuerpo/Sello +2 cada una. Grados 0–3, tiempos y límites explícitos. Total: 860 técnicas, 219 dotes y 78 reliquias.
+- Tablas de 1 y 20 natural: 64 filas, cuatro contextos, escala de nivel, primer d20 válido por criatura y turno, frecuencia de diez minutos fuera de combate y aprobación del GM principal. Conserva resultados normales y visibilidad de tiradas. CA y velocidad tienen efectos temporales sin acumulación; otras consecuencias se resuelven en mesa. Excluye muerte, iniciativa, Concentración y Control de choques.
+- Mesa Ecos con interfaz de pergamino, seis tareas, desplazamiento y acceso desde ficha, Ajustes o Ctrl + M. Lista personal del turno, ocho accesos, recursos, estados, tiradas nativas y recordatorios de ficha.
+- Creación guiada con permisos de actor y reparto estándar sin repeticiones. Abre la API pública de Plutonium en los modos reales de clase, especie, trasfondo y equipo, dirigida a la ficha. No modifica fuentes, ajustes ni funciones de suscripción.
+- Buscador local con fuentes: filtra permisos de diarios, páginas, actores, objetos y compendios; el DM consulta repertorio y reliquias completos. Dirección muestra el grupo, abre un cuaderno privado y permite revisar efectos de Ecos.
+- Taller de NPC: base importada o creación sin base, roles, motivación, vínculo, vista previa, copia privada por defecto, proporción de vida, conversión de unidades, rutina ofensiva alternativa y reversión de la última adaptación. Conserva acciones importadas; sus capacidades especiales requieren revisión del DM.
+- Regresiones nuevas para identidad, permisos, búsqueda, Plutonium, NPC, d20, visibilidad y frecuencia. Las 778 técnicas anteriores conservan su huella individual de potencia. Vistas HTML reales con datos ficticios; pendiente la comprobación funcional dentro del Foundry instalado.
+
 # Cambios
 
 ## 3.2.1 — Lectura guiada para la primera partida

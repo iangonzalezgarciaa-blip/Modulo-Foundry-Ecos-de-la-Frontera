@@ -16,7 +16,7 @@ async function usar(a,id,extra={}){
 }
 test('repertorio: conserva 401, añade 353 y más del 90% queda fuera de Forma',()=>{
   const nuevos=D.tecnicas.filter(t=>t.item.flags['ecos-frontera'].verbe.shinobi);
-  assert.equal(D.tecnicas.length,754+(D.divinidad?.nuevas??0));assert.equal(nuevos.length,353);
+  assert.equal(D.tecnicas.length,754+(D.divinidad?.nuevas??0)+(D.vida?.nuevas??0));assert.equal(nuevos.length,353);
   assert.ok(nuevos.filter(t=>t.rama!=='forma').length/nuevos.length>.9);
   assert.deepEqual(validateCatalog(D),[]);
 });
@@ -24,7 +24,7 @@ test('referencias, requisitos, dados, grados y unidades nativas son coherentes e
   const nativos=new Set();
   for(const t of D.tecnicas.filter(t=>t.item.flags['ecos-frontera'].verbe.shinobi)){
     const m=t.item.flags['ecos-frontera'].verbe,a=m.acceso;
-    assert.ok(t.origen.pagina>=7&&t.origen.pagina<=44,t.id);assert.ok(t.alias.includes(t.origen.nombre));
+    assert.equal(t.origen.obra,"Nimerios",t.id);assert.ok(t.alias.includes(t.origen.nombre));
     for(const [campo,lista,clave]of [['tradicion',D.tradicionesShinobi,'id'],['hito',D.hitosShinobi,'id'],['herencia',D.linajes,'req'],['artefacto',D.artefactosShinobi,'id'],['bestia',D.bestiasShinobi,'id']])
       if(a[campo])assert.ok(lista.some(x=>x[clave]===a[campo]),`${t.id}: ${campo}`);
     if(a.ojo)assert.ok(D.miradas.some(x=>x.id===a.ojo.id&&x.etapas.length>=a.ojo.etapa),t.id);
@@ -176,13 +176,13 @@ test('los paneles de huésped, ojos, depósito y clones se renderizan y separan 
   await a.createEmbeddedDocuments('ActiveEffect',[{flags:{'ecos-frontera':{verbe:{replicas:true}}}}]);
   const p=new V.PanelVerbe(a);p.pestana='dm';let html=await p._renderHTML();assert.match(html,/shinobiTradicion/);assert.match(html,/shinobiBestia/);assert.match(html,/shinobiRitual/);
   game.user=game.users.get('player');p.pestana='jugar';html=await p._renderHTML();assert.match(html,/Usar desde réplica/);assert.match(html,/12 Verbe/);assert.doesNotMatch(html,/shinobiDM/);
-  p.pestana='ramas';html=await p._renderHTML();assert.match(html,/Sello del centenar/);assert.match(html,/Kurama/);
+  p.pestana='ramas';html=await p._renderHTML();assert.match(html,/Sello del centenar/);assert.match(html,/Aurenox/);
 });
 test('la ficha explica requisitos estructurados aunque ya se cumplan',async()=>{
   const a=actor({linaje:'aster',fuerza:'plena',miradas:{aster:4}}),p=new V.PanelVerbe(a);let config;
   foundry.applications.api.DialogV2.wait=c=>{config=c;return Promise.resolve();};
   V.PanelVerbe.DEFAULT_OPTIONS.actions.ficha.call(p,{preventDefault(){}},{dataset:{id:'mirada-aster-luna'}});
-  assert.match(config.content,/etapa 4/);assert.match(config.content,/abrir para usar/);assert.match(config.content,/Tsukuyomi/);
+  assert.match(config.content,/etapa 4/);assert.match(config.content,/abrir para usar/);assert.match(config.content,/Luna de la pesadilla/);
 });
 test('las copias embebidas del notificador son idénticas al archivo fuente',()=>{
   const normal=s=>s.replaceAll('\r\n','\n').trim();const source=normal(fs.readFileSync(new URL('../tools/windows/Ecos-Notificar.ps1',import.meta.url),'utf8'));
