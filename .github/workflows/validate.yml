@@ -11,7 +11,7 @@ jobs:
         with:
           node-version: '22'
       - run: npm run catalog:expand
-      - run: git diff --exit-code -- data/verbe.txt docs/REPERTORIO_SHINOBI.json docs/REPERTORIO_3.0.md docs/DOTES_Y_OBTENCION.json
+      - run: git diff --exit-code -- data/verbe.txt data/reliquias.txt docs/REPERTORIO_SHINOBI.json docs/REPERTORIO_3.0.md docs/DOTES_Y_OBTENCION.json docs/PANTEON_3.2.md docs/RELIQUIAS_3.2.md
       - run: npm test
       - run: npm run check
       - run: npm run docs:catalog

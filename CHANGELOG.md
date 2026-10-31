@@ -1,5 +1,19 @@
 # Cambios
 
+## 3.2.0 — Sangre divina, choques y reliquias
+
+- Sangres de seis dioses primigenios por encima de los menores: reserva y defensas progresivas, atenuadas por la fuerza de sangre. Maethra es la mayor y tiene el techo más alto, siete técnicas nuevas propias y culminaciones con sangre plena e hitos del DM. Asignar o subir un linaje no rellena su energía.
+- Se completa el panteón con Nerys, Ashka, Gracefeel y el Cazador Sin Rostro; Seyra y Dhoren son dos dioses menores nuevos, marcados como propuesta. 22 entradas, seis herencias nuevas y 24 técnicas divinas: 778 técnicas y 219 dotes en total. Los niveles, sendas, cuotas y descansos siguen vigentes.
+- Nota privada del panteón dentro del módulo con pendientes concretos para Mundo 1, Mundo 10 y las tramas de portadores. No reemplaza las páginas de lore ni las notas editadas por el DM. Los pasivos existentes se actualizan al subir de nivel o cambiar de sangre.
+- Choque automático al dirigir una técnica ofensiva elemental o de Forma a otra hoja despierta; basta una marca en una dirección. Primero se ofrecen Sustitución y defensas, luego una contratécnica elegida por el defensor. El choque es independiente de la reacción y de la acción ordinaria; paga Verbe, conserva requisitos y usos, y no concede otro ataque. Cada defensor protege solo a sí mismo frente a un área. Ayuda rápida explica el disparador y toda la secuencia.
+- Integración con midi-qol para retirar objetivos protegidos antes del daño; el flujo nativo pausa la continuación mientras se resuelve el enfrentamiento. Sin midi, el daño y las condiciones que requieran aplicación manual se resuelven siguiendo la tarjeta. Control de duplicados, respuesta tardía y validación de consumo de la contratécnica.
+- 78 perfiles de reliquias: 51 entradas de serie/componentes/dispositivos de Made in Abyss, 11 perfiles del videojuego y 16 originales de Nimerios. Fuentes y procedencia separadas; reglas d20 nuevas, grados desconocidos conservados y funciones poco documentadas identificadas. Reg y Aubade son dossiers, no equipo. No se promete exhaustividad de variantes del videojuego o futuras publicaciones.
+- Compendio mundial y diario privados de reliquias, añadidos sin reemplazar ediciones del DM. Entrega y autorización desde la pestaña DM. Nivel mínimo, equipo, sintonía, cargos nativos, familia compartida y un uso de reliquia mayor por Largo; rituales con permiso de un solo uso. Un corto no renueva esos usos; los consumibles no se recargan.
+
+- Validación de 176 pruebas Node, auditoría de 31.120 fichas en niveles 1–20 y paquete reproducible. La ejecución real en Foundry con los módulos de campaña sigue pendiente. Se mantiene la publicación privada y el actualizador de Windows con avisos.
+- La consulta «Linajes y fuerzas antes de asignar» tiene altura limitada y desplazamiento vertical propio, también accesible con teclado.
+- La ventana de Despertar se puede redimensionar, se limita al tamaño de la pantalla y permite recorrer el formulario sin perder los botones de confirmación.
+
 ## 3.1.0 — Dotes, sendas y escalas de obtención
 
 - 64 dotes nuevas: 219 en total y 754 técnicas conservadas. Cuatro pasos por cada una de las trece ramas: Disciplina (nivel 3), Especialista (7), Maestría (11) y Leyenda (18), con beneficios propios. Doce mejoras generales incluyen ascensiones, cultivo, réplicas, depósito y acciones defensivas o curativas.

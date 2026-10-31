@@ -1,10 +1,10 @@
-# Cobertura declarada del catálogo 3.1.0
+# Cobertura declarada del catálogo 3.2.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **754 técnicas y 219 dotes**.
+El catálogo reúne **778 técnicas y 219 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
@@ -18,7 +18,7 @@ El catálogo reúne **754 técnicas y 219 dotes**.
 | Hilo | 62 | 12 |
 | Quietud | 38 | 16 |
 | Rastro | 36 | 31 |
-| Sangre | 61 | 25 |
+| Sangre | 85 | 31 |
 | Umbral | 17 | 12 |
 | Vasija | 39 | 10 |
 
@@ -780,6 +780,30 @@ El catálogo reúne **754 técnicas y 219 dotes**.
 | `forma-magma-corrosivo` | Lodo del magma corrosivo | 5 | forma | save | 0 |
 | `cuerpo-magma-coraza` | Coraza de la roca fundida | 6 | cuerpo | utility | 1 |
 | `cuerpo-vapor-presion` | Fuerza de la presión hirviente | 5 | cuerpo | utility | 1 |
+| `divino-madre-raices` | Raíces protectoras | 1 | sangre | utility | 1 |
+| `divino-madre-abrazo` | Abrazo del primer bosque | 3 | sangre | heal | 0 |
+| `divino-madre-sendero` | Sendero del sueño | 6 | sangre | utility | 0 |
+| `divino-madre-santuario` | Santuario de la Madre | 8 | sangre | utility | 1 |
+| `divino-madre-voz` | Voz de la Primera | 9 | sangre | save | 1 |
+| `divino-madre-caminos` | Caminos sin frontera | 10 | sangre | utility | 0 |
+| `divino-madre-jardin` | Jardín del Primer Sueño | 11 | sangre | save | 0 |
+| `divino-nerys-escarcha` | Promesa de escarcha | 1 | sangre | attack | 0 |
+| `divino-nerys-canto` | Canto del hielo | 4 | sangre | save | 1 |
+| `divino-nerys-aurora` | Aurora del juramento | 7 | sangre | save | 0 |
+| `divino-ashka-pluma` | Pluma de la última voz | 1 | sangre | attack | 0 |
+| `divino-ashka-alas` | Alas del mensaje perdido | 4 | sangre | utility | 1 |
+| `divino-ashka-tormenta` | Respuesta de la tormenta | 7 | sangre | save | 0 |
+| `divino-thalos-abismo` | Peso del mar primero | 9 | sangre | save | 0 |
+| `divino-ignis-ley` | Ley del Fuego Ordenador | 9 | sangre | save | 0 |
+| `divino-orun-fragmento` | Fragmento del cielo anterior | 9 | sangre | save | 0 |
+| `divino-gracefeel-lumbre` | Lumbre de despedida | 1 | sangre | heal | 0 |
+| `divino-gracefeel-farol` | Farol del último viaje | 3 | sangre | utility | 0 |
+| `divino-cazador-marca` | Rastro sin rostro | 1 | sangre | utility | 0 |
+| `divino-cazador-flecha` | Flecha del claro vacío | 3 | sangre | attack | 0 |
+| `divino-seyra-lazo` | Lazo de auxilio | 1 | sangre | utility | 0 |
+| `divino-seyra-nudo` | Nudo que retiene | 3 | sangre | save | 1 |
+| `divino-dhoren-dintel` | Dintel de guardia | 1 | sangre | utility | 1 |
+| `divino-dhoren-cerrar` | Cerrar el umbral | 3 | sangre | utility | 0 |
 
 ## Dotes
 
@@ -1010,6 +1034,9 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 ## Automatización y alcance actual
 
 - Sendas de dotes y ascensiones: acceso escalonado, topes de dados/CD, precio mínimo por grado y presupuestos compartidos de técnicas altas. Recuperaciones y dotes con actividad propia: coste y uso diario.
+- Sangre divina: 24 técnicas nuevas, seis Primeros con potencial diferenciado y Maethra como la mayor; fuerza de sangre, nivel y permisos se verifican también al usar.
+- Choques: disparador por técnica dirigida, defensas primero, intercepción independiente de la reacción y sin ataque gratuito adicional. Ver Ayuda rápida.
+- Reliquias: catálogo separado de 78 perfiles con cargos nativos, nivel, sintonía, permisos rituales, usos compartidos y procedencia. Las utilidades narrativas se resuelven con el DM.
 - Reserva, deuda, reacciones, grados, compras y aprobaciones: adaptador del Verbe y reglas puras.
 - Cuerpo templado: CA y movimiento condicionados a la armadura.
 - Desequilibrado, Embarrado, Cargado y Helado: adaptadores de tiradas y estados. Metal requiere material declarado o marcador explícito y un único objetivo.

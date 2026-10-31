@@ -1,7 +1,9 @@
 /** Requisitos explícitos del repertorio shinobi. No depende de Foundry. */
+import {accesoDivino} from "./verbe-divinity.js";
 export const VERSION_SHINOBI = 1;
 export function accesoShinobi(meta, contexto, usar = false) {
   const a = meta.acceso ?? {}, e = contexto.estado ?? {};
+  const divino=accesoDivino(meta,{...contexto,fuerza:e.fuerza});if(!divino.ok)return divino;
   if (a.tradicion && !(e.tradiciones ?? []).includes(a.tradicion)) return { ok:false, motivo:`Pide la tradición ${a.tradicion}, concedida por el DM.` };
   if (a.herencia && contexto.herencia !== a.herencia) return { ok:false, motivo:`Pide la herencia ${a.herencia}.` };
   if (a.ojo && (Number(e.miradas?.[a.ojo.id]) || 0) < a.ojo.etapa) return { ok:false, motivo:`Pide ${a.ojo.id}, etapa ${a.ojo.etapa}.` };

@@ -1,13 +1,14 @@
 /** Vista sin Foundry: HTML real del panel, personajes ficticios y navegación de demostración. */
 import fs from 'node:fs';
 import { MockActor, MockItem, resetEnvironment } from '../tests/helpers/foundry.mjs';
-import { readCatalog } from './catalog.mjs';
+import { readCatalog, decodeCatalog } from './catalog.mjs';
+import { CatalogoReliquias, usarDatosReliquias } from '../scripts/relics.js';
 import * as V from '../scripts/verbe.js';
 const D = readCatalog(), paginas = {}, fichas = {};
 const version=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version;
-const nombres = { shinobi: 'Huésped, ojos y réplicas', umbral: 'Especialista de Umbral', inicio: 'Primer despertar', rama: 'Elegir especialidad', aprender: 'Primera técnica', jugar: 'Listo para jugar', riesgo: 'Deuda y estados', dm: 'Asignar linaje (DM)', taller: 'Taller universal (DM)' };
+const nombres = { reliquias: 'Compendio de reliquias (DM)', divina: 'Sangre Antigua · nivel 20', shinobi: 'Huésped, ojos y réplicas', umbral: 'Especialista de Umbral', inicio: 'Primer despertar', rama: 'Elegir especialidad', aprender: 'Primera técnica', jugar: 'Listo para jugar', riesgo: 'Deuda y estados', dm: 'Asignar linaje (DM)', taller: 'Taller universal (DM)' };
 for (const vista of Object.keys(nombres)) {
-  resetEnvironment(); V.usarDatos(D, 'activo'); game.user = game.users.get(['dm','taller','shinobi'].includes(vista) ? 'gm' : 'player');
+  resetEnvironment(); V.usarDatos(D, 'activo'); game.user = game.users.get(['dm','taller','shinobi','reliquias','divina'].includes(vista) ? 'gm' : 'player');
   const a = new MockActor(3, { valor: vista === 'riesgo' ? 0 : 18, nats: vista === 'inicio' ? [] : ['fuego'],
     principal: ['inicio','rama'].includes(vista) ? null : 'forma' });
   a.id = 'vista-jugador'; a.name = 'Ari · viajero del valle'; a.system.abilities.wis.mod = 3; a.system.currency.soul = 0;
@@ -21,6 +22,8 @@ for (const vista of Object.keys(nombres)) {
   }
   if (vista === 'riesgo') { a.system.attributes.exhaustion = 4; a.statuses.add('malherido'); a.statuses.add('cargado'); }
   const p = new V.PanelVerbe(a); paginas[vista] = {};
+  if(vista==='reliquias'){usarDatosReliquias(decodeCatalog(fs.readFileSync(new URL('../data/reliquias.txt',import.meta.url),'utf8')));paginas[vista].resumen=await new CatalogoReliquias(a)._renderHTML();continue;}
+  if(vista==='divina'){a.system.details.level=20;Object.assign(V.estado(a),{linaje:'maethra',fuerza:'plena',linajeVisible:true,principal:'sangre',rangos:{sangre:5}});p.pestana='resumen';paginas[vista].resumen=await p._renderHTML();continue;}
   if (vista === 'taller') { paginas[vista].resumen = await new V.EditorCatalogoVerbe()._renderHTML(); continue; }
   if (vista === 'dm') { V.estado(a).linaje='ignis';V.estado(a).fuerza='media';p.pestana='dm';paginas[vista].resumen=await p._renderHTML();continue; }
   for (const tab of vista === 'shinobi' ? ['resumen','jugar','ramas','dm'] : vista === 'umbral' ? ['resumen','ramas'] : vista === 'jugar' ? ['resumen','jugar','tienda','ramas','dotes','cultivo','crear','guia'] : vista === 'riesgo' ? ['resumen','jugar'] : ['resumen']) {

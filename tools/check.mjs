@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { readCatalog, validateCatalog } from './catalog.mjs';
+import { readCatalog, validateCatalog, decodeCatalog } from './catalog.mjs';
 const root = fileURLToPath(new URL('..', import.meta.url));
 let failed = false;
 const walk = dir => fs.readdirSync(dir, { withFileTypes: true }).flatMap(e => {
@@ -29,6 +29,11 @@ for (const f of walk(path.join(root, 'scripts')).filter(f => f.endsWith('.js')))
   }
 }
 const catalog = readCatalog(), errors = validateCatalog(catalog);
+const reliquias=decodeCatalog(fs.readFileSync(path.join(root,'data/reliquias.txt'),'utf8'));
+const idsReliquia=new Set();for(const r of reliquias.reliquias){
+ if(idsReliquia.has(r.id)||!r.item?.system?.activities||r.item?.flags?.['ecos-frontera']?.reliquia?.id!==r.id)errors.push('Reliquia inválida: '+r.id);
+ idsReliquia.add(r.id);
+}
 if (errors.length) { failed = true; console.error(errors.join('\n')); }
 if (failed) process.exitCode = 1;
 else console.log(`Sintaxis, JSON, importaciones y catálogo válidos: ${catalog.tecnicas.length} técnicas, ${catalog.dotes.length} dotes.`);

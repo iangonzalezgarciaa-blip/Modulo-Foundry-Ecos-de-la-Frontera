@@ -1,0 +1,62 @@
+/** Canon del Compendio DM y ampliaciones de mesa autorizadas para 3.2. */
+export const panteon = [
+  ['maethra','Maethra','primordial','La mayor de los Primeros. Vida, bosques, bestias, sueños y caminos; duerme bajo la Fisura.'],
+  ['ignis','Ignis','primordial','Fuego Ordenador, ley, forja y ciudades. El más fuerte de los dioses despiertos; encabeza las Luces.'],
+  ['orun','Orun','primordial','Pastor de Estrellas, rutas y tiempo. Cosechado por Ozhar; persisten fragmentos.'],
+  ['thalos','Thalos','primordial','Los dos océanos, mareas y ahogados; se oculta en las profundidades.'],
+  ['nerys','Nerys','primordial','Aurora, hielo que canta y juramentos. Cosechada; sobreviven ecos y juramentados.'],
+  ['ashka','Ashka','primordial','Voz del Viento, tormentas, mensajes y aves. Cosechada; queda su última voz.'],
+  ['vhaeros','Vhaeros','menor','Hijo de Ignis: alba, escamas y juramentos.'],
+  ['aster','Aster','menor','Escriba de Ashka: registro, memoria y testimonio.'],
+  ['cendra','Cendra','menor','Chispa de Ignis: hogar, pan y familia.'],
+  ['varro','Varro','menor','Primer aprendiz de Ignis: oficio, medida y puentes.'],
+  ['nocta','Nocta','menor','Sirvienta de Orun: sueño y amparo; ayuda a mantener dormida a Maethra.'],
+  ['bastio','Bastio','menor','Mortal elevado por las plegarias: guardia y resistencia.'],
+  ['ennia','Ennia','menor','La Aguja: curación, partos y costuras.'],
+  ['moneta','Moneta','menor','La Balanza: pesos, comercio y deudas.'],
+  ['gracefeel','Gracefeel','menor','Llama Serena, servidora de Maethra: almas, viajeros y despedidas. Actúa oculta entre las Luces.'],
+  ['cazador','Cazador Sin Rostro','menor','Gruum Sin Cara, de la corte de Maethra: caza; Ozhar cosechó su rostro.'],
+  ['verde','Señor Verde','sueno','Sueño de Maethra con fieles: savia y cultivo. No es otro Primigenio.'],
+  ['ikkra','Ikkra','sueno','Sueño de Maethra: libélulas de vidrio y vigilancia.'],
+  ['ahnkree','Ahn-Kree','sueno','El sueño con mayor poder y fieles de Maethra: retorno y Dinastía. No sabe que es un sueño.'],
+  ['ozhar','Ozhar','ajeno','Depredador de dioses, exterior a los Primeros. Sin linaje jugable ordinario.'],
+  ['seyra','Seyra','menor','Propuesta nueva: los nudos y el rescate; nació de plegarias a la última voz de Ashka. No reemplaza a Ashka.',true],
+  ['dhoren','Dhoren','menor','Propuesta nueva: dinteles, cerraduras y refugios; antiguo discípulo de Varro elevado por guardianes de puentes.',true]
+].map(([id,nombre,jerarquia,texto,propuesto=false])=>({id,nombre,jerarquia,texto,propuesto}));
+
+export const linajesNuevos = [
+  {id:'nerys',alias:'Sangre de aurora',req:'Juramento del hielo',rasgo:{dr:['cold']},despertar:{dr:['cold'],ac:1},texto:'Resistencia al frío; conserva un eco del juramento, no la voluntad de una diosa viva.',forma:'Aurora viva: +1 CA durante el Despertar. Las técnicas de aurora se aprenden por separado.'},
+  {id:'ashka',alias:'Sangre de vendaval',req:'Última voz',rasgo:{ae:[['system.attributes.movement.walk',2,'3']]},despertar:{vuelo:12},texto:'Tu velocidad a pie aumenta 3 m. El viento guarda una voz de Ashka; no la ha resucitado.',forma:'Alas del mensaje: vuelo de 12 m durante el Despertar, sin turnos o acciones adicionales.'},
+  {id:'gracefeel',alias:'Sangre de despedida',req:'Llama serena',rasgo:{dr:['necrotic']},despertar:{dr:['radiant']},texto:'Resistencia al daño necrótico. Afinidad con despedidas y almas que aún no se han ido; no concede resurrección.',forma:'Llama de tránsito: también resistencia al radiante durante el Despertar.'},
+  {id:'cazador',alias:'Sangre de rastro',req:'Caza sin rostro',rasgo:{ae:[['system.skills.sur.bonuses.check',2,'2']]},despertar:{ac:1},texto:'+2 a las pruebas de Supervivencia de la hoja. No localiza automáticamente a cualquiera ni atraviesa protecciones.',forma:'La caza velada: +1 CA durante el Despertar.'},
+  {id:'seyra',alias:'Sangre de nudo',req:'Nudo del rescate',rasgo:{ae:[['system.skills.ath.bonuses.check',2,'2']]},despertar:{nado:9},texto:'+2 a las pruebas de Atletismo de la hoja. Su patrona es una ampliación propuesta, pendiente de fijar en el lore.',forma:'Cuerda de agua: velocidad de nado 9 m durante el Despertar; no concede respirar bajo el agua.'},
+  {id:'dhoren',alias:'Sangre de umbral firme',req:'Dintel guardado',rasgo:{ae:[['system.skills.prc.bonuses.check',2,'2']]},despertar:{ac:1},texto:'+2 a las pruebas de Percepción de la hoja. Su patrono es una ampliación propuesta, pendiente de fijar en el lore.',forma:'El guardián del dintel: +1 CA durante el Despertar.'}
+];
+
+const madre='maethra', limite='No despierta a Maethra ni altera Pilares, Barreras o almas. Conserva los requisitos, acciones y cuotas del Verbe.';
+export const tecnicasDivinas = [
+ {id:'madre-raices',linaje:madre,nombre:'Raíces protectoras',g:1,t:'R',tipo:'buff',duracion:6,conc:false,cambios:[['system.attributes.ac.bonus',2,'2']],disparador:'Cuando un ataque que ves vaya a golpearte, antes de resolverlo.',familiaUso:'amparo-madre',texto:'La corteza del sueño te envuelve: +2 CA hasta el comienzo de tu próximo turno. Un uso por Descanso Largo; no modifica un golpe ya resuelto.'},
+ {id:'madre-abrazo',linaje:madre,nombre:'Abrazo del primer bosque',g:3,tipo:'heal',dados:[5,8],alcance:1.5,escalado:0,familiaUso:'gracia-madre',texto:'Restauras 5d8 PG a una criatura viva que tocas. Una vez por Descanso Largo. No cierra heridas persistentes, cura Agotamiento ni revive a un muerto.'},
+ {id:'madre-sendero',linaje:madre,nombre:'Sendero del sueño',g:6,tipo:'utility',previa:'sangre-paso',texto:'Abres un camino de 30 m a un lugar desocupado que ves y que puede alcanzarse físicamente. Tú y hasta dos aliados voluntarios lo recorréis con tu acción. No admite cobertura total, barreras selladas ni otro plano; el DM confirma las posiciones.',limite},
+ {id:'madre-santuario',linaje:madre,nombre:'Santuario de la Madre',g:8,tipo:'buff',conc:true,cambios:[['system.traits.dr.value',2,'fire'],['system.traits.dr.value',2,'cold'],['system.traits.dr.value',2,'lightning']],texto:'Durante un minuto tu cuerpo alberga un refugio del sueño: resistencia al fuego, frío y relámpago. Solo protege al usuario; no añade inmunidades ni protección gratuita a sus aliados.'},
+ {id:'madre-voz',linaje:madre,nombre:'Voz de la Primera',g:9,tipo:'control',salv:'wis',previa:'sangre-voz',estados:['charmed'],texto:'Una bestia de lo salvaje que ves a 18 m salva SAB o queda Hechizada durante un minuto. Puedes pedir que se retire o cese un ataque, no obediencia suicida. Repite la salvación al final de cada turno y si recibe daño. No libera adoptados ni domina dioses.',limite},
+ {id:'madre-caminos',linaje:madre,nombre:'Caminos sin frontera',g:10,t:'10 min',tipo:'ritual',previa:'sangre-senorio',texto:'Tras preparar un umbral, tú y hasta seis compañeros recorréis hasta 1 km hacia un lugar visitado de este mismo plano. El DM valida una ruta segura y la autoriza para un solo uso. No atraviesa Pilares, sellos activos ni dominios cerrados.',limite},
+ {id:'madre-jardin',linaje:madre,nombre:'Jardín del Primer Sueño',g:11,tipo:'save',salv:'dex',dados:[18,8],escalado:0,dano:'radiant',area:9,mitad:true,texto:'Un jardín de luz emerge en una esfera de 9 m a 18 m. Las criaturas del área salvan DES: 18d8 radiante, mitad con éxito. Elige el área con cuidado: no distingue aliados. Tras la descarga la vegetación se desvanece sin crear materia comerciable.',limite},
+ {id:'nerys-escarcha',linaje:'nerys',nombre:'Promesa de escarcha',g:1,tipo:'attack',dados:[2,8],dano:'cold',texto:'Proyectas una astilla de aurora: ataque a distancia, 2d8 frío. No inmoviliza automáticamente.'},
+ {id:'nerys-canto',linaje:'nerys',nombre:'Canto del hielo',g:4,tipo:'control',salv:'str',estados:['restrained'],texto:'Un objetivo a 18 m salva FUE o queda Apresado por un hielo que canta. Concentración, un minuto; repite FUE al final de sus turnos. No congela un océano ni impide respirar.'},
+ {id:'nerys-aurora',linaje:'nerys',nombre:'Aurora del juramento',g:7,tipo:'save',salv:'con',dados:[10,8],dano:'cold',mitad:true,area:6,texto:'Un arco de aurora alcanza una esfera de 6 m: salvación CON, 10d8 frío y mitad con éxito. No afecta juramentos ni contratos de historia.'},
+ {id:'ashka-pluma',linaje:'ashka',nombre:'Pluma de la última voz',g:1,tipo:'attack',dados:[2,8],dano:'thunder',texto:'Una pluma de viento lleva tu voz: ataque a 18 m, 2d8 trueno. No ensordece ni lanza al blanco automáticamente.'},
+ {id:'ashka-alas',linaje:'ashka',nombre:'Alas del mensaje perdido',g:4,tipo:'buff',conc:true,cambios:[['system.attributes.movement.fly',4,'12']],texto:'Vuelas a 12 m durante un minuto. Concentración; prepara dónde aterrizar si termina en el aire.'},
+ {id:'ashka-tormenta',linaje:'ashka',nombre:'Respuesta de la tormenta',g:7,tipo:'save',salv:'dex',dados:[10,8],dano:'lightning',mitad:true,area:6,texto:'La voz atrapada en la tormenta descarga en una esfera de 6 m: DES, 10d8 relámpago y mitad con éxito. No cambia el clima mundial ni llama a Ashka.'},
+ {id:'thalos-abismo',linaje:'thalos',nombre:'Peso del mar primero',g:9,tipo:'save',salv:'str',dados:[14,8],dano:'bludgeoning',mitad:true,area:6,texto:'Una presión abisal golpea una esfera de 6 m: FUE, 14d8 contundente y mitad con éxito. No ahoga, vacía reservas ni drena mares automáticamente.'},
+ {id:'ignis-ley',linaje:'ignis',nombre:'Ley del Fuego Ordenador',g:9,tipo:'save',salv:'dex',dados:[14,8],dano:'fire',mitad:true,area:6,texto:'Trazas la ley del fuego en una esfera de 6 m: DES, 14d8 fuego y mitad con éxito. Conserva resistencias e inmunidades; no desintegra criaturas ni ignora el Pacto del Velo.'},
+ {id:'orun-fragmento',linaje:'orun',nombre:'Fragmento del cielo anterior',g:9,tipo:'save',salv:'con',dados:[14,8],dano:'radiant',mitad:true,area:6,texto:'Invocas el eco de una estrella fragmentada: en esfera de 6 m, CON, 14d8 radiante y mitad con éxito. No reescribe tiradas pasadas, líneas temporales ni destinos de la campaña.'},
+ {id:'gracefeel-lumbre',linaje:'gracefeel',nombre:'Lumbre de despedida',g:1,tipo:'heal',dados:[2,6],escalado:0,familiaUso:'lumbre-serena',alcance:1.5,texto:'Restauras 2d6 PG a un vivo que tocas, una vez por Descanso Largo. La llama acompaña a los moribundos, pero no regresa almas ni borra heridas persistentes.'},
+ {id:'gracefeel-farol',linaje:'gracefeel',nombre:'Farol del último viaje',g:3,tipo:'utility',duracion:600,texto:'Durante diez minutos un farol ilumina 6 m y permite conversar con un eco presente y dispuesto, si el DM confirma que existe. El eco solo sabe lo que supo en vida; no está obligado a contestar y no resucita.'},
+ {id:'cazador-marca',linaje:'cazador',nombre:'Rastro sin rostro',g:1,tipo:'utility',duracion:3600,texto:'Tras examinar una huella reciente identificas una señal del rastro durante una hora. Ventaja para seguir ese rastro en Supervivencia; no revela posición exacta, identidad secreta ni cruza planos. Se resuelve en mesa.'},
+ {id:'cazador-flecha',linaje:'cazador',nombre:'Flecha del claro vacío',g:3,tipo:'attack',dados:[5,8],dano:'piercing',texto:'Proyectas un asta de caza a 18 m: ataque, 5d8 perforante. No necesita ni fabrica munición permanente; respeta cobertura y armadura.'},
+ {id:'seyra-lazo',linaje:'seyra',nombre:'Lazo de auxilio',g:1,tipo:'utility',texto:'Lanzas un lazo a un aliado voluntario de tu tamaño o menor a 9 m. Con anclaje seguro puedes atraerlo hasta 3 m hacia ti; no atraviesa obstáculos, no deshace agarres ajenos ni permite volar. El DM mueve el token.',alcance:9},
+ {id:'seyra-nudo',linaje:'seyra',nombre:'Nudo que retiene',g:3,tipo:'control',salv:'str',estados:['restrained'],texto:'Un lazo de viento apresa a un objetivo a 18 m que falle FUE. Un minuto con Concentración; repite FUE al final de sus turnos. No asfixia ni produce cuerda vendible.'},
+ {id:'dhoren-dintel',linaje:'dhoren',nombre:'Dintel de guardia',g:1,t:'R',tipo:'buff',duracion:6,cambios:[['system.attributes.ac.bonus',2,'2']],disparador:'Antes de resolver un ataque que ves contra ti.',texto:'+2 CA hasta el comienzo de tu próximo turno, mientras ocupes un paso de hasta 1,5 m de ancho. Requiere el paso real, que valida el DM. No bloquea físicamente a todo enemigo.'},
+ {id:'dhoren-cerrar',linaje:'dhoren',nombre:'Cerrar el umbral',g:3,tipo:'utility',duracion:600,texto:'Refuerzas una puerta existente durante diez minutos: CD de herramienta o FUE para abrirla igual a tu CD de Verbe. No reemplaza una puerta destruida, no sella planos ni impide una salida que acuerde el DM. El marco sigue pudiendo romperse.'}
+];

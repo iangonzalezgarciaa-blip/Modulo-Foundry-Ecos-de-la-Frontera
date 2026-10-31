@@ -214,6 +214,19 @@
 .ecos-verbe-form select, .ecos-verbe-form input[type="number"] { width: auto; }
 .ecos-verbe-form input[name="nombre"], .ecos-verbe-form textarea { width: 100%; }
 .ecos-verbe-form fieldset { margin: 4px 0; padding: 4px 8px; border: 1px solid rgba(127, 127, 127, 0.35); border-radius: 6px; }
+/* Despertar: el catálogo se consulta dentro de la ventana, sin empujar sus botones fuera de pantalla. */
+.ecos-verbe-despertar { max-width: calc(100vw - 2rem); max-height: calc(100vh - 2rem); max-height: calc(100dvh - 2rem); }
+.ecos-verbe-despertar .window-content,
+.ecos-verbe-despertar .dialog-form,
+.ecos-verbe-despertar .dialog-content { min-height: 0; }
+.ecos-verbe-despertar .dialog-form { overflow: hidden; }
+.ecos-verbe-despertar .dialog-content { overflow-y: auto; }
+.ecos-verbe-despertar .ecos-verbe-form { max-height: 70vh; overflow-y: auto; scrollbar-gutter: stable; }
+.ecos-verbe-despertar .ecos-verbe-form select { max-width: 100%; }
+.ecos-verbe-despertar .ecos-verbe-consulta {
+  max-height: min(40vh, 26rem); overflow-y: auto; overscroll-behavior-y: contain;
+  scrollbar-gutter: stable; overflow-wrap: anywhere; padding: .5rem;
+}
 .ecos-verbe-nota { font-size: 0.88em; opacity: 0.85; }
 
 /* Capa V v1.1: cabecera, pasos, tienda y dotes */
