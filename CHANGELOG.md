@@ -1,5 +1,15 @@
 # Cambios
 
+## 3.0.0 — Repertorio shinobi y avisos de actualización
+
+- 754 técnicas: se conservan las 401 anteriores y se añaden 353 adaptaciones del estudio Naruto/Shippuden, 327 fuera de Forma. Nuevas ramas Umbral y Vasija; más genjutsu, taijutsu, sellado, marionetas, medicina, rastreo, senjutsu, ojos, contratos y huéspedes. Referencia original buscable, página, requisitos, límites y alcance de automatización por ficha.
+- Accesos separados para tradiciones, herencias, ojos/etapas, hitos, bestias/vínculos, modos y reliquias. El DM concede accesos, 17 objetos excepcionales y permisos rituales de un solo uso desde su pestaña. No se regalan todos los poderes de un ojo o bestia por conceder el acceso.
+- Réplicas físicas con energía dividida realmente y acción conjunta; depósito real del Sello del centenar; familias de usos, desgaste/sacrificio ocular persistentes y transferencias de energía sin duplicación. Efectos propios de transformación y regeneración conectados a actividades y curación nativa.
+- Ocho Cerrojos: el séptimo deja de ser fatal y la Puerta de la Muerte pasa al octavo. Migración de quienes conocían el antiguo séptimo, conservando compras y Trazos. Tormenta usa Agua + Rayo; se conservan combinaciones previamente concedidas y el lore de Nimerios.
+- Reparadas reacciones, mitad en salvación, el estado erróneo de Cambio de mente y las descripciones contradictorias de clones. Unidades válidas de duración en cultivo y límite a la regeneración repetida de Verbe.
+- El BAT instala un notificador silencioso: globo de Windows solo después de instalar una versión nueva, con última versión y fecha consultables en Estado. Para habilitarlo en una instalación anterior, descargar el BAT nuevo y pulsar Activar una vez; no requiere repetir la configuración ni el acceso de GitHub.
+- Pruebas del repertorio, migración, energía, requisitos, permisos, interfaz y actualizador en Windows; catálogo reproducible y paquete privado. Sacrificios, rituales, NPC invocados, marcas y posición conservan resolución del DM. Pendiente comprobación en Foundry con los módulos de campaña.
+
 ## 2.10.0 — Taller del DM y progresión clara
 
 - Cambiar verde por pergamino, gris y carbón; corregir las tarjetas de elementos con altura automática y distribución adaptable.

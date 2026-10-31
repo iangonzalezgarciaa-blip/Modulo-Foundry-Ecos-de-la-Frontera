@@ -34,7 +34,7 @@ export function aplicarCultivoUtilidad(data, mejoras) {
   data.system.properties = (data.system.properties ?? []).filter(p => !quitar.has(p));
   if (mejoras.includes("duracion")) {
     const d = data.system.duration, unidad = ({ round: 6, minute: 60, hour: 3600 })[d?.units];
-    if (unidad && d.value > 0) { d.value = Number(d.value) * unidad + Math.min(60, Math.ceil(Number(d.value) * unidad / 2)); d.units = "second"; }
+    if (unidad && d.value > 0) { d.value = (Number(d.value) * unidad + Math.min(60, Math.ceil(Number(d.value) * unidad / 2))) / 60; d.units = "minute"; }
   }
   return data;
 }

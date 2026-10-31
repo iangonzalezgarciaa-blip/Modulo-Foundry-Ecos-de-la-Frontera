@@ -303,7 +303,7 @@ test('actualizar la versión de reglas conserva compras, deuda y objetos existen
   assert.equal(V.estado(a).valor, -2); assert.equal(V.estado(a).cerrojosHoy.veces, 0);
   assert.equal(a.items.get(item.id), item);
 });
-test('las 401 técnicas generan datos y costes válidos en los seis niveles de control', () => {
+test('todas las técnicas generan datos y costes válidos en los seis niveles de control', () => {
   for (const level of [1, 3, 5, 11, 17, 20]) {
     const a = new MockActor(level);
     for (const t of D.tecnicas) {

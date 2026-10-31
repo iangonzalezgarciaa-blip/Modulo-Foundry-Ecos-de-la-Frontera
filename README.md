@@ -1,10 +1,10 @@
-# Ecos de la frontera · Reglas de la casa (v2.10.0)
+# Ecos de la frontera · Reglas de la casa (v3.0.0)
 
 **Interfaz para nuevos jugadores:** Inicio guía las primeras elecciones; Mis técnicas permite jugar; Aprender separa costes de aprendizaje y uso; Mejorar reúne el progreso; Ayuda rápida responde las dudas sin exigir leer un manual. [Detalles de la interfaz 2.9](docs/INTERFAZ_JUGADORES_2.9.md). [Vista previa independiente](docs/preview/interfaz.html), para descargar y abrir en un navegador con datos ficticios.
 
-Esta versión repara el núcleo del Verbe y su enlace con supervivencia. Conserva las 401 técnicas y 155 dotes. Consulta la [base y decisiones de 2.8](docs/BASE_ESTABLE_2.8.md), el [historial](CHANGELOG.md), la [cobertura completa](docs/COBERTURA_CATALOGO.md) y los [escenarios de balance](docs/ESCENARIOS_BALANCE.md). El código tiene pruebas locales; queda pendiente su validación dentro de Foundry con los módulos de la campaña.
+Esta versión reúne **754 técnicas y 155 dotes**: conserva las 401 anteriores y añade 353 adaptaciones del estudio Naruto/Shippuden, 327 fuera de Forma. Incorpora Umbral (espacio-tiempo) y Vasija (huéspedes), con requisitos y límites explícitos. [Repertorio y uso de 3.0](docs/REPERTORIO_3.0.md). Consulta la [base y decisiones de 2.8](docs/BASE_ESTABLE_2.8.md), el [historial](CHANGELOG.md), la [cobertura completa](docs/COBERTURA_CATALOGO.md) y los [escenarios de balance](docs/ESCENARIOS_BALANCE.md). El código tiene pruebas locales; queda pendiente su validación dentro de Foundry con los módulos de la campaña.
 
-**Actualizaciones privadas en Windows:** descarga `Ecos-Actualizar.ps1` del Release y configúralo una vez. Después revisa nuevas versiones en segundo plano y pospone si detecta Foundry abierto. Usa tu cuenta mediante GitHub CLI; no publica el código ni guarda tokens en el módulo. [Configuración y respaldos](docs/ACTUALIZACIONES.md). Paquete manual actual: [ecos-frontera-2.10.0.zip](releases/ecos-frontera-2.10.0.zip).
+**Actualizaciones privadas en Windows:** descarga `Ecos-Actualizar.ps1` del Release y configúralo una vez. Después revisa nuevas versiones en segundo plano y pospone si detecta Foundry abierto. Usa tu cuenta mediante GitHub CLI; no publica el código ni guarda tokens en el módulo. [Configuración y respaldos](docs/ACTUALIZACIONES.md). Paquete manual actual: [ecos-frontera-3.0.0.zip](releases/ecos-frontera-3.0.0.zip).
 
 Módulo de Foundry VTT v13 para dnd5e 5.x hecho para la campaña **Ecos de la frontera** (mundo *Fantasy and Agony*). Automatiza las reglas de supervivencia, el trabajo de los PJ, la economía del Valle de Arcegris y el Mercadillo.
 
@@ -17,7 +17,7 @@ Este README es la referencia técnica. Lo que es solo para el DM (secretos, merc
 
 ---
 
-[Cambios y uso de la revisión 2.10](docs/REVISION_2.10.md) · [Calibración de niveles y Trazos](docs/PROGRESION_2.10.md). El Release incluye `Ecos-Autoactualizacion.bat` para activar/detener la tarea ya instalada.
+[Cambios y uso de la revisión 2.10](docs/REVISION_2.10.md) · [Calibración de niveles y Trazos](docs/PROGRESION_2.10.md). El Release incluye `Ecos-Autoactualizacion.bat` para activar/detener la tarea ya instalada y avisar en Windows tras instalar una versión nueva. Descarga el BAT nuevo y pulsa Activar una vez para habilitar los avisos.
 
 ## 1. Requisitos e instalación
 
@@ -43,6 +43,7 @@ scripts/verbe-ui.js     presentación, primeros pasos y avisos para el jugador
 scripts/rest-core.js    presupuestos y resultado nativo de recuperación
 scripts/verbe-training.js compatibilidad y costes del cultivo
 scripts/verbe-authoring.js validación del taller del DM
+scripts/verbe-shinobi.js requisitos y reparto de energía del repertorio
 scripts/catalogo.js    catálogo de las tiendas del Mercadillo
 scripts/calendario.js  calendario de campaña
 data/verbe.txt         catálogo del Verbe codificado

@@ -1,6 +1,6 @@
 {
   "name": "ecos-frontera",
-  "version": "2.10.0",
+  "version": "3.0.0",
   "ecosUpdateMode": "private",
   "private": true,
   "type": "module",
@@ -12,7 +12,10 @@
     "docs:catalog": "node tools/catalog-report.mjs",
     "balance": "node tools/balance.mjs",
     "ui:preview": "node tools/preview-ui.mjs",
-    "package": "python3 tools/package.py"
+    "package": "python3 tools/package.py",
+    "catalog:expand": "node tools/expand-shinobi.mjs"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  }
 }

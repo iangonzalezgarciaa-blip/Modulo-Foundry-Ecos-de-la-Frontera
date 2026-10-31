@@ -73,8 +73,9 @@ test('la creación señala daño y geometría fuera de presupuesto', () => {
   assert.ok(r.errores.some(e => e.includes('área')));
   assert.ok(r.errores.some(e => e.includes('daño')));
 });
-test('el catálogo conserva sus 401 técnicas y 155 dotes y codifica sin pérdida', () => {
-  assert.equal(D.tecnicas.length, 401);
+test('el catálogo conserva las 401 técnicas base, añade el repertorio y codifica sin pérdida', () => {
+  assert.equal(D.tecnicas.length, 401 + D.shinobi.nuevas);
+  assert.equal(D.tecnicas.filter(t=>!t.item.flags['ecos-frontera'].verbe.shinobi).length,401);
   assert.equal(D.dotes.length, 155);
   assert.deepEqual(decodeCatalog(encodeCatalog(D)), D);
   assert.deepEqual(validateCatalog(D), []);

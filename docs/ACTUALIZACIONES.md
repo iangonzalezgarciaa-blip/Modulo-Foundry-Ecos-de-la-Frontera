@@ -35,6 +35,8 @@ Descarga **Ecos-Autoactualizacion.bat** desde el Release privado y guárdalo don
 
 **Activar corrige también las ventanas de la versión 2.9.2**: cambia únicamente la tarea de Ecos de tu usuario para arrancar mediante `wscript.exe` en segundo plano. Si antes usaste `-Remove`, vuelve a crear la tarea con su configuración conservada. No es necesario reinstalar el módulo ni repetir el instalador para usar este BAT.
 
+**Avisos desde 3.0:** vuelve a descargar el BAT del Release y elige Activar una vez. Esto instala el ayudante de notificaciones junto al actualizador existente; no repite la ruta de Foundry ni el acceso a GitHub. Al terminar una instalación mostrará un aviso de Windows con la versión instalada. Si no hay cambios, hay un fallo o Foundry sigue abierto, no anuncia una actualización. Estado muestra la última versión instalada y su fecha. Windows puede silenciar el globo con sus ajustes de notificaciones; el registro permanece. El primer -Install manual no muestra este aviso: lo hacen las comprobaciones iniciadas por la tarea o el BAT.
+
 Detener deshabilita las comprobaciones futuras. Una actualización en curso termina; no se mata un proceso en mitad de un respaldo o de sustituir la carpeta. Al activar se hace una primera comprobación y se retoma el intervalo de cinco minutos y el inicio de sesión. Foundry abierto sigue posponiendo las instalaciones.
 
 También admite comandos: `Ecos-Autoactualizacion.bat activar`, `Ecos-Autoactualizacion.bat detener` y `Ecos-Autoactualizacion.bat estado`. La consola del menú se abre solo cuando tú ejecutas el BAT; las comprobaciones periódicas usan el lanzador sin consola.

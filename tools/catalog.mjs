@@ -26,6 +26,15 @@ export function validateCatalog(D) {
     if (!Number.isInteger(t.trazos) || t.trazos < 0) errors.push(`${t.id}: coste de aprendizaje inválido`);
     const activities = Object.values(t.item?.system?.activities ?? {});
     if (!activities.length) errors.push(`${t.id}: sin actividad`);
+    if(meta?.shinobi){
+      const acceso=meta.acceso??{};
+      for(const[campo,lista,clave]of [['tradicion',D.tradicionesShinobi,'id'],['hito',D.hitosShinobi,'id'],['herencia',D.linajes,'req'],['artefacto',D.artefactosShinobi,'id'],['bestia',D.bestiasShinobi,'id']])
+        if(acceso[campo]&&!lista?.some(x=>x[clave]===acceso[campo]))errors.push(`${t.id}: requisito inexistente ${campo}`);
+      if(acceso.ojo&&!D.miradas.some(m=>m.id===acceso.ojo.id&&m.etapas.length>=acceso.ojo.etapa))errors.push(`${t.id}: ojo o etapa inexistentes`);
+      if(t.previa&&!D.tecnicas.some(x=>x.id===t.previa))errors.push(`${t.id}: previa inexistente`);
+      if(!['inst','round','minute','hour','day'].includes(t.item.system.duration.units))errors.push(`${t.id}: unidad de duración inválida`);
+      if(!t.origen?.nombre||!Number.isInteger(t.origen.pagina)||t.origen.pagina<7||t.origen.pagina>44)errors.push(`${t.id}: referencia del estudio inválida`);
+    }
     for (const a of activities) {
       if (a.consumption?.spellSlot) errors.push(`${t.id}: consume espacios de conjuro`);
       const parte = a.healing ?? a.damage?.parts?.[0];

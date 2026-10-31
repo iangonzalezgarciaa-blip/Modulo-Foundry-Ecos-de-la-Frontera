@@ -1,0 +1,2570 @@
+{
+  "base": 401,
+  "total": 754,
+  "nuevas": 353,
+  "ramas": [
+    {
+      "id": "forma",
+      "nombre": "Forma",
+      "total": 173,
+      "nuevas": 26
+    },
+    {
+      "id": "velo",
+      "nombre": "Velo",
+      "total": 49,
+      "nuevas": 14
+    },
+    {
+      "id": "cuerpo",
+      "nombre": "Cuerpo",
+      "total": 64,
+      "nuevas": 37
+    },
+    {
+      "id": "mirada",
+      "nombre": "Mirada",
+      "total": 55,
+      "nuevas": 33
+    },
+    {
+      "id": "sello",
+      "nombre": "Sello",
+      "total": 69,
+      "nuevas": 37
+    },
+    {
+      "id": "pacto",
+      "nombre": "Pacto",
+      "total": 53,
+      "nuevas": 27
+    },
+    {
+      "id": "pulso",
+      "nombre": "Pulso",
+      "total": 38,
+      "nuevas": 13
+    },
+    {
+      "id": "hilo",
+      "nombre": "Hilo",
+      "total": 62,
+      "nuevas": 40
+    },
+    {
+      "id": "quietud",
+      "nombre": "Quietud",
+      "total": 38,
+      "nuevas": 19
+    },
+    {
+      "id": "rastro",
+      "nombre": "Rastro",
+      "total": 36,
+      "nuevas": 17
+    },
+    {
+      "id": "sangre",
+      "nombre": "Sangre",
+      "total": 61,
+      "nuevas": 34
+    },
+    {
+      "id": "umbral",
+      "nombre": "Umbral",
+      "total": 17,
+      "nuevas": 17
+    },
+    {
+      "id": "vasija",
+      "nombre": "Vasija",
+      "total": 39,
+      "nuevas": 39
+    }
+  ],
+  "reparaciones": [
+    "forma-sustitucion: reacción nativa",
+    "forma-replica-solida: división real de energía y límite conjunto de acciones",
+    "forma-doble: división real de energía y límite conjunto de acciones",
+    "agua-cortina: reacción nativa",
+    "tierra-escudo: reacción nativa",
+    "velo-paso-falso: reacción nativa",
+    "mirada-aster-leer: reacción nativa",
+    "familia-mente-saltar: retirar Aturdido de la víctima equivocada",
+    "hilo-cubre: reacción nativa",
+    "familia-enjambre-escudo: reacción nativa"
+  ],
+  "tecnicas": [
+    {
+      "id": "velo-lugar-falso",
+      "referencia": "Kokoni Arazu no Jutsu",
+      "pagina": 19,
+      "rama": "velo",
+      "grado": 1
+    },
+    {
+      "id": "velo-doble-escenario",
+      "referencia": "Nijū Kokoni Arazu",
+      "pagina": 19,
+      "rama": "velo",
+      "grado": 3
+    },
+    {
+      "id": "velo-estacas-sonadas",
+      "referencia": "Kasegui no Jutsu",
+      "pagina": 19,
+      "rama": "velo",
+      "grado": 3
+    },
+    {
+      "id": "velo-cuervos-sonados",
+      "referencia": "Genjutsu de cuervos",
+      "pagina": 19,
+      "rama": "velo",
+      "grado": 2
+    },
+    {
+      "id": "velo-flauta-cautiva",
+      "referencia": "Mugen Onsa",
+      "pagina": 19,
+      "rama": "velo",
+      "grado": 4
+    },
+    {
+      "id": "velo-coro-sabio",
+      "referencia": "Gama Rinshō",
+      "pagina": 19,
+      "rama": "velo",
+      "grado": 7
+    },
+    {
+      "id": "velo-almeja-espejismo",
+      "referencia": "Espejismo de la almeja gigante",
+      "pagina": 19,
+      "rama": "velo",
+      "grado": 5
+    },
+    {
+      "id": "velo-salir-flujo",
+      "referencia": "Interferencia externa",
+      "pagina": 20,
+      "rama": "velo",
+      "grado": 1
+    },
+    {
+      "id": "velo-desorden-mental",
+      "referencia": "Shinranshin",
+      "pagina": 26,
+      "rama": "velo",
+      "grado": 5
+    },
+    {
+      "id": "velo-enlace-grupo",
+      "referencia": "Enlace telepático",
+      "pagina": 26,
+      "rama": "velo",
+      "grado": 3
+    },
+    {
+      "id": "velo-transmision-mente",
+      "referencia": "Shinden",
+      "pagina": 26,
+      "rama": "velo",
+      "grado": 2
+    },
+    {
+      "id": "velo-retorno-mente",
+      "referencia": "Shintenshin: retorno",
+      "pagina": 26,
+      "rama": "velo",
+      "grado": 1
+    },
+    {
+      "id": "velo-sueno-corporeo",
+      "referencia": "Yakumo Kurama",
+      "pagina": 44,
+      "rama": "velo",
+      "grado": 8
+    },
+    {
+      "id": "cuerpo-sombra-danzante",
+      "referencia": "Kage Buyō",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 1
+    },
+    {
+      "id": "cuerpo-combo-leon",
+      "referencia": "Shishi Rendan",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 3
+    },
+    {
+      "id": "cuerpo-combo-replicas",
+      "referencia": "Uzumaki Naruto Rendan",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 3
+    },
+    {
+      "id": "cuerpo-loto-frontal",
+      "referencia": "Omote Renge",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 3
+    },
+    {
+      "id": "cuerpo-loto-inverso",
+      "referencia": "Ura Renge",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 5
+    },
+    {
+      "id": "cuerpo-pavo-alba",
+      "referencia": "Asa Kujaku",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 7
+    },
+    {
+      "id": "cuerpo-tigre-mediodia",
+      "referencia": "Hirudora",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 9
+    },
+    {
+      "id": "cuerpo-elefante-ocaso",
+      "referencia": "Sekizō",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 10
+    },
+    {
+      "id": "cuerpo-noche-ultima",
+      "referencia": "Yagai",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 11
+    },
+    {
+      "id": "cuerpo-puno-ebrio",
+      "referencia": "Suiken",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 2
+    },
+    {
+      "id": "cuerpo-arhat",
+      "referencia": "Arhat Fist",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 2
+    },
+    {
+      "id": "cuerpo-lariat-rayo",
+      "referencia": "Lariat",
+      "pagina": 21,
+      "rama": "cuerpo",
+      "grado": 4
+    },
+    {
+      "id": "cuerpo-palma-vacio",
+      "referencia": "Hakke Kūshō",
+      "pagina": 22,
+      "rama": "cuerpo",
+      "grado": 3
+    },
+    {
+      "id": "cuerpo-doble-palma",
+      "referencia": "Hakke Kūhekishō",
+      "pagina": 22,
+      "rama": "cuerpo",
+      "grado": 5
+    },
+    {
+      "id": "cuerpo-sesenta-cuatro",
+      "referencia": "Hakke Rokujūyon Shō",
+      "pagina": 22,
+      "rama": "cuerpo",
+      "grado": 4
+    },
+    {
+      "id": "cuerpo-ciento-veintiocho",
+      "referencia": "Hakke Hyakunijūhachi Shō",
+      "pagina": 22,
+      "rama": "cuerpo",
+      "grado": 6
+    },
+    {
+      "id": "cuerpo-rotacion-palmas",
+      "referencia": "Hakkeshō Kaiten",
+      "pagina": 22,
+      "rama": "cuerpo",
+      "grado": 3
+    },
+    {
+      "id": "cuerpo-leones-gemelos",
+      "referencia": "Jūho Sōshiken",
+      "pagina": 22,
+      "rama": "cuerpo",
+      "grado": 5
+    },
+    {
+      "id": "cuerpo-palma-rompe",
+      "referencia": "Hakke Hasangeki",
+      "pagina": 22,
+      "rama": "cuerpo",
+      "grado": 5
+    },
+    {
+      "id": "cuerpo-guardian-cauces",
+      "referencia": "Shugo Hakke Rokujūyon Shō",
+      "pagina": 22,
+      "rama": "cuerpo",
+      "grado": 4
+    },
+    {
+      "id": "cuerpo-expansion-parcial",
+      "referencia": "Bubun Baika",
+      "pagina": 27,
+      "rama": "cuerpo",
+      "grado": 2
+    },
+    {
+      "id": "cuerpo-tanque-carne",
+      "referencia": "Nikudan Sensha",
+      "pagina": 27,
+      "rama": "cuerpo",
+      "grado": 3
+    },
+    {
+      "id": "cuerpo-tanque-espinas",
+      "referencia": "Nikudan Hari Sensha",
+      "pagina": 27,
+      "rama": "cuerpo",
+      "grado": 4
+    },
+    {
+      "id": "cuerpo-mariposa",
+      "referencia": "Chō Mōdo",
+      "pagina": 27,
+      "rama": "cuerpo",
+      "grado": 6
+    },
+    {
+      "id": "cuerpo-bombardeo-mariposa",
+      "referencia": "Chōdan Bakugeki",
+      "pagina": 27,
+      "rama": "cuerpo",
+      "grado": 7
+    },
+    {
+      "id": "pulso-regeneracion-prevista",
+      "referencia": "In’yu Shōmetsu",
+      "pagina": 34,
+      "rama": "pulso",
+      "grado": 3
+    },
+    {
+      "id": "pulso-centenar-sello",
+      "referencia": "Byakugō no Jutsu",
+      "pagina": 34,
+      "rama": "pulso",
+      "grado": 5
+    },
+    {
+      "id": "pulso-centenar-liberar",
+      "referencia": "Byakugō: liberación",
+      "pagina": 34,
+      "rama": "pulso",
+      "grado": 5
+    },
+    {
+      "id": "pulso-creacion-renovacion",
+      "referencia": "Sōzō Saisei",
+      "pagina": 34,
+      "rama": "pulso",
+      "grado": 6
+    },
+    {
+      "id": "pulso-renovacion-centenar",
+      "referencia": "Sōzō Saisei: Byakugō",
+      "pagina": 34,
+      "rama": "pulso",
+      "grado": 8
+    },
+    {
+      "id": "pulso-curacion-red",
+      "referencia": "Curación con Katsuyu",
+      "pagina": 34,
+      "rama": "pulso",
+      "grado": 7
+    },
+    {
+      "id": "pulso-regeneracion-colectiva",
+      "referencia": "Chikatsu Saisei",
+      "pagina": 34,
+      "rama": "pulso",
+      "grado": 6
+    },
+    {
+      "id": "pulso-don-vida",
+      "referencia": "Kishō Tensei de Chiyo",
+      "pagina": 35,
+      "rama": "pulso",
+      "grado": 9
+    },
+    {
+      "id": "pulso-espiritu-libre",
+      "referencia": "Reika no Jutsu",
+      "pagina": 35,
+      "rama": "pulso",
+      "grado": 6
+    },
+    {
+      "id": "pulso-don-celulas",
+      "referencia": "Regeneración de Jūgo",
+      "pagina": 37,
+      "rama": "pulso",
+      "grado": 5
+    },
+    {
+      "id": "pulso-mordida-sanadora",
+      "referencia": "Curación de Karin",
+      "pagina": 28,
+      "rama": "pulso",
+      "grado": 4
+    },
+    {
+      "id": "pulso-nervios-desorden",
+      "referencia": "Ranshinshō",
+      "pagina": 34,
+      "rama": "pulso",
+      "grado": 4
+    },
+    {
+      "id": "quietud-kata-sapo",
+      "referencia": "Kawazu Kumite",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 4
+    },
+    {
+      "id": "quietud-golpe-sapo",
+      "referencia": "Kawazu Tataki",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 4
+    },
+    {
+      "id": "quietud-modo-sapo",
+      "referencia": "Sennin Mōdo",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 5
+    },
+    {
+      "id": "quietud-modo-serpiente",
+      "referencia": "Modo Sabio de Kabuto",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 5
+    },
+    {
+      "id": "quietud-dragon-blanco",
+      "referencia": "Senpō: Hakugeki",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 6
+    },
+    {
+      "id": "quietud-materia-despierta",
+      "referencia": "Senpō: Muki Tensei",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 7
+    },
+    {
+      "id": "quietud-modo-bosque",
+      "referencia": "Modo Sabio de Hashirama",
+      "pagina": 37,
+      "rama": "quietud",
+      "grado": 7
+    },
+    {
+      "id": "quietud-puertas-dios",
+      "referencia": "Myojinmon",
+      "pagina": 37,
+      "rama": "quietud",
+      "grado": 8
+    },
+    {
+      "id": "quietud-mil-brazos",
+      "referencia": "Shin Sūsenju",
+      "pagina": 37,
+      "rama": "quietud",
+      "grado": 10
+    },
+    {
+      "id": "quietud-brazos-corona",
+      "referencia": "Chōjō Kebutsu",
+      "pagina": 17,
+      "rama": "quietud",
+      "grado": 11
+    },
+    {
+      "id": "quietud-aceite-viento-fuego",
+      "referencia": "Senpō: Goemon",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 8
+    },
+    {
+      "id": "quietud-agujas-cabello",
+      "referencia": "Senpō: Kebari Senbon",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 5
+    },
+    {
+      "id": "quietud-esfera-sabia",
+      "referencia": "Senpō: Rasengan",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 4
+    },
+    {
+      "id": "quietud-esfera-sabia-mayor",
+      "referencia": "Senpō: Ōdama Rasengan",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 6
+    },
+    {
+      "id": "quietud-esfera-sabia-colosal",
+      "referencia": "Senpō: Chō Ōdama Rasengan",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 8
+    },
+    {
+      "id": "quietud-estrella-sabia",
+      "referencia": "Senpō: Fūton Rasenshuriken",
+      "pagina": 36,
+      "rama": "quietud",
+      "grado": 8
+    },
+    {
+      "id": "quietud-seis-caminos",
+      "referencia": "Modo Sabio de los Seis Caminos",
+      "pagina": 40,
+      "rama": "quietud",
+      "grado": 10
+    },
+    {
+      "id": "quietud-estrella-colosal",
+      "referencia": "Chō Ōdama Rasenshuriken",
+      "pagina": 40,
+      "rama": "quietud",
+      "grado": 11
+    },
+    {
+      "id": "rastro-ocultar-firma",
+      "referencia": "Supresión",
+      "pagina": 7,
+      "rama": "rastro",
+      "grado": 1
+    },
+    {
+      "id": "rastro-firma-aliados",
+      "referencia": "Sensores Yamanaka",
+      "pagina": 26,
+      "rama": "rastro",
+      "grado": 2
+    },
+    {
+      "id": "rastro-ojo-interior",
+      "referencia": "Kagura Shingan",
+      "pagina": 43,
+      "rama": "rastro",
+      "grado": 5
+    },
+    {
+      "id": "rastro-lluvia-atenta",
+      "referencia": "Ukojizai no Jutsu",
+      "pagina": 43,
+      "rama": "rastro",
+      "grado": 4
+    },
+    {
+      "id": "rastro-campo-tacto",
+      "referencia": "Tengai Hōjin",
+      "pagina": 43,
+      "rama": "rastro",
+      "grado": 3
+    },
+    {
+      "id": "rastro-emocion-oscura",
+      "referencia": "Detección emocional de Naruto",
+      "pagina": 43,
+      "rama": "rastro",
+      "grado": 6
+    },
+    {
+      "id": "rastro-ojo-arena",
+      "referencia": "Daisan no Me",
+      "pagina": 43,
+      "rama": "rastro",
+      "grado": 3
+    },
+    {
+      "id": "rastro-arena-sensible",
+      "referencia": "Suna no Kanchi",
+      "pagina": 43,
+      "rama": "rastro",
+      "grado": 3
+    },
+    {
+      "id": "rastro-insecto-rastreador",
+      "referencia": "Rastreo por insectos",
+      "pagina": 27,
+      "rama": "rastro",
+      "grado": 2
+    },
+    {
+      "id": "rastro-olfato-cazador",
+      "referencia": "Detección olfativa",
+      "pagina": 27,
+      "rama": "rastro",
+      "grado": 1
+    },
+    {
+      "id": "rastro-vista-compartida",
+      "referencia": "Visión compartida del Rinnegan",
+      "pagina": 24,
+      "rama": "rastro",
+      "grado": 6
+    },
+    {
+      "id": "rastro-sensor-carmesí",
+      "referencia": "Ranmaru",
+      "pagina": 25,
+      "rama": "rastro",
+      "grado": 4
+    },
+    {
+      "id": "rastro-camuflaje-perfecto",
+      "referencia": "Camuflaje de Mū",
+      "pagina": 43,
+      "rama": "rastro",
+      "grado": 6
+    },
+    {
+      "id": "rastro-diagnostico-distancia",
+      "referencia": "Percepción sensorial",
+      "pagina": 7,
+      "rama": "rastro",
+      "grado": 2
+    },
+    {
+      "id": "rastro-resonancia-barrera",
+      "referencia": "Análisis sensorial",
+      "pagina": 20,
+      "rama": "rastro",
+      "grado": 3
+    },
+    {
+      "id": "hilo-cuervo",
+      "referencia": "Karasu",
+      "pagina": 32,
+      "rama": "hilo",
+      "grado": 2
+    },
+    {
+      "id": "hilo-hormiga",
+      "referencia": "Kuroari",
+      "pagina": 32,
+      "rama": "hilo",
+      "grado": 3
+    },
+    {
+      "id": "hilo-salamandra",
+      "referencia": "Sanshōuo",
+      "pagina": 32,
+      "rama": "hilo",
+      "grado": 3
+    },
+    {
+      "id": "hilo-caja-negra",
+      "referencia": "Kurohigi: Kiki Ippatsu",
+      "pagina": 32,
+      "rama": "hilo",
+      "grado": 5
+    },
+    {
+      "id": "hilo-diez-marionetas",
+      "referencia": "Jikki Chikamatsu",
+      "pagina": 32,
+      "rama": "hilo",
+      "grado": 7
+    },
+    {
+      "id": "hilo-cien-marionetas",
+      "referencia": "Hyakki no Sōen",
+      "pagina": 32,
+      "rama": "hilo",
+      "grado": 10
+    },
+    {
+      "id": "hilo-marioneta-humana",
+      "referencia": "Marionetas humanas",
+      "pagina": 32,
+      "rama": "hilo",
+      "grado": 7
+    },
+    {
+      "id": "hilo-tercer-herrero",
+      "referencia": "Marioneta del Tercer Kazekage",
+      "pagina": 32,
+      "rama": "hilo",
+      "grado": 8
+    },
+    {
+      "id": "hilo-cuerpo-artificial",
+      "referencia": "Cuerpo-marioneta de Sasori",
+      "pagina": 32,
+      "rama": "hilo",
+      "grado": 8
+    },
+    {
+      "id": "hilo-recubrir-viento",
+      "referencia": "Shinkūjin",
+      "pagina": 15,
+      "rama": "hilo",
+      "grado": 2
+    },
+    {
+      "id": "hilo-pergaminos-gemelos",
+      "referencia": "Sōshōryū",
+      "pagina": 33,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "hilo-agujas-sombra",
+      "referencia": "Kagemane Shuriken",
+      "pagina": 26,
+      "rama": "hilo",
+      "grado": 3
+    },
+    {
+      "id": "hilo-hilos-sombra",
+      "referencia": "Kagezukami",
+      "pagina": 26,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "hilo-costura-sombra",
+      "referencia": "Kage Nui",
+      "pagina": 26,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "hilo-dibujos-escuadra",
+      "referencia": "Chōjū Giga",
+      "pagina": 43,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "hilo-samehada-beber",
+      "referencia": "Samehada",
+      "pagina": 33,
+      "rama": "hilo",
+      "grado": 5
+    },
+    {
+      "id": "hilo-samehada-fusion",
+      "referencia": "Simbiosis con Samehada",
+      "pagina": 43,
+      "rama": "hilo",
+      "grado": 7
+    },
+    {
+      "id": "hilo-decapitadora",
+      "referencia": "Kubikiribōchō",
+      "pagina": 33,
+      "rama": "hilo",
+      "grado": 3
+    },
+    {
+      "id": "hilo-espada-gemela",
+      "referencia": "Hiramekarei",
+      "pagina": 33,
+      "rama": "hilo",
+      "grado": 5
+    },
+    {
+      "id": "hilo-colmillos-rayo",
+      "referencia": "Kiba",
+      "pagina": 33,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "hilo-espada-explosiva",
+      "referencia": "Shibuki",
+      "pagina": 33,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "hilo-aguja-cose",
+      "referencia": "Nuibari",
+      "pagina": 33,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "hilo-rompedefensas",
+      "referencia": "Kabutowari",
+      "pagina": 33,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "hilo-kusanagi",
+      "referencia": "Kusanagi",
+      "pagina": 33,
+      "rama": "hilo",
+      "grado": 5
+    },
+    {
+      "id": "hilo-gunbai",
+      "referencia": "Gunbai",
+      "pagina": 33,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "hilo-basho-fuego",
+      "referencia": "Bashōsen",
+      "pagina": 33,
+      "rama": "hilo",
+      "grado": 5
+    },
+    {
+      "id": "hilo-totsuka",
+      "referencia": "Espada de Totsuka",
+      "pagina": 24,
+      "rama": "hilo",
+      "grado": 9
+    },
+    {
+      "id": "hilo-yata",
+      "referencia": "Espejo de Yata",
+      "pagina": 24,
+      "rama": "hilo",
+      "grado": 8
+    },
+    {
+      "id": "sello-cuatro-simbolos",
+      "referencia": "Shishō Fūin",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 7
+    },
+    {
+      "id": "sello-ocho-trigramas",
+      "referencia": "Hakke no Fūin Shiki",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 9
+    },
+    {
+      "id": "sello-cinco-elementos",
+      "referencia": "Gogyō Fūin",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 5
+    },
+    {
+      "id": "sello-desatar-cinco",
+      "referencia": "Gogyō Kaiin",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 5
+    },
+    {
+      "id": "sello-confinar-maldicion",
+      "referencia": "Fūja Hōin",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 4
+    },
+    {
+      "id": "sello-guardar-llama",
+      "referencia": "Fūka Hōin",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 4
+    },
+    {
+      "id": "sello-cosecha-espiritus",
+      "referencia": "Genryū Kyū Fūjin",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 10
+    },
+    {
+      "id": "sello-sello-ultimo",
+      "referencia": "Ura Shishō Fūinjutsu",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 9
+    },
+    {
+      "id": "sello-torii",
+      "referencia": "Torii Fūin",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 6
+    },
+    {
+      "id": "sello-cadenas-adamantinas",
+      "referencia": "Kongō Fūsa",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 7
+    },
+    {
+      "id": "sello-violeta-cuatro",
+      "referencia": "Shishienjin",
+      "pagina": 30,
+      "rama": "sello",
+      "grado": 6
+    },
+    {
+      "id": "sello-soles-rojos",
+      "referencia": "Shisekiyōjin",
+      "pagina": 30,
+      "rama": "sello",
+      "grado": 9
+    },
+    {
+      "id": "sello-soles-seis",
+      "referencia": "Rikudō: Sekiyōjin",
+      "pagina": 30,
+      "rama": "sello",
+      "grado": 11
+    },
+    {
+      "id": "sello-cinco-talismanes",
+      "referencia": "Gofū Kekkai",
+      "pagina": 30,
+      "rama": "sello",
+      "grado": 4
+    },
+    {
+      "id": "sello-cuatro-direcciones",
+      "referencia": "Kekkai Shihō Fūjin",
+      "pagina": 30,
+      "rama": "sello",
+      "grado": 7
+    },
+    {
+      "id": "sello-marca-cielo",
+      "referencia": "Ten no Juin",
+      "pagina": 30,
+      "rama": "sello",
+      "grado": 5
+    },
+    {
+      "id": "sello-marca-tierra",
+      "referencia": "Chi no Juin",
+      "pagina": 30,
+      "rama": "sello",
+      "grado": 5
+    },
+    {
+      "id": "sello-marca-segunda",
+      "referencia": "Juin de nivel 2",
+      "pagina": 30,
+      "rama": "sello",
+      "grado": 7
+    },
+    {
+      "id": "sello-jaula-pajaro",
+      "referencia": "Sōke no Juin",
+      "pagina": 30,
+      "rama": "sello",
+      "grado": 7
+    },
+    {
+      "id": "sello-lengua-cerrada",
+      "referencia": "Control de Danzō",
+      "pagina": 30,
+      "rama": "sello",
+      "grado": 6
+    },
+    {
+      "id": "sello-palabra-calabaza",
+      "referencia": "Benihisago",
+      "pagina": 33,
+      "rama": "sello",
+      "grado": 8
+    },
+    {
+      "id": "sello-cuerda-palabra",
+      "referencia": "Kōkinjō",
+      "pagina": 33,
+      "rama": "sello",
+      "grado": 5
+    },
+    {
+      "id": "sello-hoja-palabra",
+      "referencia": "Shichiseiken",
+      "pagina": 33,
+      "rama": "sello",
+      "grado": 5
+    },
+    {
+      "id": "sello-vasija-llamada",
+      "referencia": "Kohaku no Jōhei",
+      "pagina": 33,
+      "rama": "sello",
+      "grado": 9
+    },
+    {
+      "id": "sello-alma-segador",
+      "referencia": "Shiki Fūjin",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 10
+    },
+    {
+      "id": "sello-liberar-segador",
+      "referencia": "Shiki Fūjin: Kai",
+      "pagina": 29,
+      "rama": "sello",
+      "grado": 10
+    },
+    {
+      "id": "pacto-sapo-caida",
+      "referencia": "Yatai Kuzushi",
+      "pagina": 32,
+      "rama": "pacto",
+      "grado": 5
+    },
+    {
+      "id": "pacto-estomago-sapo",
+      "referencia": "Gamaguchi Shibari",
+      "pagina": 32,
+      "rama": "pacto",
+      "grado": 6
+    },
+    {
+      "id": "pacto-rashomon",
+      "referencia": "Rashōmon",
+      "pagina": 32,
+      "rama": "pacto",
+      "grado": 4
+    },
+    {
+      "id": "pacto-tres-rashomon",
+      "referencia": "Sanjū Rashōmon",
+      "pagina": 32,
+      "rama": "pacto",
+      "grado": 7
+    },
+    {
+      "id": "pacto-cinco-rashomon",
+      "referencia": "Gojū Rashōmon",
+      "pagina": 32,
+      "rama": "pacto",
+      "grado": 9
+    },
+    {
+      "id": "pacto-serpientes-manos",
+      "referencia": "Sen’ei Jashu",
+      "pagina": 32,
+      "rama": "pacto",
+      "grado": 2
+    },
+    {
+      "id": "pacto-muchas-serpientes",
+      "referencia": "Sen’ei Tajashu",
+      "pagina": 32,
+      "rama": "pacto",
+      "grado": 4
+    },
+    {
+      "id": "pacto-mandara",
+      "referencia": "Mandara no Jin",
+      "pagina": 32,
+      "rama": "pacto",
+      "grado": 6
+    },
+    {
+      "id": "pacto-jauria-tierra",
+      "referencia": "Tsuiga no Jutsu",
+      "pagina": 32,
+      "rama": "pacto",
+      "grado": 3
+    },
+    {
+      "id": "pacto-enma-baston",
+      "referencia": "Enma",
+      "pagina": 31,
+      "rama": "pacto",
+      "grado": 5
+    },
+    {
+      "id": "pacto-halcon",
+      "referencia": "Halcones",
+      "pagina": 31,
+      "rama": "pacto",
+      "grado": 3
+    },
+    {
+      "id": "pacto-tortuga",
+      "referencia": "Tortugas",
+      "pagina": 31,
+      "rama": "pacto",
+      "grado": 2
+    },
+    {
+      "id": "pacto-comadreja",
+      "referencia": "Comadrejas",
+      "pagina": 31,
+      "rama": "pacto",
+      "grado": 5
+    },
+    {
+      "id": "pacto-salamandra-veneno",
+      "referencia": "Salamandras",
+      "pagina": 31,
+      "rama": "pacto",
+      "grado": 5
+    },
+    {
+      "id": "pacto-babosa-fragmentos",
+      "referencia": "Babosas",
+      "pagina": 31,
+      "rama": "pacto",
+      "grado": 4
+    },
+    {
+      "id": "pacto-abejas",
+      "referencia": "Clan Kamizuru",
+      "pagina": 44,
+      "rama": "pacto",
+      "grado": 3
+    },
+    {
+      "id": "pacto-insectos-esfera",
+      "referencia": "Mushi Dama",
+      "pagina": 27,
+      "rama": "pacto",
+      "grado": 4
+    },
+    {
+      "id": "pacto-insectos-senuelo",
+      "referencia": "Mushi Bunshin",
+      "pagina": 27,
+      "rama": "pacto",
+      "grado": 3
+    },
+    {
+      "id": "pacto-atraer-insectos",
+      "referencia": "Mushi Yose",
+      "pagina": 27,
+      "rama": "pacto",
+      "grado": 1
+    },
+    {
+      "id": "pacto-insectos-crecen",
+      "referencia": "Kidaichū",
+      "pagina": 27,
+      "rama": "pacto",
+      "grado": 6
+    },
+    {
+      "id": "pacto-nano-insectos",
+      "referencia": "Nano-insectos de Torune",
+      "pagina": 27,
+      "rama": "pacto",
+      "grado": 8
+    },
+    {
+      "id": "pacto-cuatro-patas",
+      "referencia": "Shikyaku",
+      "pagina": 27,
+      "rama": "pacto",
+      "grado": 2
+    },
+    {
+      "id": "pacto-colmillos-giro",
+      "referencia": "Gatsūga",
+      "pagina": 27,
+      "rama": "pacto",
+      "grado": 4
+    },
+    {
+      "id": "pacto-lobo-doble",
+      "referencia": "Sōtōrō",
+      "pagina": 27,
+      "rama": "pacto",
+      "grado": 5
+    },
+    {
+      "id": "pacto-gran-colmillo",
+      "referencia": "Garōga",
+      "pagina": 27,
+      "rama": "pacto",
+      "grado": 7
+    },
+    {
+      "id": "pacto-reanimacion",
+      "referencia": "Edo Tensei",
+      "pagina": 35,
+      "rama": "pacto",
+      "grado": 9
+    },
+    {
+      "id": "pacto-perro-divisible",
+      "referencia": "Perro multiplicador de Pain",
+      "pagina": 43,
+      "rama": "pacto",
+      "grado": 7
+    },
+    {
+      "id": "mirada-aster-luna",
+      "referencia": "Tsukuyomi",
+      "pagina": 23,
+      "rama": "mirada",
+      "grado": 7
+    },
+    {
+      "id": "mirada-aster-llama-negra",
+      "referencia": "Amaterasu",
+      "pagina": 23,
+      "rama": "mirada",
+      "grado": 7
+    },
+    {
+      "id": "mirada-aster-forma-llama",
+      "referencia": "Kagutsuchi",
+      "pagina": 23,
+      "rama": "mirada",
+      "grado": 6
+    },
+    {
+      "id": "mirada-aster-voluntad",
+      "referencia": "Kotoamatsukami",
+      "pagina": 23,
+      "rama": "mirada",
+      "grado": 9
+    },
+    {
+      "id": "mirada-aster-izanagi",
+      "referencia": "Izanagi",
+      "pagina": 23,
+      "rama": "mirada",
+      "grado": 10
+    },
+    {
+      "id": "mirada-aster-izanami",
+      "referencia": "Izanami",
+      "pagina": 23,
+      "rama": "mirada",
+      "grado": 10
+    },
+    {
+      "id": "mirada-aster-costillas",
+      "referencia": "Susanoo parcial",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 5
+    },
+    {
+      "id": "mirada-aster-guerrero",
+      "referencia": "Susanoo humanoide",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 7
+    },
+    {
+      "id": "mirada-aster-armadura",
+      "referencia": "Susanoo acorazado",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 8
+    },
+    {
+      "id": "mirada-aster-perfecto",
+      "referencia": "Susanoo perfecto",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 10
+    },
+    {
+      "id": "mirada-aster-magatama",
+      "referencia": "Yasaka no Magatama",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 7
+    },
+    {
+      "id": "mirada-aster-arco",
+      "referencia": "Arco de Susanoo",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 6
+    },
+    {
+      "id": "mirada-aster-indra",
+      "referencia": "Flecha de Indra",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 11
+    },
+    {
+      "id": "mirada-orbe-abrir",
+      "referencia": "Rinnegan",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 0
+    },
+    {
+      "id": "mirada-orbe-atraer",
+      "referencia": "Banshō Ten’in",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 4
+    },
+    {
+      "id": "mirada-orbe-repeler",
+      "referencia": "Shinra Tensei",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 5
+    },
+    {
+      "id": "mirada-orbe-absorber",
+      "referencia": "Gakidō / Preta",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 6
+    },
+    {
+      "id": "mirada-orbe-asura",
+      "referencia": "Shuradō / Asura",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 6
+    },
+    {
+      "id": "mirada-orbe-proyectiles",
+      "referencia": "Técnicas del Camino Asura",
+      "pagina": 43,
+      "rama": "mirada",
+      "grado": 7
+    },
+    {
+      "id": "mirada-orbe-humano",
+      "referencia": "Ningendō / Humano",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 7
+    },
+    {
+      "id": "mirada-orbe-animal",
+      "referencia": "Chikushōdō / Animal",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 6
+    },
+    {
+      "id": "mirada-orbe-naraka",
+      "referencia": "Jigokudō / Naraka",
+      "pagina": 24,
+      "rama": "mirada",
+      "grado": 8
+    },
+    {
+      "id": "mirada-orbe-receptores",
+      "referencia": "Kokushin",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 4
+    },
+    {
+      "id": "mirada-orbe-seis-cuerpos",
+      "referencia": "Seis Caminos de Pain",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 9
+    },
+    {
+      "id": "mirada-orbe-luna",
+      "referencia": "Chibaku Tensei",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 9
+    },
+    {
+      "id": "mirada-orbe-retorno",
+      "referencia": "Gedō: Rinne Tensei",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 11
+    },
+    {
+      "id": "mirada-orbe-estatua",
+      "referencia": "Gedō Mazō",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 10
+    },
+    {
+      "id": "mirada-orbe-limbo",
+      "referencia": "Limbo: Hengoku",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 10
+    },
+    {
+      "id": "mirada-orbe-domar-bestia",
+      "referencia": "Control ocular de los bijū",
+      "pagina": 41,
+      "rama": "mirada",
+      "grado": 10
+    },
+    {
+      "id": "mirada-carmesi-abrir",
+      "referencia": "Ketsuryūgan",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 0
+    },
+    {
+      "id": "mirada-carmesi-ilusion",
+      "referencia": "Ketsuryūgan: ilusiones",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 5
+    },
+    {
+      "id": "mirada-carmesi-sangre",
+      "referencia": "Ketsuryūgan: control sanguíneo",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 6
+    },
+    {
+      "id": "mirada-brasa-abrir",
+      "referencia": "Dōjutsu de Ranmaru",
+      "pagina": 25,
+      "rama": "mirada",
+      "grado": 0
+    },
+    {
+      "id": "sangre-varro-sauce",
+      "referencia": "Yanagi no Mai",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 3
+    },
+    {
+      "id": "sangre-varro-camelia",
+      "referencia": "Tsubaki no Mai",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 3
+    },
+    {
+      "id": "sangre-varro-alerce",
+      "referencia": "Karamatsu no Mai",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 4
+    },
+    {
+      "id": "sangre-varro-clematide",
+      "referencia": "Tessenka no Mai",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 5
+    },
+    {
+      "id": "sangre-fluyente-agua",
+      "referencia": "Hidratación del clan Hōzuki",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 4
+    },
+    {
+      "id": "sangre-fluyente-bala",
+      "referencia": "Mizudeppō",
+      "pagina": 28,
+      "rama": "sangre",
+      "grado": 3
+    },
+    {
+      "id": "sangre-fluyente-vapor",
+      "referencia": "Jōki Bōi",
+      "pagina": 28,
+      "rama": "sangre",
+      "grado": 7
+    },
+    {
+      "id": "sangre-mutable-despertar",
+      "referencia": "Transformación de Jūgo",
+      "pagina": 37,
+      "rama": "sangre",
+      "grado": 4
+    },
+    {
+      "id": "sangre-mutable-propulsion",
+      "referencia": "Propulsión de Jūgo",
+      "pagina": 37,
+      "rama": "sangre",
+      "grado": 3
+    },
+    {
+      "id": "sangre-gemelo-fusion",
+      "referencia": "Sōma no Kō",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 6
+    },
+    {
+      "id": "sangre-humo-cuerpo",
+      "referencia": "Transformación en humo Iburi",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 5
+    },
+    {
+      "id": "sangre-detonacion-contacto",
+      "referencia": "Jiraiken",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 4
+    },
+    {
+      "id": "sangre-arcilla-c1",
+      "referencia": "C1",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 2
+    },
+    {
+      "id": "sangre-arcilla-c2",
+      "referencia": "C2",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 5
+    },
+    {
+      "id": "sangre-arcilla-c3",
+      "referencia": "C3",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 8
+    },
+    {
+      "id": "sangre-arcilla-c4",
+      "referencia": "C4 Karura",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 9
+    },
+    {
+      "id": "sangre-arcilla-cero",
+      "referencia": "C0",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 11
+    },
+    {
+      "id": "sangre-calor-esferas",
+      "referencia": "Kajōsatsu",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 6
+    },
+    {
+      "id": "sangre-magnetismo-lluvia",
+      "referencia": "Satetsu Shigure",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 4
+    },
+    {
+      "id": "sangre-magnetismo-forma",
+      "referencia": "Satetsu Kesshū",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 5
+    },
+    {
+      "id": "sangre-magnetismo-espinas",
+      "referencia": "Satetsu Kaihō",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 7
+    },
+    {
+      "id": "sangre-magnetismo-oro",
+      "referencia": "Control de polvo de oro",
+      "pagina": 18,
+      "rama": "sangre",
+      "grado": 6
+    },
+    {
+      "id": "hilo-papel-danza",
+      "referencia": "Shikigami no Mai",
+      "pagina": 43,
+      "rama": "hilo",
+      "grado": 5
+    },
+    {
+      "id": "hilo-papel-replica",
+      "referencia": "Kami Bunshin",
+      "pagina": 43,
+      "rama": "hilo",
+      "grado": 3
+    },
+    {
+      "id": "hilo-papel-oceano",
+      "referencia": "Kami no Shisha",
+      "pagina": 43,
+      "rama": "hilo",
+      "grado": 10
+    },
+    {
+      "id": "sangre-corazones-fibras",
+      "referencia": "Jiongu de Kakuzu",
+      "pagina": 43,
+      "rama": "sangre",
+      "grado": 8
+    },
+    {
+      "id": "sangre-jashin",
+      "referencia": "Ritual de Jashin de Hidan",
+      "pagina": 43,
+      "rama": "sangre",
+      "grado": 8
+    },
+    {
+      "id": "sangre-transferir-cuerpo",
+      "referencia": "Fushi Tensei",
+      "pagina": 35,
+      "rama": "sangre",
+      "grado": 10
+    },
+    {
+      "id": "sangre-esporas",
+      "referencia": "Esporas de Zetsu",
+      "pagina": 43,
+      "rama": "sangre",
+      "grado": 5
+    },
+    {
+      "id": "sangre-efimera",
+      "referencia": "Mayfly / Kagerō",
+      "pagina": 43,
+      "rama": "sangre",
+      "grado": 6
+    },
+    {
+      "id": "sangre-mu-dividir",
+      "referencia": "División corporal de Mū",
+      "pagina": 43,
+      "rama": "sangre",
+      "grado": 7
+    },
+    {
+      "id": "sangre-cristal-armadura",
+      "referencia": "Guren: armadura de cristal",
+      "pagina": 44,
+      "rama": "sangre",
+      "grado": 4
+    },
+    {
+      "id": "sangre-cristal-dragon",
+      "referencia": "Guren: dragón de cristal",
+      "pagina": 44,
+      "rama": "sangre",
+      "grado": 6
+    },
+    {
+      "id": "sangre-cristal-laberinto",
+      "referencia": "Suishō Meikyū",
+      "pagina": 44,
+      "rama": "sangre",
+      "grado": 7
+    },
+    {
+      "id": "umbral-formula",
+      "referencia": "Hiraishin: preparación",
+      "pagina": 42,
+      "rama": "umbral",
+      "grado": 0
+    },
+    {
+      "id": "umbral-raijin",
+      "referencia": "Hiraishin no Jutsu",
+      "pagina": 42,
+      "rama": "umbral",
+      "grado": 5
+    },
+    {
+      "id": "umbral-raijin-largo",
+      "referencia": "Hiraishin no Jutsu: largo alcance",
+      "pagina": 42,
+      "rama": "umbral",
+      "grado": 7
+    },
+    {
+      "id": "umbral-segundo-paso",
+      "referencia": "Hiraishin: Ni no Dan",
+      "pagina": 42,
+      "rama": "umbral",
+      "grado": 6
+    },
+    {
+      "id": "umbral-intercambio-doble",
+      "referencia": "Hiraishin Goshun Mawashi",
+      "pagina": 42,
+      "rama": "umbral",
+      "grado": 8
+    },
+    {
+      "id": "umbral-barrera-traslado",
+      "referencia": "Hiraishin Dōrai",
+      "pagina": 42,
+      "rama": "umbral",
+      "grado": 9
+    },
+    {
+      "id": "umbral-inversa",
+      "referencia": "Gyaku Kuchiyose",
+      "pagina": 32,
+      "rama": "umbral",
+      "grado": 5
+    },
+    {
+      "id": "umbral-kamui-derecho",
+      "referencia": "Kamui, ojo derecho",
+      "pagina": 23,
+      "rama": "umbral",
+      "grado": 8
+    },
+    {
+      "id": "umbral-kamui-izquierdo",
+      "referencia": "Kamui, ojo izquierdo",
+      "pagina": 23,
+      "rama": "umbral",
+      "grado": 9
+    },
+    {
+      "id": "umbral-kamui-puerta",
+      "referencia": "Kamui: transporte",
+      "pagina": 42,
+      "rama": "umbral",
+      "grado": 9
+    },
+    {
+      "id": "umbral-kamui-shuriken",
+      "referencia": "Kamui Shuriken",
+      "pagina": 42,
+      "rama": "umbral",
+      "grado": 10
+    },
+    {
+      "id": "umbral-kamui-corte",
+      "referencia": "Kamui Raikiri",
+      "pagina": 42,
+      "rama": "umbral",
+      "grado": 10
+    },
+    {
+      "id": "umbral-intercambio-ojo",
+      "referencia": "Amenotejikara",
+      "pagina": 25,
+      "rama": "umbral",
+      "grado": 8
+    },
+    {
+      "id": "umbral-grieta-planos",
+      "referencia": "Yomotsu Hirasaka",
+      "pagina": 41,
+      "rama": "umbral",
+      "grado": 10
+    },
+    {
+      "id": "umbral-cambio-dimension",
+      "referencia": "Amenominaka",
+      "pagina": 41,
+      "rama": "umbral",
+      "grado": 11
+    },
+    {
+      "id": "umbral-bolsillo",
+      "referencia": "Sellos de pergaminos",
+      "pagina": 29,
+      "rama": "umbral",
+      "grado": 2
+    },
+    {
+      "id": "umbral-evacuar",
+      "referencia": "Kuchiyose / invocación inversa",
+      "pagina": 42,
+      "rama": "umbral",
+      "grado": 8
+    },
+    {
+      "id": "vasija-voz",
+      "referencia": "Comunicación mental",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 0
+    },
+    {
+      "id": "vasija-prestamo",
+      "referencia": "Chakra inicial",
+      "pagina": 39,
+      "rama": "vasija",
+      "grado": 2
+    },
+    {
+      "id": "vasija-manto-uno",
+      "referencia": "Versión 1",
+      "pagina": 39,
+      "rama": "vasija",
+      "grado": 3
+    },
+    {
+      "id": "vasija-manto-dos",
+      "referencia": "Versión 2",
+      "pagina": 39,
+      "rama": "vasija",
+      "grado": 6
+    },
+    {
+      "id": "vasija-brazos",
+      "referencia": "Brazos de chakra",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 3
+    },
+    {
+      "id": "vasija-parcial",
+      "referencia": "Transformación parcial",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 4
+    },
+    {
+      "id": "vasija-avatar",
+      "referencia": "Transformación completa",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 8
+    },
+    {
+      "id": "vasija-bomba",
+      "referencia": "Bijūdama",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 9
+    },
+    {
+      "id": "vasija-transferir",
+      "referencia": "Transferencia de energía",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 5
+    },
+    {
+      "id": "vasija-regeneracion",
+      "referencia": "Regeneración del anfitrión",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 7
+    },
+    {
+      "id": "vasija-kurama-chakra",
+      "referencia": "Modo Chakra del Nueve Colas",
+      "pagina": 39,
+      "rama": "vasija",
+      "grado": 7
+    },
+    {
+      "id": "vasija-kurama-amigo",
+      "referencia": "Modo Kurama",
+      "pagina": 39,
+      "rama": "vasija",
+      "grado": 9
+    },
+    {
+      "id": "vasija-modo-combinado",
+      "referencia": "Modo Sabio combinado",
+      "pagina": 39,
+      "rama": "vasija",
+      "grado": 10
+    },
+    {
+      "id": "vasija-shukaku-sello",
+      "referencia": "Shukaku",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 7
+    },
+    {
+      "id": "vasija-matatabi-azul",
+      "referencia": "Matatabi",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 6
+    },
+    {
+      "id": "vasija-isobu-coral",
+      "referencia": "Isobu",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 6
+    },
+    {
+      "id": "vasija-songoku-lava",
+      "referencia": "Son Gokū",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 7
+    },
+    {
+      "id": "vasija-kokuo-vapor",
+      "referencia": "Kokuō",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 6
+    },
+    {
+      "id": "vasija-saiken-acido",
+      "referencia": "Saiken",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 6
+    },
+    {
+      "id": "vasija-chomei-alas",
+      "referencia": "Chōmei",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 5
+    },
+    {
+      "id": "vasija-gyuki-tinta",
+      "referencia": "Gyūki",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 5
+    },
+    {
+      "id": "vasija-gyuki-tentaculos",
+      "referencia": "Gyūki: tentáculos",
+      "pagina": 38,
+      "rama": "vasija",
+      "grado": 6
+    },
+    {
+      "id": "vasija-juubi-bomba",
+      "referencia": "Bijūdama del Jūbi",
+      "pagina": 39,
+      "rama": "vasija",
+      "grado": 11
+    },
+    {
+      "id": "vasija-arbol",
+      "referencia": "Árbol Divino",
+      "pagina": 39,
+      "rama": "vasija",
+      "grado": 10
+    },
+    {
+      "id": "vasija-gudodama",
+      "referencia": "Gudōdama",
+      "pagina": 40,
+      "rama": "vasija",
+      "grado": 10
+    },
+    {
+      "id": "vasija-gudodama-golpe",
+      "referencia": "Gudōdama: forma ofensiva",
+      "pagina": 40,
+      "rama": "vasija",
+      "grado": 10
+    },
+    {
+      "id": "vasija-nueve-estrellas",
+      "referencia": "Chō Bijū Rasenshuriken",
+      "pagina": 40,
+      "rama": "vasija",
+      "grado": 11
+    },
+    {
+      "id": "vasija-estrella-lava",
+      "referencia": "Yōton: Rasenshuriken",
+      "pagina": 40,
+      "rama": "vasija",
+      "grado": 10
+    },
+    {
+      "id": "vasija-esfera-magnetica",
+      "referencia": "Jiton: Rasengan",
+      "pagina": 40,
+      "rama": "vasija",
+      "grado": 8
+    },
+    {
+      "id": "vasija-creacion-todas",
+      "referencia": "Creación de Todas las Cosas",
+      "pagina": 40,
+      "rama": "vasija",
+      "grado": 11
+    },
+    {
+      "id": "vasija-sol-luna",
+      "referencia": "Rikudō: Chibaku Tensei",
+      "pagina": 40,
+      "rama": "vasija",
+      "grado": 11
+    },
+    {
+      "id": "vasija-huesos-finales",
+      "referencia": "Tomogoroshi no Haikotsu",
+      "pagina": 41,
+      "rama": "vasija",
+      "grado": 11
+    },
+    {
+      "id": "vasija-ochenta-punos",
+      "referencia": "Yasogami Kūgeki",
+      "pagina": 41,
+      "rama": "vasija",
+      "grado": 11
+    },
+    {
+      "id": "vasija-esfera-expansiva",
+      "referencia": "Bōchō Gudōdama",
+      "pagina": 41,
+      "rama": "vasija",
+      "grado": 11
+    },
+    {
+      "id": "vasija-bosque-primordial",
+      "referencia": "Shin: Jukai Kōtan",
+      "pagina": 41,
+      "rama": "vasija",
+      "grado": 11
+    },
+    {
+      "id": "vasija-cabello-primordial",
+      "referencia": "Usagi no Kebari",
+      "pagina": 41,
+      "rama": "vasija",
+      "grado": 10
+    },
+    {
+      "id": "vasija-sora",
+      "referencia": "Sora",
+      "pagina": 44,
+      "rama": "vasija",
+      "grado": 5
+    },
+    {
+      "id": "vasija-sincronizar-isobu",
+      "referencia": "Yūkimaru",
+      "pagina": 44,
+      "rama": "vasija",
+      "grado": 5
+    },
+    {
+      "id": "forma-estrella-viento",
+      "referencia": "Fūton: Rasenshuriken",
+      "pagina": 10,
+      "rama": "forma",
+      "grado": 6
+    },
+    {
+      "id": "forma-esfera-viento",
+      "referencia": "Fūton: Rasengan",
+      "pagina": 10,
+      "rama": "forma",
+      "grado": 4
+    },
+    {
+      "id": "cuerpo-dos-esferas",
+      "referencia": "Rasenrengan",
+      "pagina": 10,
+      "rama": "cuerpo",
+      "grado": 5
+    },
+    {
+      "id": "hilo-esferas-orbitales",
+      "referencia": "Wakusei Rasengan",
+      "pagina": 10,
+      "rama": "hilo",
+      "grado": 6
+    },
+    {
+      "id": "cuerpo-mil-esferas",
+      "referencia": "Rasen Chō Tarengan",
+      "pagina": 10,
+      "rama": "cuerpo",
+      "grado": 8
+    },
+    {
+      "id": "cuerpo-chidori",
+      "referencia": "Chidori",
+      "pagina": 14,
+      "rama": "cuerpo",
+      "grado": 3
+    },
+    {
+      "id": "cuerpo-raikiri",
+      "referencia": "Raikiri",
+      "pagina": 14,
+      "rama": "cuerpo",
+      "grado": 5
+    },
+    {
+      "id": "hilo-agujas-rayo",
+      "referencia": "Chidori Senbon",
+      "pagina": 14,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "forma-circo-tormenta",
+      "referencia": "Reizā Sākasu",
+      "pagina": 18,
+      "rama": "forma",
+      "grado": 5
+    },
+    {
+      "id": "forma-colmillo-tormenta",
+      "referencia": "Ranton: Kōga",
+      "pagina": 18,
+      "rama": "forma",
+      "grado": 10
+    },
+    {
+      "id": "forma-burbuja-transporte",
+      "referencia": "Utakata: burbujas",
+      "pagina": 44,
+      "rama": "forma",
+      "grado": 3
+    },
+    {
+      "id": "forma-burbuja-trampa",
+      "referencia": "Utakata: trampas de burbujas",
+      "pagina": 44,
+      "rama": "forma",
+      "grado": 3
+    },
+    {
+      "id": "forma-burbuja-estalla",
+      "referencia": "Utakata: ataques de burbujas",
+      "pagina": 44,
+      "rama": "forma",
+      "grado": 4
+    },
+    {
+      "id": "rastro-clima-yota",
+      "referencia": "Yota",
+      "pagina": 44,
+      "rama": "rastro",
+      "grado": 5
+    },
+    {
+      "id": "pulso-fuka",
+      "referencia": "Fūka",
+      "pagina": 44,
+      "rama": "pulso",
+      "grado": 7
+    },
+    {
+      "id": "quietud-tsuchigumo",
+      "referencia": "Clan Tsuchigumo",
+      "pagina": 44,
+      "rama": "quietud",
+      "grado": 10
+    },
+    {
+      "id": "sangre-estrella-pavo",
+      "referencia": "Hoshigakure",
+      "pagina": 44,
+      "rama": "sangre",
+      "grado": 6
+    },
+    {
+      "id": "hilo-raiga",
+      "referencia": "Raiga",
+      "pagina": 44,
+      "rama": "hilo",
+      "grado": 6
+    },
+    {
+      "id": "sangre-amachi",
+      "referencia": "Amachi",
+      "pagina": 44,
+      "rama": "sangre",
+      "grado": 4
+    },
+    {
+      "id": "sello-limelight",
+      "referencia": "Guardianes Ninja: Limelight",
+      "pagina": 44,
+      "rama": "sello",
+      "grado": 9
+    },
+    {
+      "id": "forma-clon-agua",
+      "referencia": "Mizu Bunshin",
+      "pagina": 9,
+      "rama": "forma",
+      "grado": 3
+    },
+    {
+      "id": "forma-clon-tierra",
+      "referencia": "Tsuchi Bunshin",
+      "pagina": 9,
+      "rama": "forma",
+      "grado": 3
+    },
+    {
+      "id": "forma-clon-madera",
+      "referencia": "Moku Bunshin",
+      "pagina": 9,
+      "rama": "forma",
+      "grado": 5
+    },
+    {
+      "id": "forma-clon-rayo",
+      "referencia": "Raiton Kage Bunshin",
+      "pagina": 9,
+      "rama": "forma",
+      "grado": 4
+    },
+    {
+      "id": "forma-clon-cuervos",
+      "referencia": "Karasu Bunshin",
+      "pagina": 9,
+      "rama": "forma",
+      "grado": 3
+    },
+    {
+      "id": "forma-clon-arena",
+      "referencia": "Suna Bunshin",
+      "pagina": 9,
+      "rama": "forma",
+      "grado": 3
+    },
+    {
+      "id": "rastro-camuflaje",
+      "referencia": "Meisaigakure no Jutsu",
+      "pagina": 9,
+      "rama": "rastro",
+      "grado": 3
+    },
+    {
+      "id": "cuerpo-nudos-libres",
+      "referencia": "Nawanuke no Jutsu",
+      "pagina": 9,
+      "rama": "cuerpo",
+      "grado": 0
+    },
+    {
+      "id": "cuerpo-cuerpo-flexible",
+      "referencia": "Nan no Kaizō",
+      "pagina": 9,
+      "rama": "cuerpo",
+      "grado": 3
+    },
+    {
+      "id": "hilo-cuerpo-prestado",
+      "referencia": "Shikon no Jutsu",
+      "pagina": 9,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "cuerpo-rostro-prestado",
+      "referencia": "Shōshagan no Jutsu",
+      "pagina": 9,
+      "rama": "cuerpo",
+      "grado": 4
+    },
+    {
+      "id": "forma-esfera-colosal",
+      "referencia": "Chō Ōdama Rasengan",
+      "pagina": 10,
+      "rama": "forma",
+      "grado": 7
+    },
+    {
+      "id": "vasija-esfera-bestia",
+      "referencia": "Bijū Rasengan",
+      "pagina": 10,
+      "rama": "vasija",
+      "grado": 8
+    },
+    {
+      "id": "sello-arena-escudo",
+      "referencia": "Suna no Tate",
+      "pagina": 43,
+      "rama": "sello",
+      "grado": 3
+    },
+    {
+      "id": "sello-arena-armadura",
+      "referencia": "Suna no Yoroi",
+      "pagina": 43,
+      "rama": "sello",
+      "grado": 3
+    },
+    {
+      "id": "sello-arena-funeral",
+      "referencia": "Sabaku Sōsō",
+      "pagina": 43,
+      "rama": "sello",
+      "grado": 5
+    },
+    {
+      "id": "sello-arena-mausoleo",
+      "referencia": "Sabaku Taisō",
+      "pagina": 43,
+      "rama": "sello",
+      "grado": 8
+    },
+    {
+      "id": "sello-arena-vuelo",
+      "referencia": "Sabaku Fuyū",
+      "pagina": 43,
+      "rama": "sello",
+      "grado": 4
+    },
+    {
+      "id": "cuerpo-peso-ligero",
+      "referencia": "Keijūgan no Jutsu",
+      "pagina": 13,
+      "rama": "cuerpo",
+      "grado": 4
+    },
+    {
+      "id": "cuerpo-peso-extremo",
+      "referencia": "Chōkajūgan",
+      "pagina": 13,
+      "rama": "cuerpo",
+      "grado": 6
+    },
+    {
+      "id": "cuerpo-ligereza-grupo",
+      "referencia": "Chōkeijūgan",
+      "pagina": 13,
+      "rama": "cuerpo",
+      "grado": 7
+    },
+    {
+      "id": "velo-luna-infinita",
+      "referencia": "Mugen Tsukuyomi",
+      "pagina": 19,
+      "rama": "velo",
+      "grado": 11
+    },
+    {
+      "id": "hilo-cuerda-relampago",
+      "referencia": "Raiden",
+      "pagina": 14,
+      "rama": "hilo",
+      "grado": 6
+    },
+    {
+      "id": "sangre-cristal-prision",
+      "referencia": "Guren — Shōton",
+      "pagina": 44,
+      "rama": "sangre",
+      "grado": 5
+    },
+    {
+      "id": "forma-ola-aceitosa",
+      "referencia": "Gamayū Endan",
+      "pagina": 11,
+      "rama": "forma",
+      "grado": 6
+    },
+    {
+      "id": "forma-espiral-espacial",
+      "referencia": "Bakufū Ranbu",
+      "pagina": 11,
+      "rama": "forma",
+      "grado": 8
+    },
+    {
+      "id": "forma-agua-tiburon",
+      "referencia": "Suikōdan no Jutsu",
+      "pagina": 12,
+      "rama": "forma",
+      "grado": 4
+    },
+    {
+      "id": "forma-agua-cinco-tiburones",
+      "referencia": "Goshokuzame",
+      "pagina": 12,
+      "rama": "forma",
+      "grado": 5
+    },
+    {
+      "id": "forma-agua-tiburon-mayor",
+      "referencia": "Daikōdan no Jutsu",
+      "pagina": 12,
+      "rama": "forma",
+      "grado": 7
+    },
+    {
+      "id": "forma-agua-filo-presion",
+      "referencia": "Suidanha",
+      "pagina": 12,
+      "rama": "forma",
+      "grado": 5
+    },
+    {
+      "id": "forma-agua-adhesiva",
+      "referencia": "Mizuame Nabara",
+      "pagina": 12,
+      "rama": "forma",
+      "grado": 3
+    },
+    {
+      "id": "forma-agua-prision-movil",
+      "referencia": "Suirō Sameodori",
+      "pagina": 12,
+      "rama": "forma",
+      "grado": 8
+    },
+    {
+      "id": "forma-tierra-golem",
+      "referencia": "Golem no Jutsu",
+      "pagina": 13,
+      "rama": "forma",
+      "grado": 5
+    },
+    {
+      "id": "forma-tierra-rocas-cierre",
+      "referencia": "Sando no Jutsu",
+      "pagina": 13,
+      "rama": "forma",
+      "grado": 7
+    },
+    {
+      "id": "forma-tierra-prision-absorbe",
+      "referencia": "Kekkai Dorōdōmu",
+      "pagina": 13,
+      "rama": "forma",
+      "grado": 6
+    },
+    {
+      "id": "hilo-rayo-bestia",
+      "referencia": "Raijū Tsuiga",
+      "pagina": 14,
+      "rama": "hilo",
+      "grado": 5
+    },
+    {
+      "id": "hilo-rayo-pantera",
+      "referencia": "Kuropansa",
+      "pagina": 14,
+      "rama": "hilo",
+      "grado": 6
+    },
+    {
+      "id": "hilo-viento-red",
+      "referencia": "Kakeami",
+      "pagina": 15,
+      "rama": "hilo",
+      "grado": 4
+    },
+    {
+      "id": "sello-madera-dragon",
+      "referencia": "Mokuryū",
+      "pagina": 17,
+      "rama": "sello",
+      "grado": 6
+    },
+    {
+      "id": "hilo-madera-coloso",
+      "referencia": "Mokujin",
+      "pagina": 17,
+      "rama": "hilo",
+      "grado": 8
+    },
+    {
+      "id": "sello-madera-prision",
+      "referencia": "Shichūrō",
+      "pagina": 17,
+      "rama": "sello",
+      "grado": 5
+    },
+    {
+      "id": "sello-madera-raices",
+      "referencia": "Jubaku Eisō",
+      "pagina": 17,
+      "rama": "sello",
+      "grado": 3
+    },
+    {
+      "id": "sello-madera-bosque",
+      "referencia": "Jukai Kōtan",
+      "pagina": 17,
+      "rama": "sello",
+      "grado": 7
+    },
+    {
+      "id": "sello-madera-flores",
+      "referencia": "Kajukai Kōrin",
+      "pagina": 17,
+      "rama": "sello",
+      "grado": 8
+    },
+    {
+      "id": "forma-magma-corrosivo",
+      "referencia": "Yōkai no Jutsu",
+      "pagina": 17,
+      "rama": "forma",
+      "grado": 5
+    },
+    {
+      "id": "cuerpo-magma-coraza",
+      "referencia": "Armadura de lava",
+      "pagina": 17,
+      "rama": "cuerpo",
+      "grado": 6
+    },
+    {
+      "id": "cuerpo-vapor-presion",
+      "referencia": "Kairiki Musō",
+      "pagina": 18,
+      "rama": "cuerpo",
+      "grado": 5
+    }
+  ]
+}

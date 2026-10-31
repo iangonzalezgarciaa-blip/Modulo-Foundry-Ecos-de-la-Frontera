@@ -10,6 +10,8 @@ export function pasoInicial({ naturalezas = [], principal, tecnicas = 0 } = {}) 
 }
 
 export const ROLES_RAMA = {
+  umbral: ["door-open", "Marcas y espacio-tiempo", "Prepara anclas y mueve a tus aliados entre posiciones."],
+  vasija: ["dragon", "Huéspedes y bestias", "Coopera con una entidad vinculada y controla sus manifestaciones."],
   forma: ["wand-magic-sparkles", "Ataques y elementos", "Dale forma a tu energía y úsala a distancia."],
   cuerpo: ["hand-fist", "Combate cercano", "Refuerza tu cuerpo, tus golpes y tu movimiento."],
   velo: ["masks-theater", "Engaño e ilusiones", "Confunde, distrae y cambia lo que otros perciben."],
@@ -34,11 +36,11 @@ export function tarjetaHTML(t) {
   const id = escapar(t.id);
   return `<article class="ev-tecnica ${t.riesgo ? "riesgo" : ""}">
     <div class="ev-tec-top"><span class="ev-etiqueta">Grado ${t.grado}</span><span class="ev-etiqueta suave">${escapar(t.rama)}</span>${t.naturaleza ? `<span class="ev-etiqueta suave">${escapar(t.naturaleza)}</span>` : ""}</div>
-    <h3>${escapar(t.nombre)}</h3><p class="ev-texto-tecnica">${escapar(t.texto)}</p>
+    <h3>${escapar(t.nombre)}</h3>${t.referencia ? `<small class="ev-referencia">${escapar(t.referencia)}</small>` : ""}<p class="ev-texto-tecnica">${escapar(t.texto)}</p>
     <div class="ev-tec-datos"><span><i class="fa-regular fa-clock" aria-hidden="true"></i> ${escapar(t.tiempo)}</span><span><i class="fa-solid fa-crosshairs" aria-hidden="true"></i> ${escapar(t.alcance)}</span>${t.area ? `<span>${escapar(t.area)}</span>` : ""}</div>
     <div class="ev-costes"><span><b>${t.costo}</b> Verbe <small>por uso base</small></span>${t.trazos != null ? `<span><b>${t.trazos}</b> Trazos <small>para aprender</small></span>` : ""}</div>
     ${t.estado ?? ""}${t.nota ? `<p class="ev-nota">${escapar(t.nota)}</p>` : ""}
-    <footer><button type="button" class="ev-principal" data-action="${escapar(t.accion)}" data-id="${id}" ${t.bloqueada ? "disabled" : ""}>${escapar(t.boton)}</button><button type="button" data-action="ficha" data-id="${id}">Ver detalles</button></footer>
+    <footer>${t.accionesExtra ?? ""}<button type="button" class="ev-principal" data-action="${escapar(t.accion)}" data-id="${id}" ${t.bloqueada ? "disabled" : ""}>${escapar(t.boton)}</button><button type="button" data-action="ficha" data-id="${id}">Ver detalles</button></footer>
   </article>`;
 }
 

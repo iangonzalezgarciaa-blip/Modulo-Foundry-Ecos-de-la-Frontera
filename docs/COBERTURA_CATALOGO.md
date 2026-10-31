@@ -1,24 +1,26 @@
-# Cobertura declarada del catálogo 2.8
+# Cobertura declarada del catálogo 3.0.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-Se conservan **401 técnicas y 155 dotes**.
+El catálogo reúne **754 técnicas y 155 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
-| Forma | 147 | 41 |
-| Velo | 35 | 12 |
-| Cuerpo | 27 | 19 |
-| Mirada | 22 | 17 |
-| Sello | 32 | 20 |
-| Pacto | 26 | 23 |
-| Pulso | 25 | 10 |
-| Hilo | 22 | 8 |
-| Quietud | 19 | 15 |
-| Rastro | 19 | 17 |
-| Sangre | 27 | 20 |
+| Forma | 173 | 41 |
+| Velo | 49 | 20 |
+| Cuerpo | 64 | 23 |
+| Mirada | 55 | 26 |
+| Sello | 69 | 39 |
+| Pacto | 53 | 28 |
+| Pulso | 38 | 18 |
+| Hilo | 62 | 12 |
+| Quietud | 38 | 16 |
+| Rastro | 36 | 31 |
+| Sangre | 61 | 25 |
+| Umbral | 17 | 12 |
+| Vasija | 39 | 10 |
 
 ## Técnicas
 
@@ -275,7 +277,7 @@ Se conservan **401 técnicas y 155 dotes**.
 | `familia-crecer` | Crecer | 2 | cuerpo | utility | 0 |
 | `familia-gigante` | Gigante | 5 | cuerpo | utility | 0 |
 | `familia-mente-leer` | Leer la mente | 2 | velo | utility | 0 |
-| `familia-mente-saltar` | Saltar a otra mente | 3 | velo | save | 1 |
+| `familia-mente-saltar` | Saltar a otra mente | 3 | velo | save | 0 |
 | `familia-enjambre-nube` | Nube de insectos | 1 | pacto | save | 0 |
 | `familia-enjambre-comer` | Insectos que comen Verbe | 3 | pacto | utility | 0 |
 | `familia-colmillo` | Compañero de colmillo | 1 | pacto | utility | 0 |
@@ -425,6 +427,359 @@ Se conservan **401 técnicas y 155 dotes**.
 | `quietud-ser-valle` | Ser el valle | 11 | quietud | utility | 0 |
 | `rastro-ver-todo` | Ver todo el Verbe | 10 | rastro | utility | 0 |
 | `rastro-hilo-vida` | El hilo de cada vida | 11 | rastro | utility | 0 |
+| `velo-lugar-falso` | Lugar que no es | 1 | velo | utility | 0 |
+| `velo-doble-escenario` | Engaño bajo el engaño | 3 | velo | utility | 0 |
+| `velo-estacas-sonadas` | Estacas de la mente | 3 | velo | save | 1 |
+| `velo-cuervos-sonados` | Bandada que desorienta | 2 | velo | save | 0 |
+| `velo-flauta-cautiva` | Canción de las ataduras | 4 | velo | save | 1 |
+| `velo-coro-sabio` | Coro que encierra | 7 | velo | save | 1 |
+| `velo-almeja-espejismo` | Horizonte de la almeja | 5 | velo | utility | 0 |
+| `velo-salir-flujo` | Interferencia de un aliado | 1 | velo | utility | 0 |
+| `velo-desorden-mental` | Mente que revuelve | 5 | velo | save | 0 |
+| `velo-enlace-grupo` | Enlace de pensamientos | 3 | velo | utility | 0 |
+| `velo-transmision-mente` | Mensaje sin voz | 2 | velo | utility | 0 |
+| `velo-retorno-mente` | Retornar al cuerpo | 1 | velo | utility | 0 |
+| `velo-sueno-corporeo` | Ilusión de peso real | 8 | velo | save | 0 |
+| `cuerpo-sombra-danzante` | Sombra bajo el salto | 1 | cuerpo | utility | 1 |
+| `cuerpo-combo-leon` | Danza del león | 3 | cuerpo | attack | 1 |
+| `cuerpo-combo-replicas` | Danza de los dobles | 3 | cuerpo | attack | 0 |
+| `cuerpo-loto-frontal` | Loto de la caída | 3 | cuerpo | attack | 1 |
+| `cuerpo-loto-inverso` | Loto de los tres límites | 5 | cuerpo | attack | 1 |
+| `cuerpo-pavo-alba` | Pavo del amanecer | 7 | cuerpo | save | 0 |
+| `cuerpo-tigre-mediodia` | Tigre del mediodía | 9 | cuerpo | save | 0 |
+| `cuerpo-elefante-ocaso` | Elefante del ocaso | 10 | cuerpo | attack | 0 |
+| `cuerpo-noche-ultima` | La noche del último paso | 11 | cuerpo | attack | 0 |
+| `cuerpo-puno-ebrio` | Paso del puño ebrio | 2 | cuerpo | utility | 1 |
+| `cuerpo-arhat` | Puño del arhat | 2 | cuerpo | attack | 0 |
+| `cuerpo-lariat-rayo` | Lazo del relámpago | 4 | cuerpo | attack | 1 |
+| `cuerpo-palma-vacio` | Palma del vacío | 3 | cuerpo | attack | 0 |
+| `cuerpo-doble-palma` | Muro de dos palmas | 5 | cuerpo | save | 0 |
+| `cuerpo-sesenta-cuatro` | Sesenta y cuatro cauces | 4 | cuerpo | attack | 0 |
+| `cuerpo-ciento-veintiocho` | Ciento veintiocho cauces | 6 | cuerpo | attack | 0 |
+| `cuerpo-rotacion-palmas` | Rotación celeste | 3 | cuerpo | utility | 1 |
+| `cuerpo-leones-gemelos` | Leones gemelos de los cauces | 5 | cuerpo | utility | 1 |
+| `cuerpo-palma-rompe` | Palma que rompe la montaña | 5 | cuerpo | attack | 0 |
+| `cuerpo-guardian-cauces` | Guardia de los sesenta y cuatro | 4 | cuerpo | utility | 1 |
+| `cuerpo-expansion-parcial` | Miembro gigante | 2 | cuerpo | utility | 1 |
+| `cuerpo-tanque-carne` | Rueda del coloso | 3 | cuerpo | save | 0 |
+| `cuerpo-tanque-espinas` | Rueda de las espinas | 4 | cuerpo | save | 0 |
+| `cuerpo-mariposa` | Alas del gasto vital | 6 | cuerpo | utility | 1 |
+| `cuerpo-bombardeo-mariposa` | Impacto de la mariposa | 7 | cuerpo | attack | 0 |
+| `pulso-regeneracion-prevista` | Herida anticipada | 3 | pulso | heal | 0 |
+| `pulso-centenar-sello` | Sello del centenar | 5 | pulso | utility | 0 |
+| `pulso-centenar-liberar` | Liberar el centenar | 5 | pulso | utility | 0 |
+| `pulso-creacion-renovacion` | Renovación celular | 6 | pulso | utility | 0 |
+| `pulso-renovacion-centenar` | Renovación del centenar | 8 | pulso | utility | 0 |
+| `pulso-curacion-red` | Red de curación de la babosa | 7 | pulso | heal | 0 |
+| `pulso-regeneracion-colectiva` | Círculo de regeneración | 6 | pulso | utility | 0 |
+| `pulso-don-vida` | Vida que pasa de manos | 9 | pulso | utility | 0 |
+| `pulso-espiritu-libre` | Espíritu fuera del cuerpo | 6 | pulso | utility | 0 |
+| `pulso-don-celulas` | Tejido que se comparte | 5 | pulso | heal | 0 |
+| `pulso-mordida-sanadora` | Mordida del flujo vital | 4 | pulso | heal | 0 |
+| `pulso-nervios-desorden` | Mapa nervioso invertido | 4 | pulso | save | 1 |
+| `quietud-kata-sapo` | Kata del sapo | 4 | quietud | utility | 1 |
+| `quietud-golpe-sapo` | Golpe del sapo | 4 | quietud | attack | 0 |
+| `quietud-modo-sapo` | Quietud del sapo | 5 | quietud | utility | 1 |
+| `quietud-modo-serpiente` | Quietud de la serpiente | 5 | quietud | utility | 1 |
+| `quietud-dragon-blanco` | Eco del dragón blanco | 6 | quietud | save | 1 |
+| `quietud-materia-despierta` | Materia que despierta | 7 | quietud | save | 1 |
+| `quietud-modo-bosque` | Quietud del bosque antiguo | 7 | quietud | utility | 1 |
+| `quietud-puertas-dios` | Puertas que sujetan al coloso | 8 | quietud | save | 1 |
+| `quietud-mil-brazos` | Monumento de mil brazos | 10 | quietud | utility | 1 |
+| `quietud-brazos-corona` | Corona de los mil golpes | 11 | quietud | save | 0 |
+| `quietud-aceite-viento-fuego` | Crisol de tres alientos | 8 | quietud | save | 0 |
+| `quietud-agujas-cabello` | Cabellera de mil agujas | 5 | quietud | save | 0 |
+| `quietud-esfera-sabia` | Esfera del equilibrio | 4 | quietud | attack | 0 |
+| `quietud-esfera-sabia-mayor` | Gran esfera del equilibrio | 6 | quietud | attack | 0 |
+| `quietud-esfera-sabia-colosal` | Esfera colosal del equilibrio | 8 | quietud | attack | 0 |
+| `quietud-estrella-sabia` | Estrella del viento sabio | 8 | quietud | save | 0 |
+| `quietud-seis-caminos` | Quietud de los seis caminos | 10 | quietud | utility | 1 |
+| `quietud-estrella-colosal` | Estrella que cubre el cielo | 11 | quietud | save | 0 |
+| `rastro-ocultar-firma` | Silencio de la firma | 1 | rastro | utility | 1 |
+| `rastro-firma-aliados` | Reconocer al compañero | 2 | rastro | utility | 0 |
+| `rastro-ojo-interior` | Ojo interior del flujo | 5 | rastro | utility | 0 |
+| `rastro-lluvia-atenta` | Lluvia que escucha | 4 | rastro | utility | 0 |
+| `rastro-campo-tacto` | Campo del tacto invisible | 3 | rastro | utility | 0 |
+| `rastro-emocion-oscura` | Oír la intención hostil | 6 | rastro | utility | 0 |
+| `rastro-ojo-arena` | Tercer ojo de arena | 3 | rastro | utility | 0 |
+| `rastro-arena-sensible` | Arena que encuentra el paso | 3 | rastro | utility | 0 |
+| `rastro-insecto-rastreador` | Insecto de la firma | 2 | rastro | utility | 0 |
+| `rastro-olfato-cazador` | Olfato de la manada | 1 | rastro | utility | 0 |
+| `rastro-vista-compartida` | Red de ojos invocados | 6 | rastro | utility | 0 |
+| `rastro-sensor-carmesí` | Firma falsa de la brasa | 4 | rastro | utility | 0 |
+| `rastro-camuflaje-perfecto` | Silencio bajo la transparencia | 6 | rastro | utility | 1 |
+| `rastro-diagnostico-distancia` | Lectura del pulso vital | 2 | rastro | utility | 0 |
+| `rastro-resonancia-barrera` | Escuchar la barrera | 3 | rastro | utility | 0 |
+| `hilo-cuervo` | Cuervo de las cuchillas | 2 | hilo | utility | 1 |
+| `hilo-hormiga` | Hormiga de la prisión | 3 | hilo | utility | 1 |
+| `hilo-salamandra` | Salamandra de la guardia | 3 | hilo | utility | 1 |
+| `hilo-caja-negra` | Secretos de la caja negra | 5 | hilo | attack | 0 |
+| `hilo-diez-marionetas` | Diez guardianes blancos | 7 | hilo | utility | 1 |
+| `hilo-cien-marionetas` | Procesión de cien | 10 | hilo | utility | 1 |
+| `hilo-marioneta-humana` | Vínculo con una marioneta humana | 7 | hilo | utility | 0 |
+| `hilo-tercer-herrero` | Marioneta de hierro magnético | 8 | hilo | utility | 1 |
+| `hilo-cuerpo-artificial` | Núcleo entre mecanismos | 8 | hilo | utility | 1 |
+| `hilo-recubrir-viento` | Filo del viento canalizado | 2 | hilo | utility | 1 |
+| `hilo-pergaminos-gemelos` | Dos pergaminos, mil armas | 4 | hilo | save | 0 |
+| `hilo-agujas-sombra` | Armas que cosen la sombra | 3 | hilo | save | 1 |
+| `hilo-hilos-sombra` | Manos desde la sombra | 4 | hilo | save | 1 |
+| `hilo-costura-sombra` | Lanzas de la sombra | 4 | hilo | save | 0 |
+| `hilo-dibujos-escuadra` | Escuadra de tinta viva | 4 | hilo | utility | 1 |
+| `hilo-samehada-beber` | Mordida de la espada viva | 5 | hilo | attack | 0 |
+| `hilo-samehada-fusion` | Piel de la espada viva | 7 | hilo | utility | 1 |
+| `hilo-decapitadora` | Filo que bebe hierro | 3 | hilo | attack | 0 |
+| `hilo-espada-gemela` | Maza del doble filo | 5 | hilo | attack | 0 |
+| `hilo-colmillos-rayo` | Colmillos del relámpago | 4 | hilo | attack | 0 |
+| `hilo-espada-explosiva` | Hoja de los sellos estallantes | 4 | hilo | save | 0 |
+| `hilo-aguja-cose` | Aguja que cose enemigos | 4 | hilo | attack | 0 |
+| `hilo-rompedefensas` | Hacha y martillo | 4 | hilo | attack | 0 |
+| `hilo-kusanagi` | Filo de la serpiente | 5 | hilo | attack | 0 |
+| `hilo-gunbai` | Abanico que devuelve | 4 | hilo | utility | 1 |
+| `hilo-basho-fuego` | Abanico de cinco naturalezas | 5 | hilo | save | 0 |
+| `hilo-totsuka` | Espada del recipiente espiritual | 9 | hilo | save | 1 |
+| `hilo-yata` | Espejo de las mareas espirituales | 8 | hilo | utility | 0 |
+| `sello-cuatro-simbolos` | Sello de los cuatro símbolos | 7 | sello | utility | 0 |
+| `sello-ocho-trigramas` | Sello de los ocho trigramas | 9 | sello | utility | 0 |
+| `sello-cinco-elementos` | Nudo de los cinco cauces | 5 | sello | save | 1 |
+| `sello-desatar-cinco` | Desatar los cinco cauces | 5 | sello | utility | 0 |
+| `sello-confinar-maldicion` | Cerco contra la maldición | 4 | sello | utility | 0 |
+| `sello-guardar-llama` | Pergamino que guarda la llama | 4 | sello | utility | 0 |
+| `sello-cosecha-espiritus` | Ceremonia de los nueve sellos | 10 | sello | utility | 0 |
+| `sello-sello-ultimo` | Cuatro símbolos del último aliento | 9 | sello | utility | 0 |
+| `sello-torii` | Puerta interior del huésped | 6 | sello | save | 0 |
+| `sello-cadenas-adamantinas` | Cadenas de la marea adamantina | 7 | sello | save | 1 |
+| `sello-violeta-cuatro` | Cuatro llamas violetas | 6 | sello | utility | 0 |
+| `sello-soles-rojos` | Cuatro soles rojos | 9 | sello | utility | 0 |
+| `sello-soles-seis` | Seis soles del confinamiento | 11 | sello | utility | 0 |
+| `sello-cinco-talismanes` | Cinco talismanes de la entrada | 4 | sello | utility | 0 |
+| `sello-cuatro-direcciones` | Cerco de las cuatro direcciones | 7 | sello | utility | 0 |
+| `sello-marca-cielo` | Marca maldita del cielo | 5 | sello | utility | 1 |
+| `sello-marca-tierra` | Marca maldita de la tierra | 5 | sello | utility | 1 |
+| `sello-marca-segunda` | Segunda liberación de la marca | 7 | sello | utility | 1 |
+| `sello-jaula-pajaro` | Sello del pájaro enjaulado | 7 | sello | utility | 0 |
+| `sello-lengua-cerrada` | Juramento de la lengua cerrada | 6 | sello | utility | 0 |
+| `sello-palabra-calabaza` | Calabaza de la palabra repetida | 8 | sello | save | 1 |
+| `sello-cuerda-palabra` | Cuerda del nombre espiritual | 5 | sello | save | 0 |
+| `sello-hoja-palabra` | Hoja que registra la palabra | 5 | sello | utility | 0 |
+| `sello-vasija-llamada` | Vasija de la respuesta | 9 | sello | save | 1 |
+| `sello-alma-segador` | Sello del segador de almas | 10 | sello | utility | 0 |
+| `sello-liberar-segador` | Abrir el vientre del segador | 10 | sello | utility | 0 |
+| `pacto-sapo-caida` | Peso del sapo gigante | 5 | pacto | save | 0 |
+| `pacto-estomago-sapo` | Pasillo del estómago del sapo | 6 | pacto | save | 1 |
+| `pacto-rashomon` | Puerta del camino oscuro | 4 | pacto | utility | 0 |
+| `pacto-tres-rashomon` | Tres puertas del camino oscuro | 7 | pacto | utility | 0 |
+| `pacto-cinco-rashomon` | Cinco puertas del camino oscuro | 9 | pacto | utility | 0 |
+| `pacto-serpientes-manos` | Manos de serpiente | 2 | pacto | save | 1 |
+| `pacto-muchas-serpientes` | Manos de muchas serpientes | 4 | pacto | save | 1 |
+| `pacto-mandara` | Procesión de serpientes | 6 | pacto | save | 0 |
+| `pacto-jauria-tierra` | Jauría desde el suelo | 3 | pacto | save | 1 |
+| `pacto-enma-baston` | Rey mono, bastón de combate | 5 | pacto | utility | 1 |
+| `pacto-halcon` | Alas del contrato | 3 | pacto | utility | 1 |
+| `pacto-tortuga` | Caparazón del contrato | 2 | pacto | utility | 1 |
+| `pacto-comadreja` | Comadreja de la siega | 5 | pacto | save | 0 |
+| `pacto-salamandra-veneno` | Nube de la salamandra | 5 | pacto | save | 0 |
+| `pacto-babosa-fragmentos` | Fragmentos de la gran babosa | 4 | pacto | utility | 1 |
+| `pacto-abejas` | Colmena del contrato | 3 | pacto | utility | 1 |
+| `pacto-insectos-esfera` | Esfera de la colonia | 4 | pacto | save | 1 |
+| `pacto-insectos-senuelo` | Réplica de la colonia | 3 | pacto | utility | 1 |
+| `pacto-atraer-insectos` | Convocar la colonia local | 1 | pacto | utility | 0 |
+| `pacto-insectos-crecen` | Larvas del crecimiento voraz | 6 | pacto | save | 0 |
+| `pacto-nano-insectos` | Colonia microscópica | 8 | pacto | save | 0 |
+| `pacto-cuatro-patas` | Paso de cuatro patas | 2 | pacto | utility | 1 |
+| `pacto-colmillos-giro` | Colmillos que giran | 4 | pacto | save | 0 |
+| `pacto-lobo-doble` | Lobo de las dos cabezas | 5 | pacto | utility | 1 |
+| `pacto-gran-colmillo` | Gran colmillo de la manada | 7 | pacto | save | 0 |
+| `pacto-reanimacion` | Llamada del barro impuro | 9 | pacto | utility | 0 |
+| `pacto-perro-divisible` | Perro de las muchas cabezas | 7 | pacto | utility | 1 |
+| `mirada-aster-luna` | Luna de la pesadilla | 7 | mirada | save | 1 |
+| `mirada-aster-llama-negra` | Llama negra del foco | 7 | mirada | save | 0 |
+| `mirada-aster-forma-llama` | Forma de la llama negra | 6 | mirada | utility | 1 |
+| `mirada-aster-voluntad` | Voluntad que no se reconoce | 9 | mirada | save | 1 |
+| `mirada-aster-izanagi` | El desenlace que se niega | 10 | mirada | utility | 0 |
+| `mirada-aster-izanami` | El bucle de la elección | 10 | mirada | utility | 0 |
+| `mirada-aster-costillas` | Costillas del guardián | 5 | mirada | utility | 1 |
+| `mirada-aster-guerrero` | Guardián humanoide | 7 | mirada | utility | 1 |
+| `mirada-aster-armadura` | Guardián acorazado | 8 | mirada | utility | 1 |
+| `mirada-aster-perfecto` | Guardián perfecto | 10 | mirada | utility | 1 |
+| `mirada-aster-magatama` | Joyas del guardián | 7 | mirada | save | 0 |
+| `mirada-aster-arco` | Arco del guardián | 6 | mirada | attack | 0 |
+| `mirada-aster-indra` | Flecha del cielo de Indra | 11 | mirada | save | 0 |
+| `mirada-orbe-abrir` | Abrir el Ojo de los seis senderos | 0 | mirada | utility | 0 |
+| `mirada-orbe-atraer` | Mano de la atracción | 4 | mirada | save | 0 |
+| `mirada-orbe-repeler` | Círculo de repulsión | 5 | mirada | save | 0 |
+| `mirada-orbe-absorber` | Palmas del sendero hambriento | 6 | mirada | utility | 0 |
+| `mirada-orbe-asura` | Cuerpo del sendero de guerra | 6 | mirada | utility | 1 |
+| `mirada-orbe-proyectiles` | Artillería del sendero de guerra | 7 | mirada | save | 0 |
+| `mirada-orbe-humano` | Mano del sendero humano | 7 | mirada | save | 0 |
+| `mirada-orbe-animal` | Llamada de los ojos compartidos | 6 | mirada | utility | 1 |
+| `mirada-orbe-naraka` | Balanza del sendero infernal | 8 | mirada | utility | 0 |
+| `mirada-orbe-receptores` | Receptores negros | 4 | mirada | attack | 0 |
+| `mirada-orbe-seis-cuerpos` | Seis recipientes del sendero | 9 | mirada | utility | 1 |
+| `mirada-orbe-luna` | Núcleo de la luna cautiva | 9 | mirada | save | 1 |
+| `mirada-orbe-retorno` | Retorno del sendero exterior | 11 | mirada | utility | 0 |
+| `mirada-orbe-estatua` | Estatua del recipiente vacío | 10 | mirada | utility | 0 |
+| `mirada-orbe-limbo` | Sombra del plano contiguo | 10 | mirada | utility | 1 |
+| `mirada-orbe-domar-bestia` | Atadura ocular de las bestias | 10 | mirada | save | 1 |
+| `mirada-carmesi-abrir` | Abrir el Ojo carmesí | 0 | mirada | utility | 0 |
+| `mirada-carmesi-ilusion` | Reflejo del estanque carmesí | 5 | mirada | save | 1 |
+| `mirada-carmesi-sangre` | Lazo de la sangre expuesta | 6 | mirada | save | 1 |
+| `mirada-brasa-abrir` | Abrir el Ojo de la brasa oculta | 0 | mirada | utility | 0 |
+| `sangre-varro-sauce` | Danza del sauce óseo | 3 | sangre | attack | 0 |
+| `sangre-varro-camelia` | Danza de la camelia | 3 | sangre | utility | 1 |
+| `sangre-varro-alerce` | Danza del alerce | 4 | sangre | utility | 1 |
+| `sangre-varro-clematide` | Danza de la clemátide | 5 | sangre | save | 1 |
+| `sangre-fluyente-agua` | Cuerpo de la corriente viva | 4 | sangre | utility | 1 |
+| `sangre-fluyente-bala` | Bala del dedo de agua | 3 | sangre | attack | 0 |
+| `sangre-fluyente-vapor` | Doble del vapor aceitoso | 7 | sangre | utility | 1 |
+| `sangre-mutable-despertar` | Mutación del huésped natural | 4 | sangre | utility | 1 |
+| `sangre-mutable-propulsion` | Propulsión orgánica | 3 | sangre | utility | 1 |
+| `sangre-gemelo-fusion` | Dos cuerpos en una piel | 6 | sangre | utility | 1 |
+| `sangre-humo-cuerpo` | Cuerpo de humo | 5 | sangre | utility | 1 |
+| `sangre-detonacion-contacto` | Mina de la palma | 4 | sangre | attack | 0 |
+| `sangre-arcilla-c1` | Arcilla de la primera forma | 2 | sangre | save | 0 |
+| `sangre-arcilla-c2` | Dragón de la segunda forma | 5 | sangre | utility | 1 |
+| `sangre-arcilla-c3` | Estatua de la tercera forma | 8 | sangre | save | 0 |
+| `sangre-arcilla-c4` | Polvo de la cuarta forma | 9 | sangre | save | 0 |
+| `sangre-arcilla-cero` | Última forma de la arcilla | 11 | sangre | utility | 0 |
+| `sangre-calor-esferas` | Esferas del calor seco | 6 | sangre | save | 0 |
+| `sangre-magnetismo-lluvia` | Lluvia del hierro negro | 4 | sangre | save | 0 |
+| `sangre-magnetismo-forma` | Geometría del hierro negro | 5 | sangre | attack | 0 |
+| `sangre-magnetismo-espinas` | Bosque del hierro negro | 7 | sangre | save | 0 |
+| `sangre-magnetismo-oro` | Marea del polvo dorado | 6 | sangre | save | 1 |
+| `hilo-papel-danza` | Danza del cuerpo de papel | 5 | hilo | utility | 1 |
+| `hilo-papel-replica` | Réplica de papel | 3 | hilo | utility | 1 |
+| `hilo-papel-oceano` | Mar de los sellos preparados | 10 | hilo | utility | 0 |
+| `sangre-corazones-fibras` | Costura de los corazones | 8 | sangre | utility | 1 |
+| `sangre-jashin` | Círculo del dolor compartido | 8 | sangre | utility | 0 |
+| `sangre-transferir-cuerpo` | Muda de una vida ajena | 10 | sangre | utility | 0 |
+| `sangre-esporas` | Esporas del huésped blanco | 5 | sangre | save | 1 |
+| `sangre-efimera` | Paso de la efímera | 6 | sangre | utility | 0 |
+| `sangre-mu-dividir` | Cuerpo que se divide | 7 | sangre | utility | 1 |
+| `sangre-cristal-armadura` | Armadura del cristal vivo | 4 | sangre | utility | 1 |
+| `sangre-cristal-dragon` | Dragón de cristal | 6 | sangre | save | 0 |
+| `sangre-cristal-laberinto` | Laberinto de cristal | 7 | sangre | utility | 0 |
+| `umbral-formula` | Fórmula del punto de regreso | 0 | umbral | utility | 0 |
+| `umbral-raijin` | Paso a la fórmula | 5 | umbral | utility | 0 |
+| `umbral-raijin-largo` | Camino largo de la fórmula | 7 | umbral | utility | 0 |
+| `umbral-segundo-paso` | Segundo paso del relámpago | 6 | umbral | attack | 0 |
+| `umbral-intercambio-doble` | Rueda de las dos fórmulas | 8 | umbral | utility | 0 |
+| `umbral-barrera-traslado` | Umbral que desvía la descarga | 9 | umbral | utility | 0 |
+| `umbral-inversa` | Llamada de vuelta al contrato | 5 | umbral | utility | 0 |
+| `umbral-kamui-derecho` | Costura del cuerpo ausente | 8 | umbral | utility | 1 |
+| `umbral-kamui-izquierdo` | Costura del objetivo distante | 9 | umbral | save | 1 |
+| `umbral-kamui-puerta` | Puerta de la cámara ligada | 9 | umbral | utility | 0 |
+| `umbral-kamui-shuriken` | Filo del umbral ocular | 10 | umbral | save | 0 |
+| `umbral-kamui-corte` | Corte del relámpago ausente | 10 | umbral | attack | 0 |
+| `umbral-intercambio-ojo` | Intercambio del sendero | 8 | umbral | utility | 0 |
+| `umbral-grieta-planos` | Grieta entre los planos | 10 | umbral | utility | 0 |
+| `umbral-cambio-dimension` | Dominio de las seis estancias | 11 | umbral | utility | 0 |
+| `umbral-bolsillo` | Bolsillo de la fórmula | 2 | umbral | utility | 0 |
+| `umbral-evacuar` | Umbral de evacuación | 8 | umbral | utility | 0 |
+| `vasija-voz` | Escuchar al huésped interior | 0 | vasija | utility | 0 |
+| `vasija-prestamo` | Préstamo de la bestia | 2 | vasija | utility | 0 |
+| `vasija-manto-uno` | Manto de la primera cola | 3 | vasija | utility | 1 |
+| `vasija-manto-dos` | Manto de la segunda forma | 6 | vasija | utility | 1 |
+| `vasija-brazos` | Brazos del chakra viviente | 3 | vasija | utility | 0 |
+| `vasija-parcial` | Rasgo de la bestia | 4 | vasija | utility | 1 |
+| `vasija-avatar` | Avatar de la bestia | 8 | vasija | utility | 1 |
+| `vasija-bomba` | Esfera de la bestia | 9 | vasija | save | 0 |
+| `vasija-transferir` | Manto prestado al compañero | 5 | vasija | utility | 0 |
+| `vasija-regeneracion` | Pulso regenerador del huésped | 7 | vasija | utility | 0 |
+| `vasija-kurama-chakra` | Manto del zorro de nueve colas | 7 | vasija | utility | 1 |
+| `vasija-kurama-amigo` | Avatar del zorro compañero | 9 | vasija | utility | 1 |
+| `vasija-modo-combinado` | El huésped y el mundo | 10 | vasija | utility | 1 |
+| `vasija-shukaku-sello` | Mausoleo de la primera cola | 7 | vasija | save | 1 |
+| `vasija-matatabi-azul` | Llama de las dos colas | 6 | vasija | save | 0 |
+| `vasija-isobu-coral` | Coral de las tres colas | 6 | vasija | save | 1 |
+| `vasija-songoku-lava` | Roca ardiente de cuatro colas | 7 | vasija | save | 0 |
+| `vasija-kokuo-vapor` | Presión de las cinco colas | 6 | vasija | utility | 1 |
+| `vasija-saiken-acido` | Fluido de las seis colas | 6 | vasija | save | 0 |
+| `vasija-chomei-alas` | Alas de las siete colas | 5 | vasija | utility | 1 |
+| `vasija-gyuki-tinta` | Tinta de las ocho colas | 5 | vasija | save | 1 |
+| `vasija-gyuki-tentaculos` | Tentáculos de la octava cola | 6 | vasija | save | 1 |
+| `vasija-juubi-bomba` | Esfera del receptáculo mayor | 11 | vasija | utility | 0 |
+| `vasija-arbol` | Raíces del árbol divino | 10 | vasija | save | 1 |
+| `vasija-gudodama` | Esferas de la verdad cambiante | 10 | vasija | utility | 1 |
+| `vasija-gudodama-golpe` | Filo de las esferas de verdad | 10 | vasija | attack | 0 |
+| `vasija-nueve-estrellas` | Nueve estrellas del huésped | 11 | vasija | save | 0 |
+| `vasija-estrella-lava` | Estrella del huésped volcánico | 10 | vasija | save | 0 |
+| `vasija-esfera-magnetica` | Esfera del huésped magnético | 8 | vasija | attack | 0 |
+| `vasija-creacion-todas` | Dar forma y aliento | 11 | vasija | utility | 0 |
+| `vasija-sol-luna` | Sellos del sol y la luna | 11 | vasija | utility | 0 |
+| `vasija-huesos-finales` | Huesos de la ceniza final | 11 | vasija | attack | 0 |
+| `vasija-ochenta-punos` | Ochenta golpes del cielo vacío | 11 | vasija | save | 0 |
+| `vasija-esfera-expansiva` | Esfera del horizonte vacío | 11 | vasija | utility | 0 |
+| `vasija-bosque-primordial` | Raíces del sueño primordial | 11 | vasija | utility | 0 |
+| `vasija-cabello-primordial` | Cabellera del conejo celeste | 10 | vasija | save | 0 |
+| `vasija-sora` | Manto del huésped incompleto | 5 | vasija | utility | 1 |
+| `vasija-sincronizar-isobu` | Canción que calma las tres colas | 5 | vasija | save | 1 |
+| `forma-estrella-viento` | Estrella del viento girante | 6 | forma | save | 0 |
+| `forma-esfera-viento` | Esfera con naturaleza de viento | 4 | forma | attack | 0 |
+| `cuerpo-dos-esferas` | Dos esferas en un paso | 5 | cuerpo | attack | 0 |
+| `hilo-esferas-orbitales` | Esferas que orbitan | 6 | hilo | attack | 0 |
+| `cuerpo-mil-esferas` | Combinación de las muchas esferas | 8 | cuerpo | save | 0 |
+| `cuerpo-chidori` | Mil aves en la palma | 3 | cuerpo | attack | 0 |
+| `cuerpo-raikiri` | Corte del relámpago | 5 | cuerpo | attack | 0 |
+| `hilo-agujas-rayo` | Agujas de las mil aves | 4 | hilo | save | 0 |
+| `forma-circo-tormenta` | Rayos del circo controlado | 5 | forma | save | 0 |
+| `forma-colmillo-tormenta` | Colmillo de la tormenta sabia | 10 | forma | attack | 0 |
+| `forma-burbuja-transporte` | Burbuja del viajero | 3 | forma | utility | 1 |
+| `forma-burbuja-trampa` | Burbuja de la trampa | 3 | forma | save | 1 |
+| `forma-burbuja-estalla` | Burbuja que estalla | 4 | forma | save | 0 |
+| `rastro-clima-yota` | Pulso del cielo emotivo | 5 | rastro | utility | 0 |
+| `pulso-fuka` | Beso del flujo robado | 7 | pulso | utility | 0 |
+| `quietud-tsuchigumo` | Aliento prohibido de la tierra | 10 | quietud | utility | 0 |
+| `sangre-estrella-pavo` | Cola del pavo de la estrella | 6 | sangre | utility | 1 |
+| `hilo-raiga` | Espadas del trueno encadenado | 6 | hilo | save | 0 |
+| `sangre-amachi` | Adaptación del organismo acuático | 4 | sangre | utility | 1 |
+| `sello-limelight` | Cuatro focos del relámpago | 9 | sello | utility | 0 |
+| `forma-clon-agua` | Cuerpo de agua duplicada | 3 | forma | utility | 1 |
+| `forma-clon-tierra` | Cuerpo de tierra duplicada | 3 | forma | utility | 1 |
+| `forma-clon-madera` | Cuerpo de madera duplicada | 5 | forma | utility | 1 |
+| `forma-clon-rayo` | Cuerpo de rayo duplicado | 4 | forma | utility | 1 |
+| `forma-clon-cuervos` | Cuerpo de los cuervos dispersos | 3 | forma | utility | 1 |
+| `forma-clon-arena` | Cuerpo de arena duplicada | 3 | forma | utility | 1 |
+| `rastro-camuflaje` | Ocultarse en el entorno | 3 | rastro | utility | 1 |
+| `cuerpo-nudos-libres` | Manos fuera del nudo | 0 | cuerpo | utility | 0 |
+| `cuerpo-cuerpo-flexible` | Huesos del junco | 3 | cuerpo | utility | 0 |
+| `hilo-cuerpo-prestado` | Movimiento de un cuerpo vacío | 4 | hilo | utility | 0 |
+| `cuerpo-rostro-prestado` | Rostro tomado de un recuerdo | 4 | cuerpo | utility | 0 |
+| `forma-esfera-colosal` | Esfera girante colosal | 7 | forma | attack | 0 |
+| `vasija-esfera-bestia` | Esfera girante del huésped | 8 | vasija | attack | 0 |
+| `sello-arena-escudo` | Escudo del amor de arena | 3 | sello | utility | 1 |
+| `sello-arena-armadura` | Armadura de arena | 3 | sello | utility | 1 |
+| `sello-arena-funeral` | Funeral de la arena | 5 | sello | save | 0 |
+| `sello-arena-mausoleo` | Mausoleo de la gran arena | 8 | sello | save | 0 |
+| `sello-arena-vuelo` | Plataforma de arena | 4 | sello | utility | 1 |
+| `cuerpo-peso-ligero` | Cuerpo de peso aligerado | 4 | cuerpo | utility | 1 |
+| `cuerpo-peso-extremo` | Puño del peso aumentado | 6 | cuerpo | attack | 0 |
+| `cuerpo-ligereza-grupo` | Ligereza de los compañeros | 7 | cuerpo | utility | 0 |
+| `velo-luna-infinita` | Sueño de la luna infinita | 11 | velo | utility | 0 |
+| `hilo-cuerda-relampago` | Cuerda de dos relámpagos | 6 | hilo | save | 0 |
+| `sangre-cristal-prision` | Prisión del cristal vivo | 5 | sangre | save | 1 |
+| `forma-ola-aceitosa` | Llama del aceite de sapo | 6 | forma | save | 0 |
+| `forma-espiral-espacial` | Espiral de fuego y umbral | 8 | forma | save | 0 |
+| `forma-agua-tiburon` | Tiburón de la corriente | 4 | forma | attack | 0 |
+| `forma-agua-cinco-tiburones` | Cinco cazadores de agua | 5 | forma | save | 0 |
+| `forma-agua-tiburon-mayor` | Tiburón que bebe la descarga | 7 | forma | save | 0 |
+| `forma-agua-filo-presion` | Filo de agua comprimida | 5 | forma | save | 0 |
+| `forma-agua-adhesiva` | Suelo de la marea adhesiva | 3 | forma | save | 1 |
+| `forma-agua-prision-movil` | Prisión del tiburón danzante | 8 | forma | save | 1 |
+| `forma-tierra-golem` | Guardián de roca | 5 | forma | utility | 1 |
+| `forma-tierra-rocas-cierre` | Dos montañas que se cierran | 7 | forma | save | 1 |
+| `forma-tierra-prision-absorbe` | Prisión del cuenco de tierra | 6 | forma | save | 1 |
+| `hilo-rayo-bestia` | Bestia que persigue al rayo | 5 | hilo | attack | 0 |
+| `hilo-rayo-pantera` | Pantera del relámpago negro | 6 | hilo | save | 0 |
+| `hilo-viento-red` | Red del abanico cortante | 4 | hilo | save | 0 |
+| `sello-madera-dragon` | Dragón que sujeta el flujo | 6 | sello | save | 1 |
+| `hilo-madera-coloso` | Guerrero de madera | 8 | hilo | utility | 1 |
+| `sello-madera-prision` | Casa de los cuatro pilares | 5 | sello | save | 1 |
+| `sello-madera-raices` | Raíces que enlazan | 3 | sello | save | 1 |
+| `sello-madera-bosque` | Bosque que despierta | 7 | sello | utility | 0 |
+| `sello-madera-flores` | Bosque de las flores dormidas | 8 | sello | save | 1 |
+| `forma-magma-corrosivo` | Lodo del magma corrosivo | 5 | forma | save | 0 |
+| `cuerpo-magma-coraza` | Coraza de la roca fundida | 6 | cuerpo | utility | 1 |
+| `cuerpo-vapor-presion` | Fuerza de la presión hirviente | 5 | cuerpo | utility | 1 |
 
 ## Dotes
 
@@ -588,12 +943,14 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `medico-oficio` | Médico de oficio | 3 | Médico del Verbe; rama Pulso, Experto; nivel 5 | dados, costo |
 | `cirujano-verbe` | Cirujano del Verbe | 4 | Médico de oficio; rama Pulso, Maestro; nivel 11 | Texto/mesa |
 
-## Automatización añadida o reforzada en 2.8
+## Automatización y alcance actual
 
 - Reserva, deuda, reacciones, grados, compras y aprobaciones: adaptador del Verbe y reglas puras.
 - Cuerpo templado: CA y movimiento condicionados a la armadura.
 - Desequilibrado, Embarrado, Cargado y Helado: adaptadores de tiradas y estados. Metal requiere material declarado o marcador explícito y un único objetivo.
 - Agua/tierra apagan Ardiendo al aplicar sus estados; vencimiento temporal al inicio del turno.
 - Palma que cierra: tratamiento diario confirmado por el DM. Restaurar, Aliento para muchos, Rehacer y Mano que cierra todo: enlace con heridas. Mano que sostiene: estabilización.
-- Invocaciones, clones, títeres, ilusiones, resurrección, cirugía, regeneración repetida, trasplantes y beneficios condicionales restantes: resolución del DM según su descripción. No se generan actores ni turnos adicionales automáticamente.
+- Repertorio shinobi: 353 incorporaciones con origen y página; tradiciones, herencias, ojos, modos, bestias y rituales con comprobaciones de acceso y consumo.
+- Clones físicos: reserva dividida y acción conjunta; Sello del centenar: depósito real; familias de usos, desgaste ocular y permisos rituales persistentes. Los modos propios aplican sus efectos y la regeneración marcada usa curación nativa por turno.
+- Invocaciones y títeres: perfiles y órdenes en mesa; no se crean actores ni tokens. Ilusiones, resurrección, cirugía, trasplantes, sacrificios, posiciones y beneficios condicionales conservan resolución del DM según su ficha.
 - Defensas con midi-qol: integración existente, pendiente de comprobar en Foundry con la versión instalada; críticos, áreas y posición de Sustitución requieren especial atención.

@@ -157,5 +157,48 @@ try {
         Assert-Ecos ($script:FakeTask.Definition.Triggers.Count -eq 2) 'Debe recrear la tarea eliminada por -Remove.'
         Assert-Ecos ($script:FakeTask.Definition.Triggers.Item(1).Repetition.Interval -eq 'PT5M') 'Debe comprobar cada cinco minutos.'
     }
+    Test-EcosCase 'Todos los scripts y el BAT embebido son validos en PowerShell 5.1' {
+        foreach ($name in @('Ecos-Actualizar.ps1', 'Ecos-Notificar.ps1', 'Ecos-Autoactualizacion.bat')) {
+            $source = Get-Content -LiteralPath (Join-Path $PSScriptRoot ('..\tools\windows\' + $name)) -Raw
+            if ($name.EndsWith('.bat')) { $mark = '# ECOS_' + 'POWERSHELL'; $source = $source.Substring($source.IndexOf($mark) + $mark.Length) }
+            $tokens = $null; $errors = $null
+            [Management.Automation.Language.Parser]::ParseInput($source, [ref]$tokens, [ref]$errors) | Out-Null
+            Assert-Ecos ($errors.Count -eq 0) ("Error de sintaxis en $name : " + ($errors | Out-String))
+        }
+    }
+    Test-EcosCase 'Notifica una vez al instalar y guarda silencio sin cambios o al posponer' {
+        . (Join-Path $PSScriptRoot '..\tools\windows\Ecos-Notificar.ps1')
+        $script:Notifications = @()
+        function Show-EcosUpdateNotification([string]$Version, [string]$Root) { $script:Notifications += $Version }
+        $f = New-EcosFixture
+        $f.Config | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $f.State 'config.json') -Encoding UTF8
+        # Sustituto inocuo: simula instalacion. No consulta GitHub ni muestra un globo real.
+        @'
+param([switch]$Check, [string]$StateRoot)
+$config = Get-Content -LiteralPath (Join-Path $StateRoot 'config.json') -Raw | ConvertFrom-Json
+'{"id":"ecos-frontera","version":"3.0.0"}' | Set-Content -LiteralPath (Join-Path $config.UserDataPath 'Data\modules\ecos-frontera\module.json') -Encoding UTF8
+'@ | Set-Content -LiteralPath (Join-Path $f.State 'Ecos-Actualizar.ps1') -Encoding UTF8
+        Invoke-EcosNotifyingCheck $f.State
+        Assert-Ecos ($script:Notifications.Count -eq 1 -and $script:Notifications[0] -eq '3.0.0') 'Falta el aviso de instalacion.'
+        Invoke-EcosNotifyingCheck $f.State
+        Assert-Ecos ($script:Notifications.Count -eq 1) 'No debe repetir el aviso sin cambios.'
+        'param([switch]$Check,[string]$StateRoot) # Pospuesto o sin cambios' | Set-Content -LiteralPath (Join-Path $f.State 'Ecos-Actualizar.ps1') -Encoding UTF8
+        Invoke-EcosNotifyingCheck $f.State
+        Assert-Ecos ($script:Notifications.Count -eq 1) 'No debe avisar si se pospone.'
+        'param([switch]$Check,[string]$StateRoot) throw "fallo simulado"' | Set-Content -LiteralPath (Join-Path $f.State 'Ecos-Actualizar.ps1') -Encoding UTF8
+        try { Invoke-EcosNotifyingCheck $f.State } catch {}
+        Assert-Ecos ($script:Notifications.Count -eq 1) 'No debe avisar si falla.'
+    }
+    Test-EcosCase 'El BAT real funciona con espacios y ampersand sin configuracion' {
+        $old = $env:LOCALAPPDATA
+        try {
+            $env:LOCALAPPDATA = Join-Path $script:Fixtures 'Sin configurar & espacios'
+            New-Item -ItemType Directory -Path $env:LOCALAPPDATA | Out-Null
+            $batPath = Join-Path $env:LOCALAPPDATA 'Ecos Auto & prueba.bat'
+            Copy-Item -LiteralPath (Join-Path $PSScriptRoot '..\tools\windows\Ecos-Autoactualizacion.bat') -Destination $batPath
+            $result = & $env:ComSpec /d /c ('""' + $batPath + '" estado"') 2>&1
+            Assert-Ecos ($LASTEXITCODE -eq 1 -and ($result | Out-String).Contains('No hay configuracion')) 'El BAT no ejecuto su script o ignoro la falta de configuracion.'
+        } finally { $env:LOCALAPPDATA = $old }
+    }
     Write-Host "$script:Tests pruebas del actualizador aprobadas. No se usaron credenciales ni tareas reales."
 } finally { Remove-Item -LiteralPath $script:Fixtures -Recurse -Force }

@@ -9,6 +9,7 @@
  * Ningún nombre de linaje vive en este archivo: todo lo que depende del linaje sale de los datos.
  */
 
+import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
 import { presupuestoCorto } from "./rest-core.js";
@@ -49,7 +50,7 @@ export const FUERZA = {
 const CARS = { int: "Inteligencia", wis: "Sabiduría", cha: "Carisma", con: "Constitución", str: "Fuerza", dex: "Destreza" };
 const NATS = { fuego: "Fuego", agua: "Agua", viento: "Viento", tierra: "Tierra", rayo: "Rayo" };
 const INFUNDIBLES = new Set(["pura", "cuerpo", "hilo", "quietud", "velo"]);
-const RAMAS_LINAJE = ["mirada", "sangre", "pacto", "pulso"];
+const RAMAS_LINAJE = ["mirada", "sangre", "pacto", "pulso", "vasija"];
 const NIVEL_CULTIVO = ["Sin cultivar", "Pulida", "Dominada", "Propia"];
 
 
@@ -80,7 +81,7 @@ const ESTADO_NAT = { fuego: ["ardiendo"], agua: ["empapado"], viento: ["desequil
   escarcha: ["helado"], raiz: ["embarrado"], magma: ["ardiendo", "embarrado"], vapor: ["ardiendo"], ceniza: ["ardiendo"],
   tormenta: ["desequilibrado", "cargado"], hierro: ["cargado"], corriente: ["empapado", "cargado"], destello: ["cargado"],
   arena: ["embarrado"], madera: ["embarrado"] };
-/** Siete Cerrojos: lo que suma cada uno a la hoja (se acumulan). */
+/** Ocho Cerrojos: lo que suma cada uno a la hoja (se acumulan). */
 const CERROJO_FX = {
   1: [["system.bonuses.mwak.damage", 2, "+ 2"]],
   2: [["system.attributes.movement.walk", 2, "@paso"]],
@@ -89,7 +90,8 @@ const CERROJO_FX = {
     ["system.bonuses.mwak.damage", 2, "+ 1d6"]],
   5: [["system.attributes.movement.walk", 1, "2"]],
   6: [["system.bonuses.mwak.damage", 2, "+ 2d6"]],
-  7: [["system.bonuses.mwak.damage", 2, "+ 4d6"], ["flags.dnd5e.meleeCriticalThreshold", 5, "18"]]
+  7: [["system.bonuses.mwak.damage", 2, "+ 4d6"], ["flags.dnd5e.meleeCriticalThreshold", 5, "18"]],
+  8: [["system.bonuses.mwak.damage", 2, "+ 4d6"]]
 };
 
 let D = null; // datos de data/verbe.txt
@@ -250,7 +252,8 @@ export function ramaAbierta(actor, rama) {
   if ((e.abiertas ?? []).includes(rama)) return true;
   if (rama === "pulso") return tieneDote(actor, "control-fino");
   if (rama === "mirada") return Object.values(e.miradas ?? {}).some(v => Number(v) > 0);
-  if (rama === "sangre") return !!herenciaDe(actor);
+  if (rama === "sangre") return !!herenciaDe(actor) || (D.hitosShinobi ?? []).some(h => h.abreSangre && estado(actor)?.hitosShinobi?.includes(h.id));
+  if (rama === "vasija") return !!e.vasija?.bestia || (e.hitosShinobi ?? []).some(h => ["seis-caminos", "sangre-primordial", "creacion-primordial", "sol-y-luna", "dominio-dimensional"].includes(h));
   if (rama === "pacto") return (e.pactos ?? []).length > 0;
   return true;
 }
@@ -297,9 +300,89 @@ export function natsDe(actor) {
 /** Las combinaciones que puede usar (las da el DM con la dote). */
 export const combosDe = actor => new Set(estado(actor)?.combos ?? []);
 
+function contextoShinobi(actor) {
+  const activas=(actor?.effects??[]).filter(e=>!e.disabled).map(e=>e.getFlag(MOD,F)).filter(Boolean);
+  return {estado:estado(actor)??{},herencia:herenciaDe(actor)?.req,cerrojoActivo:Math.max(0,...activas.map(e=>Number(e.cerrojo)||0)),
+    ojosAbiertos:activas.map(e=>e.ojo).filter(Boolean),modos:activas.map(e=>e.modo).filter(Boolean),
+    artefactos:(actor?.items??[]).filter(i=>i.system?.equipped).map(i=>i.getFlag(MOD,F)?.artefacto).filter(Boolean)};
+}
+async function efectosShinobi(actor,item,uso) {
+  const meta=item.getFlag(MOD,F), fuentes=(item.effects??[]).map(e=>e.toObject?e.toObject():foundry.utils.deepClone(e)).filter(e=>e.flags?.[MOD]?.[F]?.aplicarUsuario);
+  if (meta.dividirVerbe) {
+    const dur=item.system.duration, segundos=Math.max(6,(Number(dur?.value)||1)*({round:6,minute:60,hour:3600,day:86400}[dur?.units]||60));
+    fuentes.push({name:'Formación de réplicas',duration:{seconds:segundos,rounds:Math.ceil(segundos/6)},changes:[],statuses:[],flags:{[MOD]:{[F]:{replicas:true,grupoModo:'replicas',nonce:uso.nonce}}},description:'Energía realmente repartida. Una acción ofensiva conjunta por turno; el saldo no gastado se pierde al disiparlas. No duplica depósitos, inventario ni progresión.'});
+  }
+  for(const f of fuentes){
+    const fl=f.flags[MOD][F], grupo=fl.grupoModo;
+    if(grupo)for(const vieja of actor.effects.filter(e=>e.getFlag(MOD,F)?.grupoModo===grupo))await vieja.delete({ecosSinCierre:true});
+    delete f._id;f.origin=item.uuid;f.duration??={};f.duration.startTime=game.time.worldTime;
+    f.duration.startRound=game.combat?.round;f.duration.startTurn=game.combat?.turn;
+    const concentracion=actor.effects.find(e=>e.statuses?.has('concentrating'));
+    if(item.system.properties?.has?.('concentration')||item.system.properties?.includes?.('concentration'))fl.deConcentracion=concentracion?.uuid??concentracion?.id??null;
+    const [creado]=await actor.createEmbeddedDocuments('ActiveEffect',[f]);
+    if(fl.deConcentracion&&concentracion?.addDependent)await concentracion.addDependent(creado);
+  }
+  if(meta.liberarReserva||meta.prestamo)await serializarActor(actor,async()=>{
+    const e=estado(actor), cantidad=meta.liberarReserva?Number(e.reservaSellada)||0:2*competencia(actor);
+    await guardar(actor,{...cambiosRecuperacion(actor,cantidad),...(meta.liberarReserva?{reservaSellada:0}:{})});
+  });
+}
+export function almacenarVerbe(actor,cantidad) {
+  return serializarActor(actor,async()=>{
+    if(!conoce(actor,'pulso-centenar-sello'))return rechazar('Primero aprende Sello del centenar.');
+    const e=estado(actor),r=depositoReserva({valor:e.valor,almacenado:e.reservaSellada,cantidad,nivel:nivelDe(actor)});
+    if(!r.ok)return rechazar(r.motivo);
+    await guardar(actor,{valor:r.valor,reservaSellada:r.almacenado});return true;
+  });
+}
+/** Los poderes que necesitan preparación no se autorizan desde el cliente del jugador. */
+export function concederShinobi(actor,campo,valor,extra=null) {
+  if(!game.user.isGM)return Promise.resolve(false);
+  return serializarActor(actor,async()=>{
+    const e=estado(actor);if(!e?.despierto)return false;
+    if(campo==='tradicion'){
+      const t=D.tradicionesShinobi?.find(t=>t.id===valor);if(!t)return false;
+      const tiene=e.tradiciones?.includes(valor);await guardar(actor,{tradiciones:tiene?e.tradiciones.filter(x=>x!==valor):[...(e.tradiciones??[]),valor],...(!tiene&&t.pacto?{pactos:[...new Set([...(e.pactos??[]),t.pacto])]}:{})});
+    }else if(campo==='hito'){
+      if(!D.hitosShinobi?.some(h=>h.id===valor))return false;
+      await guardar(actor,{hitosShinobi:e.hitosShinobi?.includes(valor)?e.hitosShinobi.filter(x=>x!==valor):[...(e.hitosShinobi??[]),valor]});
+    }else if(campo==='vasija'){
+      if(valor&&!D.bestiasShinobi?.some(b=>b.id===valor))return false;
+      await guardar(actor,{vasija:{bestia:valor||null,vinculo:Math.clamp(Number(extra)||1,1,3)}});
+    }else if(campo==='ritual'){
+      const t=tecnicaPorId(valor,actor);if(!t?.item.flags[MOD][F].ritual||!conoce(actor,valor))return false;
+      await guardar(actor,{permisosRituales:{[valor]:true}});
+    }else if(campo==='ocular'){
+      if(!D.miradas.some(m=>m.id===valor))return false;
+      await guardar(actor,{desgasteOcular:{[valor]:0},ojosSacrificados:{[valor]:0}});
+    }else return false;
+    await asegurarRasgos(actor);await refrescar(actor);return true;
+  });
+}
+export function transferirVerbe(origen,destino,cantidad) {
+  if(!game.user.isGM||origen===destino||!despierto(origen)||!despierto(destino))return Promise.resolve(false);
+  const orden=[origen,destino].sort((a,b)=>claveActor(a).localeCompare(claveActor(b)));
+  return enSerie(claveActor(orden[0]),()=>enSerie(claveActor(orden[1]),async()=>{
+    if(consumoPendiente(origen)||consumoPendiente(destino))return rechazar('Espera a que termine el uso de las técnicas antes de transferir energía.');
+    const n=Number(cantidad),e=estado(origen);
+    if(!Number.isSafeInteger(n)||n<1||n>Number(e.valor))return rechazar('La transferencia usa solo energía positiva existente.');
+    const cambios=cambiosRecuperacion(destino,n),antes=Number(e.valor);
+    await guardar(origen,{valor:antes-n});
+    try{await guardar(destino,cambios);}catch(err){await guardar(origen,{valor:antes});throw err;}
+    return true;
+  }));
+}
+export function concederArtefacto(actor,id){
+  if(!game.user.isGM)return Promise.resolve(false);
+  return serializarActor(actor,async()=>{
+    const a=D.artefactosShinobi?.find(a=>a.id===id);if(!a||actor.items.some(i=>i.getFlag(MOD,F)?.artefacto===id))return false;
+    await actor.createEmbeddedDocuments('Item',[{name:a.nombre,type:'equipment',img:'systems/dnd5e/icons/svg/items/loot.svg',system:{description:{value:`<p>${escH(a.texto)}</p><p>Reliquia de campaña. Sus técnicas se aprenden y pagan aparte; equiparla no otorga todas sus capacidades.</p>`},equipped:true,quantity:1,rarity:'legendary'},flags:{[MOD]:{[F]:{artefacto:id}}}}]);return true;
+  });
+}
+
 /** La herencia y los regalos del DM se conservan aunque excedan el límite ordinario. */
 export function naturalezaVisible(actor, tec) {
-  if (!tec.nat || conoce(actor, tec.id)) return true;
+  if (!tec.nat || (!NATS[tec.nat] && !D.combos[tec.nat]) || conoce(actor, tec.id)) return true;
   if (D.combos[tec.nat]) return combosDe(actor).has(tec.nat);
   return natsDe(actor).has(tec.nat) || (natsDe(actor).size < 2 && !(estado(actor)?.probadas ?? []).includes(tec.nat));
 }
@@ -331,6 +414,8 @@ export function requisitos(actor, tec) {
   const e = estado(actor);
   if (!e?.despierto) return { ok: false, motivo: "No despertó." };
   if (conoce(actor, tec.id)) return { ok: false, motivo: "Ya la sabe." };
+  const acceso = accesoShinobi(tec.item?.flags?.[MOD]?.[F] ?? tec, contextoShinobi(actor), false);
+  if (!acceso.ok) return acceso;
   if (tec.retirada) return { ok: false, motivo: "El DM retiró esta técnica del aprendizaje nuevo." };
   if (tec.nivelMin && nivelDe(actor) < tec.nivelMin) return { ok: false, motivo: `Pide nivel ${tec.nivelMin}.` };
   if (tec.previa && !conoce(actor, tec.previa)) return { ok: false, motivo: `Primero aprende ${tecnicaPorId(tec.previa,actor)?.n ?? tec.previa}.` };
@@ -347,7 +432,7 @@ export function requisitos(actor, tec) {
   const her = herenciaDe(actor);
   if (D.linajes.some(l => l.req && l.req === tec.req) && her?.req !== tec.req) return { ok: false, motivo: "Es de otra sangre." };
   if (tec.req === "una herencia" && !her) return { ok: false, motivo: "Pide una herencia." };
-  if (tec.sec === "sangre" && (rangoDon(actor, "sangre") < 5) && tec.g > (FUERZA[e.fuerza ?? "plena"]?.grado ?? 9)) return { ok: false, motivo: `Su sangre llega hasta el grado ${FUERZA[e.fuerza].grado}.` };
+  if (tec.sec === "sangre" && conSangre(actor) && (rangoDon(actor, "sangre") < 5) && tec.g > (FUERZA[e.fuerza ?? "plena"]?.grado ?? 9)) return { ok: false, motivo: `Su sangre llega hasta el grado ${FUERZA[e.fuerza].grado}.` };
   // Pactos de un linaje de criaturas
   if (/^pacto con /.test(tec.req ?? "")) {
     const p = tec.req.replace(/^pacto con (las |los |el |la )?/, "").split(" ")[0].toLowerCase();
@@ -455,12 +540,15 @@ export function costoUso(actor, meta, grado, { infusion = null } = {}) {
 }
 
 /** La interfaz consulta exactamente los costes y bloqueos del uso nativo, sin gastar nada. */
-export function previsualizarUso(actor, meta, grado = Number(meta?.g) || 0) {
+export function previsualizarUso(actor, meta, grado = Number(meta?.g) || 0, {replica=false} = {}) {
   const e = estado(actor) ?? {};
   const extra = meta?.fuerte ? extraContraFuerte(actor).extra : 0;
   const costo = costoUso(actor, meta, grado, { infusion: meta.infusion }) + extra;
+  const acceso = accesoShinobi(meta, contextoShinobi(actor), true);
+  if (!acceso.ok) return { ...acceso, costo };
+  if (replica && (grado>2 || !efectoV(actor,"replicas") || e.accionReplicaUsada)) return {ok:false,costo,motivo:"No hay acción de réplicas disponible o el grado supera 2."};
   const item = itemsDe(actor, meta.id)[0];
-  const permiso = evaluarGasto({ valor: Number(e.valor) || 0, costo, limite: limiteNegativo(actor), grado,
+  const permiso = evaluarGasto({ valor: Number(replica?e.reservaReplicas:e.valor) || 0, costo, limite: replica?0:limiteNegativo(actor), grado,
     gradoMaximo: gradoUsable(actor, meta), agotamiento: Number(actor.system?.attributes?.exhaustion) || 0,
     incapacitado: noPuedeActuar(actor), reaccion: item?.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R",
     puedeReaccionar: reaccionDisponible(actor), altoGastado: !!e.usosAltos?.[meta.id] });
@@ -468,17 +556,17 @@ export function previsualizarUso(actor, meta, grado = Number(meta?.g) || 0) {
 }
 
 /** Conserva el diálogo, las tiradas y el consumo de dnd5e. No lanza desde una copia del catálogo. */
-export async function usarTecnica(actor, id) {
+export async function usarTecnica(actor, id, { replica = false } = {}) {
   if (!editarActor(actor) || !despierto(actor)) return false;
   const item = itemsDe(actor, id)[0];
   if (!item) return rechazar("Primero debes aprender esa técnica.");
   if (D.defensas?.[id]) return rechazar("Esta defensa se ofrece cuando recibes un ataque con midi-qol. Sin esa integración, acuerda el uso y el coste con el DM antes de resolver el golpe.");
   const meta = item.getFlag(MOD, F);
-  const estadoUso = previsualizarUso(actor, meta);
+  const estadoUso = previsualizarUso(actor, meta,Number(meta.g)||0,{replica});
   if (!estadoUso.ok) return rechazar(estadoUso.motivo);
   const fuente = item.system?.activities;
   const actividades = fuente?.values ? [...fuente.values()] : Object.values(fuente ?? {});
-  if (actividades.length === 1 && typeof actividades[0].use === "function") return actividades[0].use();
+  if (actividades.length === 1 && typeof actividades[0].use === "function") return replica ? actividades[0].use({ ecosReplica: true, consume: { action: false } }) : actividades[0].use();
   if (item.sheet?.render) {
     aviso(actividades.length > 1 ? "Elige la actividad que quieres usar en la ficha de tu técnica." : "Usa la actividad desde la ficha de tu técnica.");
     return item.sheet.render({ force: true });
@@ -502,7 +590,7 @@ export function datosItem(actor, tec) {
   const inf = e.infusiones?.[tec.id] ?? null;
   const cul = e.cultivos?.[tec.id] ?? null;
   data.system.ability = habilidadTecnica(actor, meta);
-  const extra = dadosExtra(actor, meta, inf);
+  const extra = Math.floor(dadosExtra(actor, meta, inf) / (Number(meta.divisorDados) || 1));
   const mej = cul?.mejoras ?? [];
   const max = Math.max(0, gradoUsable(actor, meta) - tec.g);
   for (const act of Object.values(data.system.activities)) {
@@ -557,6 +645,7 @@ export function datosItem(actor, tec) {
   }
   // Los estados de naturaleza llevan su mecánica, y con afinidad Entrenada duran el doble.
   const doble = afinidadDe(actor, inf || meta.nat) >= 2;
+  if (meta.shinobi && actor.system.attributes?.movement?.units === "ft") for (const ef of data.effects ?? []) for (const c of ef.changes ?? []) if (/^system\.attributes\.movement\./.test(c.key) && Number.isFinite(Number(c.value))) c.value = String(Number(c.value) / 0.3);
   data.effects = (data.effects ?? []).map(ef => {
     if (!ESTADOS[ef.statuses?.[0]]) return ef;
     const normal = efectoEstado(ef.statuses[0], ef._id, doble);
@@ -713,6 +802,11 @@ async function asegurarRasgos(actor) {
       cerrojosHoy: { ciclo: 0, veces: 0 }, historial: hist(e, "Base estable 2.8: deuda unificada y Cerrojos por Descanso Largo; compras conservadas.") });
     e = estado(actor);
   }
+  if (D.shinobi && (Number(e.shinobiVersion) || 0) < VERSION_SHINOBI && soyGM()) {
+    const antiguaFatal=Number(e.cerrojos)===7;
+    await guardar(actor,{shinobiVersion:VERSION_SHINOBI,...(antiguaFatal?{cerrojos:8,compras:(e.compras??[]).map(c=>c.tipo==="cerrojo"&&c.datos?.n===7?{...c,datos:{...c.datos,n:8}}:c)}:{}),historial:hist(e,"Repertorio shinobi: compras conservadas; la antigua puerta fatal pasa a la octava.")});
+    e=estado(actor);
+  }
   // Los dones del despertar: si falta alguno (despertó antes de la v1.2), se lo pone sin cobrar.
   const faltan = (D.innatos ?? []).filter(id => !(e.dotes ?? []).includes(id));
   if (faltan.length) {
@@ -823,25 +917,41 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
       aviso("Solo el DM puede omitir el gasto de una técnica.", "warn");
       return false;
     }
+    const acceso = accesoShinobi(meta, contextoShinobi(actor), true);
+    if (!acceso.ok) { aviso(acceso.motivo,"warn"); return false; }
     const grado = meta.g + (Number(usageConfig?.scaling) || 0);
     const fuerte = meta.fuerte ? extraContraFuerte(actor) : { extra: 0, quien: null };
     const costo = costoUso(actor, meta, grado, { infusion: meta.infusion }) + fuerte.extra;
-    const valor = Number(e.valor) || 0;
+    const replica = usageConfig?.ecosReplica === true;
+    if (replica && (grado > 2 || meta.dividirVerbe || meta.ritual || meta.liberarReserva || meta.prestamo || e.accionReplicaUsada || !efectoV(actor,"replicas") || Object.values(item.system.activities ?? {}).some(a=>a.type === "utility"))) { aviso("Las réplicas comparten una acción ofensiva, usan grado 0–2 y no duplican poderes o recursos especiales.","warn"); return false; }
+    const valor = Number(replica ? e.reservaReplicas : e.valor) || 0;
     const reaccion = item.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R";
-    const permiso = evaluarGasto({ valor, costo, limite: limiteNegativo(actor), grado, gradoMaximo: gradoUsable(actor, meta),
+    const permiso = evaluarGasto({ valor, costo, limite: replica ? 0 : limiteNegativo(actor), grado, gradoMaximo: replica ? Math.min(2,gradoUsable(actor,meta)) : gradoUsable(actor, meta),
       agotamiento: Number(actor.system?.attributes?.exhaustion) || 0, incapacitado: noPuedeActuar(actor),
       reaccion, puedeReaccionar: reaccionDisponible(actor), altoGastado: !!e.usosAltos?.[meta.id] });
     if (!permiso.ok) { aviso(permiso.motivo, "warn"); return false; }
-    const nuevo = permiso.despues;
+    let nuevo = permiso.despues;
+    const pg = Number(meta.costoPG) || 0;
+    if (pg && Number(actor.system.attributes.hp.value) <= pg) { aviso(`Necesita más de ${pg} PG para pagar este esfuerzo sin caer.`,"warn"); return false; }
+    const reparto = meta.dividirVerbe ? dividirReserva(valor,costo,Math.min(competencia(actor),Number(meta.copias)||1)) : null;
+    if (reparto && reparto.porCuerpo < 1) { aviso("No queda energía positiva suficiente para repartir entre todos los cuerpos.","warn"); return false; }
+    if (reparto) nuevo = reparto.original;
     const nonce = foundry.utils.randomID();
     consumosPendientes.set(claveActor(actor), { config: usageConfig, nonce, hasta: Date.now() + 30000 });
     updates.actor ??= {};
-    updates.actor[`flags.${MOD}.${F}.valor`] = nuevo;
+    updates.actor[`flags.${MOD}.${F}.${replica ? "reservaReplicas" : "valor"}`] = nuevo;
+    if (replica && game.combat?.started) updates.actor[`flags.${MOD}.${F}.accionReplicaUsada`] = true;
+    if (reparto) { updates.actor[`flags.${MOD}.${F}.reservaReplicas`] = reparto.comprometido; updates.actor[`flags.${MOD}.${F}.lazoReplica`] = nonce; }
+    if (meta.ritual) updates.actor[`flags.${MOD}.${F}.permisosRituales.${meta.id}`] = false;
+    if (meta.familiaUso) updates.actor[`flags.${MOD}.${F}.usosFamilia.${meta.familiaUso}`] = true;
+    if (meta.desgasteOjo && (Number(e.miradas?.[meta.desgasteOjo]) || 0) < 5) updates.actor[`flags.${MOD}.${F}.desgasteOcular.${meta.desgasteOjo}`] = (Number(e.desgasteOcular?.[meta.desgasteOjo]) || 0) + 1;
+    if (meta.sacrificarOjo) updates.actor[`flags.${MOD}.${F}.ojosSacrificados.${meta.sacrificarOjo}`] = (Number(e.ojosSacrificados?.[meta.sacrificarOjo]) || 0) + 1;
+    if (pg) updates.actor["system.attributes.hp.value"] = Number(actor.system.attributes.hp.value) - pg;
     updates.actor[`flags.${MOD}.${F}.ultimoUso`] = nonce;
     if (grado >= 6) updates.actor[`flags.${MOD}.${F}.usosAltos.${meta.id}`] = true;
     if (reaccion && game.combat?.started) updates.actor[`flags.${MOD}.${F}.reaccionUsada`] = true;
     if (e.reserva === meta.id && !e.reservaUsada && grado === meta.g) updates.actor[`flags.${MOD}.${F}.reservaUsada`] = true;
-    usageConfig.ecosVerbe = { grado, costo, antes: valor, despues: nuevo, nonce, fuerte: fuerte.extra ? fuerte : null };
+    usageConfig.ecosVerbe = { grado, costo, antes: valor, despues: nuevo, nonce, fuerte: fuerte.extra ? fuerte : null, replica, reparto };
     foundry.utils.setProperty(messageConfig, `data.flags.${MOD}.${F}`, { grado, costo, despues: nuevo, extraFuerte: fuerte.extra || 0 });
   } catch (err) {
     console.error(`${MOD} | capa V: consumo`, err);
@@ -858,7 +968,8 @@ async function despuesDeUsar(activity, usageConfig) {
   if (consumoPendiente(actor)?.nonce === v.nonce) consumosPendientes.delete(claveActor(actor));
   const meta = item.getFlag(MOD, F);
   if (v.fuerte?.extra) aLaMesa(actor, "Contra alguien más fuerte", `<p>${escH(actor.name)} paga <b>${v.fuerte.extra} Verbe más</b>: ${escH(v.fuerte.quien ?? "su objetivo")} es más fuerte que su grado.</p>`, { soloDueno: true });
-  if (v.despues < 0) await sobreesfuerzo(actor, v.grado, v.despues);
+  if (!v.replica && v.despues < 0) await sobreesfuerzo(actor, v.grado, v.despues);
+  await efectosShinobi(actor,item,v);
   // Estados de poder que se ponen al usar su técnica.
   if (meta.id === "sangre-despertar") await ponerDespertar(actor);
   else if (meta.rama === "mirada" && /-abrir$/.test(meta.id)) await ponerOjo(actor, meta.id.split("-")[1]);
@@ -905,7 +1016,7 @@ async function ponerOjo(actor, ojo) {
   const da = (m?.etapas ?? []).slice(0, etapa).map((t, i) => `<p><b>Etapa ${i + 1}:</b> ${escH(t)}</p>`).join("");
   await actor.createEmbeddedDocuments("ActiveEffect", [{ name: `${m?.nombre ?? "Ojo"} · abierto`, img: "systems/dnd5e/icons/svg/schools/divination.svg",
     duration: { seconds: 60, rounds: 10 }, description: `${da}<p>Mantenerlo abierto cuesta 1 Verbe por minuto: vuelve a usar «Abrir».</p>`,
-    flags: { [MOD]: { [F]: { ojo } } } }]);
+    flags: { [MOD]: { [F]: { ojo,shinobi:!!D.shinobi } } } }]);
 }
 
 /** Dado extra del Despertar del linaje (técnicas de sus naturalezas). */
@@ -964,7 +1075,7 @@ async function alDescansarInterno(actor, result, config) {
     const breve = !largo ? recuperacionBreve(actor, rec) : null;
     const cambios = largo ? cambiosRecuperacion(actor, rec) : { valor: breve.valor, recResto: breve.recResto, recCortos: breve.recCortos };
     Object.assign(cambios, { reflejaUsada: false, reaccionUsada: false });
-    if (largo) Object.assign(cambios, { recCortos: 0, reservaUsada: false, despertarLibre: false, respiroUsado: false,
+    if (largo) Object.assign(cambios, { usosFamilia: Object.fromEntries(Object.keys(e.usosFamilia ?? {}).map(id => [id,false])), recCortos: 0, reservaUsada: false, despertarLibre: false, respiroUsado: false,
       usosAltos: Object.fromEntries(Object.keys(e.usosAltos ?? {}).map(id => [id, false])),
       cerrojosHoy: { ciclo: (Number(e.cerrojosHoy?.ciclo) || 0) + 1, veces: 0 } });
     await guardar(actor, cambios);
@@ -1274,7 +1385,7 @@ const DUR = { "inst.": ["inst", null], "1 asalto": ["round", 1], "1 min": ["minu
 const SALV = { FUE: "str", DES: "dex", CON: "con", INT: "int", SAB: "wis", CAR: "cha" };
 const DANO = { fuerza: "force", fuego: "fire", frío: "cold", relámpago: "lightning", trueno: "thunder", contundente: "bludgeoning",
   cortante: "slashing", perforante: "piercing", psíquico: "psychic", radiante: "radiant", necrótico: "necrotic", veneno: "poison", ácido: "acid" };
-const ESCUELA = { forma: "vfo", velo: "vve", cuerpo: "vcu", mirada: "vmi", sello: "vse", pacto: "vpa", pulso: "vpu", hilo: "vhi",
+const ESCUELA = { umbral: "vum", vasija: "vva", forma: "vfo", velo: "vve", cuerpo: "vcu", mirada: "vmi", sello: "vse", pacto: "vpa", pulso: "vpu", hilo: "vhi",
   quietud: "vqu", rastro: "vra", sangre: "vsa" };
 
 /** Grado máximo que puede crear en una rama: su máximo menos uno; Maestro o Legendario, su máximo. */
@@ -1619,13 +1730,15 @@ export async function despertarOjo(actor, ojo, etapa, trasplante = false) {
   if (!game.user.isGM) return false;
   const e = estado(actor);
   const m = D.miradas.find(x => x.id === ojo);
+  if (!m || !Number.isInteger(etapa) || etapa<1 || etapa>m.etapas.length) return rechazar("La etapa de Mirada no existe.");
+  if (nivelDe(actor)<(m.niveles?.[etapa-1]||1)) return rechazar(`Esta etapa pide nivel ${m.niveles[etapa-1]}.`);
   const antes = Number(e.miradas?.[ojo]) || 0;
   if (etapa <= antes) return rechazar(`Ya tiene ese ojo en la etapa ${antes}.`);
   const costo = (m?.trazos ?? [3, 5, 8]).slice(antes, etapa).reduce((t, n) => t + n, 0);
   const texto = `${m?.nombre ?? ojo}: etapa ${etapa} (${costo} Trazos)`;
   await guardar(actor, { miradas: { [ojo]: etapa }, trasplantes: trasplante ? [...new Set([...(e.trasplantes ?? []), ojo])] : (e.trasplantes ?? []),
     gastados: (Number(e.gastados) || 0) + costo, historial: hist(e, texto), compras: compra(e, "ojo", { ojo, antes, etapa }, costo, texto) });
-  for (const t of D.tecnicas.filter(x => x.rama === "mirada" && x.id.startsWith(`mirada-${ojo}-`))) {
+  for (const t of D.tecnicas.filter(x => x.rama === "mirada" && x.incl && x.id.startsWith(`mirada-${ojo}-`))) {
     const n = Number(String(t.req ?? "").match(/etapa (\d)/)?.[1]) || 1;
     if (n <= etapa && !conoce(actor, t.id)) await aprender(actor, t, { gratis: true, nota: "con la Mirada" });
   }
@@ -1639,7 +1752,7 @@ async function aprenderCerrojoInterno(actor) {
   const e = estado(actor);
   const sig = (Number(e.cerrojos) || 0) + 1;
   const c = D.cerrojos.find(x => x.n === sig);
-  if (!c) return rechazar("Ya sabe los siete.");
+  if (!c) return rechazar("Ya sabe los ocho.");
   if (c.grado > rangoGrado(rangoDe(actor, "cuerpo")) || c.grado > gradoMax(actor)) return rechazar(`El cerrojo ${sig} es de grado ${c.grado}: pide más rango de Cuerpo o más nivel.`, "warn");
   const { libres } = trazos(actor);
   if (libres < c.grado) return rechazar(`Cuesta ${c.grado} Trazos y tiene ${libres}.`, "warn");
@@ -1655,6 +1768,7 @@ async function abrirCerrojoInterno(actor, n) {
   const e = estado(actor);
   const c = D.cerrojos.find(x => x.n === n);
   if (!c || n > (Number(e.cerrojos) || 0)) return;
+  if (n === 8 && !await confirmar("Abrir la Puerta de la Muerte", "<p>El cuerpo original morirá al terminar. Solo una intervención excepcional del DM puede cambiarlo. ¿Abrirla?</p>")) return false;
   const abiertos = Number(efectoV(actor, "cerrojo")?.getFlag(MOD, F)?.cerrojo) || 0;
   const cuantos = rangoDe(actor, "cuerpo") >= 3 ? 3 : 2;
   if (n <= abiertos) return rechazar(`Ya tiene abierto hasta el cerrojo ${abiertos}.`);
@@ -1680,7 +1794,7 @@ async function abrirCerrojoInterno(actor, n) {
   const da = D.cerrojos.filter(x => x.n <= n).map(x => `<li><b>${x.n} · ${escH(x.nombre)}:</b> ${escH(x.da)}</li>`).join("");
   const min = esCerrojero(actor) ? 2 : 1;
   const pg = libre ? 0 : (rangoDon(actor, "cuerpo") >= 4 ? Math.ceil((Number(c.pg) || 0) / 2) : Number(c.pg) || 0);
-  const datos = { name: `Siete Cerrojos · ${n}`, img: "systems/dnd5e/icons/svg/abilities/strength.svg",
+  const datos = { name: `Ocho Cerrojos · ${n}`, img: "systems/dnd5e/icons/svg/abilities/strength.svg",
     changes, duration: { seconds: min * 60, rounds: min * 10, startTime: game.time.worldTime,
       startRound: game.combat?.round ?? null, startTurn: game.combat?.turn ?? null },
     description: `<ul>${da}</ul><p>Paga ${pg || "—"} PG al inicio de cada turno. Al cerrar: ${escH(c.cierre)}.</p>`,
@@ -1698,7 +1812,7 @@ async function abrirCerrojoInterno(actor, n) {
     throw error;
   }
   if (permiso.sobreesfuerzo) await sobreesfuerzo(actor, c.grado, permiso.despues);
-  aLaMesa(actor, "✦ Siete Cerrojos", `<p>${escH(actor.name)} abre hasta el cerrojo ${n}, ${escH(c.nombre)}${pg ? `: paga ${pg} PG por turno` : ""}.</p>`);
+  aLaMesa(actor, "✦ Ocho Cerrojos", `<p>${escH(actor.name)} abre hasta el cerrojo ${n}, ${escH(c.nombre)}${pg ? `: paga ${pg} PG por turno` : ""}.</p>`);
 }
 
 /** Al cerrar los Cerrojos o terminar el Despertar (lo hace el DM, una sola vez). */
@@ -1707,9 +1821,16 @@ async function alQuitarEfecto(ef, opciones) {
   const actor = ef.parent;
   if (!(actor instanceof Actor)) return;
   const fl = ef.getFlag(MOD, F);
+  if (ef.statuses?.has("concentrating")) for(const ligado of actor.effects.filter(e=>e.getFlag(MOD,F)?.deConcentracion && [ef.uuid,ef.id].includes(e.getFlag(MOD,F).deConcentracion))) await ligado.delete();
+  if (fl?.replicas && fl.nonce === estado(actor)?.lazoReplica) await guardar(actor,{reservaReplicas:0});
   if (fl?.cerrojo) {
     const c = D.cerrojos.find(x => x.n === fl.cerrojo);
-    if (fl.cerrojo === 7) {
+    if (fl.cerrojo === 8) {
+      await actor.update({"system.attributes.hp.value":0});
+      await susurrarDM("La Octava Puerta", `<p>${escH(actor.name)} agotó la Puerta de la Muerte. El precio es la vida del cuerpo original: registra la muerte o una intervención excepcional ganada en la historia. Una cura ordinaria, un clon o un descanso no la evitan.</p>`);
+      return;
+    }
+    if (fl.cerrojo === 7 && D.cerrojos.length === 7) {
       const cd7 = rangoDon(actor, "cuerpo") >= 5 ? 10 : (rangoDon(actor, "cuerpo") >= 4 ? 15 : 20);
       const rolls = await actor.rollSavingThrow({ ability: "con", target: cd7 }, { configure: false });
       const roll = Array.isArray(rolls) ? rolls[0] : rolls;
@@ -1745,7 +1866,7 @@ async function alQuitarEfecto(ef, opciones) {
 async function inicioDeTurno(combat) {
   const actor = combat?.combatant?.actor;
   if (!actor) return;
-  if (despierto(actor) && estado(actor).reaccionUsada) await guardar(actor, { reaccionUsada: false });
+  if (despierto(actor) && (estado(actor).reaccionUsada || estado(actor).accionReplicaUsada)) await guardar(actor, { reaccionUsada: false, accionReplicaUsada:false });
   for (const ef of actor.effects.filter(x => { const fl = x.getFlag(MOD, F);
     return fl && !fl.herencia && !fl.dotesAE && (Number(x.duration?.seconds) > 0 || Number(x.duration?.rounds) > 0); })) {
     const r = ef.duration?.remaining;
@@ -1755,17 +1876,20 @@ async function inicioDeTurno(combat) {
   const pg = Number(cerr?.getFlag(MOD, F)?.pg) || 0;
   if (cerr && pg) {
     await actor.update({ "system.attributes.hp.value": Math.max(0, actor.system.attributes.hp.value - pg) });
-    aLaMesa(actor, "Siete Cerrojos", `<p>${escH(actor.name)} paga ${pg} PG por los Cerrojos abiertos.</p>`);
+    aLaMesa(actor, "Ocho Cerrojos", `<p>${escH(actor.name)} paga ${pg} PG por los Cerrojos abiertos.</p>`);
   }
   if (actor.statuses?.has("ardiendo")) {
     const roll = await new Roll("1d6").evaluate();
     await actor.applyDamage([{ value: roll.total, type: "fire" }]);
     await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `${escH(actor.name)} arde: ${roll.total} de fuego` });
   }
+  for (const ef of actor.effects) { const rg = ef.getFlag(MOD,F)?.regenera; if (ef.disabled || !rg || actor.system.attributes.hp.value <= 0) continue; const roll = await new Roll(rg).evaluate(); await actor.applyDamage([{value:roll.total,type:"healing"}]); }
   const regen = efectoV(actor, "despertar") ? herenciaDe(actor)?.despertar?.regen : null;
   if (regen && despierto(actor)) {
     const roll = await new Roll(regen).evaluate();
-    const valor = await recuperarVerbe(actor, roll.total);
+    const breve = recuperacionBreve(actor,roll.total);
+    await guardar(actor,{valor:breve.valor,recResto:breve.recResto,recCortos:breve.recCortos});
+    const valor = breve.valor;
     aLaMesa(actor, "Verbe", `<p>${escH(actor.name)} recupera ${roll.total} de Verbe (${valor}).</p>`, { soloDueno: true });
   }
 }
@@ -1999,7 +2123,7 @@ export async function ajustar(actor, campo, valor, clave = null) {
   else if (campo === "control") {
     await actor.update({ "system.skills.cvb.value": Math.clamp(Number(valor) || 0, 0, 2) });
     await guardar(actor, { historial: nota(`Control ${["sin competencia", "competente", "pericia"][Number(valor) || 0]}`) });
-  } else if (campo === "cerrojos") await guardar(actor, { cerrojos: Math.clamp(Number(valor) || 0, 0, 7), historial: nota(`sabe ${valor} cerrojos`) });
+  } else if (campo === "cerrojos") await guardar(actor, { cerrojos: Math.clamp(Number(valor) || 0, 0, D.cerrojos.length), historial: nota(`sabe ${valor} cerrojos`) });
   else if (campo === "dote") {
     const dote = D.dotes.find(x => x.id === valor);
     if (!dote) return;
@@ -2043,7 +2167,7 @@ const leadDe = r => (dm() ? (r.lead || r.jugador) : r.jugador) ?? "";
 const donDe = (don, k) => (dm() ? don[k] : (don.jugador?.[k] ?? don[k]));
 const dotTexto = d => (dm() ? d.texto : (d.textoJ ?? d.texto));
 const nombrePacto = p => (dm() ? p : String(p).replace(/\s*\(.*?\)\s*/g, ""));
-const ORDEN_SEC = ["pura", "fuego", "agua", "viento", "tierra", "rayo", "combo", "velo", "cuerpo", "mirada", "sello", "pacto", "pulso", "hilo", "quietud", "rastro", "sangre", "familia"];
+const ORDEN_SEC = ["pura", "fuego", "agua", "viento", "tierra", "rayo", "combo", "velo", "cuerpo", "mirada", "sello", "pacto", "pulso", "hilo", "quietud", "rastro", "sangre", "umbral", "vasija", "familia"];
 const TIEMPO_L = { A: "Acción", AA: "Acción adicional", R: "Reacción", "1 min": "1 minuto", "10 min": "10 minutos", "1 h": "1 hora", "8 h": "8 horas", "3 días": "ritual de 3 días" };
 const COMP_L = { GV: "gestos y voz", G: "gestos", V: "voz", "—": "sin gestos ni voz" };
 const alcanceL = a => ({ yo: "sobre ti", toque: "toque", vista: "a la vista" }[a] ?? a);
@@ -2183,11 +2307,11 @@ ${h2("control-y-sobreesfuerzo", "Control, choques y sobreesfuerzo")}
 <ul><li><b>Control del Verbe</b> es una habilidad con Sabiduría: choques de técnicas, romper Velos, abrir Cerrojos, la Quietud.</li>
 <li><b>Choque</b>: la ventaja en el ciclo suma 2 al grado al comparar potencia; gana la potencia mayor y un empate se resuelve con Control contra Control. El DM puede elegir la regla clásica de prioridad elemental en los ajustes.</li>
 <li><b>Sobreesfuerzo</b>: puedes gastar Verbe que no tienes, hasta la mitad de tu reserva en negativo. Cada gasto en negativo, incluidas defensas y Cerrojos, pide CON (CD 10 + grado, antes de dones) o 1 Agotamiento. Con Agotamiento 4 no se permite. Todas las fuentes recuperan la deuda a razón de 2 por punto; un punto impar se guarda para la próxima recuperación.</li></ul>
-${h2("siete-cerrojos", "Siete Cerrojos")}
+${h2("siete-cerrojos", "Ocho Cerrojos")}
 <p>Un estado de Cuerpo. Se abre con una acción adicional y una prueba de Control (CD 10 + 2 × el cerrojo que abres) y dura 1 minuto. Lo que dan se acumula; los PG por turno y el Agotamiento al cerrar son los del más alto.</p>
 <ul><li><b>En orden:</b> cada acción adicional abre hasta 2 cerrojos más de los que tienes abiertos (3 con Maestro en Cuerpo), y cada vez pagas el Verbe del nuevo.</li>
 <li><b>El mismo día:</b> si los abres por segunda vez entre dos Descansos Largos, al cerrar sumas 1 Agotamiento más.</li>
-<li><b>El séptimo:</b> al cerrarlo, CON CD 20 (15 con el don Legendario de Cuerpo). Si fallas, mueres; si la superas, caes a 0 PG con 4 de Agotamiento.</li>
+<li><b>Séptimo:</b> conmoción, con 16 PG por turno y 3 de Agotamiento al cerrar. <b>Octavo:</b> muerte del cuerpo original al terminar; solo una intervención excepcional del DM puede evitar ese precio. Debes confirmarlo antes de abrirla.</li>
 <li><b>Se mejoran con:</b> los dones de Cuerpo (Legendario: los PG por turno a la mitad), la escuela de los Cerrojeros (el primero sin prueba ni PG, y duran 2 minutos) y la dote Cerrojo temprano.</li></ul>
 ${tablaG(["Cerrojo", "Grado", "Da", "PG por turno", "Al cerrar"], D.cerrojos.map(c => [`${c.n} · ${escH(c.nombre)}`, c.grado, escH(c.da), c.pg || "—", escH(c.cierre)]))}
 ${h2("defensas", "Sustitución y otras defensas")}
@@ -2317,6 +2441,12 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       limpiarFiltros() { this.filtro = { rama: "", grado: "", nat: "", texto: "", solo: true, agrupar: "rama" }; this.abiertos = null; this.render(); },
       comoJugador() { this.comoJugador = !this.comoJugador; this.render(); },
       rango(ev, t) { correr(this, subirRango(this.actor, t.dataset.rama)); },
+      usarReplica(ev,t) { correr(this,usarTecnica(this.actor,t.dataset.id,{replica:true})); },
+      almacenar() { correr(this,almacenarVerbe(this.actor,Number(valorDe(this,"depositarVerbe")))); },
+      cerrarReplicas() { const ef=efectoV(this.actor,"replicas");if(ef)correr(this,ef.delete()); },
+      shinobiDM(ev,t) { correr(this,concederShinobi(this.actor,t.dataset.campo,valorDe(this,t.dataset.de),valorDe(this,"shinobiVinculo"))); },
+      artefactoDM() { correr(this,concederArtefacto(this.actor,valorDe(this,"shinobiArtefacto"))); },
+      transferirDM() { correr(this,transferirVerbe(this.actor,game.actors.get(valorDe(this,"shinobiDestino")),Number(valorDe(this,"shinobiCantidad")))); },
       aprender(ev, t) {
         ev?.preventDefault?.();
         const tec = tecnicaPorId(t.dataset.id, this.actor);
@@ -2475,6 +2605,9 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       this.filtroUso[ev.target.dataset.filtroUso] = ev.target.type === "checkbox" ? ev.target.checked : ev.target.value;
       this.render();
     }));
+    const ojoSelect=content.querySelector('[name="mirada"]'), etapaSelect=content.querySelector('[name="etapa"]');
+    const etapas=()=>{const m=D.miradas.find(m=>m.id===ojoSelect?.value);if(m&&etapaSelect)etapaSelect.innerHTML=opciones(m.etapas.map((_,i)=>[i+1,`Etapa ${i+1} · ${m.trazos[i]} Trazos${m.niveles?.[i]?` · nivel ${m.niveles[i]}`:""}`]),1);};
+    ojoSelect?.addEventListener("change",etapas);if(ojoSelect)etapas();
     // Grupos que el jugador abre o cierra: se recuerdan mientras el panel esté abierto.
     content.querySelectorAll("details.ecos-verbe-grupo").forEach(d => d.addEventListener("toggle", () => {
       this.abiertos ??= new Set([...content.querySelectorAll("details.ecos-verbe-grupo[open]")].map(x => x.dataset.g));
@@ -2517,7 +2650,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
   }
 
   #tarjeta(t, { aprender: compra = false, item = null } = {}) {
-    const a = this.actor;
+    const a = this.actor, e = estado(a);
     const meta = item?.getFlag(MOD, F) ?? { ...t.item.flags[MOD][F], infusion: estado(a)?.infusiones?.[t.id] ?? null };
     const uso = previsualizarUso(a, meta);
     const r = compra ? requisitos(a, t) : null;
@@ -2525,6 +2658,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     return tarjetaHTML({ id: t.id, nombre: item?.name ?? t.n, texto: textoDe(t), grado: t.g, rama: nombreRama(t.rama),
       naturaleza: meta.infusion || t.nat ? nombreNat(meta.infusion || t.nat) : null,
       tiempo: TIEMPO_L[t.t] ?? t.t ?? "Ver ficha", alcance: t.alc ? alcanceL(t.alc) : "Ver ficha", area: t.area,
+      referencia:t.origen?.nombre,
+      accionesExtra:!compra && Number(meta.g)<=2 && efectoV(a,"replicas") && Object.values(t.item.system.activities).some(x=>["attack","save","damage","heal"].includes(x.type)) ? `<button type="button" data-action="usarReplica" data-id="${escH(t.id)}" ${Number(e.reservaReplicas)<uso.costo||e.accionReplicaUsada?"disabled":""}>Usar desde réplica</button>`:"",
       costo: uso.costo, trazos: compra ? t.trazos : null,
       accion: compra ? "aprender" : defensa ? "ficha" : "usar", boton: compra ? `${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Aprender"} · ${t.trazos} ${t.trazos === 1 ? "Trazo" : "Trazos"}` : defensa ? "Cómo usar esta defensa" : "Usar técnica",
       bloqueada: compra ? !r.ok || r.probar : !defensa && !uso.ok,
@@ -2560,9 +2695,9 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
   #jugar() {
     const a = this.actor, f = this.filtroUso;
     const conocidas = itemsTecnica(a).map(item => ({ item, t: tecnicaPorId(item.getFlag(MOD, F).id, a) })).filter(x => x.t);
-    const lista = conocidas.filter(({ item, t }) => !f.texto || `${item.name} ${textoDe(t)}`.toLowerCase().includes(f.texto.toLowerCase()))
+    const lista = conocidas.filter(({ item, t }) => !f.texto || `${item.name} ${(t.alias ?? []).join(" ")} ${textoDe(t)}`.toLowerCase().includes(f.texto.toLowerCase()))
       .filter(({ item }) => !f.solo || previsualizarUso(a, item.getFlag(MOD, F)).ok);
-    return `${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana habitual de dnd5e para confirmar el uso.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
+    return `${efectoV(a,"replicas")?`<div class="ev-instruccion"><span><b>Reserva repartida en réplicas: ${Number(estado(a).reservaReplicas)||0} Verbe</b>Una acción ofensiva conjunta por turno. «Usar desde réplica» gasta ese saldo y solo admite grado 0–2. Al disipar, se pierde el saldo restante.</span><button type="button" data-action="cerrarReplicas">Disipar réplicas</button></div>`:""}${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana habitual de dnd5e para confirmar el uso.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
       <div class="ev-instruccion"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span><b>Si afecta a otro, marca su token antes de usarla.</b> El alcance y las condiciones de cada técnica siguen contando.</span></div>
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar en mis técnicas</span><input type="search" data-filtro-uso="texto" placeholder="Nombre o efecto…" value="${escH(f.texto)}"></label><label><input type="checkbox" data-filtro-uso="solo" ${f.solo ? "checked" : ""}> Ocultar las bloqueadas por recursos o estado</label></div>
       ${lista.length ? `<div class="ev-tarjetas">${lista.map(({ t, item }) => this.#tarjeta(t, { item })).join("")}</div>` : `<div class="ev-vacio"><h3>${conocidas.length ? "Ninguna coincide con ese filtro" : "Tu primera técnica te espera"}</h3><p>${conocidas.length ? "Quita el filtro para ver los bloqueos y sus motivos." : "Aprende una técnica con Trazos. Después aparecerá aquí lista para usarla."}</p><button type="button" data-action="pestana" data-p="tienda">Ir a Aprender</button></div>`}`;
@@ -2613,7 +2748,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const ocFila = e.descubierta ? `Descubriste una segunda naturaleza: ${NATS[oc] ?? ""}.`
       : `Puede que tu Verbe responda a otra naturaleza que no conoces. Se intenta descubrir con «Probar» en Aprender; si responde, aprender la técnica cuesta los Trazos indicados.${dm() && oc ? ` <i>Oculta: ${NATS[oc]}</i>` : ""}`;
     const cerrAbierto = efectoV(a, "cerrojo");
-    const cerr = (Number(e.cerrojos) || 0) ? `<h3>Siete Cerrojos</h3><p>${D.cerrojos.filter(c => c.n <= e.cerrojos).map(c =>
+    const cerr = (Number(e.cerrojos) || 0) ? `<h3>Ocho Cerrojos</h3><p>${D.cerrojos.filter(c => c.n <= e.cerrojos).map(c =>
       `<button type="button" data-action="cerrojo" data-n="${c.n}" data-tooltip="${escH(c.da)} · cuesta ${costoGrado(c.grado)} Verbe y una prueba de Control CD ${10 + (2 * c.n)} · ${c.pg ? `${c.pg} PG por turno` : "sin PG"}">Abrir hasta el ${c.n} · ${escH(c.nombre)}</button>`).join(" ")}
       ${cerrAbierto ? ` <button type="button" data-action="cerrar">Cerrar (${escH(cerrAbierto.name)})</button>` : ""}</p>` : "";
     const monedas = Number(a.system?.currency?.soul) || 0;
@@ -2638,7 +2773,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         ${Object.keys(e.miradas ?? {}).length ? `<tr><th>Ojos</th><td>${Object.entries(e.miradas).map(([k, n]) => `${escH(D.miradas.find(m => m.id === k)?.nombre ?? k)}, etapa ${n}${(e.trasplantes ?? []).includes(k) ? " (trasplantado)" : ""}`).join("; ")}</td></tr>` : ""}
         ${(e.pactos ?? []).length ? `<tr><th>Pactos</th><td>${e.pactos.map(p => escH(nombrePacto(p))).join(", ")}</td></tr>` : ""}
       </table></details>
-      ${cerr ? `<details class="ev-ficha-personal"><summary>Siete Cerrojos · poder con coste de PG y Agotamiento</summary>${cerr}</details>` : ""}
+      ${cerr ? `<details class="ev-ficha-personal"><summary>Ocho Cerrojos · poder con coste de PG y Agotamiento</summary>${cerr}</details>` : ""}
       <details><summary>Historial</summary><ul>${(e.historial ?? []).slice().reverse().map(h => `<li>${escH(h)}</li>`).join("")}</ul></details>`;
   }
 
@@ -2702,8 +2837,9 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       ${opcionesNaturaleza(a,"combo").length ? `<p>Combina dos elementos conocidos: <select name="comboElegir">${opciones(opcionesNaturaleza(a,"combo").map(n=>[n,`${nombreNat(n)} (${D.combos[n].de.map(nombreNat).join(" + ")})`]), "")}</select> <button type="button" data-action="naturalezaExtra" data-tipo="combo">Abrir combinación</button></p>` : ""}
       <p>${combosDe(a).size ? `Combinaciones abiertas: ${[...combosDe(a)].map(nombreNat).join(", ")}. Todas sus técnicas aparecen en Aprender; las de mayor grado muestran sus requisitos.` : "Naturaleza combinada abre una combinación desde nivel 9 con maestro; Tercera naturaleza abre otro elemento desde nivel 7 con maestro. Una tercera naturaleza no concede por sí sola una combinación."}</p></section>
       <h3>Afinidad con tu naturaleza</h3><p class="ecos-nota">Qué tan bien manejas tu elemento. Entrenada: sus técnicas tiran 1 dado más y sus estados duran el doble. Maestra: 2 dados más, y quien falla contra ella no resiste su daño.</p><ul>${af || "<li>Primero elige tu naturaleza (Inicio).</li>"}</ul>
+      <section class="ev-naturalezas"><h3>Tradiciones y vínculos</h3><p>${(e.tradiciones??[]).map(id=>escH(D.tradicionesShinobi?.find(t=>t.id===id)?.nombre??id)).join(", ")||"El DM concede los aprendizajes secretos cuando los ganas en la historia."}</p>${e.vasija?.bestia?`<p>Bestia: ${escH(D.bestiasShinobi?.find(b=>b.id===e.vasija.bestia)?.nombre??e.vasija.bestia)} · vínculo ${e.vasija.vinculo}.</p>`:""}${conoce(a,"pulso-centenar-sello")?`<p>Sello del centenar: ${Number(e.reservaSellada)||0}/${2*nivelDe(a)} almacenados. <input name="depositarVerbe" type="number" min="1" value="1" style="width:5em"><button type="button" data-action="almacenar">Almacenar desde mi Verbe</button></p>`:""}</section>
       <h3>Control del Verbe ${ayuda("control")}</h3><p>${["Sin competencia", "Competente", "Pericia"][Math.min(2, ctl)]}. ${ctl < 2 ? `<button type="button" data-action="control" data-tooltip="${ctl === 0 ? "Sumas tu competencia a las pruebas de Control" : "Sumas el doble de tu competencia"}">${ctl === 0 ? "Volverte competente · 2 Trazos" : "Pericia · 3 Trazos (nivel 5)"}</button>` : ""}</p>
-      <h3>Siete Cerrojos</h3><p class="ecos-nota">Un estado de Cuerpo: pegas más fuerte y más rápido, pagando PG cada turno y Agotamiento al cerrar. <a class="ecos-verbe-guia" data-action="guia" data-s="siete-cerrojos"><i class="fa-solid fa-book-open"></i> Guía</a></p>
+      <h3>Ocho Cerrojos</h3><p class="ecos-nota">Un estado de Cuerpo: pegas más fuerte y más rápido, pagando PG cada turno y Agotamiento al cerrar. <a class="ecos-verbe-guia" data-action="guia" data-s="siete-cerrojos"><i class="fa-solid fa-book-open"></i> Guía</a></p>
       <p>${cerr ? `Sabes hasta el ${cerr}.` : "No sabes ninguno."} ${sigC ? `<button type="button" data-action="aprenderCerrojo" data-tooltip="${escH(`${sigC.nombre}: ${sigC.da}. Grado ${sigC.grado}.`)}">Aprender el ${sigC.n} · ${escH(sigC.nombre)} · ${sigC.grado} Trazo${sigC.grado === 1 ? "" : "s"}</button>` : ""}</p>`;
   }
 
@@ -2718,11 +2854,11 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       if (f.rama && t.rama !== f.rama) return false;
       if (f.grado !== "" && String(t.g) !== String(f.grado)) return false;
       if (f.nat && t.nat !== f.nat) return false;
-      if (f.texto && !`${t.n} ${textoDe(t)}`.toLowerCase().includes(f.texto.toLowerCase())) return false;
+      if (f.texto && !`${t.n} ${(t.alias ?? []).join(" ")} ${textoDe(t)}`.toLowerCase().includes(f.texto.toLowerCase())) return false;
       if (!dm()) {
         if (t.soloDM) return false;
         const esSangre = t.sec === "sangre" || D.linajes.some(l => l.req && l.req === t.req);
-        if (esSangre && (!ve || !herenciaDe(a) || (t.req !== "una herencia" && herenciaDe(a).req !== t.req))) return false;
+        if (esSangre && !t.item.flags[MOD][F].shinobi && (!ve || !herenciaDe(a) || (t.req !== "una herencia" && herenciaDe(a).req !== t.req))) return false;
         if (t.rama === "mirada" && !(e.miradas ?? {})[t.id.split("-")[1]]) return false;
       }
       return true;
@@ -2773,7 +2909,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const meta = itemsDe(this.actor, t.id)[0]?.getFlag(MOD, F) ?? { ...t.item.flags[MOD][F], infusion: estado(this.actor)?.infusiones?.[t.id] ?? null };
     const costo = previsualizarUso(this.actor, meta).costo;
     return `<details class="ecos-verbe-tec ${sabe ? "sabe" : r.ok ? "puede" : "no"}" data-id="${t.id}" data-tipo="tec"><summary>
-      <span class="gr">Grado ${t.g}</span><span class="nom"><b>${escH(t.n)}</b><small>${escH([tiempo, t.alc ? alcanceL(t.alc) : null, t.area].filter(Boolean).join(" · "))}</small><small class="ev-efecto-breve">${escH(textoDe(t))}</small></span>
+      <span class="gr">Grado ${t.g}</span><span class="nom"><b>${escH(t.n)}</b><small>${escH((t.alias??[]).slice(0,2).join(" · "))}</small><small>${escH([tiempo, t.alc ? alcanceL(t.alc) : null, t.area].filter(Boolean).join(" · "))}</small><small class="ev-efecto-breve">${escH(textoDe(t))}</small></span>
       <span class="vb"><b>${costo} Verbe</b><small>por uso base</small></span><span class="acc">${btn}${!sabe && r.ok && !r.probar ? `<small>Te quedarían ${trazos(this.actor).libres - t.trazos} Trazos</small>` : ""}</span></summary><div class="ecos-verbe-ficha-cont"></div></details>`;
   }
 
@@ -2788,16 +2924,17 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const rangoN = D.rangos.findIndex(x => x.grado >= t.g);
     const durTxt = t.dur ? (t.dur === "inst." ? "instantánea" : t.dur.startsWith("C ") ? `Concentración, ${t.dur.slice(2)}` : t.dur) : (it?.system?.duration?.units ?? "—");
     const tirada = t.tir === "ataque" ? `Ataque${t.veces > 1 ? ` (${t.veces} ataques)` : ""}` : t.tir ? `Salvación de ${t.tir}${t.dmg ? (t.mitad ? ", mitad si la supera" : ", nada si la supera") : ""}` : "Ninguna";
-    const extra = it ? dadosExtra(a, it.flags?.[MOD]?.[F] ?? t, null) : 0;
+    const extra = it ? Math.floor(dadosExtra(a, it.flags?.[MOD]?.[F] ?? t, null)/(Number(it.flags?.[MOD]?.[F]?.divisorDados)||1)) : 0;
     const dano = t.dmg ? `${t.veces > 1 ? `${t.veces} × ` : ""}${escH(t.dmg)}${extra ? ` <b>(+${extra} dado${extra > 1 ? "s" : ""} tuyo${extra > 1 ? "s" : ""})</b>` : ""}` : "—";
     const deja = (it?.effects ?? []).map(ef => (ESTADOS[ef.statuses?.[0]] ? `<span data-tooltip="${escH(ESTADOS[ef.statuses[0]].texto)}">${escH(ef.name)}</span>` : escH(ef.name))).join(", ") || "—";
     const sube = t.sube === "truco" ? "más dados en los niveles 5, 11 y 17" : t.sube ? `${escH(t.sube)} por cada grado de más` : (t.g > 0 ? "—" : "—");
     const meta = itemsDe(a, id)[0]?.getFlag(MOD, F) ?? { ...it.flags[MOD][F], infusion: estado(a)?.infusiones?.[id] ?? null };
     const verbes = t.g > 0 ? Array.from({ length: Math.max(0, gradoUsable(a, meta) - t.g) + 1 }, (_, i) => `grado ${t.g + i}: ${costoUso(a, meta, t.g + i, { infusion: meta.infusion })} Verbe`).join(" · ") : `${costoUso(a, meta, 0, { infusion: meta.infusion })} Verbe (pide tener al menos 1)`;
-    const pide = [t.g ? `nivel ${nivel}` : null, rangoN > 0 ? `${nombreRango(rangoN)} en ${nombreRama(t.rama)}` : null, t.nat ? `naturaleza ${nombreNat(t.nat)}` : null,
+    const ac=meta.acceso??{}, requeridos=[ac.tradicion?`Tradición: ${D.tradicionesShinobi?.find(x=>x.id===ac.tradicion)?.nombre??ac.tradicion}`:null,ac.herencia?`Herencia: ${ac.herencia}`:null,ac.ojo?`${D.miradas.find(x=>x.id===ac.ojo.id)?.nombre??ac.ojo.id}, etapa ${ac.ojo.etapa}; abrir para usar`:null,ac.hito?`Hito: ${D.hitosShinobi?.find(x=>x.id===ac.hito)?.nombre??ac.hito}`:null,ac.bestia?`Bestia: ${D.bestiasShinobi?.find(x=>x.id===ac.bestia)?.nombre??ac.bestia}`:ac.vasija?'Una bestia vinculada':null,ac.vinculo?`Vínculo ${ac.vinculo}`:null,ac.cerrojo?`Cerrojo ${ac.cerrojo} aprendido y abierto para usar`:null,ac.artefacto?`${D.artefactosShinobi?.find(x=>x.id===ac.artefacto)?.nombre??ac.artefacto} equipado para usar`:null,ac.modo?`Modo activo: ${ac.modo.replaceAll('-',' ')}`:null,meta.ritual?'Preparativos y permiso del DM para cada uso':null,meta.familiaUso?'Comparte un uso por largo con sus variantes':null].filter(Boolean).map(escH);
+    const pide = [t.g ? `nivel ${nivel}` : null, rangoN > 0 ? `${nombreRango(rangoN)} en ${nombreRama(t.rama)}` : null, t.nat ? `naturaleza ${nombreNat(t.nat)}` : null,...requeridos,
       t.req && !(t.sec === "sangre" && !dm()) ? escH(t.req) : null].filter(Boolean).join(" · ") || "—";
     const f = (k, v) => `<th>${k}</th><td>${v}</td>`;
-    return `${D.defensas?.[id] ? '<p class="ecos-verbe-intro"><b>Es una defensa reactiva.</b> Con midi-qol se ofrece cuando un ataque va a impactarte; el aviso muestra el coste según el ataque. No la lances como una técnica normal antes del golpe. Sin esa integración, el DM resuelve la reacción, el objeto y el coste en mesa.</p>' : ''}<p class="texto">${escH(textoDe(t))}</p>
+    return `${D.defensas?.[id] ? '<p class="ecos-verbe-intro"><b>Es una defensa reactiva.</b> Con midi-qol se ofrece cuando un ataque va a impactarte; el aviso muestra el coste según el ataque. No la lances como una técnica normal antes del golpe. Sin esa integración, el DM resuelve la reacción, el objeto y el coste en mesa.</p>' : ''}<p class="texto">${escH(textoDe(t))}</p>${t.origen ? `<p class="ecos-nota">Referencia: <b>${escH(t.origen.nombre)}</b> · ${escH(t.origen.obra)} · estudio, p. ${t.origen.pagina}. Grado y cifras adaptados a esta campaña.</p>` : ""}${t.automatizacion ? `<p class="ecos-nota">${escH(t.automatizacion)}</p>` : ""}
       <table class="ecos-verbe-ficha">
         <tr>${f("Rama", `${nombreRama(t.rama)}${t.nat ? ` · ${escH(nombreNat(t.nat))}` : ""}`)}${f("Grado", `${t.g}${t.g >= 6 ? " · una vez por Descanso Largo" : ""}`)}</tr>
         <tr>${f("Tiempo", escH(TIEMPO_L[t.t] ?? t.t ?? "—"))}${f("Alcance", escH(t.alc ? alcanceL(t.alc) : "—"))}</tr>
@@ -2920,6 +3057,14 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const cerradas = D.ramas.filter(r => !ramaAbierta(a, r.id)).map(r => [r.id, r.nombre]);
     const sec = (titulo, html, abierto = false) => `<details class="ecos-verbe-dmsec" ${abierto ? "open" : ""}><summary>${titulo}</summary>${html}</details>`;
     return `<p><button type="button" data-action="editorCatalogo"><i class="fa-solid fa-pen-nib"></i> Taller del DM · crear y publicar técnicas universales</button></p>${intro("Solo tú ves esta pestaña.", "Pedidos, Trazos, deshacer compras y cambios a mano. «Ver como el jugador» (arriba) muestra el panel tal como lo ve él.")}
+      ${D.shinobi?sec("Repertorio shinobi: tradiciones, bestias y rituales",`
+        <p>Tradición: <select name="shinobiTradicion">${opciones((D.tradicionesShinobi??[]).map(t=>[t.id,`${e.tradiciones?.includes(t.id)?"✓ ":""}${t.nombre}`]),"")}</select><button type="button" data-action="shinobiDM" data-campo="tradicion" data-de="shinobiTradicion">Conceder / retirar</button></p>
+        <p>Hito: <select name="shinobiHito">${opciones((D.hitosShinobi??[]).map(h=>[h.id,`${e.hitosShinobi?.includes(h.id)?"✓ ":""}${h.nombre}`]),"")}</select><button type="button" data-action="shinobiDM" data-campo="hito" data-de="shinobiHito">Conceder / retirar</button></p>
+        <p>Bestia: <select name="shinobiBestia"><option value="">Sin vínculo</option>${opciones((D.bestiasShinobi??[]).map(b=>[b.id,b.nombre]),e.vasija?.bestia??"")}</select> Vínculo <select name="shinobiVinculo">${opciones([[1,"1 · inestable"],[2,"2 · control"],[3,"3 · cooperación"]],e.vasija?.vinculo??1)}</select><button type="button" data-action="shinobiDM" data-campo="vasija" data-de="shinobiBestia">Guardar vínculo</button></p>
+        <p>Ritual preparado: <select name="shinobiRitual">${opciones(itemsTecnica(a).filter(i=>i.getFlag(MOD,F)?.ritual).map(i=>[i.getFlag(MOD,F).id,i.name]),"")}</select><button type="button" data-action="shinobiDM" data-campo="ritual" data-de="shinobiRitual">Autorizar un uso</button></p><p class="ecos-nota">Confirma antes preparación, participantes, precio, salvación y resultado. El permiso se consume al usarlo; un descanso no lo repone.</p>
+        <p>Desgaste ocular: <select name="shinobiOjo">${opciones(D.miradas.map(m=>[m.id,`${m.nombre}: ${Number(e.desgasteOcular?.[m.id])||0}/6 · ${Number(e.ojosSacrificados?.[m.id])||0} sacrificados`]),"")}</select><button type="button" data-action="shinobiDM" data-campo="ocular" data-de="shinobiOjo">Restaurar tras resolver la historia</button></p>
+        <p>Reliquia: <select name="shinobiArtefacto">${opciones((D.artefactosShinobi??[]).map(x=>[x.id,x.nombre]),"")}</select><button type="button" data-action="artefactoDM">Dar objeto equipado</button></p>
+        <p>Transferir energía positiva a: <select name="shinobiDestino">${opciones(game.actors.filter(x=>x.id!==a.id&&despierto(x)).map(x=>[x.id,x.name]),"")}</select><input name="shinobiCantidad" type="number" min="1" value="1" style="width:5em"><button type="button" data-action="transferirDM">Transferir Verbe</button></p><p class="ecos-nota">Descuenta al origen; el receptor paga deuda a 2:1 y respeta su máximo. Úsalo solo después de resolver contacto, absorción y salvación.</p>`,false):""}
       ${sec(`Pedidos (${pend.length})`, `<ul>${pendHTML || "<li>Nada pendiente.</li>"}</ul>`, pend.length > 0)}
       ${sec("Trazos", `<p>Tiene <b>${t.libres}</b> libres · ${t.gastados} gastados · ${t.total} en total (${4 * nivelDe(a) + 4} por nivel y ${Number(e.trazosExtra) || 0} dados por ti o por Monedas).</p>
         <p>Dar o quitar: <input type="number" name="trazosN" value="1" style="width:5em"> <button type="button" data-action="trazosDM" data-n="campo">Aplicar</button> <small>(un número negativo los quita)</small></p>
@@ -2936,7 +3081,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         <p>Rango: <select name="aj-rama">${opciones(D.ramas.map(r => [r.id, `${r.nombre} (${nombreRango(rangoDe(a, r.id))})`]), "")}</select> a <select name="aj-rango">${opciones(D.rangos.map((r, i) => [i, r.nombre]), 1)}</select> <button type="button" data-action="ajustar" data-campo="rango" data-de="aj-rango" data-clave="aj-rama">Fijar</button></p>
         <p>Afinidad: <select name="aj-afnat">${opciones([...natsDe(a)].map(n => [n, NATS[n] ?? n]), "")}</select> a <select name="aj-af">${opciones([[1, "Despierta"], [2, "Entrenada"], [3, "Maestra"]], 1)}</select> <button type="button" data-action="ajustar" data-campo="afinidad" data-de="aj-af" data-clave="aj-afnat">Fijar</button>
           · Control: <select name="aj-control">${opciones([[0, "Sin competencia"], [1, "Competente"], [2, "Pericia"]], Number(a.system?.skills?.cvb?.value) || 0)}</select> <button type="button" data-action="ajustar" data-campo="control" data-de="aj-control">Fijar</button>
-          · Cerrojos que sabe: <input type="number" name="aj-cerrojos" min="0" max="7" value="${Number(e.cerrojos) || 0}" style="width:4em"> <button type="button" data-action="ajustar" data-campo="cerrojos" data-de="aj-cerrojos">Fijar</button></p>
+          · Cerrojos que sabe: <input type="number" name="aj-cerrojos" min="0" max="${D.cerrojos.length}" value="${Number(e.cerrojos) || 0}" style="width:4em"> <button type="button" data-action="ajustar" data-campo="cerrojos" data-de="aj-cerrojos">Fijar</button></p>
         <p>Dote: <select name="aj-dote" data-desc="dote">${opciones(D.dotes.map(d => [d.id, `${tieneDote(a, d.id) ? "✓ " : ""}${d.nombre}`]), "")}</select> <button type="button" data-action="ajustar" data-campo="dote" data-de="aj-dote">Dar o quitar (gratis)</button></p>
         <div class="ecos-verbe-desc" data-de="aj-dote"></div>
         <p>Enseñar una técnica gratis: <select name="darTecnica" data-desc="tec">${opciones(todas, "")}</select> <button type="button" data-action="darTecnica">Enseñar</button></p>
@@ -3281,8 +3426,8 @@ Hooks.once("init", () => {
   CONFIG.DND5E.spellcasting.verbe = { label: "Técnicas del Verbe", order: 25 };
   CONFIG.DND5E.spellLevels[10] = "Grado 10 del Verbe";
   CONFIG.DND5E.spellLevels[11] = "Grado 11 del Verbe";
-  const ramas = { vfo: "Forma", vve: "Velo", vcu: "Cuerpo", vmi: "Mirada", vse: "Sello", vpa: "Pacto", vpu: "Pulso", vhi: "Hilo", vqu: "Quietud", vra: "Rastro", vsa: "Sangre" };
-  const iconos = { vfo: "evocation", vve: "illusion", vcu: "transmutation", vmi: "divination", vse: "abjuration", vpa: "conjuration",
+  const ramas = { vum: "Umbral", vva: "Vasija", vfo: "Forma", vve: "Velo", vcu: "Cuerpo", vmi: "Mirada", vse: "Sello", vpa: "Pacto", vpu: "Pulso", vhi: "Hilo", vqu: "Quietud", vra: "Rastro", vsa: "Sangre" };
+  const iconos = { vum: "conjuration", vva: "evocation", vfo: "evocation", vve: "illusion", vcu: "transmutation", vmi: "divination", vse: "abjuration", vpa: "conjuration",
     vpu: "necromancy", vhi: "enchantment", vqu: "abjuration", vra: "divination", vsa: "transmutation" };
   for (const [k, n] of Object.entries(ramas)) CONFIG.DND5E.spellSchools[k] = { label: n, icon: `systems/dnd5e/icons/svg/schools/${iconos[k]}.svg`, fullKey: `verbe${n}`, reference: "" };
   CONFIG.DND5E.skills.cvb = { label: "Control del Verbe", ability: "wis", fullKey: "controlVerbe", reference: "", icon: "systems/dnd5e/icons/svg/abilities/wisdom.svg" };
@@ -3304,7 +3449,7 @@ Hooks.once("ready", async () => {
     return console.error(`${MOD} | capa V: no pude leer sus datos`, err);
   }
   const api = (game.modules.get(MOD).api ??= {});
-  api.verbe = { editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), despierto, estado, maxVerbe, trazos, refrescar, aprender,
+  api.verbe = { concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
     deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)
@@ -3361,6 +3506,10 @@ Hooks.on("dnd5e.rollHitDieV2", (rolls, datos) => {
   } catch (err) {
     console.warn(`${MOD} | capa V: aliento`, err);
   }
+});
+Hooks.on("updateWorldTime", () => {
+  if (!activo() || !soyGM()) return;
+  for (const a of game.actors) for (const ef of a.effects) { const fl=ef.getFlag(MOD,F); if ((fl?.shinobi||fl?.replicas) && Number.isFinite(ef.duration?.remaining) && ef.duration.remaining<=0) ef.delete().catch(err=>console.error(`${MOD} | caducidad shinobi`,err)); }
 });
 Hooks.on("updateSetting", setting => {
   if (activo() && setting.key === `${MOD}.${AJ.extra}`) for (const id of paneles.keys()) refrescarPanel(id);
