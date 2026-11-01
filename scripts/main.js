@@ -4694,6 +4694,19 @@ Hooks.on("getSceneControlButtons", controls => {
       abrirPanelDM();
     }
   };
+  tokens.tools.ecosVerbe = {
+    name: "ecosVerbe",
+    title: "Verbe: usa tus técnicas sin abrir la hoja (token seleccionado o tu personaje)",
+    icon: "fa-solid fa-droplet",
+    button: true,
+    visible: true,
+    order: 97,
+    onChange: (event, active) => {
+      if (active === false) return;
+      const actor = canvas.tokens?.controlled?.[0]?.actor ?? game.user.character;
+      game.modules.get(MOD)?.api?.verbe?.usoRapido?.(actor);
+    }
+  };
   tokens.tools.ecosMenu = {
     name: "ecosMenu",
     title: "Ecos: jornada de trabajo, mercadillo, calendario y todos los botones de la barra, explicados (Mayús+M)",

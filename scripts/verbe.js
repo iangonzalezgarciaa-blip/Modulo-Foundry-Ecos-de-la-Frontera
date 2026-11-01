@@ -2599,6 +2599,32 @@ export function abrirPanel(actor, pestana) {
   if (pestana) p.pestana = pestana;
   return p.render({ force: true });
 }
+/** Uso rápido: lista las técnicas aprendidas y las usa sin abrir la hoja ni el panel (botón «Verbe» de la barra izquierda). */
+export async function usoRapido(actor) {
+  if (!activo()) return;
+  if (!actor || !despierto(actor) || !actor.isOwner) return aviso("Selecciona un token propio con el Verbe despierto, o elige tu personaje.", "warn");
+  const filas = itemsTecnica(actor).map(i => ({ i, m: i.getFlag(MOD, F) })).sort((x, y) => (x.m.g - y.m.g) || x.i.name.localeCompare(y.i.name, "es"));
+  if (!filas.length) return aviso(`${actor.name} aún no tiene técnicas aprendidas.`, "info");
+  const lista = filas.map(({ i, m }) => {
+    let costo = "?"; try { costo = previsualizarUso(actor, m).costo; } catch { /* sin vista previa */ }
+    return `<li><button type="button" data-id="${escH(m.id)}"><span>${escH(i.name)}</span><small>Grado ${m.g} · ${costo} Verbe</small></button></li>`;
+  }).join("");
+  const { DialogV2 } = foundry.applications.api;
+  await DialogV2.wait({
+    window: { title: `Verbe · ${actor.name}`, resizable: true }, position: { width: 360 },
+    content: `<p><b>Reserva:</b> <span data-ecos-reserva>${Number(estado(actor)?.valor) || 0} / ${maxVerbe(actor)}</span></p><ul class="ecos-uso-rapido" style="list-style:none;margin:0;padding:0;display:grid;gap:4px">${lista}</ul>`,
+    buttons: [{ action: "cerrar", label: "Cerrar", default: true }],
+    render: (ev, dialog) => {
+      const el = dialog.element;
+      el.querySelectorAll(".ecos-uso-rapido button").forEach(b => b.addEventListener("click", async e => {
+        e.preventDefault(); b.disabled = true;
+        try { await usarTecnica(actor, b.dataset.id); } catch (err) { console.error(`${MOD} | uso rápido`, err); aviso("No se pudo usar la técnica. Puedes intentarlo desde tu hoja.", "error"); }
+        finally { b.disabled = false; const r = el.querySelector("[data-ecos-reserva]"); if (r) r.textContent = `${Number(estado(actor)?.valor) || 0} / ${maxVerbe(actor)}`; }
+      }));
+    },
+    rejectClose: false
+  });
+}
 const esperaPanel = {};
 function refrescarPanel(id) {
   clearTimeout(esperaPanel[id]);
@@ -3781,7 +3807,7 @@ Hooks.once("ready", async () => {
     return console.error(`${MOD} | capa V: no pude leer sus datos`, err);
   }
   const api = (game.modules.get(MOD).api ??= {});
-  api.verbe = { ofertasActor, corregirGastoSimple, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), despierto, estado, maxVerbe, trazos, refrescar, aprender,
+  api.verbe = { ofertasActor, corregirGastoSimple, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), usoRapido, despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
     deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)

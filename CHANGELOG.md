@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- Botón «Verbe» en la barra izquierda (grupo Tokens): lista rápida de técnicas aprendidas para usarlas sin abrir la hoja. Sin probar en Foundry real.
+
 - Documentación: `docs/MAPA_CODIGO.md` con archivo, función y línea de cada tema del código (tarea 0.1; sin cambio de versión).
 
 ## 3.4.0 — 2026-10-31
