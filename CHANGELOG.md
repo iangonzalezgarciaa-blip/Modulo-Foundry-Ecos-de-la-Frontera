@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## Sin publicar
+
+- Documentación: `docs/MAPA_CODIGO.md` con archivo, función y línea de cada tema del código (tarea 0.1; sin cambio de versión).
+
 ## 3.4.0 — 2026-10-31
 
 - Creación verificada por estructura, nivel, elecciones duplicadas, valores base, PG, recursos y avances nativos consultables. El DM confirma los apartados manuales y decide activar Ecos; el Verbe conserva su concesión independiente. La aprobación detecta cambios posteriores de construcción.
