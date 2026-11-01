@@ -1,6 +1,6 @@
 # Historial de cambios
 
-## Sin publicar
+## 3.4.1 — 2026-11-01
 
 - Botón «Verbe» en la barra izquierda (grupo Tokens): lista rápida de técnicas aprendidas para usarlas sin abrir la hoja. Sin probar en Foundry real.
 
