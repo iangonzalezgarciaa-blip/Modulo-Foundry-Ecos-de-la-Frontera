@@ -32,3 +32,21 @@ Técnica examinada: **Aliento de brasa**, grado 1. La media incluye solamente su
 ## Prueba de mesa necesaria para cerrar el balance
 
 En niveles 1, 3, 5, 11, 17 y 20, comparar marcial y lanzador, uno y varios enemigos, tres encuentros antes de descansar, Santuario e intemperie. Registrar daño/curación reales, turnos de control, reacciones, Verbe neto y minutos de arbitraje. Cambiar una variable por tanda y conservar el historial de personajes. El informe identifica sensibilidades; no certifica balance perfecto del catálogo.
+
+
+## Reserva de Verbe por dados (3.6)
+
+Dados por nivel: 1–4: 1d10 · 5–10: 1d10 + 4 · 11–16: 1d12 · 17–20: 2d10 + 1. Sin mínimo. 4000 personajes simulados; reserva base sin característica ni dotes.
+
+| Nivel | Tabla fija | Media con dados | Esperado | 10 % más bajo | 10 % más alto |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 5 | 5.4 | 5.5 | 1 | 10 |
+| 3 | 18 | 16.3 | 16.5 | 10 | 23 |
+| 5 | 34 | 31.3 | 31.5 | 23 | 40 |
+| 8 | 55 | 59.6 | 60.0 | 49 | 70 |
+| 10 | 80 | 78.5 | 79.0 | 67 | 90 |
+| 11 | 92 | 85.0 | 85.5 | 72 | 97 |
+| 13 | 104 | 97.9 | 98.5 | 84 | 111 |
+| 16 | 118 | 117.3 | 118.0 | 102 | 133 |
+| 17 | 134 | 129.2 | 130.0 | 113 | 145 |
+| 20 | 167 | 164.9 | 166.0 | 145 | 183 |

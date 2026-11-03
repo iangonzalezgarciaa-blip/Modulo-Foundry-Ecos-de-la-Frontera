@@ -29,6 +29,15 @@ lines.push('', '## Lectura para el diseño', '',
   '- Antes de ampliar clones, invocaciones o control: registrar turnos adicionales, reacciones negadas, concentraciones, salvaciones repetidas y recursos de la clase además del Verbe. No valorar un poder solo por sus dados.', '',
   '## Prueba de mesa necesaria para cerrar el balance', '',
   'En niveles 1, 3, 5, 11, 17 y 20, comparar marcial y lanzador, uno y varios enemigos, tres encuentros antes de descansar, Santuario e intemperie. Registrar daño/curación reales, turnos de control, reacciones, Verbe neto y minutos de arbitraje. Cambiar una variable por tanda y conservar el historial de personajes. El informe identifica sensibilidades; no certifica balance perfecto del catálogo.', '');
+{
+  // Reserva por dados (2.2a): media y dispersión frente a la tabla fija, con un generador reproducible.
+  const { simularReserva, DADOS_VERBE } = await import('../scripts/verbe-reserva.js');
+  let semilla = 20261103; const azar = () => ((semilla = (semilla * 1103515245 + 12345) % 2147483648) / 2147483648);
+  const sim = simularReserva(4000, azar);
+  lines.push('', '## Reserva de Verbe por dados (3.6)', '', `Dados por nivel: ${DADOS_VERBE.map(t => `${t.desde}–${t.hasta}: ${t.formula}`).join(' · ')}. Sin mínimo. 4000 personajes simulados; reserva base sin característica ni dotes.`, '',
+    '| Nivel | Tabla fija | Media con dados | Esperado | 10 % más bajo | 10 % más alto |', '|---:|---:|---:|---:|---:|---:|',
+    ...sim.filter(r => [1, 3, 5, 8, 10, 11, 13, 16, 17, 20].includes(r.nivel)).map(r => `| ${r.nivel} | ${D.verbeMax[r.nivel]} | ${r.media.toFixed(1)} | ${r.esperado.toFixed(1)} | ${r.p10} | ${r.p90} |`));
+}
 fs.writeFileSync(new URL('../docs/ESCENARIOS_BALANCE.md', import.meta.url), lines.join('\n'));
 console.log('Escenarios de balance generados con reglas reales y documentos simulados.');
 

@@ -138,11 +138,11 @@
 
 - [x] **2.1c · Naturaleza oculta: control del DM** (hecha: Herramientas del DM → Naturaleza secreta y Etapa del Verbe) (S · Dep.: 2.1b). Panel para que el DM fije la naturaleza en secreto, la revele, o deje elegir al jugador, caso a caso. Listo cuando el DM puede ocultar, revelar y cambiar el modo por personaje.
 
-- [ ] **2.2a · Reserva por dados: modelo** (M · Dep.: 0.1). Diseñar la tirada de Verbe por nivel desde el despertar, como los PG: dado por nivel con promedio cercano al incremento de la tabla actual y SIN mínimo (D3). Ubicar la tabla actual (tarea 0.1). Guardar las tiradas por actor. Opción por personaje: tirar o usar promedio (decide el DM). Documentar la fórmula. Listo cuando una simulación en tools/balance.mjs da totales cercanos a la tabla en promedio.
+- [x] **2.2a · Reserva por dados: modelo** (hecha: scripts/verbe-reserva.js; 1d10, 1d10+4, 1d12, 2d10+1 por tramos; simulación en docs/ESCENARIOS_BALANCE.md) (M · Dep.: 0.1). Diseñar la tirada de Verbe por nivel desde el despertar, como los PG: dado por nivel con promedio cercano al incremento de la tabla actual y SIN mínimo (D3). Ubicar la tabla actual (tarea 0.1). Guardar las tiradas por actor. Opción por personaje: tirar o usar promedio (decide el DM). Documentar la fórmula. Listo cuando una simulación en tools/balance.mjs da totales cercanos a la tabla en promedio.
 
-- [ ] **2.2b · Reserva por dados: tirada al despertar y al subir de nivel** (M · Dep.: 2.2a). Interfaz y flujo: tirar al despertar y en cada nivel, con el resultado visible al DM y registro. Respetar las reglas de Sangre que calculan porcentajes sobre la tabla de nivel (ver diario «Ecos · Panteón y sangre divina (solo DM)»).
+- [x] **2.2b · Reserva por dados: tirada al despertar y al subir de nivel** (hecha: tirada del DM con mensaje y registro) (M · Dep.: 2.2a). Interfaz y flujo: tirar al despertar y en cada nivel, con el resultado visible al DM y registro. Respetar las reglas de Sangre que calculan porcentajes sobre la tabla de nivel (ver diario «Ecos · Panteón y sangre divina (solo DM)»).
 
-- [ ] **2.2c · Reserva por dados: migración** (S · Dep.: 2.2b). Los personajes existentes conservan su reserva actual como valor fijo. Pruebas de no regresión.
+- [x] **2.2c · Reserva por dados: migración** (hecha: las fichas anteriores quedan en «promedio» = la tabla; al pasar a dados, lo ya ganado queda fijo) (S · Dep.: 2.2b). Los personajes existentes conservan su reserva actual como valor fijo. Pruebas de no regresión.
 
 - [ ] **2.3a · Oponentes impredecibles: ocultar datos exactos** (M · Dep.: —). Revisar qué ven los jugadores de un enemigo (barra de PG, CA, ficha) y qué ajustes de Foundry o midi-qol lo ocultan (a verificar). Aplicar los ajustes y documentarlos. Listo cuando un jugador no puede leer PG ni CA exactos de un enemigo.
 

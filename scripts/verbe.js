@@ -20,6 +20,7 @@ import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from 
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
 import { plantillaEnEscena } from "./verbe-plantillas.js";
 import { problemasTecnica } from "./verbe-validate.js";
+import { DADOS_VERBE, dadoNivel, modoReserva, reservaBase, nivelesSinTirar } from "./verbe-reserva.js";
 import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
@@ -245,6 +246,35 @@ export function conflictoSangre(actor, { linaje = undefined, ojo = null } = {}) 
  * Migración de 3.6 (2.5a): una Mirada heredada sin linaje pasa a ser su sangre; si alguien tiene dos sangres
  * (un linaje y otra Mirada heredada), se avisa al DM una vez con la lista para que decida. No se borra nada.
  */
+/**
+ * Tira los dados de reserva que falten (2.2b): al despertar y al subir de nivel. Solo el DM. Sin mínimo.
+ * El resultado sale en el chat para el DM y el dueño, y queda en el historial.
+ */
+export function asegurarTiradasVerbe(actor) { return serializarActor(actor, async () => {
+  if (!soyGM() || !despierto(actor)) return [];
+  const e = estado(actor), faltan = nivelesSinTirar(e, nivelDe(actor));
+  if (!faltan.length) return [];
+  const tiradas = { ...(e.dadosVerbe.tiradas ?? {}) }, filas = [];
+  for (const k of faltan) {
+    const t = dadoNivel(k), r = await new Roll(t.formula).evaluate();
+    tiradas[k] = Number(r.total) || 0;
+    filas.push(`nivel ${k}: ${t.formula} = <b>${tiradas[k]}</b>`);
+  }
+  await guardar(actor, { dadosVerbe: { ...e.dadosVerbe, tiradas }, historial: hist(e, `Reserva por dados: ${faltan.map(k => `nivel ${k} +${tiradas[k]}`).join(", ")}`) });
+  aLaMesa(actor, "✦ Reserva de Verbe", `<p>${escH(actor.name)} tira su reserva: ${filas.join(" · ")}. Máximo ahora: <b>${maxVerbe(actor)}</b>. Sin mínimo: si falta, se compensa con dotes o con Trazos que dé el DM por rol.</p>`, { soloDueno: true });
+  refrescarPanel(actor.id);
+  return faltan;
+}); }
+/** El DM cambia el modo de reserva. Pasar a dados deja fijos (con la tabla) los niveles que ya tenía. */
+export async function cambiarModoReserva(actor, modo) {
+  if (!game.user.isGM || !despierto(actor)) return false;
+  const e = estado(actor), n = nivelDe(actor);
+  if (modo === modoReserva(e)) return false;
+  if (modo === "dados") await guardar(actor, { dadosVerbe: { modo: "dados", fijoHasta: n, tiradas: {}, version: 1 }, historial: hist(e, `Reserva por dados desde el nivel ${n + 1} (hasta el ${n}, la tabla)`) });
+  else await guardar(actor, { dadosVerbe: { modo: "promedio", version: 1 }, historial: hist(e, "Reserva con la tabla fija") });
+  refrescarPanel(actor.id);
+  return true;
+}
 export async function revisarSangres() {
   if (!soyGM() || !D) return [];
   const conflictos = [];
@@ -354,7 +384,8 @@ export function maxVerbe(actor) {
   if (!e?.despierto) return 0;
   const n = nivelDe(actor);
   const baseDivina = Math.max(0, Number(D.verbeMax[n]) + modDe(actor, e.car));
-  let max = Number(D.verbeMax[n] ?? D.verbeMax[String(n)]) + modDe(actor, e.car);
+  // Reserva base: la tabla fija («promedio») o la suma de sus dados por nivel («dados», 2.2). La sangre divina sigue usando la tabla.
+  let max = reservaBase(e, n, D.verbeMax) + modDe(actor, e.car);
   if (tieneDote(actor, "reserva-profunda")) max += n;
   max += sumaEf(actor, ef => (Number(ef.max?.plano) || 0) + (n >= 10 ? Number(ef.max?.desde10) || 0 : 0) + ((Number(ef.max?.nivel) || 0) * n));
   if (tieneDote(actor, "eco-sangre") && ["plena", "media"].includes(e.fuerza)) max += (n >= 11 ? 2 : 1) * n;
@@ -997,6 +1028,7 @@ export async function dialogoDespertar(actor) {
     <details><summary>Consultar linajes y fuerzas antes de asignar</summary><div class="ecos-verbe-consulta" role="region" aria-label="Consulta de linajes y fuerzas" tabindex="0">${Object.entries(FUERZA).map(([k])=>describir("fuerza",k,actor)).join("")}${D.linajes.map(l=>describir("linaje",l.id,actor)).join("")}</div></details>
     <label>Rama principal <select name="principal"><option value="">Que la elija el jugador</option>${opciones(ramasLibres(), "")}</select></label>
     ${actor.type !== "character" ? `<label>Nivel (PNJ) <input type="number" name="nivel" min="1" max="20" value="${nivelDe(actor)}"></label>` : ""}
+    <label>Reserva de Verbe <select name="reservaModo">${opciones([["dados", `Tirar dados por nivel (${DADOS_VERBE.map(t => `${t.desde}–${t.hasta}: ${t.formula}`).join(" · ")})`], ["promedio", "Usar el promedio (la tabla fija)"]], "dados")}</select></label>
     <label><input type="checkbox" name="lleno" checked> Empieza con la reserva llena</label>
   </div>`;
   const r = await DialogV2.wait({
@@ -1023,6 +1055,7 @@ export async function despertar(actor, o) {
   const e = {
     despierto: true, car: o.car || caracteristicaSugerida(actor), nats: natModo === "visible" && nat ? [nat] : [], oc: revolver(oculta, actor.id), descubierta: false,
     natModo, oc1: natModo === "secreta" ? revolver(nat, actor.id) : null, etapa, maestros: [],
+    dadosVerbe: o.reservaModo === "promedio" ? { modo: "promedio", version: 1 } : { modo: "dados", fijoHasta: 0, tiradas: {}, version: 1 },
     probadas: [], linaje: o.linaje || "ninguno", fuerza: o.fuerza || "ninguna", linajeVisible: !!o.linajeVisible, principal: o.principal || null,
     segunda: null, maestria: null, escuela: null, rangos: {}, ordenRamas: [], abiertas: [], afinidad: {}, trazosExtra: 0, gastados: 0,
     dotes: [...(D.innatos ?? [])], natsExtra: [], combos: [], miradas: {}, trasplantes: [], pactos: [], cerrojos: 0, cultivos: {}, infusiones: {}, propias: [],
@@ -1031,6 +1064,7 @@ export async function despertar(actor, o) {
   };
   if (e.principal) { e.rangos[e.principal] = 1; e.ordenRamas.push(e.principal); }
   await actor.update({ [`flags.${MOD}.${F}`]: e });
+  await asegurarTiradasVerbe(actor);
   if (o.lleno) await actor.update({ [`flags.${MOD}.${F}.valor`]: maxVerbe(actor) });
   await asegurarRasgos(actor);
   const lin = linajeDe(actor);
@@ -3154,6 +3188,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       oculta() { correr(this, guardar(this.actor, { oc: revolver(valorDe(this, "oculta"), this.actor.id), descubierta: false })); },
       descubrirNat() { correr(this, pedirDescubrimiento(this.actor)); },
       activarFamilia() { correr(this, activarFamilia(this.actor, valorDe(this, "notaFamilia"))); },
+      modoReserva() { correr(this, cambiarModoReserva(this.actor, valorDe(this, "modoReserva")).then(() => asegurarTiradasVerbe(this.actor))); },
       abrirDiario(ev, t) { abrirDiarioPorNombre(t.dataset.diario, t.dataset.pagina); },
       cambiarNat() { correr(this, pedirDescubrimiento(this.actor, { tipo: "cambio", de: valorDe(this, "cambioDe"), a: valorDe(this, "cambioA") })); },
       pruebaEntreno() { correr(this, pruebaEntreno(this.actor)); },
@@ -3762,6 +3797,10 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         <p>Enseñar una técnica gratis: <select name="darTecnica" data-desc="tec">${opciones(todas, "")}</select> <button type="button" data-action="darTecnica">Enseñar</button></p>
         <div class="ecos-verbe-desc" data-de="darTecnica"></div>
         <p>Técnicas que sabe:</p><ul>${sabe || "<li>Ninguna.</li>"}</ul>`)}
+      ${sec("Reserva de Verbe: dados o promedio", `<p>Modo: <b>${modoReserva(e) === "dados" ? "dados por nivel" : "promedio (tabla fija)"}</b> · máximo ahora <b>${maxVerbe(a)}</b>.</p>
+        <p>Con dados, cada nivel suma ${DADOS_VERBE.map(t => `${t.formula} (niveles ${t.desde}–${t.hasta})`).join(", ")}; el promedio queda cerca de la tabla (167 al nivel 20) pero dos personajes iguales salen distintos. Sin mínimo: si a alguien no le alcanza, compénsalo con dotes o con Trazos por rol. Al pasar a dados, los niveles que ya tenía quedan con la tabla.</p>
+        <p><select name="modoReserva">${opciones([["dados", "Tirar dados"], ["promedio", "Usar el promedio"]], modoReserva(e))}</select> <button type="button" data-action="modoReserva">Guardar modo</button></p>
+        ${modoReserva(e) === "dados" ? `<p class="ecos-nota">Tiradas: ${Object.entries(e.dadosVerbe?.tiradas ?? {}).map(([k, v]) => `nivel ${k}: ${v}`).join(" · ") || "ninguna todavía"}${e.dadosVerbe?.fijoHasta ? ` · hasta el nivel ${e.dadosVerbe.fijoHasta}, la tabla` : ""}.</p>` : ""}`)}
       ${sec("Etapa del Verbe (quién le enseña)", `<p>Está en la etapa <b>${datosEtapa(etapaDe(e)).nombre}</b> (${etapaDe(e)} de ${ETAPA_MAX}). ${escH(datosEtapa(etapaDe(e)).texto)}</p>
         <p>Cuando encuentre por rol a un maestro o a un aprendiz que le enseñe, ábrele la siguiente: más ramas y más grado. El jugador lo ve en su panel y en el chat.</p>
         <p><label>Quién le enseña <input name="maestro" maxlength="120" placeholder="Nombre del maestro o del aprendiz"></label> <button type="button" data-action="etapaMas" ${etapaDe(e) >= ETAPA_MAX ? "disabled" : ""}><i class="fa-solid fa-unlock"></i> Abrir la siguiente etapa</button> <button type="button" data-action="etapaMenos" ${etapaDe(e) <= 1 ? "disabled" : ""}>Volver una etapa</button></p>
@@ -4255,7 +4294,7 @@ Hooks.once("ready", async () => {
   const api = (game.modules.get(MOD).api ??= {});
   api.verbe = { ofertasActor, corregirGastoSimple, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), usoRapido, despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
-    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
+    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, asegurarTiradasVerbe, cambiarModoReserva, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)
       ? documento.setFlag(MOD, "metal", !!metal) : false };
   game.socket.on(`module.${MOD}`, d => { if (d?.capaV && !socketDefensa(d)) manejar(d); });
@@ -4347,6 +4386,8 @@ Hooks.on("refreshToken", token => { if (activo()) barraToken(token); });
 Hooks.on("deleteActiveEffect", (ef, opciones) => { if (activo()) alQuitarEfecto(ef, opciones).catch(err => console.error(`${MOD} | capa V`, err)); });
 Hooks.on("updateActor", (actor, cambios) => {
   if (!activo()) return;
+  if (soyGM() && modoReserva(estado(actor)) === "dados" && (foundry.utils.hasProperty(cambios, "system.details.level") || foundry.utils.hasProperty(cambios, `flags.${MOD}.${F}.nivel`)))
+    asegurarTiradasVerbe(actor).catch(err => console.error(`${MOD} | reserva por dados`, err));
   if (consumoPendiente(actor)?.nonce === estado(actor)?.ultimoUso) consumosPendientes.delete(claveActor(actor));
   if (soyGM() && Number(foundry.utils.getProperty(cambios, `flags.${MOD}.${F}.valor`)) < 0 && herenciaDe(actor)?.barrera) {
     manejar({ accion: "capaVBarrera", actorId: actor.id }, { interno: true });
