@@ -21,6 +21,7 @@ import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
 import { plantillaEnEscena } from "./verbe-plantillas.js";
 import { problemasTecnica } from "./verbe-validate.js";
 import { tramoReserva, tramoFuerza, tramoVida, queVe } from "./verbe-lectura.js";
+import { cargaDe, bonoCarga, cdInterrupcion, textoCarga } from "./verbe-canalizar.js";
 import { DADOS_VERBE, dadoNivel, modoReserva, reservaBase, nivelesSinTirar } from "./verbe-reserva.js";
 import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
@@ -84,6 +85,9 @@ export const ESTADOS = {
     texto: "Velocidad a la mitad y desventaja en las salvaciones de DES." },
   cargado: { name: "Cargado", img: "systems/dnd5e/icons/svg/statuses/marked.svg", dura: 6,
     texto: "No usa reacciones; si lleva metal, el próximo ataque con arma de metal contra él tiene ventaja." },
+  canalizando: { name: "Canalizando", img: "systems/dnd5e/icons/svg/statuses/concentrating.svg", dura: 0,
+    changes: [{ key: "system.attributes.movement.walk", mode: 5, value: "0" }, { key: "system.attributes.movement.fly", mode: 5, value: "0" }],
+    texto: "Prepara una técnica cargada: velocidad 0, sin reacciones ni choques. Si recibe daño, salvación de Constitución (CD 10 o la mitad del daño, la mayor) o la pierde; también si queda incapacitado o lo mueven a la fuerza." },
   helado: { name: "Helado", img: "systems/dnd5e/icons/svg/statuses/restrained.svg", dura: 60,
     changes: [{ key: "system.attributes.movement.walk", mode: 2, value: "-3" }],
     texto: "−3 m de velocidad cada vez; con velocidad 0, queda Apresado por el hielo." }
@@ -283,6 +287,63 @@ export async function variarReservaNpc(actor, pct) {
   const e = estado(actor), base = maxVerbe(actor) - (Number(e.maxVariable) || 0), d = Math.round(base * p);
   await guardar(actor, { maxVariable: d, valor: Math.min(Number(e.valor) || 0, base + d), historial: hist(e, `Verbe variable: ${d >= 0 ? "+" : ""}${d} de reserva`) });
   return d;
+}
+/* ---------- Técnicas cargadas: Canalizando (3.3) ---------- */
+const efectoCanal = actor => actor?.effects?.find(x => x.getFlag?.(MOD, F)?.canalizar && !x.disabled) ?? null;
+/** Empieza a canalizar: paga su Verbe y queda Canalizando (sin reacciones ni choques, quieto). */
+export function canalizar(actor, id) { return serializarActor(actor, async () => {
+  const item = itemsDe(actor, id)[0], meta = item?.getFlag(MOD, F), c = cargaDe(meta);
+  if (!c) return rechazar("No es una técnica cargada.");
+  if (efectoCanal(actor)) return rechazar("Ya estás canalizando otra técnica: libérala o déjala.", "warn");
+  if (noPuedeActuar(actor)) return rechazar("Su estado no le permite canalizar.", "warn");
+  const e = estado(actor), costo = costoUso(actor, meta, Number(meta.g) || 0);
+  const permiso = evaluarGasto({ valor: Number(e.valor) || 0, costo, limite: limiteNegativo(actor), grado: Number(meta.g) || 0, agotamiento: Number(actor.system?.attributes?.exhaustion) || 0 });
+  if (!permiso.ok) return rechazar(permiso.motivo, "warn");
+  const ef = efectoEstado("canalizando", foundry.utils.randomID());
+  ef.flags[MOD][F].canalizar = { id, carga: 0, min: c.min, max: c.max };
+  ef.name = `Canalizando: ${item.name}`;
+  await actor.createEmbeddedDocuments("ActiveEffect", [ef]);
+  await guardar(actor, { valor: permiso.despues, canalizada: null, historial: hist(e, `Canaliza ${item.name} (${costo} Verbe)`) });
+  aLaMesa(actor, `✦ Canaliza ${escH(item.name)}`, `<p>${escH(actor.name)} empieza a cargar <b>${escH(item.name)}</b> (${costo} Verbe). Queda quieto, sin reacciones ni choques. Puede liberarla desde el turno ${c.min}; cada turno suma carga (hasta ${c.max}).</p>`);
+  if (permiso.despues < 0) await sobreesfuerzo(actor, Number(meta.g) || 0, permiso.despues);
+  refrescarPanel(actor.id);
+  return true;
+}); }
+/** Al empezar su turno, la carga sube 1 (hasta el máximo). */
+async function subirCarga(actor) {
+  const ef = efectoCanal(actor); if (!ef) return;
+  const fl = ef.getFlag(MOD, F).canalizar, carga = Math.min(fl.max, (Number(fl.carga) || 0) + 1);
+  await ef.setFlag(MOD, F, { ...ef.getFlag(MOD, F), canalizar: { ...fl, carga } });
+  aLaMesa(actor, "✦ Carga", `<p>${escH(actor.name)}: carga <b>${carga}/${fl.max}</b>${carga >= fl.min ? " · ya puede liberarla" : ` · puede liberarla con ${fl.min}`}.</p>`);
+  refrescarPanel(actor.id);
+}
+/** Libera la técnica: sin volver a pagar y con lo que sume la carga. */
+export function liberarCanalizada(actor) { return serializarActor(actor, async () => {
+  const ef = efectoCanal(actor); if (!ef) return rechazar("No está canalizando.");
+  const fl = ef.getFlag(MOD, F).canalizar, meta = itemsDe(actor, fl.id)[0]?.getFlag(MOD, F), c = cargaDe(meta);
+  if ((Number(fl.carga) || 0) < fl.min) return rechazar(`Le falta carga: tiene ${fl.carga} y necesita ${fl.min}.`, "warn");
+  const bono = bonoCarga(c, fl.carga);
+  await guardar(actor, { canalizada: { id: fl.id, carga: fl.carga, bono, lista: true } });
+  await ef.delete();
+  aLaMesa(actor, "✦ Libera la carga", `<p>${escH(actor.name)} libera <b>${escH(itemsDe(actor, fl.id)[0]?.name ?? fl.id)}</b> con carga ${fl.carga}: ${[bono.dados ? `+${bono.dados} dados de daño` : "", bono.cd ? `+${bono.cd} a la CD (súmala en la salvación)` : "", bono.ataque ? `+${bono.ataque} al ataque (súmalo en la tirada)` : ""].filter(Boolean).join(", ") || "sin extras"}.</p>`);
+  return "liberada";
+}).then(r => (r === "liberada" ? usarTecnica(actor, estado(actor).canalizada.id) : r)); }
+/** Se interrumpe: se pierde la carga y el Verbe pagado. */
+export async function interrumpirCanal(actor, motivo = "") {
+  const ef = efectoCanal(actor); if (!ef) return false;
+  const nombre = itemsDe(actor, ef.getFlag(MOD, F).canalizar.id)[0]?.name ?? "la técnica";
+  await ef.delete();
+  aLaMesa(actor, "✦ Se rompe la carga", `<p>${escH(actor.name)} pierde ${escH(nombre)}${motivo ? `: ${escH(motivo)}` : ""}. El Verbe pagado se pierde.</p>`);
+  refrescarPanel(actor.id);
+  return true;
+}
+/** Daño mientras canaliza: salvación de Constitución (CD 10 o la mitad del daño, la mayor). */
+async function golpeCanalizando(actor, dano) {
+  if (!efectoCanal(actor) || dano <= 0) return;
+  const cd = cdInterrupcion(dano);
+  const r = await actor.rollSavingThrow?.({ ability: "con", target: cd }, { configure: false }, { data: { flavor: `Mantener la carga (CD ${cd})` } });
+  const roll = Array.isArray(r) ? r[0] : r;
+  if (!roll || roll.total < cd) await interrumpirCanal(actor, `recibe ${dano} de daño y falla la salvación (CD ${cd})`);
 }
 export async function revisarSangres() {
   if (!soyGM() || !D) return [];
@@ -761,6 +822,8 @@ export function costoUso(actor, meta, grado, { infusion = null } = {}) {
     if (cul?.infusionFija !== infusion) c += Math.max(0, extra);
   }
   if (e.reserva === meta.id && !e.reservaUsada && grado === meta.g) c = 0;
+  // La técnica cargada ya se pagó al empezar a canalizarla.
+  if (e.canalizada?.id === meta.id && e.canalizada?.lista) c = 0;
   return Math.max(0, c);
 }
 
@@ -812,6 +875,8 @@ function efectoEstado(st, id, doble = false) {
     flags: { [MOD]: { [F]: { estado: st } } } };
 }
 
+/** Párrafo de la ficha para las técnicas cargadas (3.3). */
+const fichaCarga = meta => { const c = cargaDe(meta); return c ? `<p class="ev-nota"><b>Cargada.</b> ${escH(textoCarga(c))}</p>` : ""; };
 /** Arma los datos del objeto para este actor a partir de la técnica base. */
 export function datosItem(actor, tec) {
   const data = foundry.utils.deepClone(tec.item);
@@ -902,7 +967,7 @@ export function datosItem(actor, tec) {
   }
   meta.infusion = inf;
   meta.cultivo = cul?.nivel ?? 0;
-  data.system.description.value = (data.system.description.value ?? "") + notaPersonal(actor, tec, extra, inf, cul);
+  data.system.description.value = (data.system.description.value ?? "") + fichaCarga(meta) + notaPersonal(actor, tec, extra, inf, cul);
   const {firma:anteriorFirma,...metadatos}=meta;
   meta.firma = firma(JSON.stringify([data.name, data.system, data.effects,metadatos]));
   return data;
@@ -1296,6 +1361,7 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
     }
     const acceso = accesoShinobi(meta, contextoShinobi(actor), true);
     if (!acceso.ok) { aviso(acceso.motivo,"warn"); return false; }
+    if (cargaDe(meta) && !(e.canalizada?.id === meta.id && e.canalizada?.lista)) { aviso("Es una técnica cargada: primero canalízala desde el panel (Mis técnicas → Canalizar) y libérala cuando tenga carga.", "warn"); return false; }
     const aprendido=permisoAprendido(actor,meta);if(!aprendido.ok){aviso(aprendido.motivo,"warn");return false;}
     const grado = meta.g + (Number(usageConfig?.scaling) || 0);
     if(grado>meta.g){const accesoElevado=accesoObtencion({...meta,g:grado},{nivel:nivelDe(actor),dotes:dotesActivas(actor)});if(!accesoElevado.ok){aviso(accesoElevado.motivo,"warn");return false;}}
@@ -1355,6 +1421,7 @@ async function despuesDeUsar(activity, usageConfig) {
   if (!v) return;
   const item = activity.item;
   const actor = item.actor;
+  if (estado(actor)?.canalizada?.id === item.getFlag(MOD, F)?.id) await guardar(actor, { canalizada: null });
   if (consumoPendiente(actor)?.nonce === v.nonce) consumosPendientes.delete(claveActor(actor));
   const meta = item.getFlag(MOD, F);
   if (v.fuerte?.extra) aLaMesa(actor, "Contra alguien más fuerte", `<p>${escH(actor.name)} paga <b>${v.fuerte.extra} Verbe más</b>: ${escH(v.fuerte.quien ?? "su objetivo")} es más fuerte que su grado.</p>`, { soloDueno: true });
@@ -1417,6 +1484,11 @@ export function antesDelDano(config) {
     const meta = act?.item?.getFlag?.(MOD, F);
     if (!meta?.id) return;
     const actor = act.actor;
+    const can = estado(actor)?.canalizada;
+    if (can?.id === meta.id && can.lista && can.bono?.dados) {
+      const p = config.rolls?.[0]?.parts ?? [], m = String(p[0] ?? "").match(/d(\d+)/);
+      p.push(`${can.bono.dados}d${m?.[1] ?? 6}`);
+    }
     const dado = herenciaDe(actor)?.despertar?.dado;
     if (!dado || !efectoV(actor, "despertar")) return;
     if (!deNats(meta.infusion || meta.nat).some(n => dado.nats.includes(n))) return;
@@ -2475,6 +2547,7 @@ async function alQuitarEfecto(ef, opciones) {
 async function inicioDeTurno(combat) {
   const actor = combat?.combatant?.actor;
   if (!actor) return;
+  if (efectoCanal(actor)) await subirCarga(actor);
   if (despierto(actor)) await guardar(actor, { reaccionUsada: false, accionReplicaUsada:false,turnoTecnicas:{combate:game.combat?.id??"combate",acciones:0,mayores:0} });
   for (const ef of actor.effects.filter(x => { const fl = x.getFlag(MOD, F);
     return fl && !fl.herencia && !fl.dotesAE && (Number(x.duration?.seconds) > 0 || Number(x.duration?.rounds) > 0); })) {
@@ -2958,6 +3031,8 @@ ${h2("lo-mas-fuerte", "Lo más fuerte crece contigo")}
 <ul><li>Las técnicas más fuertes tienen una <b>escalera</b>: una versión chica que se aprende temprano y otras más grandes después. La ficha de cada técnica dice «Crece» con su escalera.</li>
 <li>Las que atan, duermen, sellan o mandan sobre otro, como la Sustitución, <b>cuestan más contra alguien más fuerte que tú</b>: 2 Verbe más por cada grado que su grado (la mitad de su nivel o VD) pase de tu grado máximo. Contra lo chico sirven desde el principio.</li>
 <li>Cada técnica y cada dote dicen al final <b>«Se mejora con»</b>: el grado, el rango de su rama, la afinidad, el cultivo, las dotes y la escuela que la hacen crecer.</li></ul>
+${h2("cargadas", "Técnicas cargadas y Canalizando")}
+<p>Algunas técnicas se <b>cargan</b> antes de soltarlas (su ficha dice «Cargada»). En Mis técnicas pulsa <b>Canalizar</b>: pagas su Verbe y quedas <b>Canalizando</b> (velocidad 0, sin reacciones ni choques). Cada uno de tus turnos suma 1 de carga hasta su máximo; desde la carga mínima pulsas <b>Liberar</b> y la técnica sale con lo que sume la carga (dados, ataque o CD). Si recibes daño, salvación de Constitución (CD 10 o la mitad del daño, la mayor) o pierdes la carga y el Verbe pagado; también si quedas incapacitado o te mueven a la fuerza. No es lo mismo que «Cargado», el estado del Rayo.</p>
 ${h2("etapas", "Etapas del Verbe y tu naturaleza")}
 <p>Nadie usa el Verbe solo. Cuando encuentras a alguien que te enseñe (un maestro o un aprendiz), el DM abre tu siguiente <b>etapa</b>: ${ETAPAS.filter(x => x.n > 0).map(x => `<b>${x.nombre}</b> (${Number.isFinite(x.ramas) ? `${x.ramas} rama${x.ramas === 1 ? "" : "s"}, hasta grado ${x.grado}` : "sin límite"})`).join(", ")}.</p>
 <p>Tu <b>naturaleza</b> (tu elemento) y la segunda están ocultas hasta que las descubres <b>entrenando</b>: desde nivel 5, o nivel 3 con Entrenado en Forma, y en etapa Practicante. La primera pide ${DESCUBRIR.primera.dias} días y una prueba de Control del Verbe CD ${DESCUBRIR.primera.cd} (${DESCUBRIR.primera.trazos} Trazos si la superas); la segunda, ${DESCUBRIR.segunda.dias} días y CD ${DESCUBRIR.segunda.cd} (${DESCUBRIR.segunda.trazos} Trazos). Hasta entonces aprendes técnicas sin elemento. La técnica <b>Cambiar naturaleza del Verbe</b> (3 Trazos) cambia una naturaleza por otra con 7 días y CD 15.</p>
@@ -3221,6 +3296,9 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       descubrirNat() { correr(this, pedirDescubrimiento(this.actor)); },
       activarFamilia() { correr(this, activarFamilia(this.actor, valorDe(this, "notaFamilia"))); },
       leerObjetivos() { correr(this, leerObjetivos(this.actor)); },
+      canalizar(ev, t) { correr(this, canalizar(this.actor, t.dataset.id)); },
+      liberar() { correr(this, liberarCanalizada(this.actor)); },
+      interrumpirCanal() { correr(this, interrumpirCanal(this.actor, game.user.isGM ? "el DM la interrumpe (movimiento forzado u otra causa)" : "la deja")); },
       modoReserva() { correr(this, cambiarModoReserva(this.actor, valorDe(this, "modoReserva")).then(() => asegurarTiradasVerbe(this.actor))); },
       abrirDiario(ev, t) { abrirDiarioPorNombre(t.dataset.diario, t.dataset.pagina); },
       cambiarNat() { correr(this, pedirDescubrimiento(this.actor, { tipo: "cambio", de: valorDe(this, "cambioDe"), a: valorDe(this, "cambioA") })); },
@@ -3348,14 +3426,17 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const uso = previsualizarUso(a, meta);
     const r = compra ? requisitos(a, t) : null;
     const defensa = !compra && !!D.defensas?.[t.id];
+    const carga = !compra && cargaDe(meta), canal = carga ? efectoCanal(a) : null, flc = canal?.getFlag(MOD, F)?.canalizar;
+    const mia = flc?.id === t.id, otraCanal = !!canal && !mia;
     return tarjetaHTML({ id: t.id, nombre: item?.name ?? t.n, texto: textoDe(t), resolucion:resolucionTexto(t), grado: t.g, rama: nombreRama(t.rama),
       naturaleza: meta.infusion || t.nat ? nombreNat(meta.infusion || t.nat) : null,
       tiempo: TIEMPO_L[t.t] ?? t.t ?? "Ver ficha", alcance: t.alc ? alcanceL(t.alc, t.area) : "Ver ficha", area: t.area,
       referencia:t.divina&&!dm()?null:t.origen?.nombre,
       accionesExtra:!compra && Number(meta.g)<=capacidadReplicas(a) && efectoV(a,"replicas") && Object.values(t.item.system.activities).some(x=>["attack","save","damage","heal"].includes(x.type)) ? `<button type="button" data-action="usarReplica" data-id="${escH(t.id)}" ${Number(e.reservaReplicas)<uso.costo||e.accionReplicaUsada?"disabled":""}>Usar desde réplica</button>`:"",
       costo: uso.costo, trazos: compra ? t.trazos : null,
-      accion: compra ? "aprender" : defensa ? "ficha" : "usar", boton: compra ? `${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Aprender"} · ${t.trazos} ${t.trazos === 1 ? "Trazo" : "Trazos"}` : defensa ? "Cómo usar esta defensa" : "Usar técnica",
-      bloqueada: compra ? !r.ok || r.probar : !defensa && !uso.ok,
+      accion: compra ? "aprender" : defensa ? "ficha" : carga ? (mia ? "liberar" : "canalizar") : "usar", boton: compra ? `${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Aprender"} · ${t.trazos} ${t.trazos === 1 ? "Trazo" : "Trazos"}` : defensa ? "Cómo usar esta defensa"
+        : carga ? (mia ? `Liberar · carga ${flc.carga}/${flc.max}` : "Canalizar (empieza a cargar)") : "Usar técnica",
+      bloqueada: compra ? !r.ok || r.probar : carga ? (mia ? flc.carga < flc.min : otraCanal || !uso.costo && !uso.ok && !/cargada/.test(uso.motivo ?? "")) : !defensa && !uso.ok,
       riesgo: !compra && uso.ok && uso.despues < 0,
       estado: compra ? `<p class="ev-disponibilidad">${r.ok ? `Te quedarán ${trazos(a).libres - t.trazos} Trazos después de aprenderla.` : escH(r.motivo)}</p>` : estadoUsoHTML(uso),
       nota: compra ? (r.pideDM ? "Requiere aprobación del DM antes de aprenderla." : "Aprender no gasta Verbe. Lo gastarás al usarla.")
@@ -3410,6 +3491,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const cupos=cuotasPoder(nivelDe(a),dotesActivas(a)),gastados=estado(a).cuotasPoder??{};
     return `${cupos.mayores?`<details class="ev-limites-poder"><summary>Usos altos que te quedan hasta el próximo Descanso Largo</summary><ul><li>Grados 6–8: <b>${Math.max(0,cupos.mayores-(gastados.mayores||0))} de ${cupos.mayores}</b> usos compartidos.</li><li>Grados 9–11: <b>${Math.max(0,cupos.culminaciones-(gastados.culminaciones||0))} de ${cupos.culminaciones}</b> usos compartidos.</li>${cupos.trascendentes?`<li>Dentro de los anteriores, grado 11: <b>${Math.max(0,cupos.trascendentes-(gastados.trascendentes||0))} de ${cupos.trascendentes}</b>.</li>`:""}</ul><p>También cuenta el grado elegido al elevar una técnica. Cada técnica alta conserva su propio uso por Largo. Cambiar de técnica no devuelve usos compartidos.</p></details>`:""}${efectoV(a,"replicas")?`<div class="ev-instruccion"><span><b>Reserva repartida en réplicas: ${Number(estado(a).reservaReplicas)||0} Verbe</b>Una acción ofensiva conjunta por turno. «Usar desde réplica» gasta ese saldo y solo admite grado 0–${capacidadReplicas(a)}. Al disipar, se pierde el saldo restante.</span><button type="button" data-action="cerrarReplicas">Disipar réplicas</button></div>`:""}${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana de uso. Comprueba el grado y el gasto antes de confirmar.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
       <div class="ev-instruccion"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span><b>Si afecta a otro, marca su token antes de usarla.</b> El alcance y las condiciones de cada técnica siguen contando.</span></div>
+      ${efectoCanal(a) ? `<p class="ev-aviso"><b>Canalizando ${escH(itemsDe(a, efectoCanal(a).getFlag(MOD, F).canalizar.id)[0]?.name ?? "")}</b> · carga ${efectoCanal(a).getFlag(MOD, F).canalizar.carga}/${efectoCanal(a).getFlag(MOD, F).canalizar.max}. Velocidad 0, sin reacciones ni choques. <button type="button" data-action="interrumpirCanal">Dejar de canalizar</button></p>` : ""}
       ${queVe(itemsTecnica(a).map(i => i.getFlag(MOD, F)?.id)).size ? `<p><button type="button" data-action="leerObjetivos" data-tooltip="Marca tokens y lee su Verbe por tramos (lleno, a medias, poco; más débil o más fuerte), nunca cifras"><i class="fa-solid fa-eye"></i> Leer el Verbe de los marcados</button></p>` : ""}
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar en mis técnicas</span><input type="search" data-filtro-uso="texto" placeholder="Nombre o efecto…" value="${escH(f.texto)}"></label><label><input type="checkbox" data-filtro-uso="solo" ${f.solo ? "checked" : ""}> Ocultar las bloqueadas por recursos o estado</label></div>
       ${lista.length ? `<div class="ev-tarjetas">${lista.map(({ t, item }) => this.#tarjeta(t, { item })).join("")}</div>` : `<div class="ev-vacio"><h3>${conocidas.length ? "Ninguna coincide con ese filtro" : "Tu primera técnica te espera"}</h3><p>${conocidas.length ? "Quita el filtro para ver los bloqueos y sus motivos." : "Aprende una técnica con Trazos. Después aparecerá aquí lista para usarla."}</p><button type="button" data-action="pestana" data-p="tienda">Ir a Aprender</button></div>`}`;
@@ -3870,7 +3952,7 @@ const noPuedeActuar = actor => INCAPAZ.some(st => actor?.statuses?.has(st));
 /** ¿Está en un combate empezado? Fuera de combate las reacciones no se agotan: la marca de midi-qol no caduca sin turnos. */
 const enCombate = actor => !!game.combat?.started && !!game.combat.combatants?.some?.(c => c.actor === actor || (c.actor?.uuid && c.actor.uuid === actor?.uuid) || (c.actorId && c.actorId === actor?.id));
 function reaccionDisponible(actor) {
-  if (noPuedeActuar(actor) || actor?.statuses?.has("cargado")) return false;
+  if (noPuedeActuar(actor) || actor?.statuses?.has("cargado") || actor?.statuses?.has("canalizando")) return false;
   if (!enCombate(actor)) return true;
   if (estado(actor)?.reaccionUsada) return false;
   try { return !globalThis.MidiQOL?.hasUsedReaction?.(actor); } catch { return true; }
@@ -4156,7 +4238,7 @@ async function choqueAutomatico(wf) {
   const trabajo=(async()=>{
     const vistos=new Set();
     for(const tok of [...(wf.targets??[])]){
-      const actor=tok?.actor;if(!actor||actor===wf.actor||!despierto(actor)||vistos.has(actor.uuid??actor.id)||noPuedeActuar(actor))continue;
+      const actor=tok?.actor;if(!actor||actor===wf.actor||!despierto(actor)||vistos.has(actor.uuid??actor.id)||noPuedeActuar(actor)||actor.statuses?.has("canalizando"))continue;
       vistos.add(actor.uuid??actor.id);
       const respuesta=await preguntarDefensa(actor,{choque:true,quien:wf.actor.name,con:wf.item.name,grado:gradoAtaque(wf)});
       if(!respuesta)continue;
@@ -4358,7 +4440,7 @@ Hooks.once("ready", async () => {
   const api = (game.modules.get(MOD).api ??= {});
   api.verbe = { ofertasActor, corregirGastoSimple, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), usoRapido, despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
-    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, rangoDe, tieneDote, lecturaDe, leerObjetivos, variarReservaNpc, asegurarTiradasVerbe, cambiarModoReserva, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
+    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, canalizar, liberarCanalizada, interrumpirCanal, rangoDe, tieneDote, lecturaDe, leerObjetivos, variarReservaNpc, asegurarTiradasVerbe, cambiarModoReserva, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)
       ? documento.setFlag(MOD, "metal", !!metal) : false };
   game.socket.on(`module.${MOD}`, d => { if (d?.capaV && !socketDefensa(d)) manejar(d); });
@@ -4448,8 +4530,14 @@ Hooks.on("updateSetting", setting => {
 });
 Hooks.on("refreshToken", token => { if (activo()) barraToken(token); });
 Hooks.on("deleteActiveEffect", (ef, opciones) => { if (activo()) alQuitarEfecto(ef, opciones).catch(err => console.error(`${MOD} | capa V`, err)); });
-Hooks.on("updateActor", (actor, cambios) => {
+Hooks.on("preUpdateActor", (actor, cambios, opciones) => {
   if (!activo()) return;
+  const nuevo = foundry.utils.getProperty(cambios, "system.attributes.hp.value");
+  if (nuevo !== undefined && efectoCanal(actor)) opciones.ecosDanoCanal = Math.max(0, (Number(actor.system.attributes.hp.value) || 0) - Number(nuevo));
+});
+Hooks.on("updateActor", (actor, cambios, opciones) => {
+  if (!activo()) return;
+  if (soyGM() && opciones?.ecosDanoCanal > 0) golpeCanalizando(actor, opciones.ecosDanoCanal).catch(err => console.error(`${MOD} | canalizar`, err));
   if (soyGM() && modoReserva(estado(actor)) === "dados" && (foundry.utils.hasProperty(cambios, "system.details.level") || foundry.utils.hasProperty(cambios, `flags.${MOD}.${F}.nivel`)))
     asegurarTiradasVerbe(actor).catch(err => console.error(`${MOD} | reserva por dados`, err));
   if (consumoPendiente(actor)?.nonce === estado(actor)?.ultimoUso) consumosPendientes.delete(claveActor(actor));
@@ -4484,6 +4572,11 @@ Hooks.on("dnd5e.postRollAttack", (rolls, datos) => {
     atacanteId: atacante.id, efectoIds: ids })).catch(err => console.error(`${MOD} | estados`, err));
 });
 Hooks.on("preCreateActiveEffect", (effect, data) => { if (activo()) normalizarHielo(effect, data); });
+Hooks.on("createActiveEffect", effect => {
+  const actor = effect?.parent;
+  if (!activo() || !soyGM() || !(actor instanceof Actor) || !efectoCanal(actor)) return;
+  if (INCAPAZ.some(st => effect.statuses?.has?.(st))) interrumpirCanal(actor, "queda incapacitado").catch(() => null);
+});
 for (const evento of ["createActiveEffect", "deleteActiveEffect", "updateActiveEffect"]) Hooks.on(evento, effect => {
   const actor = effect.parent;
   if (!activo() || !soyGM() || !(actor instanceof Actor)) return;
@@ -4500,4 +4593,4 @@ Hooks.on("updateCombat", (combat, cambios) => {
 });
 
 /** Para las pruebas fuera de Foundry. */
-export const _prueba = { revolver, resolverEntreno, iniciarEntrenoNaturaleza, aplicarDesventaja, defenderAtaque, despuesDeUsar, ponerDespertar, ponerOjo, alQuitarEfecto, inicioDeTurno, manejar, crearAprobada, asegurarRasgos, choqueAutomatico, choqueNativo, elegirContraTecnica, pagarContraTecnica, opcionesChoque, excluirBlanco, enfrentamientoAutomatico };
+export const _prueba = { subirCarga, golpeCanalizando, revolver, resolverEntreno, iniciarEntrenoNaturaleza, aplicarDesventaja, defenderAtaque, despuesDeUsar, ponerDespertar, ponerOjo, alQuitarEfecto, inicioDeTurno, manejar, crearAprobada, asegurarRasgos, choqueAutomatico, choqueNativo, elegirContraTecnica, pagarContraTecnica, opcionesChoque, excluirBlanco, enfrentamientoAutomatico };

@@ -178,13 +178,13 @@
 
 - [x] **3.2c · Contratécnicas no elementales: Umbral, Quietud, Vasija y Pacto** (hecha) (M · Dep.: 3.2a). Teletransporte, entorno, bestias. Mismos mínimos.
 
-- [ ] **3.3 · Estado «Canalizando» y regla de técnicas cargadas** (M · Dep.: 0.1). Definir en verbe-effects.js el estado «Canalizando»: el usuario no puede reaccionar ni chocar y queda estático (velocidad 0) mientras prepara. La preparación dura 2 o más turnos y cada turno sube potencia, fiabilidad, precisión o coste. Se interrumpe por daño (salvación de CON, CD 10 o la mitad del daño, la mayor), por incapacitación o por movimiento forzado. Explicarlo en la ficha de cada técnica y en la ayuda del panel. Listo cuando una técnica de prueba carga, se interrumpe y se libera. Nota: «Cargado» ya lo usa el Rayo; no reutilizar ese nombre.
+- [x] **3.3 · Estado «Canalizando» y regla de técnicas cargadas** (hecha: scripts/verbe-canalizar.js, Canalizar/Liberar en el panel, ayuda) (M · Dep.: 0.1). Definir en verbe-effects.js el estado «Canalizando»: el usuario no puede reaccionar ni chocar y queda estático (velocidad 0) mientras prepara. La preparación dura 2 o más turnos y cada turno sube potencia, fiabilidad, precisión o coste. Se interrumpe por daño (salvación de CON, CD 10 o la mitad del daño, la mayor), por incapacitación o por movimiento forzado. Explicarlo en la ficha de cada técnica y en la ayuda del panel. Listo cuando una técnica de prueba carga, se interrumpe y se libera. Nota: «Cargado» ya lo usa el Rayo; no reutilizar ese nombre.
 
-- [ ] **3.4a · Auditar candidatas a cargadas** (S · Dep.: 3.3). Listar las técnicas existentes que deberían ser cargadas (Rasengan y Chidori, ver docs/REPERTORIO_SHINOBI.json, y otras de gran potencia). Informe en docs/AUDITORIA_CARGADAS.md.
+- [x] **3.4a · Auditar candidatas a cargadas** (hecha: docs/AUDITORIA_CARGADAS.md) (S · Dep.: 3.3). Listar las técnicas existentes que deberían ser cargadas (Rasengan y Chidori, ver docs/REPERTORIO_SHINOBI.json, y otras de gran potencia). Informe en docs/AUDITORIA_CARGADAS.md.
 
-- [ ] **3.4b · Convertir las existentes en cargadas** (M · Dep.: 3.4a).
+- [x] **3.4b · Convertir las existentes en cargadas** (hecha: 16 en CARGADAS) (M · Dep.: 3.4a).
 
-- [ ] **3.4c · Crear 1 o 2 cargadas nuevas por forma, herencia y rama** (M, en dos lotes · Dep.: 3.4b).
+- [x] **3.4c · Crear 1 o 2 cargadas nuevas por forma, herencia y rama** (hecha: 11 nuevas; Mirada sin cargada propia, ver auditoría) (M, en dos lotes · Dep.: 3.4b).
 
 - [ ] **3.5a · Clones: diseño** (S · Dep.: 3.3). Escribir docs/CLONES.md. Ya existen clones como técnicas: Forma «forma-clon-agua», «forma-clon-tierra», «forma-clon-madera», «forma-clon-rayo», «forma-clon-cuervos» (grados 3 a 5), Hilo «Kami Bunshin» (g3) y Pacto «Mushi Bunshin» (g3); ver docs/REPERTORIO_SHINOBI.json. Diseñar el coste alto (propuesta: el clon se lleva una parte de la reserva y de los PG del usuario, además del Verbe de la técnica), duración, límites y cómo se disipa.
 

@@ -1,24 +1,24 @@
 {
   "base": 401,
-  "total": 837,
+  "total": 866,
   "nuevas": 353,
   "ramas": [
     {
       "id": "forma",
       "nombre": "Forma",
-      "total": 174,
+      "total": 178,
       "nuevas": 26
     },
     {
       "id": "velo",
       "nombre": "Velo",
-      "total": 53,
+      "total": 56,
       "nuevas": 14
     },
     {
       "id": "cuerpo",
       "nombre": "Cuerpo",
-      "total": 66,
+      "total": 68,
       "nuevas": 37
     },
     {
@@ -30,55 +30,55 @@
     {
       "id": "sello",
       "nombre": "Sello",
-      "total": 71,
+      "total": 74,
       "nuevas": 37
     },
     {
       "id": "pacto",
       "nombre": "Pacto",
-      "total": 57,
+      "total": 60,
       "nuevas": 27
     },
     {
       "id": "pulso",
       "nombre": "Pulso",
-      "total": 50,
+      "total": 51,
       "nuevas": 13
     },
     {
       "id": "hilo",
       "nombre": "Hilo",
-      "total": 66,
+      "total": 68,
       "nuevas": 40
     },
     {
       "id": "quietud",
       "nombre": "Quietud",
-      "total": 50,
+      "total": 52,
       "nuevas": 19
     },
     {
       "id": "rastro",
       "nombre": "Rastro",
-      "total": 50,
+      "total": 53,
       "nuevas": 17
     },
     {
       "id": "sangre",
       "nombre": "Sangre",
-      "total": 61,
+      "total": 62,
       "nuevas": 34
     },
     {
       "id": "umbral",
       "nombre": "Umbral",
-      "total": 33,
+      "total": 36,
       "nuevas": 17
     },
     {
       "id": "vasija",
       "nombre": "Vasija",
-      "total": 47,
+      "total": 49,
       "nuevas": 39
     }
   ],
