@@ -308,6 +308,26 @@ export async function recuperarVerbe(actor, cantidad) {
     return cambios.valor;
   });
 }
+/**
+ * Devolver Verbe (solo DM, tarea 1.8): suma una cantidad a la reserva, sin pasar del máximo, y lo deja anotado
+ * con quién, cuánto y por qué. Sirve para recursos complejos que la corrección automática del recibo no cubre.
+ */
+export async function devolverVerbe(actor, cantidad, motivo = "", { mensaje = null } = {}) {
+  if (!game.user.isGM) return { ok: false, motivo: "Solo el DM devuelve Verbe." };
+  const n = Math.trunc(Number(cantidad));
+  if (!actor || !despierto(actor)) return { ok: false, motivo: "Esa ficha no tiene el Verbe despierto." };
+  if (!Number.isFinite(n) || n < 1 || n > 200) return { ok: false, motivo: "La cantidad va de 1 a 200." };
+  return serializarActor(actor, async () => {
+    const e = estado(actor), antes = Number(e.valor) || 0, despues = Math.min(maxVerbe(actor), antes + n);
+    if (despues <= antes) return { ok: false, motivo: `${actor.name} ya tiene su reserva llena (${antes}/${maxVerbe(actor)}).` };
+    const nota = String(motivo ?? "").trim().slice(0, 300);
+    const registro = { fecha: new Date().toISOString(), por: game.user.name, cantidad: despues - antes, pedido: n, antes, despues, motivo: nota, mensaje: mensaje ?? null };
+    await guardar(actor, { valor: despues, devoluciones: [...(e.devoluciones ?? []), registro].slice(-50),
+      historial: hist(e, `El DM devuelve ${despues - antes} Verbe${nota ? `: ${nota}` : ""}`) });
+    aLaMesa(actor, "✦ Verbe devuelto", `<p>El DM devuelve <b>${despues - antes} Verbe</b> a ${escH(actor.name)} (${antes} → ${despues})${nota ? `: ${escH(nota)}` : ""}.${despues - antes < n ? ` No pasa de su máximo (${maxVerbe(actor)}).` : ""}</p>`, { soloDueno: true });
+    return { ok: true, ...registro };
+  });
+}
 export function trazos(actor) {
   const e = estado(actor) ?? {};
   // 4 por nivel, y quien despierta en el nivel N los recibe todos: 4 × N + 4 (el doble del diseño original, por pedido del DM).
@@ -3962,7 +3982,7 @@ Hooks.once("ready", async () => {
   const api = (game.modules.get(MOD).api ??= {});
   api.verbe = { ofertasActor, corregirGastoSimple, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), usoRapido, despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
-    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
+    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)
       ? documento.setFlag(MOD, "metal", !!metal) : false };
   game.socket.on(`module.${MOD}`, d => { if (d?.capaV && !socketDefensa(d)) manejar(d); });

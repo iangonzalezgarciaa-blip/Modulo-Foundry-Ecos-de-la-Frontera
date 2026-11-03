@@ -374,3 +374,16 @@ test('las ediciones del DM se aplican al catálogo en uso y se restauran', () =>
   V.aplicarEdicionesMundo({ tecnicas: {}, dotes: {} });
   assert.equal(V.tecnicaPorId('fuego-aliento').dmg, '3d6 fuego');
 });
+
+test('el DM devuelve Verbe a mano: no pasa del máximo y queda anotado', async () => {
+  const a = new MockActor(5, { valor: 3 });
+  const max = V.maxVerbe(a);
+  const r = await V.devolverVerbe(a, 4, 'técnica mal configurada');
+  assert.equal(r.ok, true); assert.equal(V.estado(a).valor, 7);
+  assert.equal(V.estado(a).devoluciones.at(-1).motivo, 'técnica mal configurada');
+  const tope = await V.devolverVerbe(a, 500, 'demasiado');
+  assert.equal(tope.ok, false);
+  const lleno = await V.devolverVerbe(a, 200, 'hasta arriba');
+  assert.equal(V.estado(a).valor, max); assert.equal(lleno.cantidad, max - 7);
+  assert.equal((await V.devolverVerbe(a, 1)).ok, false);
+});

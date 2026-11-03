@@ -26,6 +26,7 @@ import { CALENDARIO, eventosDelDia, faseLunar, diaCampana, sumarDias, mesPrimerA
 import "./verbe.js";
 import "./mesa.js";
 import "./azar.js";
+import { motivoPausaMoneda } from "./mesa-control.js";
 import { crearCola } from "./verbe-core.js";
 import { recuperacionDGLarga, presupuestoCorto, ajustarRecuperacionDG } from "./rest-core.js";
 import { tipoCuracionVerbe, tratarHeridaConPulso } from "./verbe-medicina.js";
@@ -2160,28 +2161,37 @@ async function preguntarSoul(actor, texto, espera = 60000) {
   });
 }
 
-async function avisoRepeticion(actor, que, roll) {
+async function avisoRepeticion(actor, que, roll, antes = null) {
   await game.dice3d?.showForRoll?.(roll, game.user, true);
   await ChatMessage.create({
-    content: tarjeta("✦ Moneda Antigua", [`<b>${actor.name}</b> gasta una Moneda Antigua y repite la ${que}: <b>${roll.total}</b> (antes: 1 natural). Vale esta.`], { clase: "ecos-soul" }),
+    content: tarjeta("✦ Moneda Antigua", [`<b>${actor.name}</b> gasta una Moneda Antigua y repite la ${que}: <b>${roll.total}</b> (antes: ${antes ?? "1 natural"}). Vale esta.`], { clase: "ecos-soul" }),
     speaker: ChatMessage.getSpeaker({ actor }),
     flags: { [MOD]: { soulDe: "midi" } }
   });
 }
 
-/** midi-qol: un 1 natural en el ataque de un PJ se puede repetir antes de comprobar si acierta. */
+/** Pausa de la Moneda Antigua (tarea 1.7): «fallo» = con un 1 o cuando falla; «uno» = solo con un 1; «apagado». */
+const modoPausaMoneda = () => { try { return game.settings.get(MOD, "pausaMoneda") ?? "fallo"; } catch { return "fallo"; } };
+const anotarRecibo = (wf, actor, que, antes, nueva) => game.modules.get(MOD)?.api?.resolucion?.registrarPaso?.(wf, `moneda-${actor.id}`, "Moneda Antigua",
+  `${actor.name} gasta una Moneda Antigua y repite la ${que}: ${antes} → ${nueva}. Vale la nueva.`)?.catch?.(() => null);
+
+/** midi-qol: después de tirar el ataque de un PJ y antes de ver si acierta, puede gastar una Moneda Antigua para repetir. */
 Hooks.on("midi-qol.preCheckHits", async workflow => {
   try {
     const roll = workflow?.attackRoll;
     const actor = workflow?.actor;
-    if (!roll || roll.options?.[MOD]?.soulVisto || !esPJ(actor) || (soulCoins(actor) < 1) || !esUnoNatural(roll)) return;
+    if (!roll || roll.options?.[MOD]?.soulVisto || !esPJ(actor) || (soulCoins(actor) < 1)) return;
+    const cas = [...(workflow.targets ?? [])].map(t => Number(t.actor?.system?.attributes?.ac?.value)).filter(Number.isFinite);
+    const motivo = motivoPausaMoneda(roll, { objetivo: cas.length ? Math.min(...cas) : null, modo: modoPausaMoneda() });
+    if (!motivo) return;
     foundry.utils.setProperty(roll, `options.${MOD}.soulVisto`, true);
-    if (!(await preguntarSoul(actor, `<b>${actor.name}</b> saca un <b>1 natural</b> (ataque${workflow.item ? ` con ${workflow.item.name}` : ""}).`))) return;
+    if (!(await preguntarSoul(actor, `<b>${actor.name}</b> ${motivo} (ataque${workflow.item ? ` con ${workflow.item.name}` : ""}).`))) return;
     const nueva = await roll.reroll();
     foundry.utils.setProperty(nueva, `options.${MOD}`, { soulVisto: true, sinSoul: true });
     if (typeof workflow.setAttackRoll === "function") await workflow.setAttackRoll(nueva);
     else workflow.attackRoll = nueva;
-    await avisoRepeticion(actor, "tirada de ataque", nueva);
+    await avisoRepeticion(actor, "tirada de ataque", nueva, roll.total);
+    anotarRecibo(workflow, actor, "tirada de ataque", roll.total, nueva.total);
   } catch (err) {
     console.error(`${MOD} | Moneda Antigua (ataque midi)`, err);
   }
@@ -2196,14 +2206,17 @@ function engancharMidi() {
     try {
       const actor = target?.actor;
       const r0 = Array.isArray(result) ? result[0] : null;
-      if (r0 && !r0.options?.[MOD]?.soulVisto && esPJ(actor) && (soulCoins(actor) > 0) && esUnoNatural(r0)) {
+      const cd = Number(this.saveDC ?? this.activity?.save?.dc?.value ?? this.item?.system?.save?.dc);
+      const motivo = r0 && !r0.options?.[MOD]?.soulVisto && esPJ(actor) && (soulCoins(actor) > 0) ? motivoPausaMoneda(r0, { objetivo: Number.isFinite(cd) && cd > 0 ? cd : null, modo: modoPausaMoneda() }) : null;
+      if (motivo) {
         foundry.utils.setProperty(r0, `options.${MOD}.soulVisto`, true);
         const que = (context?.rollType === "save") ? "salvación" : "prueba";
-        if (await preguntarSoul(actor, `<b>${actor.name}</b> saca un <b>1 natural</b> (${que}${this.item ? ` contra ${this.item.name}` : ""}).`)) {
+        if (await preguntarSoul(actor, `<b>${actor.name}</b> ${motivo} (${que}${this.item ? ` contra ${this.item.name}` : ""}).`)) {
           const nueva = await r0.reroll();
           foundry.utils.setProperty(nueva, `options.${MOD}`, { soulVisto: true, sinSoul: true });
           result = [nueva, ...result.slice(1)];
-          await avisoRepeticion(actor, que, nueva);
+          await avisoRepeticion(actor, que, nueva, r0.total);
+          anotarRecibo(this, actor, que, r0.total, nueva.total);
         }
       }
     } catch (err) {
@@ -9993,6 +10006,7 @@ async function migrar() {
 Hooks.once("ready", () => {
   RELOJ_PREVIO = game.settings.get(MOD, "relojBarrera");
   game.socket.on(`module.${MOD}`, d => {
+    if (d?.ctl) return; // control del jugador: lo atiende mesa-control.js
     if (!manejarSoulSocket(d)) manejarSocket(d);
   });
   try {
