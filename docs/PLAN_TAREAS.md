@@ -102,9 +102,9 @@
 
 - [x] **0.1 · Mapa de código** (hecha en v3.4.1: docs/MAPA_CODIGO.md) (S · Dep.: —). Crear docs/MAPA_CODIGO.md: para cada tema de la tabla de la sección 1 indicar archivo, funciones y líneas reales (con grep). Añadir dónde está la tabla de reserva de Verbe por nivel (el número 167 no aparece en scripts/, hay que buscarla), dónde se definen los estados y dónde se aplican las técnicas. Listo cuando cada fila tiene función y línea.
 
-- [ ] **0.2 · Línea base** (S · Dep.: —). Ejecutar npm test, npm run check, npm run catalog:audit y npm run balance. Guardar la salida resumida en docs/LINEA_BASE_3.4.md (cuántas pasan, cuáles fallan). Listo cuando hay un punto de partida para comparar.
+- [x] **0.2 · Línea base** (hecha: docs/LINEA_BASE_3.4.md) (S · Dep.: —). Ejecutar npm test, npm run check, npm run catalog:audit y npm run balance. Guardar la salida resumida en docs/LINEA_BASE_3.4.md (cuántas pasan, cuáles fallan). Listo cuando hay un punto de partida para comparar.
 
-- [ ] **0.3 · Cómo se edita el catálogo** (S · Dep.: —). data/verbe.txt parece codificado. Leer tools/catalog.mjs, tools/expand-\*.mjs, tools/evolve-catalog.mjs y el script catalog:expand de package.json. Documentar en docs/CATALOGO_COMO_EDITAR.md: cómo añadir una técnica, cómo modificarla y cómo regenerar el archivo. Desbloquea todas las tareas que crean o cambian técnicas.
+- [x] **0.3 · Cómo se edita el catálogo** (hecha: docs/CATALOGO_COMO_EDITAR.md) (S · Dep.: —). data/verbe.txt parece codificado. Leer tools/catalog.mjs, tools/expand-\*.mjs, tools/evolve-catalog.mjs y el script catalog:expand de package.json. Documentar en docs/CATALOGO_COMO_EDITAR.md: cómo añadir una técnica, cómo modificarla y cómo regenerar el archivo. Desbloquea todas las tareas que crean o cambian técnicas.
 
 ## Fase 1 · Correcciones y control del jugador (publica v3.5.0)
 
@@ -268,24 +268,26 @@
 
 ## Decisiones abiertas
 
-1.  «Soul coin»: ¿es la Moneda Antigua del módulo u otro recurso? (tarea 1.7)
+Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 
-2.  Sangre: ¿una Mirada heredada cuenta dentro de la única sangre, y el Pacto queda aparte? (D5, tarea 2.5a)
+1.  «Soul coin» = la **Moneda Antigua** del módulo (`system.currency.soul`; se unificaron en la v1.x). (1.7)
 
-3.  Clones: topes y detalle de los recuerdos y del entrenamiento acreditado (tarea 3.5c).
+2.  **Sí:** una Mirada heredada es la única sangre del personaje. El Pacto va aparte (se gana en la historia). Un ojo trasplantado no cuenta como sangre. (2.5a)
 
-4.  Estados cuando ataca un NPC: supuesto actual, decide el DM y el jugador que defiende recibe aviso y puede usar reacciones o recursos (tarea 1.6).
+3.  **Clones:** al usar la técnica se pregunta cuánto Verbe se le transfiere y cuántas copias se crean (muy opcional). Cada copia aparece como una ficha nueva «clon de <nombre>» en el campo, con **1 PG** y el Verbe transferido; puede usar técnicas. Si la destruyen, ese Verbe se pierde. Clones sólidos: se pueden infundir con una naturaleza; el de sombras es Verbe puro (técnica rara, como el pergamino prohibido). (3.5)
 
-5.  Seyra y Dhoren: ¿entran al canon del panteón? (tarea 4.4a)
+4.  Estados cuando ataca un NPC: se mantiene el supuesto (decide el DM; el jugador que defiende recibe aviso y puede usar reacciones o recursos). (1.6)
 
-6.  Licencias de PF2e y distribución pública del módulo (tareas 4.2c y 12).
+5.  Seyra y Dhoren: **pendiente**, preguntar al llegar a 4.4a.
 
-7.  Cuántos Trazos, días y qué CD para descubrir una naturaleza (tarea 2.1b).
+6.  Licencias de PF2e: **pendiente**, comprobar en 4.2c.
 
-8.  Cuántas ramas adicionales encarecen y cuánto (fórmula de la tarea 2.4).
+7.  **Naturaleza:** se descubre como en la serie, desde un nivel equivalente a *chunin* (nivel 5) o a un *genin* muy entrenado (nivel 3 con rango Entrenado en Forma). «3 Trazos, 7 días, CD 15» es el precio de una técnica aparte: **Cambiar naturaleza del Verbe**. Además, el Verbe se aprende **por etapas**: nadie lo usa al empezar, y si conocen a un maestro o a un aprendiz por rol, el DM pulsa un botón que les abre la siguiente etapa y más ramas. Debe quedar muy claro para el DM. (2.1)
+
+8.  **Ramas:** +1 Trazo por rango desde la 3.ª rama y +2 desde la 5.ª. (2.4)
 
 ## Registro de progreso
 
 | Fecha | Tarea | IA o persona | Resultado | Versión |
 |-------|-------|--------------|-----------|---------|
-|       |       |              |           |         |
+| 3-nov-2026 | 0.2, 0.3 | Claude | Línea base y guía del catálogo; decisiones 1–4, 7 y 8 respondidas | 3.4.1 (sin versión nueva) |
