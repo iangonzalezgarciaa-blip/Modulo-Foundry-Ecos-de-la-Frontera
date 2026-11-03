@@ -1,10 +1,10 @@
-# Preparar la primera prueba real · 3.9.0
+# Preparar la primera prueba real · 3.9.1
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
 ## Antes de empezar
 
-1. Cierra Foundry para que el actualizador privado pueda instalar esta versión. Conserva su respaldo.
+1. Actualiza el módulo desde Foundry (Configuración → Módulos → Buscar actualizaciones) antes de abrir el mundo de prueba. Conviene un respaldo del mundo.
 2. Reabre un mundo de prueba o utiliza copias de fichas. Comprueba la versión del módulo en Diagnóstico.
 3. Conecta un DM y un jugador. Usa dos navegadores o sesiones separadas para comprobar permisos.
 4. Revisa que estén activos los módulos que quieras probar, incluidos Plutonium y Midi-QOL cuando corresponda. La base de integración es Foundry 13 con dnd5e 5.2.5. En un mundo nuevo, para probar el Verbe entre DM y jugador, pon Capa V en Activo y recarga ambos clientes; Prueba solo lo habilita al DM.
@@ -92,7 +92,7 @@ Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el pan
 
 ### 14. Actualizar con respaldo
 
-Con Foundry cerrado, deja que el actualizador privado instale el Release. Reabre el mundo de prueba y comprueba versión y datos. Conserva el respaldo hasta terminar la revisión.
+Respalda el mundo de prueba. En la pantalla de inicio de Foundry, Módulos → Buscar actualizaciones y actualiza Ecos. Reabre el mundo y comprueba versión y datos. Conserva el respaldo hasta terminar la revisión.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 

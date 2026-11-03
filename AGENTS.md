@@ -17,10 +17,15 @@ El flujo `.github/workflows/release.yml` automatiza la publicación al cambiar l
 
 Esta regla aplica a las versiones del módulo; los cambios de documentación o de herramientas sin cambio de versión no requieren crear versiones nuevas.
 
-## Privacidad y actualizaciones
+## Visibilidad y actualizaciones
 
-El autor ha rechazado expresamente publicar su trabajo mientras esté en desarrollo. **Mantener privados el repositorio, los Releases y cualquier copia o distribución.** No proponer hacer público el proyecto otra vez ni cambiar su visibilidad. Incluso al terminarlo, cualquier publicación pública requiere una autorización nueva y explícita.
+El 3-nov-2026 el autor hizo público el repositorio y pidió usar el actualizador nativo de Foundry (versión 3.9.1). **No cambiar la visibilidad del repositorio sin una orden nueva y explícita del autor**, en ningún sentido.
 
-El autor quiere una configuración inicial y actualizaciones posteriores automáticas. En Windows se usa el actualizador privado local con GitHub CLI. Las nuevas versiones terminadas se publican como Releases privados y el actualizador las instala cuando no detecta Foundry abierto. No incrustar tokens en el módulo, en URLs ni en el archivo de configuración del actualizador.
+`package.json` declara `ecosUpdateMode: public`:
+- `module.json` anuncia `manifest` en la dirección estable del último Release y `download` en el ZIP de su versión.
+- El flujo de publicación lo comprueba.
+- Foundry instala y actualiza desde ahí, sin descargas manuales.
 
-`package.json` declara `ecosUpdateMode: private`. En este modo el manifiesto no debe anunciar enlaces nativos que Foundry no pueda descargar sin autenticación. No afirmar que la tarea está instalada en el PC del autor hasta comprobarlo allí.
+El actualizador privado de Windows (`tools/windows/`) queda retirado: se conserva el código y sus pruebas, pero los Releases ya no lo adjuntan. No incrustar tokens en el módulo, en URLs ni en ninguna configuración.
+
+Con el repositorio público, cualquiera puede leer `docs/` y decodificar el catálogo. Avisar al autor antes de añadir al repositorio secretos de campaña nuevos; los que solo deban ver él y su mesa van en los diarios de su mundo.

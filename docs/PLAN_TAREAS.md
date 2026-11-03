@@ -18,7 +18,7 @@
 
 ## 1. Contexto del proyecto
 
-- **Módulo:** «Ecos de la frontera · Reglas de la casa», id ecos-frontera, v3.4.0 (31-oct-2026), para Foundry VTT v13 y dnd5e 5.2.5 o superior. Repo: https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera (rama main; público por ahora).
+- **Módulo:** «Ecos de la frontera · Reglas de la casa», id ecos-frontera, v3.4.0 (31-oct-2026), para Foundry VTT v13 y dnd5e 5.2.5 o superior. Repo: https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera (rama main; público desde el 3-nov-2026, con actualización nativa de Foundry desde 3.9.1).
 
 - **Mundo de uso:** «Fantasy and Agony» (D&D 5e). Existe otro mundo, «Esperanza Oculta», de Pathfinder 2e, para una campaña futura. Módulos presentes en el mundo: midi-qol, Chris's Premades, Plutonium, Active Auras, JB2A, entre otros.
 
@@ -298,3 +298,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 3-nov-2026 | 3.1–3.6 | Claude | Choque en cualquier rama, defensas del catálogo, 18 contratécnicas, Canalizando y 27 cargadas, clones con ficha; corrección del alcance en pies (Cuerpo), ventanas y nombres ocultos. Release v3.7.0 | 3.7.0 |
 | 3-nov-2026 | 4.1–4.8 | Claude | Conjuros en el choque, 20 formas puras, 10 plantillas de NPC, iconos, reglas y macro de PF2e; borrador de lore 4.1a para aprobar. Release v3.8.0 | 3.8.0 |
 | 3-nov-2026 | 5.1a–c, 5.2a | Claude | Música de YouTube sincronizada con el reproductor oficial (cola, volumen por equipo); inventario de acoplamiento a dnd5e. 5.2b espera la aprobación del autor. Release v3.9.0 | 3.9.0 |
+| 3-nov-2026 | Actualizaciones | Claude | El autor hizo público el repositorio: manifiesto y descarga nativos de Foundry; se retira el actualizador de Windows. Release v3.9.1 | 3.9.1 |

@@ -1,4 +1,12 @@
-# Ecos de la frontera · Reglas de la casa (v3.9.0)
+# Ecos de la frontera · Reglas de la casa (v3.9.1)
+
+**Instalar o actualizar:** en la pantalla de inicio de Foundry, Módulos → Instalar módulo y pega este manifiesto:
+
+```
+https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera/releases/latest/download/module.json
+```
+
+Desde ahí Foundry avisa y actualiza solo (Módulos → Buscar actualizaciones). [Más detalle](docs/ACTUALIZACIONES.md).
 
 **Novedades de 3.9:**
 - **Música:** el DM pega un enlace de YouTube en la Mesa Ecos y suena para todos a la vez, con cola y volumen propio de cada jugador. Usa el reproductor oficial de YouTube.
@@ -65,7 +73,7 @@
 
 **Acceso:** Mesa Ecos en la ficha, Ajustes o **Ctrl + M**. [Vista de la mesa](docs/preview/mesa.html) · [Vista del Verbe](docs/preview/interfaz.html). Las vistas son HTML real con datos ficticios; queda por comprobar el recorrido dentro del Foundry instalado.
 
-**Actualización privada:** el actualizador instala los Releases cuando Foundry está cerrado y conserva un respaldo. El BAT activa o pausa la tarea y puede avisar tras actualizar. [Instrucciones](docs/ACTUALIZACIONES.md) · [Paquete manual 3.4.0](releases/ecos-frontera-3.4.0.zip).
+**Actualizaciones:** desde 3.9.1 las hace Foundry con su propio actualizador (manifiesto público). El actualizador de Windows de las versiones anteriores ya no hace falta: detenlo con su BAT. [Instrucciones](docs/ACTUALIZACIONES.md).
 
 Módulo de Foundry VTT v13 para dnd5e 5.x hecho para la campaña **Ecos de la frontera** (mundo *Fantasy and Agony*). Automatiza las reglas de supervivencia, el trabajo de los PJ, la economía del Valle de Arcegris y el Mercadillo.
 
@@ -78,7 +86,7 @@ Este README es la referencia técnica. Lo que es solo para el DM (secretos, merc
 
 ---
 
-[Cambios y uso de la revisión 2.10](docs/REVISION_2.10.md) · [Calibración de niveles y Trazos](docs/PROGRESION_2.10.md). El Release incluye `Ecos-Autoactualizacion.bat` para activar/detener la tarea ya instalada y avisar en Windows tras instalar una versión nueva. Descarga el BAT nuevo y pulsa Activar una vez para habilitar los avisos.
+[Cambios y uso de la revisión 2.10](docs/REVISION_2.10.md) · [Calibración de niveles y Trazos](docs/PROGRESION_2.10.md).
 
 ## 1. Requisitos e instalación
 

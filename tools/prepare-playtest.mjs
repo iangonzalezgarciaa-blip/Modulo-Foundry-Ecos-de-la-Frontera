@@ -7,7 +7,7 @@ Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, int
 
 ## Antes de empezar
 
-1. Cierra Foundry para que el actualizador privado pueda instalar esta versión. Conserva su respaldo.
+1. Actualiza el módulo desde Foundry (Configuración → Módulos → Buscar actualizaciones) antes de abrir el mundo de prueba. Conviene un respaldo del mundo.
 2. Reabre un mundo de prueba o utiliza copias de fichas. Comprueba la versión del módulo en Diagnóstico.
 3. Conecta un DM y un jugador. Usa dos navegadores o sesiones separadas para comprobar permisos.
 4. Revisa que estén activos los módulos que quieras probar, incluidos Plutonium y Midi-QOL cuando corresponda. La base de integración es Foundry 13 con dnd5e 5.2.5. En un mundo nuevo, para probar el Verbe entre DM y jugador, pon Capa V en Activo y recarga ambos clientes; Prueba solo lo habilita al DM.

@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.9.1 — 2026-11-03
+
+- Actualización nativa de Foundry: el repositorio pasa a público por decisión del autor y `module.json` anuncia el manifiesto estable (`releases/latest/download/module.json`) y el ZIP de cada versión. Foundry avisa y actualiza el módulo solo, desde Módulos → Buscar actualizaciones. El actualizador de Windows (`Ecos-Actualizar.ps1` y su BAT) queda retirado: los Releases ya no lo adjuntan; las copias instaladas se detienen con su BAT («Detener»).
+- Sin cambios de reglas ni de catálogo.
+
 ## 3.9.0 — 2026-11-03
 
 - Música de YouTube en la mesa: en Mesa Ecos → Control el DM pega un enlace y suena para todos a la vez, en el mismo segundo (quien entra tarde empieza donde va). Reproducir, pausa, seguir, siguiente, detener y una cola de hasta 50 que avanza sola. Cada jugador elige su volumen en los ajustes del módulo y puede silenciarlo solo para él. Usa el reproductor oficial incrustado de YouTube, visible abajo a la izquierda; no descarga audio. Informe de módulos parecidos en docs/MUSICA_YOUTUBE.md (tareas 5.1a–c).
