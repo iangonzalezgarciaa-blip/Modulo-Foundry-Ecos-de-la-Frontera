@@ -1,26 +1,26 @@
-# Cobertura declarada del catálogo 3.6.0
+# Cobertura declarada del catálogo 3.7.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **861 técnicas y 219 dotes**.
+El catálogo reúne **892 técnicas y 222 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
-| Forma | 174 | 42 |
-| Velo | 53 | 24 |
-| Cuerpo | 66 | 25 |
+| Forma | 180 | 44 |
+| Velo | 56 | 24 |
+| Cuerpo | 68 | 25 |
 | Mirada | 59 | 30 |
-| Sello | 71 | 41 |
-| Pacto | 57 | 32 |
-| Pulso | 50 | 30 |
-| Hilo | 66 | 16 |
-| Quietud | 50 | 28 |
-| Rastro | 50 | 45 |
-| Sangre | 85 | 31 |
-| Umbral | 33 | 28 |
-| Vasija | 47 | 18 |
+| Sello | 74 | 41 |
+| Pacto | 60 | 32 |
+| Pulso | 51 | 30 |
+| Hilo | 68 | 16 |
+| Quietud | 52 | 28 |
+| Rastro | 53 | 45 |
+| Sangre | 86 | 31 |
+| Umbral | 36 | 28 |
+| Vasija | 49 | 18 |
 
 ## Técnicas
 
@@ -887,6 +887,37 @@ El catálogo reúne **861 técnicas y 219 dotes**.
 | `vida-sello-sello-despensa` | Sello de la despensa | 1 | sello | utility | 0 |
 | `vida-sello-etiqueta-almacen` | Etiqueta del almacén | 0 | sello | utility | 0 |
 | `forma-cambiar-naturaleza` | Cambiar naturaleza del Verbe | 2 | forma | utility | 0 |
+| `cuerpo-palma-desvia` | Palma que desvía | 1 | cuerpo | utility | 1 |
+| `cuerpo-patada-quiebre` | Patada que quiebra | 2 | cuerpo | attack | 0 |
+| `hilo-red-parada` | Red de parada | 1 | hilo | utility | 1 |
+| `hilo-cuchillas-suspendidas` | Cuchillas suspendidas | 3 | hilo | attack | 0 |
+| `velo-reflejo-falso` | Reflejo falso | 1 | velo | utility | 1 |
+| `velo-punzada-mente` | Punzada en la mente | 2 | velo | save | 0 |
+| `sello-parada` | Sello de parada | 2 | sello | utility | 1 |
+| `sello-lanza` | Lanza de sello | 3 | sello | attack | 0 |
+| `rastro-paso-medido` | Paso medido | 1 | rastro | utility | 1 |
+| `rastro-golpe-grieta` | Golpe en la grieta | 2 | rastro | attack | 0 |
+| `umbral-paso-corto` | Paso de umbral | 2 | umbral | utility | 1 |
+| `umbral-desgarro` | Desgarro del umbral | 4 | umbral | save | 0 |
+| `quietud-raiz-firme` | Raíz firme | 1 | quietud | utility | 1 |
+| `quietud-peso-entorno` | Peso del entorno | 3 | quietud | save | 0 |
+| `vasija-piel-huesped` | Piel del huésped | 2 | vasija | utility | 1 |
+| `vasija-zarpazo` | Zarpazo del huésped | 3 | vasija | attack | 0 |
+| `pacto-guardian` | Guardián del pacto | 1 | pacto | utility | 1 |
+| `pacto-embestida` | Embestida del aliado | 3 | pacto | attack | 0 |
+| `forma-fuego-sol-cautivo` | Sol cautivo | 3 | forma | save | 0 |
+| `forma-agua-ola-contenida` | Ola contenida | 3 | forma | save | 0 |
+| `forma-tierra-puno-montana` | Puño de la montaña | 4 | forma | attack | 0 |
+| `forma-rayo-lanza-tormenta` | Lanza de tormenta | 3 | forma | attack | 0 |
+| `umbral-puerta-colapso` | Puerta que colapsa | 4 | umbral | save | 0 |
+| `velo-pesadilla-lenta` | Pesadilla lenta | 3 | velo | save | 0 |
+| `sello-sello-mayor` | Sello de peso | 4 | sello | save | 1 |
+| `pacto-llamada-larga` | Llamada larga | 3 | pacto | attack | 0 |
+| `pulso-cauce-vida` | Cauce de vida | 3 | pulso | heal | 0 |
+| `rastro-tiro-paciente` | Tiro paciente | 3 | rastro | attack | 0 |
+| `sangre-latido-antiguo` | Latido de la sangre | 4 | sangre | save | 0 |
+| `forma-clon-sombra` | Clon de sombra | 5 | forma | utility | 0 |
+| `forma-clones-masivos` | Legión de sombras | 8 | forma | utility | 0 |
 
 ## Dotes
 
@@ -1113,6 +1144,9 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `reserva-estable` | Reserva estable | 3 | nivel 9 | recLargoPlano |
 | `coordinacion-consciente` | Coordinación consciente | 3 | nivel 11 | actividad propia |
 | `pulso-compasivo` | Pulso compasivo | 2 | nivel 5 | actividad propia |
+| `clon-economico` | Clones económicos | 3 | Clon de sombra o una técnica de clones | Texto/mesa |
+| `clon-multiple` | Clones múltiples | 4 | Clones económicos | Texto/mesa |
+| `clon-legion` | Legión | 6 | Clones múltiples y Clon de sombra | Texto/mesa |
 
 ## Automatización y alcance actual
 

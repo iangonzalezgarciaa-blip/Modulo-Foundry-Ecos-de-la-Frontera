@@ -9567,8 +9567,8 @@ const CONFIG_MODULOS = [
       return n ? 1 : 0;
     },
     texto: "los enemigos derrotados dejan su mancha (sangre; quemadura en elementales, demonios y constructos; baba verde en limos y plantas; gris en no muertos) y su cuerpo queda medio transparente para todos, para poder saquearlo." },
-  { id: "healthEstimate", v: 2, ajustes: { "core.estimations": ESTIMACIONES, "core.deathStateName": "Muerto", "core.showDescription": 0, "core.NPCsJustDie": true,
-    "core.menuSettings.fontSize": 16 },
+  { id: "healthEstimate", v: 3, ajustes: { "core.estimations": ESTIMACIONES, "core.deathStateName": "Muerto", "core.showDescription": 0, "core.NPCsJustDie": true,
+    "core.menuSettings.fontSize": 11, "core.unknownEntity": "Alguien" },
     texto: "al pasar el ratón sobre un token se ve, en letra más chica, lo que se nota a simple vista («Sin un rasguño», «Rasguñado», «Golpeado», «Sangra», «Tambalea», «En el suelo»), con textos propios para no muertos, constructos, plantas, limos y enjambres; los PJ a 0 PG salen como «Acechado por la Muerte». No dice los PG." },
   { id: "torch", v: 1, ajustes: { gameLightSources: `${RUTA}/data/torch-es.json` },
     texto: "el botón de la llama del token reconoce antorchas, velas, lámparas, faroles y los trucos Luz, Luces danzantes y Crear llama con sus nombres en español. Las antorchas y velas se gastan del inventario." },

@@ -22,6 +22,7 @@ import { plantillaEnEscena } from "./verbe-plantillas.js";
 import { problemasTecnica } from "./verbe-validate.js";
 import { tramoReserva, tramoFuerza, tramoVida, queVe } from "./verbe-lectura.js";
 import { cargaDe, bonoCarga, cdInterrupcion, textoCarga } from "./verbe-canalizar.js";
+import { clonDe, limitesClones, repartoClones } from "./verbe-clones.js";
 import { DADOS_VERBE, dadoNivel, modoReserva, reservaBase, nivelesSinTirar } from "./verbe-reserva.js";
 import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
@@ -345,6 +346,107 @@ async function golpeCanalizando(actor, dano) {
   const roll = Array.isArray(r) ? r[0] : r;
   if (!roll || roll.total < cd) await interrumpirCanal(actor, `recibe ${dano} de daño y falla la salvación (CD ${cd})`);
 }
+/** Rearma las técnicas de todas las fichas despiertas (también tokens no vinculados) si cambió su ficha base. */
+export async function rearmarMundo() {
+  if (!soyGM()) return 0;
+  const actores = [...(game.actors ?? [])];
+  for (const sc of game.scenes ?? []) for (const t of sc.tokens ?? []) if (!t.actorLink && t.actor) actores.push(t.actor);
+  let n = 0;
+  for (const a of actores) {
+    if (!despierto(a) || !itemsTecnica(a).length) continue;
+    try { await refrescar(a); n++; } catch (err) { console.warn(`${MOD} | rearmar ${a.name}`, err); }
+  }
+  return n;
+}
+/* ---------- Clones del Verbe (3.5) ---------- */
+const esClon = a => !!a?.getFlag?.(MOD, F)?.clon;
+/** Al usar una técnica de clones: pregunta (si quiere) cuántas copias y cuánto Verbe le da a cada una. */
+async function pedirClones(actor, item, meta) {
+  if (!actor?.isOwner) return;
+  const c = clonDe(meta), lim = limitesClones(c, { dotes: dotesActivas(actor), competencia: competencia(actor) });
+  const disp = Math.max(0, Number(estado(actor)?.valor) || 0);
+  const sugerido = Math.max(lim.minimo, Math.min(disp, Math.floor(disp / (lim.copias + 1)) || lim.minimo));
+  const r = await foundry.applications.api.DialogV2.wait({
+    window: { title: `${item.name} · clones`, icon: "fa-solid fa-people-group" },
+    content: `<div class="ecos-dialogo"><p>Cada copia es una ficha nueva <b>«Clon de ${escH(actor.name)}»</b> junto a ti, con ${c.pg} PG${c.ca ? ` y CA ${c.ca}` : ""} y el Verbe que le des (sale de tu reserva: tienes ${disp}). Puede usar tus técnicas. Si la destruyen, ese Verbe se pierde; si la disipas, te vuelve lo que le quede y recuerdas lo que vivió (sin experiencia).</p>
+      <label>Copias (1 a ${lim.copias}) <input name="copias" type="number" min="1" max="${lim.copias}" value="1"></label>
+      <label>Verbe para cada una (mínimo ${lim.minimo}) <input name="verbe" type="number" min="${lim.minimo}" value="${sugerido}"></label></div>`,
+    rejectClose: false,
+    buttons: [{ action: "crear", label: "Crear los clones", icon: "fa-solid fa-check", default: true, callback: (_e, b) => ({ copias: Number(b.form.elements.copias.value), verbe: Number(b.form.elements.verbe.value) }) },
+      { action: "no", label: "Ninguno", icon: "fa-solid fa-xmark" }]
+  });
+  if (!r || typeof r !== "object") return;
+  const ok = repartoClones(r, { disponible: disp, limites: lim });
+  if (!ok.ok) return avisoUso(ok.motivo);
+  alDM({ accion: "capaVClones", actorUuid: actor.uuid, tecnica: meta.id, copias: ok.copias, verbe: ok.verbe });
+}
+/** Lo hace el DM: descuenta el Verbe y crea las fichas y los tokens junto al creador. */
+async function crearClones(creador, d) {
+  if (!soyGM()) return false;
+  const meta = itemsDe(creador, d.tecnica)[0]?.getFlag(MOD, F) ?? tecnicaPorId(d.tecnica, creador)?.item?.flags?.[MOD]?.[F];
+  const c = clonDe(meta); if (!c) return false;
+  const lim = limitesClones(c, { dotes: dotesActivas(creador), competencia: competencia(creador) }), e = estado(creador);
+  const ok = repartoClones(d, { disponible: Math.max(0, Number(e.valor) || 0), limites: lim });
+  if (!ok.ok) { await susurrarDM("Clones", `<p>${escH(creador.name)}: ${escH(ok.motivo)}</p>`); return false; }
+  await guardar(creador, { valor: (Number(e.valor) || 0) - ok.total, historial: hist(e, `Crea ${ok.copias} clon${ok.copias > 1 ? "es" : ""} (${ok.verbe} Verbe cada uno)`) });
+  let carpeta = game.folders?.find?.(f => f.type === "Actor" && f.name === "Clones del Verbe");
+  if (!carpeta && globalThis.Folder?.create) carpeta = await Folder.create({ name: "Clones del Verbe", type: "Actor" });
+  const base = creador.toObject();
+  for (const k of ["_id", "_stats", "sort", "folder"]) delete base[k];
+  base.ownership = foundry.utils.deepClone(creador.ownership ?? creador.baseActor?.ownership ?? { default: 0 });
+  base.folder = carpeta?.id ?? null;
+  const nonce = foundry.utils.randomID();
+  const datos = Array.from({ length: ok.copias }, (_, i) => {
+    const x = foundry.utils.deepClone(base);
+    x.name = `Clon de ${creador.name}${ok.copias > 1 ? ` ${i + 1}` : ""}`;
+    foundry.utils.setProperty(x, "system.attributes.hp.value", c.pg);
+    foundry.utils.setProperty(x, "system.attributes.hp.max", c.pg);
+    foundry.utils.setProperty(x, "system.attributes.hp.temp", 0);
+    if (c.ca) foundry.utils.setProperty(x, "system.attributes.ac", { calc: "flat", flat: c.ca });
+    const v = foundry.utils.deepClone(x.flags?.[MOD]?.[F] ?? {});
+    Object.assign(v, { valor: ok.verbe, compras: [], historial: [`Clon de ${creador.name}`], clon: { de: creador.uuid, deNombre: creador.name, tecnica: d.tecnica, verbe: ok.verbe, nonce, creado: Date.now(), registro: [] } });
+    foundry.utils.setProperty(x, `flags.${MOD}.${F}`, v);
+    foundry.utils.setProperty(x, `flags.${MOD}.pj`, false);
+    if (x.prototypeToken) { x.prototypeToken.name = x.name; x.prototypeToken.actorLink = true; delete x.prototypeToken.actorId; }
+    return x;
+  });
+  const creados = await Actor.createDocuments(datos);
+  const tok = creador.getActiveTokens?.()[0]?.document ?? creador.token ?? null, escena = tok?.parent ?? canvas?.scene;
+  if (escena && tok) {
+    const g = escena.grid?.size ?? 100, pasos = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+    const tokens = [];
+    for (const [i, a] of creados.entries()) {
+      const [dx, dy] = pasos[i % pasos.length], vuelta = Math.floor(i / pasos.length) + 1;
+      const t = (await a.getTokenDocument({ x: tok.x + dx * g * vuelta, y: tok.y + dy * g * vuelta })).toObject();
+      tokens.push(t);
+    }
+    await escena.createEmbeddedDocuments("Token", tokens);
+  }
+  aLaMesa(creador, "✦ Clones", `<p>${escH(creador.name)} crea <b>${ok.copias}</b> clon${ok.copias > 1 ? "es" : ""} con <b>${ok.verbe} Verbe</b> cada uno (${ok.total} en total). Cada uno tiene ${c.pg} PG. Si los destruyen, ese Verbe se pierde.</p>`);
+  return creados;
+}
+/** Disipar (o destruir) un clon: si lo disipa su creador le vuelve el Verbe que le quede; siempre deja recuerdos. */
+export async function disiparClon(clon, { destruido = false } = {}) {
+  if (!soyGM() || !esClon(clon)) return false;
+  const info = estado(clon).clon, resto = Math.max(0, Number(estado(clon).valor) || 0);
+  let creador = null; try { creador = fromUuidSync(info.de); } catch { creador = null; }
+  creador = creador instanceof Actor ? creador : creador?.actor ?? null;
+  if (creador && !destruido && resto) {
+    const ec = estado(creador); await guardar(creador, { valor: Math.min(maxVerbe(creador), (Number(ec.valor) || 0) + resto), historial: hist(ec, `Disipa un clon: recupera ${resto} Verbe`) });
+  }
+  const vivido = (info.registro ?? []).join(" · ");
+  let recuerdos = vivido;
+  try {
+    const r = await foundry.applications.api.DialogV2.wait({ window: { title: `Recuerdos de ${clon.name}` },
+      content: `<div class="ecos-dialogo"><p>${destruido ? "Lo destruyeron: su Verbe se pierde." : `Su creador lo disipa: recupera ${resto} Verbe.`} Escribe o aprueba lo que su creador recuerda (lo que vio, oyó, sintió y aprendió). No da experiencia.</p><textarea name="r" rows="6" maxlength="2000">${escH(vivido)}</textarea></div>`,
+      rejectClose: false, buttons: [{ action: "ok", label: "Enviar recuerdos", default: true, callback: (_e, b) => b.form.elements.r.value }, { action: "no", label: "Sin recuerdos" }] });
+    recuerdos = typeof r === "string" && r !== "no" ? r : (r === "no" ? "" : vivido);
+  } catch { /* sin ventana */ }
+  if (creador) aLaMesa(creador, `✦ Recuerdos del clon`, `<p>${escH(clon.name)} ${destruido ? "se deshace al recibir el golpe" : "se disipa"}${!destruido && resto ? ` y devuelve ${resto} Verbe` : ""}.${recuerdos ? ` ${escH(creador.name)} recuerda: <i>${escH(recuerdos)}</i>` : ""}</p><p class="ecos-nota">Los recuerdos no dan experiencia.</p>`, { soloDueno: true });
+  for (const sc of game.scenes ?? []) { const ids = (sc.tokens ?? []).filter(t => t.actorId === clon.id).map(t => t.id); if (ids.length) await sc.deleteEmbeddedDocuments("Token", ids); }
+  await clon.delete();
+  return true;
+}
 export async function revisarSangres() {
   if (!soyGM() || !D) return [];
   const conflictos = [];
@@ -579,7 +681,7 @@ function permisoAprendido(actor,meta){
 }
 async function efectosShinobi(actor,item,uso) {
   const meta=item.getFlag(MOD,F), fuentes=(item.effects??[]).map(e=>e.toObject?e.toObject():foundry.utils.deepClone(e)).filter(e=>e.flags?.[MOD]?.[F]?.aplicarUsuario);
-  if (meta.dividirVerbe) {
+  if (meta.dividirVerbe && !clonDe(meta)) {
     const dur=item.system.duration, segundos=Math.max(6,(Number(dur?.value)||1)*({round:6,minute:60,hour:3600,day:86400}[dur?.units]||60));
     fuentes.push({name:'Formación de réplicas',duration:{seconds:segundos,rounds:Math.ceil(segundos/6)},changes:[],statuses:[],flags:{[MOD]:{[F]:{replicas:true,grupoModo:'replicas',nonce:uso.nonce}}},description:'Energía realmente repartida. Una acción ofensiva conjunta por turno; el saldo no gastado se pierde al disiparlas. No duplica depósitos, inventario ni progresión.'});
   }
@@ -809,6 +911,7 @@ export function costoUso(actor, meta, grado, { infusion = null } = {}) {
   c += ajusteClima(nat, meta);
   // Tu naturaleza de nacimiento (la primera) te sale más natural: 1 Verbe menos, mínimo 1.
   if (nat && nat === naturalezaPropia(actor) && c > 1) c -= 1;
+  if (clonDe(meta) && tieneDote(actor, "clon-economico")) c -= 1;
   if (grado > 0) c = Math.max(pisoCosto(grado,D.costo), c);
   // Abrir un ojo cuesta 1 por minuto; quien lo lleva trasplantado paga el doble.
   if (meta.rama === "mirada") {
@@ -875,6 +978,42 @@ function efectoEstado(st, id, doble = false) {
     flags: { [MOD]: { [F]: { estado: st } } } };
 }
 
+/**
+ * El catálogo mide en metros. En un mundo en pies (dnd5e sin «unidades métricas»), el alcance y las plantillas de la
+ * ficha se pasan a pies (1,5 m = 5 pies): midi-qol compara el alcance sin convertir y un golpe de 1,5 m quedaba
+ * «fuera de alcance» contra un objetivo al lado, así que no se tiraba nada (3.7.0, técnicas de Cuerpo).
+ */
+const metricoMundo = () => { try { return !!game.settings.get("dnd5e", "metricLengthUnits"); } catch { return false; } };
+const aPies = v => (Number.isFinite(Number(v)) && v !== "" && v !== null ? Math.round(Number(v) / 0.3 * 100) / 100 : v);
+export function medidasDelMundo(data, metrico = metricoMundo()) {
+  if (metrico || !data?.system) return data;
+  const r = data.system.range;
+  if (r?.units === "m") Object.assign(r, { units: "ft", value: aPies(r.value), ...(r.long ? { long: aPies(r.long) } : {}), ...(r.reach ? { reach: aPies(r.reach) } : {}) });
+  const tpl = data.system.target?.template;
+  if (tpl?.units === "m") Object.assign(tpl, { units: "ft", size: aPies(tpl.size), width: aPies(tpl.width), height: aPies(tpl.height) });
+  for (const act of Object.values(data.system.activities ?? {})) {
+    if (act.range?.override && act.range.units === "m") Object.assign(act.range, { units: "ft", value: aPies(act.range.value) });
+    const t2 = act.target?.template;
+    if (act.target?.override && t2?.units === "m") Object.assign(t2, { units: "ft", size: aPies(t2.size), width: aPies(t2.width), height: aPies(t2.height) });
+  }
+  return data;
+}
+/** Si una técnica no se puede usar, además del aviso sale una ventana: que el jugador sepa qué pasa (3.7). */
+function avisoUso(texto) {
+  aviso(texto, "warn");
+  try { foundry.applications.api.DialogV2.prompt?.({ window: { title: "No se usó la técnica", icon: "fa-solid fa-circle-info" }, content: `<p>${escH(texto)}</p>`, rejectClose: false })?.catch?.(() => null); } catch { /* sin ventanas */ }
+}
+/** Después de usar una técnica que no tira dados (utilidad o refuerzo), una ventana explica qué quedó activo. */
+async function explicarUso(actor, item, meta) {
+  const acts = Object.values(item.system?.activities?.contents ?? item.system?.activities ?? {});
+  if (acts.some(a => ["attack", "save", "damage", "heal"].includes(a.type))) return;
+  if (!game.user || !actor?.isOwner) return;
+  const efectos = actor.effects.filter(x => x.origin === item.uuid && !x.disabled).map(x => x.name);
+  const tec = tecnicaPorId(meta.id, actor);
+  const html = `<p><b>${escH(item.name)}</b>: ${escH(String(tec?.texto ?? "").split(/(?<=\.)\s/)[0])}</p>
+    <p>${efectos.length ? `Queda activo sobre ti: <b>${efectos.map(escH).join(", ")}</b>. No tira dados ahora: se suma a lo que hagas mientras dure.` : "No tira dados: es una utilidad. El DM resuelve su efecto en la mesa."}</p>`;
+  try { await foundry.applications.api.DialogV2.prompt({ window: { title: "Qué pasó", icon: "fa-solid fa-circle-info" }, content: html, rejectClose: false }); } catch { /* sin ventanas */ }
+}
 /** Párrafo de la ficha para las técnicas cargadas (3.3). */
 const fichaCarga = meta => { const c = cargaDe(meta); return c ? `<p class="ev-nota"><b>Cargada.</b> ${escH(textoCarga(c))}</p>` : ""; };
 /** Arma los datos del objeto para este actor a partir de la técnica base. */
@@ -968,6 +1107,7 @@ export function datosItem(actor, tec) {
   meta.infusion = inf;
   meta.cultivo = cul?.nivel ?? 0;
   data.system.description.value = (data.system.description.value ?? "") + fichaCarga(meta) + notaPersonal(actor, tec, extra, inf, cul);
+  medidasDelMundo(data);
   const {firma:anteriorFirma,...metadatos}=meta;
   meta.firma = firma(JSON.stringify([data.name, data.system, data.effects,metadatos]));
   return data;
@@ -1349,42 +1489,42 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
     const actor = item.actor;
     if (!editarActor(actor)) return false;
     if (enSerie.ocupada(claveActor(actor)) || (consumoPendiente(actor) && consumoPendiente(actor).config !== usageConfig)) {
-      aviso("Ya hay una operación de Verbe en curso para este personaje.", "warn");
+      avisoUso("Ya hay una operación de Verbe en curso para este personaje.");
       return false;
     }
     const e = estado(actor);
-    if (!e?.despierto) { aviso(`${actor?.name ?? "Este actor"} no tiene el Verbe despierto.`, "warn"); return false; }
+    if (!e?.despierto) { avisoUso(`${actor?.name ?? "Este actor"} no tiene el Verbe despierto.`); return false; }
     if (usageConfig?.consume === false) {
       if (game.user.isGM) return;
-      aviso("Solo el DM puede omitir el gasto de una técnica.", "warn");
+      avisoUso("Solo el DM puede omitir el gasto de una técnica.");
       return false;
     }
     const acceso = accesoShinobi(meta, contextoShinobi(actor), true);
-    if (!acceso.ok) { aviso(acceso.motivo,"warn"); return false; }
-    if (cargaDe(meta) && !(e.canalizada?.id === meta.id && e.canalizada?.lista)) { aviso("Es una técnica cargada: primero canalízala desde el panel (Mis técnicas → Canalizar) y libérala cuando tenga carga.", "warn"); return false; }
-    const aprendido=permisoAprendido(actor,meta);if(!aprendido.ok){aviso(aprendido.motivo,"warn");return false;}
+    if (!acceso.ok) { avisoUso(acceso.motivo); return false; }
+    if (cargaDe(meta) && !(e.canalizada?.id === meta.id && e.canalizada?.lista)) { avisoUso("Es una técnica cargada: primero canalízala desde el panel (Mis técnicas → Canalizar) y libérala cuando tenga carga."); return false; }
+    const aprendido=permisoAprendido(actor,meta);if(!aprendido.ok){avisoUso(aprendido.motivo);return false;}
     const grado = meta.g + (Number(usageConfig?.scaling) || 0);
-    if(grado>meta.g){const accesoElevado=accesoObtencion({...meta,g:grado},{nivel:nivelDe(actor),dotes:dotesActivas(actor)});if(!accesoElevado.ok){aviso(accesoElevado.motivo,"warn");return false;}}
+    if(grado>meta.g){const accesoElevado=accesoObtencion({...meta,g:grado},{nivel:nivelDe(actor),dotes:dotesActivas(actor)});if(!accesoElevado.ok){avisoUso(accesoElevado.motivo);return false;}}
     const cuota=permisoCuota(grado,{nivel:nivelDe(actor),dotes:dotesActivas(actor),usados:e.cuotasPoder});
-    if(!cuota.ok){aviso(cuota.motivo,"warn");return false;}
+    if(!cuota.ok){avisoUso(cuota.motivo);return false;}
     const concentracion=permisoConcentracion(actor,item,usageConfig,grado);
-    if(!concentracion.ok){aviso(concentracion.motivo,"warn");return false;}
+    if(!concentracion.ok){avisoUso(concentracion.motivo);return false;}
     const fuerte = meta.fuerte ? extraContraFuerte(actor) : { extra: 0, quien: null };
     const costo = costoUso(actor, meta, grado, { infusion: meta.infusion }) + fuerte.extra;
     const replica = usageConfig?.ecosReplica === true;
-    if (replica && (grado > capacidadReplicas(actor) || meta.dividirVerbe || meta.ritual || meta.liberarReserva || meta.prestamo || e.accionReplicaUsada || !efectoV(actor,"replicas") || Object.values(item.system.activities ?? {}).some(a=>a.type === "utility"))) { aviso("Las réplicas comparten una acción ofensiva, respetan su límite de grado y no duplican poderes o recursos especiales.","warn"); return false; }
+    if (replica && (grado > capacidadReplicas(actor) || meta.dividirVerbe || meta.ritual || meta.liberarReserva || meta.prestamo || e.accionReplicaUsada || !efectoV(actor,"replicas") || Object.values(item.system.activities ?? {}).some(a=>a.type === "utility"))) { avisoUso("Las réplicas comparten una acción ofensiva, respetan su límite de grado y no duplican poderes o recursos especiales."); return false; }
     const valor = Number(replica ? e.reservaReplicas : e.valor) || 0;
     const reaccion = item.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R";
-    const turno=consumosChoque.has(usageConfig)?{ok:true}:permisoTurno(grado,{combate:game.combat?.started?(game.combat.id??"combate"):null,estado:e.turnoTecnicas,reaccion,replica});if(!turno.ok){aviso(turno.motivo,"warn");return false;}
+    const turno=consumosChoque.has(usageConfig)?{ok:true}:permisoTurno(grado,{combate:game.combat?.started?(game.combat.id??"combate"):null,estado:e.turnoTecnicas,reaccion,replica});if(!turno.ok){avisoUso(turno.motivo);return false;}
     const permiso = evaluarGasto({ valor, costo, limite: replica ? 0 : limiteNegativo(actor), grado, gradoMaximo: replica ? Math.min(capacidadReplicas(actor),gradoUsable(actor,meta)) : gradoUsable(actor, meta),
       agotamiento: Number(actor.system?.attributes?.exhaustion) || 0, incapacitado: noPuedeActuar(actor),
       reaccion, puedeReaccionar: reaccionDisponible(actor), altoGastado: !!e.usosAltos?.[meta.id] });
-    if (!permiso.ok) { aviso(permiso.motivo, "warn"); return false; }
+    if (!permiso.ok) { avisoUso(permiso.motivo); return false; }
     let nuevo = permiso.despues;
     const pg = meta.costoPG?Math.max(1,Number(meta.costoPG)-sumaEf(actor,ef=>ef.costoPGMenos)):0;
-    if (pg && Number(actor.system.attributes.hp.value) <= pg) { aviso(`Necesita más de ${pg} PG para pagar este esfuerzo sin caer.`,"warn"); return false; }
-    const reparto = meta.dividirVerbe ? dividirReserva(valor,costo,Math.min(competencia(actor),Number(meta.copias)||1)) : null;
-    if (reparto && reparto.porCuerpo < 1) { aviso("No queda energía positiva suficiente para repartir entre todos los cuerpos.","warn"); return false; }
+    if (pg && Number(actor.system.attributes.hp.value) <= pg) { avisoUso(`Necesita más de ${pg} PG para pagar este esfuerzo sin caer.`); return false; }
+    const reparto = meta.dividirVerbe && !clonDe(meta) ? dividirReserva(valor,costo,Math.min(competencia(actor),Number(meta.copias)||1)) : null;
+    if (reparto && reparto.porCuerpo < 1) { avisoUso("No queda energía positiva suficiente para repartir entre todos los cuerpos."); return false; }
     if (reparto) nuevo = reparto.original;
     const nonce = foundry.utils.randomID();
     consumosPendientes.set(claveActor(actor), { config: usageConfig, nonce, hasta: Date.now() + 30000 });
@@ -1427,6 +1567,8 @@ async function despuesDeUsar(activity, usageConfig) {
   if (v.fuerte?.extra) aLaMesa(actor, "Contra alguien más fuerte", `<p>${escH(actor.name)} paga <b>${v.fuerte.extra} Verbe más</b>: ${escH(v.fuerte.quien ?? "su objetivo")} es más fuerte que su grado.</p>`, { soloDueno: true });
   if (!v.replica && v.despues < 0) await sobreesfuerzo(actor, v.grado, v.despues);
   await efectosShinobi(actor,item,v);
+  if (clonDe(meta)) await pedirClones(actor, item, meta);
+  else explicarUso(actor, item, meta).catch(() => null);
   // Estados de poder que se ponen al usar su técnica.
   if (meta.id === "sangre-despertar") await ponerDespertar(actor);
   else if (meta.rama === "mirada" && /-abrir$/.test(meta.id)) await ponerOjo(actor, meta.id.split("-")[1]);
@@ -1559,7 +1701,7 @@ async function manejarInterno(d, { interno = false } = {}) {
     const actor = d.actorId ? game.actors.get(d.actorId) : null;
     const remitente = game.users.get?.(d.de) ?? game.users.find(u => u.id === d.de);
     const propio = remitente && actor?.testUserPermission(remitente, "OWNER");
-    if (!interno && !["capaVPedir", "capaVMetal"].includes(d.accion)) return;
+    if (!interno && !["capaVPedir", "capaVMetal", "capaVClones", "capaVDisipar"].includes(d.accion)) return;
     if (!interno && d.accion === "capaVPedir" && !propio) return;
     const api = game.modules.get(MOD)?.api;
     if (d.accion === "capaVBarrera" && actor) {
@@ -1576,6 +1718,13 @@ async function manejarInterno(d, { interno = false } = {}) {
       const atacante = game.actors.get(d.atacanteId);
       if (!remitente || !atacante?.testUserPermission(remitente, "OWNER")) return;
       await consumirMetal(actor, Array.isArray(d.efectoIds) ? d.efectoIds.slice(0, 20).map(String) : []);
+    } else if (d.accion === "capaVClones" || d.accion === "capaVDisipar") {
+      // El que pide debe ser dueño del creador (o del clon que disipa).
+      let doc = null; try { doc = fromUuidSync(String(d.actorUuid ?? "")); } catch { doc = null; }
+      const objetivo = doc instanceof Actor ? doc : doc?.actor ?? null;
+      if (!objetivo || (!interno && !(remitente && objetivo.testUserPermission(remitente, "OWNER")))) return;
+      if (d.accion === "capaVClones") await crearClones(objetivo, d);
+      else await disiparClon(objetivo, { destruido: false });
     } else if (d.accion === "capaVPedir" && actor) {
       if (!["tecnica", "crear", "dote", "afinidad", "naturaleza"].includes(d.tipo) || !d.datos || typeof d.datos !== "object") return;
       if (JSON.stringify(d.datos).length > 16000) return;
@@ -3296,6 +3445,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       descubrirNat() { correr(this, pedirDescubrimiento(this.actor)); },
       activarFamilia() { correr(this, activarFamilia(this.actor, valorDe(this, "notaFamilia"))); },
       leerObjetivos() { correr(this, leerObjetivos(this.actor)); },
+      disiparClon(ev, t) { const id = t.dataset.uuid || this.actor.uuid; alDM({ accion: "capaVDisipar", actorUuid: id }); },
       canalizar(ev, t) { correr(this, canalizar(this.actor, t.dataset.id)); },
       liberar() { correr(this, liberarCanalizada(this.actor)); },
       interrumpirCanal() { correr(this, interrumpirCanal(this.actor, game.user.isGM ? "el DM la interrumpe (movimiento forzado u otra causa)" : "la deja")); },
@@ -3491,6 +3641,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const cupos=cuotasPoder(nivelDe(a),dotesActivas(a)),gastados=estado(a).cuotasPoder??{};
     return `${cupos.mayores?`<details class="ev-limites-poder"><summary>Usos altos que te quedan hasta el próximo Descanso Largo</summary><ul><li>Grados 6–8: <b>${Math.max(0,cupos.mayores-(gastados.mayores||0))} de ${cupos.mayores}</b> usos compartidos.</li><li>Grados 9–11: <b>${Math.max(0,cupos.culminaciones-(gastados.culminaciones||0))} de ${cupos.culminaciones}</b> usos compartidos.</li>${cupos.trascendentes?`<li>Dentro de los anteriores, grado 11: <b>${Math.max(0,cupos.trascendentes-(gastados.trascendentes||0))} de ${cupos.trascendentes}</b>.</li>`:""}</ul><p>También cuenta el grado elegido al elevar una técnica. Cada técnica alta conserva su propio uso por Largo. Cambiar de técnica no devuelve usos compartidos.</p></details>`:""}${efectoV(a,"replicas")?`<div class="ev-instruccion"><span><b>Reserva repartida en réplicas: ${Number(estado(a).reservaReplicas)||0} Verbe</b>Una acción ofensiva conjunta por turno. «Usar desde réplica» gasta ese saldo y solo admite grado 0–${capacidadReplicas(a)}. Al disipar, se pierde el saldo restante.</span><button type="button" data-action="cerrarReplicas">Disipar réplicas</button></div>`:""}${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana de uso. Comprueba el grado y el gasto antes de confirmar.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
       <div class="ev-instruccion"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span><b>Si afecta a otro, marca su token antes de usarla.</b> El alcance y las condiciones de cada técnica siguen contando.</span></div>
+      ${esClon(a) ? `<p class="ev-aviso">Eres <b>un clon de ${escH(estado(a).clon.deNombre)}</b>: ${a.system.attributes.hp.value} PG y ${estado(a).valor} Verbe. Si te destruyen, ese Verbe se pierde. <button type="button" data-action="disiparClon">Disiparme (vuelve mi Verbe)</button></p>` : ""}
+      ${(() => { const mios = (game.actors ?? []).filter(x => esClon(x) && estado(x).clon.de === a.uuid); return mios.length ? `<p class="ev-aviso">Tienes ${mios.length} clon${mios.length > 1 ? "es" : ""}: ${mios.map(x => `${escH(x.name)} (${estado(x).valor} Verbe) <button type="button" data-action="disiparClon" data-uuid="${x.uuid}">Disipar</button>`).join(" · ")}</p>` : ""; })()}
       ${efectoCanal(a) ? `<p class="ev-aviso"><b>Canalizando ${escH(itemsDe(a, efectoCanal(a).getFlag(MOD, F).canalizar.id)[0]?.name ?? "")}</b> · carga ${efectoCanal(a).getFlag(MOD, F).canalizar.carga}/${efectoCanal(a).getFlag(MOD, F).canalizar.max}. Velocidad 0, sin reacciones ni choques. <button type="button" data-action="interrumpirCanal">Dejar de canalizar</button></p>` : ""}
       ${queVe(itemsTecnica(a).map(i => i.getFlag(MOD, F)?.id)).size ? `<p><button type="button" data-action="leerObjetivos" data-tooltip="Marca tokens y lee su Verbe por tramos (lleno, a medias, poco; más débil o más fuerte), nunca cifras"><i class="fa-solid fa-eye"></i> Leer el Verbe de los marcados</button></p>` : ""}
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar en mis técnicas</span><input type="search" data-filtro-uso="texto" placeholder="Nombre o efecto…" value="${escH(f.texto)}"></label><label><input type="checkbox" data-filtro-uso="solo" ${f.solo ? "checked" : ""}> Ocultar las bloqueadas por recursos o estado</label></div>
@@ -4433,6 +4585,7 @@ Hooks.once("ready", async () => {
     BASE = { tecnicas: D.tecnicas, dotes: D.dotes };
     aplicarEdicionesMundo();
     if (soyGM()) setTimeout(() => revisarSangres().catch(err => console.warn(`${MOD} | sangre`, err)), 3000);
+    if (soyGM()) setTimeout(() => rearmarMundo().catch(err => console.warn(`${MOD} | rearmar`, err)), 5000);
     console.log(`${MOD} | capa V ${D.version}: ${D.tecnicas.length} técnicas (${MODO})`);
   } catch (err) {
     return console.error(`${MOD} | capa V: no pude leer sus datos`, err);
@@ -4440,7 +4593,7 @@ Hooks.once("ready", async () => {
   const api = (game.modules.get(MOD).api ??= {});
   api.verbe = { ofertasActor, corregirGastoSimple, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), usoRapido, despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
-    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, canalizar, liberarCanalizada, interrumpirCanal, rangoDe, tieneDote, lecturaDe, leerObjetivos, variarReservaNpc, asegurarTiradasVerbe, cambiarModoReserva, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
+    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, disiparClon, canalizar, liberarCanalizada, interrumpirCanal, rangoDe, tieneDote, lecturaDe, leerObjetivos, variarReservaNpc, asegurarTiradasVerbe, cambiarModoReserva, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)
       ? documento.setFlag(MOD, "metal", !!metal) : false };
   game.socket.on(`module.${MOD}`, d => { if (d?.capaV && !socketDefensa(d)) manejar(d); });
@@ -4537,6 +4690,7 @@ Hooks.on("preUpdateActor", (actor, cambios, opciones) => {
 });
 Hooks.on("updateActor", (actor, cambios, opciones) => {
   if (!activo()) return;
+  if (soyGM() && esClon(actor) && Number(foundry.utils.getProperty(cambios, "system.attributes.hp.value")) <= 0) disiparClon(actor, { destruido: true }).catch(err => console.error(`${MOD} | clon`, err));
   if (soyGM() && opciones?.ecosDanoCanal > 0) golpeCanalizando(actor, opciones.ecosDanoCanal).catch(err => console.error(`${MOD} | canalizar`, err));
   if (soyGM() && modoReserva(estado(actor)) === "dados" && (foundry.utils.hasProperty(cambios, "system.details.level") || foundry.utils.hasProperty(cambios, `flags.${MOD}.${F}.nivel`)))
     asegurarTiradasVerbe(actor).catch(err => console.error(`${MOD} | reserva por dados`, err));
@@ -4572,6 +4726,15 @@ Hooks.on("dnd5e.postRollAttack", (rolls, datos) => {
     atacanteId: atacante.id, efectoIds: ids })).catch(err => console.error(`${MOD} | estados`, err));
 });
 Hooks.on("preCreateActiveEffect", (effect, data) => { if (activo()) normalizarHielo(effect, data); });
+Hooks.on("createChatMessage", m => {
+  if (!activo() || !soyGM()) return;
+  const a = game.actors?.get?.(m.speaker?.actor);
+  if (!esClon(a)) return;
+  const texto = String(m.flavor || m.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
+  if (!texto) return;
+  const info = estado(a).clon;
+  guardar(a, { clon: { ...info, registro: [...(info.registro ?? []), texto].slice(-20) } }).catch(() => null);
+});
 Hooks.on("createActiveEffect", effect => {
   const actor = effect?.parent;
   if (!activo() || !soyGM() || !(actor instanceof Actor) || !efectoCanal(actor)) return;
@@ -4593,4 +4756,4 @@ Hooks.on("updateCombat", (combat, cambios) => {
 });
 
 /** Para las pruebas fuera de Foundry. */
-export const _prueba = { subirCarga, golpeCanalizando, revolver, resolverEntreno, iniciarEntrenoNaturaleza, aplicarDesventaja, defenderAtaque, despuesDeUsar, ponerDespertar, ponerOjo, alQuitarEfecto, inicioDeTurno, manejar, crearAprobada, asegurarRasgos, choqueAutomatico, choqueNativo, elegirContraTecnica, pagarContraTecnica, opcionesChoque, excluirBlanco, enfrentamientoAutomatico };
+export const _prueba = { crearClones, pedirClones, subirCarga, golpeCanalizando, revolver, resolverEntreno, iniciarEntrenoNaturaleza, aplicarDesventaja, defenderAtaque, despuesDeUsar, ponerDespertar, ponerOjo, alQuitarEfecto, inicioDeTurno, manejar, crearAprobada, asegurarRasgos, choqueAutomatico, choqueNativo, elegirContraTecnica, pagarContraTecnica, opcionesChoque, excluirBlanco, enfrentamientoAutomatico };

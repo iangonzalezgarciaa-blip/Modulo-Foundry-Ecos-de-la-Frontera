@@ -76,3 +76,4 @@ test('las plantillas en metros se convierten a pies de la escena (1,5 m = 5 pies
   assert.equal(data.distance, 15); assert.equal(data.flags.dnd5e.dimensions.size, 15);
   assert.equal(plantillaEnEscena({ distance: 6 }, 'm', 'm'), false);
 });
+

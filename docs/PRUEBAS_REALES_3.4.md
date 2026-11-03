@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.6.0
+# Preparar la primera prueba real · 3.7.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -177,6 +177,30 @@ Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el pan
 ### 28. 3.6 · Curación con reposo
 
 Con un PJ con Herida No Tratada, trata con un Maestro de Pulso que tenga Médico del Verbe: la tirada debe llevar ventaja y el bono. Supera la CD por 5: cuenta dos días. Lanza Restauración menor otro día: cuenta dos días y no borra un nivel de golpe.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 29. 3.7 · Técnicas de Cuerpo y de cuerpo a cuerpo
+
+Con un PJ que sepa un golpe de Cuerpo de 1,5 m, marca a un enemigo al lado y úsalo: debe tirar el ataque y el daño (antes no tiraba nada). Usa un refuerzo de Cuerpo (acción adicional): debe salir la ventana «Qué pasó».
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 30. 3.7 · Choque y defensas de cualquier rama
+
+Ataca con una técnica de Cuerpo a un PJ despierto que sepa una contratécnica de Velo: debe ofrecerse el choque y, sin ventaja elemental, decidir Control + grado. Con Palma que desvía, la ventana de defensa debe ofrecerla y dar +3 a la CA.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 31. 3.7 · Canalizar y liberar
+
+En combate, canaliza Lanza de tormenta: el token queda quieto y sin reacción. Pasa un turno y libérala: debe tirar con 1 dado más. Repite y hazle daño mientras canaliza: debe tirar Constitución y, si falla, perder la carga.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 32. 3.7 · Clones con ficha propia
+
+Con un PJ que sepa Clon de sombra, úsalo y elige 2 de Verbe: debe aparecer «Clon de…» junto a él con 1 PG y 2 de Verbe. Hazle daño: debe desaparecer y el DM ver la ventana de recuerdos. Crea otro y disípalo desde su panel: debe devolver su Verbe.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 

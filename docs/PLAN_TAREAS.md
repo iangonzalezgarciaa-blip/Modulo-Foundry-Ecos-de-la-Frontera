@@ -186,15 +186,15 @@
 
 - [x] **3.4c · Crear 1 o 2 cargadas nuevas por forma, herencia y rama** (hecha: 11 nuevas; Mirada sin cargada propia, ver auditoría) (M, en dos lotes · Dep.: 3.4b).
 
-- [ ] **3.5a · Clones: diseño** (S · Dep.: 3.3). Escribir docs/CLONES.md. Ya existen clones como técnicas: Forma «forma-clon-agua», «forma-clon-tierra», «forma-clon-madera», «forma-clon-rayo», «forma-clon-cuervos» (grados 3 a 5), Hilo «Kami Bunshin» (g3) y Pacto «Mushi Bunshin» (g3); ver docs/REPERTORIO_SHINOBI.json. Diseñar el coste alto (propuesta: el clon se lleva una parte de la reserva y de los PG del usuario, además del Verbe de la técnica), duración, límites y cómo se disipa.
+- [x] **3.5a · Clones: diseño** (hecha: docs/CLONES.md) (S · Dep.: 3.3). Escribir docs/CLONES.md. Ya existen clones como técnicas: Forma «forma-clon-agua», «forma-clon-tierra», «forma-clon-madera», «forma-clon-rayo», «forma-clon-cuervos» (grados 3 a 5), Hilo «Kami Bunshin» (g3) y Pacto «Mushi Bunshin» (g3); ver docs/REPERTORIO_SHINOBI.json. Diseñar el coste alto (propuesta: el clon se lleva una parte de la reserva y de los PG del usuario, además del Verbe de la técnica), duración, límites y cómo se disipa.
 
-- [ ] **3.5b · Clones: crear el clon** (M · Dep.: 3.5a). Mecánica de aparición y coste.
+- [x] **3.5b · Clones: crear el clon** (hecha: ventana de copias y Verbe, fichas «Clon de…» con 1 PG) (M · Dep.: 3.5a). Mecánica de aparición y coste.
 
-- [ ] **3.5c · Clones: recuerdos al disiparse** (M · Dep.: 3.5b). D2: sin XP. Al disiparse se genera una «tarjeta de recuerdos» para el usuario con lo que el clon vio, oyó, sintió y aprendió; el DM la redacta o aprueba. Propuesta, no decidida: el entrenamiento hecho por el clon acredita días de entrenamiento con un tope diario.
+- [x] **3.5c · Clones: recuerdos al disiparse** (hecha: tarjeta del DM con lo vivido; el crédito de entrenamiento queda pendiente de decidir) (M · Dep.: 3.5b). D2: sin XP. Al disiparse se genera una «tarjeta de recuerdos» para el usuario con lo que el clon vio, oyó, sintió y aprendió; el DM la redacta o aprueba. Propuesta, no decidida: el entrenamiento hecho por el clon acredita días de entrenamiento con un tope diario.
 
-- [ ] **3.5d · Clones: dotes de abaratamiento y clones masivos** (M · Dep.: 3.5c). Cadena de dotes que baja el coste hasta el nivel del Tajū Kage Bunshin.
+- [x] **3.5d · Clones: dotes de abaratamiento y clones masivos** (hecha: Clones económicos → Clones múltiples → Legión; técnica Legión de sombras) (M · Dep.: 3.5c). Cadena de dotes que baja el coste hasta el nivel del Tajū Kage Bunshin.
 
-- [ ] **3.5e · Clones: adaptar los existentes** (S · Dep.: 3.5b). Mover las técnicas actuales al nuevo sistema o retirarlas.
+- [x] **3.5e · Clones: adaptar los existentes** (hecha: cuerpos elementales al sistema nuevo; réplicas y señuelo sin cambios) (S · Dep.: 3.5b). Mover las técnicas actuales al nuevo sistema o retirarlas.
 
 - [ ] **3.6 · R · Publicar v3.7.0** (S · Dep.: 3.1 a 3.5).
 

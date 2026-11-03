@@ -24,10 +24,10 @@ Las medias de dados no incluyen impacto, salvaciones, mitigación, objetivos mú
 | 1 | utilidad | varro | 8 | 2 / 0 / 0 | +0 | 4 | 0 | 0 | 0.0 | +4 |
 | 1 | utilidad | ignis | 8 | 2 / 0 / 0 | +0 | 4 | 0 | 0 | 0.0 | +4 |
 | 1 | utilidad | maethra | 10 | 4 / 0 / 0 | +0 | 5 | 0 | 0 | 0.0 | +5 |
-| 5 | ofensiva | ninguna | 37 | 25 / 16 / 4 | +3 | 9 | 0 | 0 | 315.0 | +18 |
-| 5 | ofensiva | varro | 37 | 25 / 16 / 4 | +3 | 9 | 0 | 0 | 315.0 | +18 |
-| 5 | ofensiva | ignis | 41 | 29 / 20 / 8 | +3 | 9 | 0 | 0 | 315.0 | +20 |
-| 5 | ofensiva | maethra | 55 | 43 / 34 / 22 | +3 | 9 | 0 | 0 | 315.0 | +27 |
+| 5 | ofensiva | ninguna | 37 | 34 / 34 / 31 | +3 | 9 | 0 | 0 | 157.5 | +6 |
+| 5 | ofensiva | varro | 37 | 34 / 34 / 31 | +3 | 9 | 0 | 0 | 157.5 | +6 |
+| 5 | ofensiva | ignis | 41 | 38 / 38 / 35 | +3 | 9 | 0 | 0 | 157.5 | +6 |
+| 5 | ofensiva | maethra | 55 | 52 / 52 / 49 | +3 | 9 | 0 | 0 | 157.5 | +6 |
 | 5 | mixta | ninguna | 37 | 31 / 28 / 22 | +3 | 9 | 9 | 0 | 157.5 | +15 |
 | 5 | mixta | varro | 37 | 31 / 28 / 22 | +3 | 9 | 9 | 0 | 157.5 | +15 |
 | 5 | mixta | ignis | 41 | 35 / 32 / 26 | +3 | 9 | 9 | 0 | 157.5 | +15 |

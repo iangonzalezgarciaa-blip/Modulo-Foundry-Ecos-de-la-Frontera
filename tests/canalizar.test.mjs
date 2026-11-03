@@ -53,3 +53,15 @@ test('3.4c: técnicas cargadas nuevas por naturaleza de Forma, por rama y de her
   const ramas = new Set([...nuevas.map(t => t.rama), ...Object.keys(CARGADAS).map(id => tec(id).rama)]);
   for (const r of ['forma', 'cuerpo', 'hilo', 'quietud', 'vasija', 'umbral', 'velo', 'sello', 'pacto', 'pulso', 'rastro', 'sangre']) assert.ok(ramas.has(r), r);
 });
+
+test('en un mundo en pies, el alcance y las plantillas de la ficha pasan a pies (midi-qol no convierte)', async () => {
+  const golpe = structuredClone(D.tecnicas.find(t => t.id === 'cuerpo-patada-quiebre').item);
+  V.medidasDelMundo(golpe, false);
+  assert.deepEqual([golpe.system.range.units, golpe.system.range.value], ['ft', 5]);
+  const cono = structuredClone(D.tecnicas.find(t => t.id === 'fuego-aliento').item);
+  V.medidasDelMundo(cono, false);
+  assert.deepEqual([cono.system.target.template.units, cono.system.target.template.size], ['ft', 15]);
+  const metrico = structuredClone(D.tecnicas.find(t => t.id === 'fuego-aliento').item);
+  V.medidasDelMundo(metrico, true);
+  assert.equal(metrico.system.target.template.units, 'm');
+});

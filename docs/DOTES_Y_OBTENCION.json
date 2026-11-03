@@ -1,6 +1,6 @@
 {
-  "tecnicas": 890,
-  "dotes": 219,
+  "tecnicas": 892,
+  "dotes": 222,
   "nuevas": 64,
   "dotesDetalle": [
     {
@@ -3059,6 +3059,47 @@
         ]
       },
       "automatizacion": "Actividad nativa, coste, uso diario y efecto registrados. La recuperación consume el presupuesto breve cuando lo indica."
+    },
+    {
+      "id": "clon-economico",
+      "nombre": "Clones económicos",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "clon-multiple",
+      "nombre": "Clones múltiples",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [
+          "clon-economico"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "clon-legion",
+      "nombre": "Legión",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
     }
   ],
   "caminos": [

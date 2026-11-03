@@ -325,19 +325,19 @@
     "linaje": "ninguna",
     "inicio": 37,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
-      25,
-      16,
-      4
+      34,
+      34,
+      31
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 315,
-    "gasto": 36,
+    "mediaDados": 157.5,
+    "gasto": 9,
     "corto": 3,
-    "largo": 18
+    "largo": 6
   },
   {
     "nivel": 5,
@@ -345,19 +345,19 @@
     "linaje": "varro",
     "inicio": 37,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
-      25,
-      16,
-      4
+      34,
+      34,
+      31
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 315,
-    "gasto": 36,
+    "mediaDados": 157.5,
+    "gasto": 9,
     "corto": 3,
-    "largo": 18
+    "largo": 6
   },
   {
     "nivel": 5,
@@ -365,19 +365,19 @@
     "linaje": "ignis",
     "inicio": 41,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
-      29,
-      20,
-      8
+      38,
+      38,
+      35
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 315,
-    "gasto": 36,
+    "mediaDados": 157.5,
+    "gasto": 9,
     "corto": 3,
-    "largo": 20
+    "largo": 6
   },
   {
     "nivel": 5,
@@ -385,19 +385,19 @@
     "linaje": "maethra",
     "inicio": 55,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
-      43,
-      34,
-      22
+      52,
+      52,
+      49
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 315,
-    "gasto": 36,
+    "mediaDados": 157.5,
+    "gasto": 9,
     "corto": 3,
-    "largo": 27
+    "largo": 6
   },
   {
     "nivel": 5,
@@ -405,7 +405,7 @@
     "linaje": "ninguna",
     "inicio": 37,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       31,
       28,
@@ -425,7 +425,7 @@
     "linaje": "varro",
     "inicio": 37,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       31,
       28,
@@ -445,7 +445,7 @@
     "linaje": "ignis",
     "inicio": 41,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       35,
       32,
@@ -465,7 +465,7 @@
     "linaje": "maethra",
     "inicio": 55,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       49,
       46,
@@ -485,7 +485,7 @@
     "linaje": "ninguna",
     "inicio": 37,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       25,
       16,
@@ -505,7 +505,7 @@
     "linaje": "varro",
     "inicio": 37,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       25,
       16,
@@ -525,7 +525,7 @@
     "linaje": "ignis",
     "inicio": 41,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       29,
       20,
@@ -545,7 +545,7 @@
     "linaje": "maethra",
     "inicio": 55,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       43,
       34,
@@ -565,7 +565,7 @@
     "linaje": "ninguna",
     "inicio": 37,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       31,
       28,
@@ -585,7 +585,7 @@
     "linaje": "varro",
     "inicio": 37,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       31,
       28,
@@ -605,7 +605,7 @@
     "linaje": "ignis",
     "inicio": 41,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       35,
       32,
@@ -625,7 +625,7 @@
     "linaje": "maethra",
     "inicio": 55,
     "libres": 5,
-    "tecnicaAlta": "Gran soplo",
+    "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       49,
       46,

@@ -1,4 +1,16 @@
-# Ecos de la frontera · Reglas de la casa (v3.6.0)
+# Ecos de la frontera · Reglas de la casa (v3.7.0)
+
+**Novedades de 3.7:**
+- **Choques y defensas:**
+  - el choque vale en cualquier rama;
+  - las defensas salen del catálogo;
+  - hay 18 contratécnicas sin elemento.
+- **Técnicas cargadas:** se usan con el estado Canalizando.
+- **Clones:** cada clon tiene ficha propia y deja recuerdos.
+- **Correcciones:**
+  - los golpes de Cuerpo vuelven a tirar (el alcance pasa a pies);
+  - salen ventanas que explican qué pasó;
+  - los enemigos ya no muestran su nombre ni su vida.
 
 **Novedades de 3.6:**
 - **El Verbe se aprende por etapas:** el DM abre la siguiente cuando el personaje encuentra quién le enseñe.
@@ -28,7 +40,7 @@
   - la naturaleza de nacimiento cuesta 1 Verbe menos.
 - **Pruebas en Foundry:** hay ocho casos nuevos en Diagnóstico.
 
-**Preparada para tus pruebas de mesa:** abre **Mesa Ecos → Diagnóstico y pruebas**. Encontrarás versiones, avisos de integración, informe técnico sin datos privados y veintiocho casos para registrar en un cuaderno privado. Ninguna prueba real se declara superada por las comprobaciones de código. [Recorrido de pruebas](docs/PRUEBAS_REALES_3.4.md) · [Guía de funciones 3.4](docs/MESA_3.4.md).
+**Preparada para tus pruebas de mesa:** abre **Mesa Ecos → Diagnóstico y pruebas**. Encontrarás versiones, avisos de integración, informe técnico sin datos privados y treinta y dos casos para registrar en un cuaderno privado. Ninguna prueba real se declara superada por las comprobaciones de código. [Recorrido de pruebas](docs/PRUEBAS_REALES_3.4.md) · [Guía de funciones 3.4](docs/MESA_3.4.md).
 
 **Creación verificada:** detecta elecciones repetidas, niveles o valores incoherentes y avances nativos pendientes. El DM aprueba la configuración y decide si activa Ecos. Despertar el Verbe es una concesión independiente. **Qué quiero hacer** propone técnicas por intención, con requisitos y costes, y abre el Verbe filtrado por la opción elegida.
 

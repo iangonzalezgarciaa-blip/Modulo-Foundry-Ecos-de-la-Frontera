@@ -13,8 +13,8 @@ const actor=(nivel=20,patch={})=>new MockActor(nivel,{progresionVersion:1,shinob
 const agregar=(a,id)=>{const i=new MockItem(V.datosItem(a,tec(id)),a);a.items.push(i);return i;};
 async function usar(a,id,scaling=0){const item=a.items.find(i=>i.getFlag('ecos-frontera','verbe')?.id===id)??agregar(a,id),activity={actor:a,item},usage={scaling},updates={};if(V.alConsumir(activity,usage,{},updates)===false)return false;await a.update(updates.actor);await V._prueba.despuesDeUsar(activity,usage);return usage.ecosVerbe;}
 async function poder(a,id){const item=a.items.find(i=>i.getFlag('ecos-frontera','verbe')?.dote===id),activity={actor:a,item},usage={},updates={};assert.ok(item,id);if(V.alConsumir(activity,usage,{},updates)===false)return false;await a.update(updates.actor);await V._prueba.despuesDeUsar(activity,usage);return true;}
-test('219 dotes, cuatro pasos para cada rama y requisitos sin ciclos ni referencias rotas',()=>{
-  assert.equal(D.dotes.length,219);assert.equal(D.dotes.filter(d=>d.evolucion).length,64);assert.deepEqual(validateCatalog(D),[]);
+test('dotes: 219 base más las de clones, cuatro pasos para cada rama y requisitos sin ciclos ni referencias rotas',()=>{
+  assert.equal(D.dotes.length,219+(D.clones?.dotes??0));assert.equal(D.dotes.filter(d=>d.evolucion).length,64);assert.deepEqual(validateCatalog(D),[]);
   const visitar=(id,camino=[])=>{assert.ok(!camino.includes(id),id);for(const p of dote(id).requisitos?.dotes??[])visitar(p,[...camino,id]);};
   for(const d of D.dotes)visitar(d.id);for(const r of D.ramas)for(const id of senda(r.id))assert.ok(dote(id));
 });
@@ -86,7 +86,8 @@ test('los rituales no se convierten en una acción al conservar un cultivo antig
 });
 test('los aumentos de alcance y área tienen máximos conjuntos',()=>{
   const t=tec('fuego-gran-soplo'),a=actor(20,{dotes:['alcance-largo','area-ancha'],cultivos:{[t.id]:{nivel:2,mejoras:['area','area']}}}),data=V.datosItem(a,t);
-  assert.ok(data.system.target.template.size<=t.item.system.target.template.size*2);
+  const f=data.system.target.template.units==='ft'?1/0.3:1;
+  assert.ok(data.system.target.template.size<=t.item.system.target.template.size*f*2+0.01);
 });
 test('Dos hilos permite dos concentraciones con una menor y bloquea dos altas o una tercera',()=>{
   assert.equal(validarConcentraciones({existentes:[{id:'a',grado:7}],grado:6,nivel:16,doble:true}).ok,false);

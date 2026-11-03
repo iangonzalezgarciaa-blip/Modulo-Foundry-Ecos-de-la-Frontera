@@ -1,6 +1,6 @@
 # Auditoría de catálogo y escalado · 3.1
 
-Revisión automática de **861 técnicas y 219 dotes**: 34440 fichas preparadas y 34440 actividades, con veinte niveles y dos perfiles. Requisitos referenciados, costes, cotas de dados, elevación, JSON e importaciones se validan junto a las pruebas de integración.
+Revisión automática de **892 técnicas y 222 dotes**: 35680 fichas preparadas y 35680 actividades, con veinte niveles y dos perfiles. Requisitos referenciados, costes, cotas de dados, elevación, JSON e importaciones se validan junto a las pruebas de integración.
 
 **Alcance:** el perfil normal usa el rango permitido por nivel, sin dotes; el perfil de tensión entrega todas las dotes y nueve mejoras simultáneas por técnica, una combinación de cultivo deliberadamente superior a la legal. Sirve para comprobar que incluso datos antiguos excesivos respetan los topes. No es una construcción comprable ni una simulación de combate. La tabla usa técnicas cuyo grado cabe por nivel, aunque otros requisitos de sangre, historia, senda o contrato puedan impedir usarlas.
 
