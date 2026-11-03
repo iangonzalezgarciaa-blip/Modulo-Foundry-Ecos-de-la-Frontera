@@ -366,3 +366,11 @@ test('si conoce la defensa pero no le alcanza, se explica el coste en vez de cal
   assert.ok(bloqueadas[0].extra > 0);
   assert.match(bloqueadas[0].motivo, /Agotamiento 4|Verbe/);
 });
+
+test('las ediciones del DM se aplican al catálogo en uso y se restauran', () => {
+  V.aplicarEdicionesMundo({ tecnicas: { 'fuego-aliento': { dadosN: 5 } }, dotes: {} });
+  assert.equal(V.tecnicaPorId('fuego-aliento').dmg, '5d6 fuego');
+  assert.equal(V.tecnicaOriginal('fuego-aliento').dmg, '3d6 fuego');
+  V.aplicarEdicionesMundo({ tecnicas: {}, dotes: {} });
+  assert.equal(V.tecnicaPorId('fuego-aliento').dmg, '3d6 fuego');
+});

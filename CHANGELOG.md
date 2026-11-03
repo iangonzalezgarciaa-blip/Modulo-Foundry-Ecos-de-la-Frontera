@@ -7,6 +7,8 @@
 - Descanso Corto: ya no devuelve Dados de Golpe, solo deja gastarlos para curarse (se recuperan con el Largo). Los ajustes guardados se corrigen una vez; el DM puede volver a subirlo en «Descansos y Dados de Golpe». La ventana para gastar suma «Gastar hasta el tope» (el dado más grande primero, hasta el tope del descanso o los PG llenos) y avisa cuánto curó o si Malherido no deja subir.
 - Naturaleza de nacimiento (la primera que despertó): sus técnicas e infusiones cuestan 1 Verbe menos, mínimo 1. Explicado en la Ayuda.
 - Defensas contra ataques de PNJ: fuera de combate la reacción ya no queda «gastada» para siempre (la marca de midi-qol no caducaba sin turnos), así que Sustitución se vuelve a ofrecer. Si conoces una defensa pero no puedes usarla (sin Verbe, sin reacción, Agotamiento 4), el chat te dice por qué y cuánto costaría, con el extra por ser un ataque más grande. En las fichas, un área con origen en ti dice «desde ti» en vez de «sobre ti».
+- Editor del DM (Mesa Ecos → Dirección → «Editar técnicas», o Taller del DM): borrar técnicas del mundo (solo del catálogo, o también de las fichas que la saben) y técnicas propias de cada ficha; cada publicación pasa por el validador (tareas 1.3 y 1.4a).
+- Cambiar el catálogo del módulo: nombre, texto, coste, Trazos, nivel, tiempo, alcance, área y dados de cualquier técnica, y nombre, texto y Trazos de cualquier dote. Se guarda solo la diferencia en el mundo (sobrevive a actualizar o reinstalar), las fichas que la saben se rearman solas y «Restaurar original» la deshace. Reliquias y hechizos se abren en el editor de dnd5e (tareas 1.4b y 1.4c).
 
 ## 3.4.1 — 2026-11-01
 

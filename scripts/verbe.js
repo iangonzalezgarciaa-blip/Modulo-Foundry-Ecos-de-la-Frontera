@@ -19,6 +19,8 @@ import { donDivino, asegurarNotaPanteon } from "./verbe-divinity.js";
 import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
 import { plantillaEnEscena } from "./verbe-plantillas.js";
+import { problemasTecnica } from "./verbe-validate.js";
+import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
 import { presupuestoCorto } from "./rest-core.js";
 import { VERSION_REGLAS, recuperarReserva, evaluarGasto, requisitoNatural, crearCola,
@@ -31,7 +33,7 @@ const MOD = "ecos-frontera";
 const F = "verbe";
 const RUTA = `modules/${MOD}`;
 const LLAVE = "ecos-frontera";
-const AJ = { modo: "capaV", pend: "capaVPendientes", extra: "capaVExtra" };
+const AJ = { modo: "capaV", pend: "capaVPendientes", extra: "capaVExtra", ediciones: "capaVEdiciones" };
 const enSerie = crearCola();
 const consumosPendientes = new Map();
 const consumosChoque = new WeakSet();
@@ -104,6 +106,7 @@ const CERROJO_FX = {
 };
 
 let D = null; // datos de data/verbe.txt
+let BASE = null; // técnicas y dotes tal como vienen en el módulo, antes de las ediciones del DM
 let MODO = "apagado";
 let COMO_JUGADOR = false; // el DM mira el panel como lo ve el jugador
 /** ¿Se muestra lo del DM? (falso para el DM cuando mira «como el jugador»). */
@@ -139,7 +142,37 @@ async function cargarDatos() {
   const r = await fetch(`${RUTA}/data/verbe.txt?v=${Date.now()}`, { cache: "no-store" });
   return r.ok ? descifrar(await r.text()) : null;
 }
-export function usarDatos(datos, modo = null) { D = datos; if (modo) MODO = modo; }
+export function usarDatos(datos, modo = null) { D = datos; BASE = datos ? { tecnicas: datos.tecnicas, dotes: datos.dotes } : null; if (modo) MODO = modo; }
+const edicionesMundo = () => { try { return game.settings.get(MOD, AJ.ediciones) ?? {}; } catch { return {}; } };
+/** Vuelve a montar técnicas y dotes desde el módulo con las diferencias que guardó el DM en el mundo. */
+export function aplicarEdicionesMundo(ediciones = edicionesMundo()) {
+  if (!D || !BASE) return;
+  const r = catalogoConEdiciones(BASE, ediciones);
+  D.tecnicas = r.tecnicas;
+  D.dotes = r.dotes;
+}
+export const tecnicaOriginal = id => BASE?.tecnicas?.find(t => t.id === id) ?? null;
+export const doteOriginal = id => BASE?.dotes?.find(d => d.id === id) ?? null;
+/** Guarda (o borra, si no queda ninguna diferencia) la edición de una técnica o dote del catálogo base. */
+export function guardarEdicionBase(tipo, id, propuesto) {
+  if (!game.user.isGM) return Promise.resolve(false);
+  return enSerie("catalogo", async () => {
+    const tecnica = tipo === "tecnica", orig = tecnica ? tecnicaOriginal(id) : doteOriginal(id);
+    if (!orig) return rechazar("No encuentro ese original en el catálogo del módulo.");
+    const r = diferencias(tecnica ? CAMPOS_TECNICA : CAMPOS_DOTE, tecnica ? leerCamposTecnica(orig) : leerCamposDote(orig), propuesto);
+    if (!r.ok) return rechazar(r.errores.join(" "));
+    if (tecnica) {
+      const errores = problemasTecnica(aplicarEdicionTecnica(orig, r.cambios)).filter(p => p.nivel === "error");
+      if (errores.length) return rechazar(`No se guardó: ${errores.map(p => p.texto).join(" ")}`);
+    }
+    const ed = foundry.utils.deepClone(edicionesMundo()), clave = tecnica ? "tecnicas" : "dotes";
+    ed[clave] ??= {};
+    if (Object.keys(r.cambios).length) ed[clave][id] = r.cambios; else delete ed[clave][id];
+    await game.settings.set(MOD, AJ.ediciones, ed);
+    return { cambios: r.cambios };
+  });
+}
+export function restaurarOriginal(tipo, id) { return guardarEdicionBase(tipo, id, {}); }
 export { descifrar };
 
 /** La naturaleza oculta se guarda revuelta, para que no se lea a simple vista en los datos del actor. */
@@ -1856,6 +1889,8 @@ export function publicarTecnicaUniversal(datos, id = null) {
     t.revision = (Number(anterior?.revision)||0)+1;
     t.historialEdicion = [...(anterior?.historialEdicion ?? []),{ revision:t.revision, por:game.user.id, fecha:new Date().toISOString() }].slice(-30);
     t.item.system.description.value += `<p><b>Aprender:</b> ${t.trazos} Trazos · nivel ${t.nivelMin}${t.req ? ` · ${escH(t.req)}` : ""}${t.previa ? ` · primero ${escH(tecnicaPorId(t.previa)?.n)}` : ""}.</p><p>El texto explica la resolución especial; las repeticiones de daño y condiciones narrativas las resuelve el DM.</p>`;
+    const malas = problemasTecnica(t).filter(p => p.nivel === "error");
+    if (malas.length) return rechazar(`No se publicó: ${malas.map(p => p.texto).join(" ")}`);
     await game.settings.set(MOD,AJ.extra,[...extraMundo().filter(x=>x.id!==t.id),t]);
     for (const a of game.actors ?? []) if (a?.isOwner && conoce(a,t.id)) {
       try { await refrescar(a); } catch (err) { console.error(`${MOD} | refrescar técnica universal`,err); aviso(`Publicado; abre la hoja de ${a.name} y usa «Rearmar» para refrescarla.`,"warn"); }
@@ -1872,6 +1907,31 @@ export function retirarTecnicaUniversal(id, retirada = true) {
     for (const a of game.actors ?? []) refrescarPanel(a.id);
     return true;
   });
+}
+/** Borra una técnica del mundo (Taller del DM). Con `deFichas`, también la quita de las fichas que la aprendieron. */
+export function borrarTecnicaMundo(id, { deFichas = false } = {}) {
+  if (!game.user.isGM) return Promise.resolve(false);
+  return enSerie("catalogo", async () => {
+    const t = extraMundo().find(x => x.id === id); if (!t) return false;
+    await game.settings.set(MOD, AJ.extra, extraMundo().filter(x => x.id !== id));
+    let fichas = 0;
+    if (deFichas) for (const a of game.actors ?? []) {
+      const ids = itemsDe(a, id).map(i => i.id);
+      if (!ids.length) continue;
+      await a.deleteEmbeddedDocuments("Item", ids); fichas += 1;
+    }
+    for (const a of game.actors ?? []) refrescarPanel(a.id);
+    return { nombre: t.n, fichas };
+  });
+}
+/** Borra una técnica propia (firmada, variante o evolución) de una ficha, y su objeto si lo tiene. */
+export async function borrarPropia(actor, id) {
+  if (!game.user.isGM || !actor) return false;
+  const e = estado(actor); if (!(e?.propias ?? []).some(t => t.id === id)) return false;
+  const ids = itemsDe(actor, id).map(i => i.id);
+  if (ids.length) await actor.deleteEmbeddedDocuments("Item", ids);
+  await guardar(actor, { propias: (e.propias ?? []).filter(t => t.id !== id) });
+  return true;
 }
 export function formularioUniversalDe(t) {
   if (t?.definicionUniversal) return foundry.utils.deepClone(t.definicionUniversal);
@@ -1895,7 +1955,33 @@ export class EditorCatalogoVerbe extends foundry.applications.api.ApplicationV2 
     editar(ev,t) { if(!game.user.isGM)return;const tec=extraMundo().find(x=>x.id===t.dataset.id);if(!tec)return;this.formulario=formularioUniversalDe(tec);this.idTecnica=tec.id;this.render(); },
     duplicar(ev,t) { if(!game.user.isGM)return;const tec=tecnicaPorId(t.dataset.id || this.element.querySelector('[name="duplicarBase"]')?.value);if(!tec)return;this.formulario=formularioUniversalDe(tec);this.formulario.nombre+=' · copia';this.idTecnica=null;this.render(); },
     async guardar() { if(!game.user.isGM)return;this.leer();const t=await publicarTecnicaUniversal(this.formulario,this.idTecnica);if(t){this.idTecnica=t.id;aviso(`Publicada ${t.n}: aparece en Aprender con sus requisitos.`);this.render();} },
-    async retirar(ev,t) { if(!game.user.isGM)return;const tec=extraMundo().find(x=>x.id===t.dataset.id);if(!tec)return;if(await confirmar(tec.retirada?"Volver a publicar":"Retirar del aprendizaje",`<p>${escH(tec.n)}: las técnicas ya aprendidas se conservan.</p>`)){await retirarTecnicaUniversal(tec.id,!tec.retirada);this.render();} }
+    async retirar(ev,t) { if(!game.user.isGM)return;const tec=extraMundo().find(x=>x.id===t.dataset.id);if(!tec)return;if(await confirmar(tec.retirada?"Volver a publicar":"Retirar del aprendizaje",`<p>${escH(tec.n)}: las técnicas ya aprendidas se conservan.</p>`)){await retirarTecnicaUniversal(tec.id,!tec.retirada);this.render();} },
+    async borrar(ev,t) {
+      if(!game.user.isGM)return;const tec=extraMundo().find(x=>x.id===t.dataset.id);if(!tec)return;
+      const saben=(game.actors??[]).filter(a=>conoce(a,tec.id)).map(a=>a.name);
+      const r=await foundry.applications.api.DialogV2.wait({window:{title:`Borrar ${tec.n}`},content:`<p>Se borra <b>${escH(tec.n)}</b> del catálogo de este mundo. No se puede deshacer.</p><p>${saben.length?`La saben: ${saben.map(escH).join(", ")}.`:"Ninguna ficha la aprendió."}</p>`,rejectClose:false,
+        buttons:[...(saben.length?[{action:"todo",label:"Borrar y quitarla de las fichas"}]:[]),{action:"catalogo",label:saben.length?"Borrar solo del catálogo":"Borrar",default:!saben.length},{action:"no",label:"Cancelar",default:!!saben.length}]});
+      if(!r||r==="no")return;const hecho=await borrarTecnicaMundo(tec.id,{deFichas:r==="todo"});
+      if(hecho){aviso(`Borrada ${hecho.nombre}${hecho.fichas?` (y de ${hecho.fichas} ficha${hecho.fichas===1?"":"s"})`:""}.`);if(this.idTecnica===tec.id){this.idTecnica=null;this.formulario={...FORMULARIO_UNIVERSAL};}this.render();}
+    },
+    async borrarPropia(ev,t) {
+      if(!game.user.isGM)return;const a=game.actors.get(t.dataset.actor),tec=(estado(a)?.propias??[]).find(x=>x.id===t.dataset.id);if(!a||!tec)return;
+      if(await confirmar(`Borrar ${tec.n}`,`<p>Se borra la técnica propia <b>${escH(tec.n)}</b> de <b>${escH(a.name)}</b> (y su objeto en la ficha). No se puede deshacer.</p>`)){if(await borrarPropia(a,tec.id))aviso(`Borrada ${tec.n} de ${a.name}.`);this.render();}
+    },
+    elegirBase(ev,t) { if(!game.user.isGM)return;const tipo=t.dataset.tipo,id=this.element.querySelector(`[name="base-${tipo}"]`)?.value;if(!id)return;this.base={tipo,id};this.render(); },
+    async guardarBase() {
+      if(!game.user.isGM||!this.base)return;const prop={};
+      for(const el of this.element.querySelectorAll('[data-base]'))prop[el.name]=el.value;
+      const r=await guardarEdicionBase(this.base.tipo,this.base.id,prop);
+      if(r)aviso(Object.keys(r.cambios).length?`Guardado: ${Object.keys(r.cambios).length} cambio(s). Las fichas que la saben se rearman solas.`:"Sin diferencias con el original: queda como en el módulo.");
+      this.render();
+    },
+    async restaurarBase() {
+      if(!game.user.isGM||!this.base)return;
+      if(await confirmar("Restaurar original","<p>Se borran tus cambios y vuelve el texto y los números del módulo.</p>")){await restaurarOriginal(this.base.tipo,this.base.id);aviso("Restaurado el original.");this.render();}
+    },
+    abrirReliquias() { if(!game.user.isGM)return;const pack=game.packs.get("world.ecos-reliquias");if(!pack)return aviso("No encuentro el compendio de reliquias de este mundo.","warn");pack.render(true); },
+    abrirHechizo() { if(!game.user.isGM)return;const it=game.items.get(this.element.querySelector('[name="hechizo"]')?.value);if(!it)return aviso("Elige un hechizo del mundo.","warn");it.sheet.render(true); }
   }};
   leer() {
     for(const el of this.element.querySelectorAll('[data-editor]')) this.formulario[el.name]=el.type==="checkbox"?el.checked:el.value;
@@ -1909,9 +1995,40 @@ export class EditorCatalogoVerbe extends foundry.applications.api.ApplicationV2 
     const input=(k,n,t="text",extra="")=>`<label>${n}<input data-editor name="${k}" type="${t}" value="${escH(f[k])}" ${extra}></label>`;
     const select=(k,n,pares)=>`<label>${n}<select data-editor name="${k}">${opciones(pares,String(f[k]))}</select></label>`;
     const check=(k,n)=>`<label class="ecos-check"><input data-editor name="${k}" type="checkbox" ${f[k]?"checked":""}>${n}</label>`;
-    const lista=extraMundo().map(t=>`<li><b>${escH(t.n)}</b> · grado ${t.g}${t.retirada?" · retirada":""} <button type="button" data-action="editar" data-id="${t.id}">Editar</button> <button type="button" data-action="duplicar" data-id="${t.id}">Duplicar</button> <button type="button" data-action="retirar" data-id="${t.id}">${t.retirada?"Republicar":"Retirar"}</button></li>`).join("");
+    const lista=extraMundo().map(t=>`<li><b>${escH(t.n)}</b> · grado ${t.g}${t.retirada?" · retirada":""} <button type="button" data-action="editar" data-id="${t.id}">Editar</button> <button type="button" data-action="duplicar" data-id="${t.id}">Duplicar</button> <button type="button" data-action="retirar" data-id="${t.id}">${t.retirada?"Republicar":"Retirar"}</button> <button type="button" data-action="borrar" data-id="${t.id}"><i class="fa-solid fa-trash"></i> Borrar</button></li>`).join("");
+    const propias=(game.actors??[]).flatMap(a=>(estado(a)?.propias??[]).map(t=>`<li><b>${escH(t.n)}</b> · ${escH(a.name)} · grado ${t.g}${t.modo?` · ${escH(t.modo)}`:t.firmada?" · firmada":""} <button type="button" data-action="duplicar" data-id="${t.id}">Copiar al catálogo para editar</button> <button type="button" data-action="borrarPropia" data-actor="${a.id}" data-id="${t.id}"><i class="fa-solid fa-trash"></i> Borrar</button></li>`)).join("");
+    const ed=edicionesMundo(),nEd=Object.keys(ed.tecnicas??{}).length+Object.keys(ed.dotes??{}).length;
+    const campoBase=([k,n,tipo,min,max],valor,original)=>{
+      const v=escH(valor??""),cambia=String(valor??"")!==String(original??""),orig=cambia?`<small class="ecos-nota">Original: ${escH(String(original??"—")).slice(0,160)}</small>`:"";
+      if(tipo==="area")return `<label>${n}<textarea data-base name="${k}" rows="4" maxlength="4000">${v}</textarea>${orig}</label>`;
+      if(tipo==="tiempo")return `<label>${n}<select data-base name="${k}">${opciones([["A","Acción"],["AA","Acción adicional"],["R","Reacción"]],String(valor))}</select>${orig}</label>`;
+      if(tipo==="dado")return valor===""?"":`<label>${n}<select data-base name="${k}">${opciones([4,6,8,10,12].map(x=>[x,`d${x}`]),String(valor))}</select>${orig}</label>`;
+      if(valor==="")return "";
+      return `<label>${n}<input data-base name="${k}" type="${tipo==="texto"?"text":"number"}" value="${v}" ${tipo==="texto"?'maxlength="100"':`min="${min}" max="${max}" step="${tipo==="entero"?1:0.5}"`}>${orig}</label>`;
+    };
+    let base="";
+    if(this.base){
+      const tec=this.base.tipo==="tecnica",orig=tec?tecnicaOriginal(this.base.id):doteOriginal(this.base.id);
+      if(orig){
+        const campos=tec?CAMPOS_TECNICA:CAMPOS_DOTE,o=tec?leerCamposTecnica(orig):leerCamposDote(orig);
+        const cambios=(tec?ed.tecnicas:ed.dotes)?.[this.base.id]??{},actual={...o,...cambios};
+        base=`<h4>${escH(tec?orig.n:orig.nombre)}${Object.keys(cambios).length?` · <i>${Object.keys(cambios).length} cambio(s) guardado(s)</i>`:""}</h4><div class="ev-editor-grid">${campos.map(c=>campoBase(c,actual[c[0]],o[c[0]])).join("")}</div>
+        <div class="ecos-botones"><button type="button" data-action="guardarBase"><i class="fa-solid fa-floppy-disk"></i> Guardar cambios en este mundo</button>${Object.keys(cambios).length?`<button type="button" data-action="restaurarBase"><i class="fa-solid fa-rotate-left"></i> Restaurar original</button>`:""}</div>
+        ${tec?`<p class="ecos-nota">Al guardar se revisa la técnica: si quedara un área sin plantilla o un daño que te alcanza, no se guarda.</p>`:""}`;
+      }
+    }
+    const hechizos=(game.items??[]).filter(i=>i.type==="spell"&&!i.getFlag?.(MOD,F)).map(i=>[i.id,i.name]).sort((a,b)=>a[1].localeCompare(b[1]));
     return `<div class="ecos-verbe-cuerpo"><h2>Taller del DM</h2><p>Publica técnicas para el catálogo de todos los jugadores. Cada personaje tendrá que cumplir sus requisitos y aprenderlas con Trazos. Crear aquí no cobra ni enseña nada al personaje seleccionado.</p>
       <details><summary>Técnicas adicionales (${extraMundo().length})</summary><ul>${lista||"<li>No hay técnicas adicionales.</li>"}</ul></details>
+      <details><summary>Técnicas propias de las fichas (firmadas, variantes, evoluciones)</summary><ul>${propias||"<li>Ninguna ficha tiene técnicas propias.</li>"}</ul></details>
+      <details ${this.base?"open":""}><summary>Cambiar el catálogo del módulo (${nEd} edición${nEd===1?"":"es"} guardada${nEd===1?"":"s"})</summary>
+        <p>Cambia el nombre, el texto o los números de cualquier técnica o dote del módulo. Se guarda <b>solo lo que cambias</b>, en este mundo: si actualizas o reinstalas el módulo, tus cambios siguen. «Restaurar original» los borra.</p>
+        <div class="ecos-botones"><select name="base-tecnica">${opciones(BASE?.tecnicas?.map(t=>[t.id,`${(ed.tecnicas??{})[t.id]?"✎ ":""}${t.n} · grado ${t.g}`])??[],this.base?.tipo==="tecnica"?this.base.id:"")}</select><button type="button" data-action="elegirBase" data-tipo="tecnica">Editar técnica</button>
+        <select name="base-dote">${opciones(BASE?.dotes?.map(d=>[d.id,`${(ed.dotes??{})[d.id]?"✎ ":""}${d.nombre}`])??[],this.base?.tipo==="dote"?this.base.id:"")}</select><button type="button" data-action="elegirBase" data-tipo="dote">Editar dote</button></div>
+        ${base}
+        <h4>Reliquias y hechizos</h4><p>Las reliquias viven en el compendio del mundo «Reliquias»: ábrelo, desbloquéalo y edita cada una con el editor de dnd5e. Tus cambios de texto se conservan al actualizar el módulo. Los hechizos se editan con el editor nativo de dnd5e.</p>
+        <div class="ecos-botones"><button type="button" data-action="abrirReliquias"><i class="fa-solid fa-gem"></i> Abrir compendio de reliquias</button><select name="hechizo">${opciones(hechizos,"")}</select><button type="button" data-action="abrirHechizo"><i class="fa-solid fa-wand-sparkles"></i> Abrir hechizo en su editor</button></div>
+      </details>
       <div class="ecos-botones"><button type="button" data-action="nuevo">Nueva técnica</button><select name="duplicarBase">${opciones(D.tecnicas.map(t=>[t.id,`${t.n} · grado ${t.g}`]),"")}</select><button type="button" data-action="duplicar">Usar como punto de partida</button></div>
       <h3>${this.idTecnica?"Editar publicación":"Nueva publicación"}</h3><div class="ev-editor-grid">
       <fieldset><legend>Identidad y aprendizaje</legend>${input("nombre","Nombre","text",'maxlength="100"')}${select("rama","Especialidad",D.ramas.map(r=>[r.id,r.nombre]))}${select("nat","Elemento",[["","Sin elemento"],...Object.keys(NATS).map(n=>[n,nombreNat(n)]),...Object.keys(D.combos).map(n=>[n,nombreNat(n)])])}${input("grado","Grado (0–11)","number",'min="0" max="11"')}${input("trazos","Trazos para aprender","number",'min="0" max="100"')}${input("nivelMin","Nivel mínimo adicional","number",'min="1" max="20"')}${select("previa","Técnica previa",[["","Ninguna"],...[...D.tecnicas,...extraMundo()].filter(t=>t.id!==this.idTecnica).map(t=>[t.id,t.n])])}${input("req","Requisito narrativo o maestro","text",'maxlength="500"')}</fieldset>
@@ -3803,6 +3920,8 @@ Hooks.once("init", () => {
   });
   game.settings.register(MOD, AJ.pend, { scope: "world", config: false, type: Array, default: [] });
   game.settings.register(MOD, AJ.extra, { scope: "world", config: false, type: Array, default: [] });
+  // Ediciones del DM sobre el catálogo del módulo: solo las diferencias, para que una actualización no las borre.
+  game.settings.register(MOD, AJ.ediciones, { scope: "world", config: false, type: Object, default: { tecnicas: {}, dotes: {} } });
   game.settings.register(MOD, "verbeChoques", {
     name: "Choques del Verbe", hint: "Potencia: el elemento favorable aporta 2 grados; si empatan, Control. Clásico: el ciclo elemental decide antes que el grado.",
     scope: "world", config: true, type: String, default: "potencia",
@@ -3834,6 +3953,8 @@ Hooks.once("ready", async () => {
   try {
     D = await cargarDatos();
     if (!D) return console.warn(`${MOD} | capa V: no encuentro sus datos`);
+    BASE = { tecnicas: D.tecnicas, dotes: D.dotes };
+    aplicarEdicionesMundo();
     console.log(`${MOD} | capa V ${D.version}: ${D.tecnicas.length} técnicas (${MODO})`);
   } catch (err) {
     return console.error(`${MOD} | capa V: no pude leer sus datos`, err);
@@ -3920,6 +4041,14 @@ Hooks.on("updateWorldTime", () => {
 });
 Hooks.on("updateSetting", setting => {
   if (activo() && setting.key === `${MOD}.${AJ.extra}`) for (const id of paneles.keys()) refrescarPanel(id);
+  if (activo() && setting.key === `${MOD}.${AJ.ediciones}`) {
+    const antes = new Set(D.tecnicas.filter(t => t.editadaDM).map(t => t.id));
+    aplicarEdicionesMundo();
+    const tocadas = new Set([...antes, ...D.tecnicas.filter(t => t.editadaDM).map(t => t.id)]);
+    // Las fichas que ya la saben se rearman con la versión nueva (o la original, si se restauró).
+    if (soyGM()) for (const a of game.actors ?? []) if (itemsTecnica(a).some(i => tocadas.has(i.getFlag(MOD, F).id))) refrescar(a).catch(err => console.error(`${MOD} | edición del catálogo`, err));
+    for (const id of paneles.keys()) refrescarPanel(id);
+  }
 });
 Hooks.on("refreshToken", token => { if (activo()) barraToken(token); });
 Hooks.on("deleteActiveEffect", (ef, opciones) => { if (activo()) alQuitarEfecto(ef, opciones).catch(err => console.error(`${MOD} | capa V`, err)); });
