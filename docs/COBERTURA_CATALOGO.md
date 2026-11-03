@@ -1,14 +1,14 @@
-# Cobertura declarada del catálogo 3.7.0
+# Cobertura declarada del catálogo 3.8.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **892 técnicas y 222 dotes**.
+El catálogo reúne **912 técnicas y 222 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
-| Forma | 180 | 44 |
+| Forma | 200 | 46 |
 | Velo | 56 | 24 |
 | Cuerpo | 68 | 25 |
 | Mirada | 59 | 30 |
@@ -918,6 +918,26 @@ El catálogo reúne **892 técnicas y 222 dotes**.
 | `sangre-latido-antiguo` | Latido de la sangre | 4 | sangre | save | 0 |
 | `forma-clon-sombra` | Clon de sombra | 5 | forma | utility | 0 |
 | `forma-clones-masivos` | Legión de sombras | 8 | forma | utility | 0 |
+| `forma-pura-chispa` | Chispa de Verbe | 0 | forma | attack | 0 |
+| `forma-pura-empujon` | Empujón de Verbe | 0 | forma | save | 0 |
+| `forma-pura-guardia` | Guardia de Verbe | 0 | forma | utility | 1 |
+| `forma-pura-dardo` | Dardo de Verbe | 1 | forma | attack | 0 |
+| `forma-pura-filo` | Filo de Verbe | 1 | forma | attack | 0 |
+| `forma-pura-escudo` | Escudo de Verbe | 1 | forma | utility | 1 |
+| `forma-pura-impulso` | Impulso | 1 | forma | utility | 1 |
+| `forma-pura-red` | Red de Verbe | 1 | forma | save | 1 |
+| `forma-pura-lluvia` | Lluvia de agujas | 2 | forma | save | 0 |
+| `forma-pura-lanza` | Lanza de Verbe | 2 | forma | attack | 0 |
+| `forma-pura-martillo` | Martillo de Verbe | 2 | forma | attack | 1 |
+| `forma-pura-muro` | Muro de Verbe | 2 | forma | utility | 0 |
+| `forma-pura-orbes` | Orbes guía | 3 | forma | attack | 0 |
+| `forma-pura-estallido` | Estallido de Verbe | 3 | forma | save | 0 |
+| `forma-pura-coraza` | Coraza de Verbe | 3 | forma | utility | 1 |
+| `forma-pura-salto` | Salto de Verbe | 3 | forma | utility | 0 |
+| `forma-pura-cadena` | Cadena de Verbe | 4 | forma | save | 1 |
+| `forma-pura-ariete` | Ariete de Verbe | 4 | forma | save | 1 |
+| `forma-pura-baluarte` | Baluarte | 5 | forma | utility | 1 |
+| `forma-pura-cometa` | Cometa de Verbe | 5 | forma | save | 0 |
 
 ## Dotes
 

@@ -1,4 +1,11 @@
-# Ecos de la frontera · Reglas de la casa (v3.7.0)
+# Ecos de la frontera · Reglas de la casa (v3.8.0)
+
+**Novedades de 3.8:**
+- **Conjuros:** los conjuros de D&D también chocan con las técnicas.
+- **Técnicas:** 20 formas sin elemento.
+- **NPC:** 10 plantillas nuevas.
+- **Iconos:** iconos claros para técnicas y dotes.
+- **PF2e:** reglas para convertir hechizos y macro para exportarlos.
 
 **Novedades de 3.7:**
 - **Choques y defensas:**

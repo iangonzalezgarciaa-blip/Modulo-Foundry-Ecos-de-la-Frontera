@@ -1,6 +1,6 @@
 # Auditoría de catálogo y escalado · 3.1
 
-Revisión automática de **892 técnicas y 222 dotes**: 35680 fichas preparadas y 35680 actividades, con veinte niveles y dos perfiles. Requisitos referenciados, costes, cotas de dados, elevación, JSON e importaciones se validan junto a las pruebas de integración.
+Revisión automática de **912 técnicas y 222 dotes**: 36480 fichas preparadas y 36480 actividades, con veinte niveles y dos perfiles. Requisitos referenciados, costes, cotas de dados, elevación, JSON e importaciones se validan junto a las pruebas de integración.
 
 **Alcance:** el perfil normal usa el rango permitido por nivel, sin dotes; el perfil de tensión entrega todas las dotes y nueve mejoras simultáneas por técnica, una combinación de cultivo deliberadamente superior a la legal. Sirve para comprobar que incluso datos antiguos excesivos respetan los topes. No es una construcción comprable ni una simulación de combate. La tabla usa técnicas cuyo grado cabe por nivel, aunque otros requisitos de sangre, historia, senda o contrato puedan impedir usarlas.
 
@@ -9,7 +9,7 @@ La media muestra solo dados de daño o curación, sin impacto, salvaciones, blan
 | Nivel | Perfil | Mayor media de dados | Técnica de referencia | Mínimo de coste entre grados 6–11 |
 |---:|---|---:|---|---:|
 | 1 | Normal | 18.0 | agua-ola | 8 |
-| 1 | Tensión | 26.0 | rayo-arco | 7 |
+| 1 | Tensión | 27.5 | forma-pura-filo | 7 |
 | 5 | Normal | 38.5 | fuego-gran-soplo | 8 |
 | 5 | Tensión | 55.0 | hilo-decapitadora | 7 |
 | 11 | Normal | 71.5 | quietud-esfera-sabia-mayor | 8 |
