@@ -8,9 +8,9 @@ La media muestra solo dados de daño o curación, sin impacto, salvaciones, blan
 
 | Nivel | Perfil | Mayor media de dados | Técnica de referencia | Mínimo de coste entre grados 6–11 |
 |---:|---|---:|---|---:|
-| 1 | Normal | 18.0 | agua-ola | 9 |
+| 1 | Normal | 18.0 | agua-ola | 8 |
 | 1 | Tensión | 26.0 | rayo-arco | 7 |
-| 5 | Normal | 38.5 | fuego-gran-soplo | 9 |
+| 5 | Normal | 38.5 | fuego-gran-soplo | 8 |
 | 5 | Tensión | 55.0 | hilo-decapitadora | 7 |
 | 11 | Normal | 71.5 | quietud-esfera-sabia-mayor | 8 |
 | 11 | Tensión | 93.5 | cuerpo-peso-extremo | 7 |

@@ -1,6 +1,20 @@
-# Ecos de la frontera · Reglas de la casa (v3.4.0)
+# Ecos de la frontera · Reglas de la casa (v3.5.0)
 
-**Preparada para tus pruebas de mesa:** abre **Mesa Ecos → Diagnóstico y pruebas**. Encontrarás versiones, avisos de integración, informe técnico sin datos privados y quince casos para registrar en un cuaderno privado. Ninguna prueba real se declara superada por las comprobaciones de código. [Recorrido de pruebas](docs/PRUEBAS_REALES_3.4.md) · [Guía de funciones 3.4](docs/MESA_3.4.md).
+**Novedades de 3.5:**
+- **Técnicas revisadas:** un validador revisa las 860 técnicas; 79 quedaron corregidas, como «Aliento de brasa», que ya no daña a quien la usa y se coloca bien en escenas en pies.
+- **Control en la tirada:**
+  - ventana de ventaja en cada ataque;
+  - pregunta antes de aplicar un estado;
+  - pausa para gastar una Moneda Antigua al fallar.
+- **Herramientas del DM:**
+  - editor de técnicas y dotes que guarda solo tus cambios y deja restaurar el original;
+  - botón para devolver Verbe con registro.
+- **Reglas:**
+  - el Descanso Corto solo sirve para gastar Dados de Golpe;
+  - la naturaleza de nacimiento cuesta 1 Verbe menos.
+- **Pruebas en Foundry:** hay ocho casos nuevos en Diagnóstico.
+
+**Preparada para tus pruebas de mesa:** abre **Mesa Ecos → Diagnóstico y pruebas**. Encontrarás versiones, avisos de integración, informe técnico sin datos privados y veintitrés casos para registrar en un cuaderno privado. Ninguna prueba real se declara superada por las comprobaciones de código. [Recorrido de pruebas](docs/PRUEBAS_REALES_3.4.md) · [Guía de funciones 3.4](docs/MESA_3.4.md).
 
 **Creación verificada:** detecta elecciones repetidas, niveles o valores incoherentes y avances nativos pendientes. El DM aprueba la configuración y decide si activa Ecos. Despertar el Verbe es una concesión independiente. **Qué quiero hacer** propone técnicas por intención, con requisitos y costes, y abre el Verbe filtrado por la opción elegida.
 

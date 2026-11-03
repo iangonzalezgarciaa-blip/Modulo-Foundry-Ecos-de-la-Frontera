@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.4.1
+# Preparar la primera prueba real · 3.5.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -99,6 +99,54 @@ Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el pan
 ### 15. Primera escena sin manual
 
 Pide a alguien nuevo que cree una ficha de prueba, encuentre una técnica por intención y juegue una escena social y otra de combate. Anota dónde necesitó una explicación externa.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 16. 3.5 · Cono que no te alcanza
+
+En una escena medida en pies, usa Aliento de brasa con un objetivo delante. El cono debe medir 15 pies, colocarse desde ti y no dañarte. Repite en una escena en metros (4,5 m).
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 17. 3.5 · Ventaja en cada ataque
+
+Ataca con un PJ y con un PNJ. Siempre debe abrirse la ventana Normal/Ventaja/Desventaja; con un objetivo derribado o un efecto que dé ventaja, la ventana debe avisarlo y preguntarte si la usas.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 18. 3.5 · Preguntar antes de un estado
+
+Con un PNJ, usa un ataque o técnica que derribe o aturda a un PJ. El DM debe ver «¿Aplicar…?» con lo que provoca y el jugador el aviso en el chat. Responde No: no debe aplicarse. Repite con Sí.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 19. 3.5 · Pausa para la Moneda Antigua
+
+Con un PJ con Monedas Antiguas, falla un ataque y una salvación (sin sacar 1). Debe ofrecerse gastar una para repetir; al aceptar, la tirada nueva cuenta y la tarjeta lo anota.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 20. 3.5 · Sustitución contra un PNJ fuera de combate
+
+Sin combate, haz que un PNJ muerda dos veces a un PJ con Sustitución. Las dos veces debe ofrecerse. Deja al PJ sin Verbe y Agotamiento 4: el chat debe explicar por qué no puede y cuánto costaría.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 21. 3.5 · Descanso Corto solo para gastar
+
+Con un PJ herido y Dados de Golpe gastados, haz un Descanso Corto: no debe recuperar dados y debe abrirse la ventana para gastarlos. Prueba «Gastar hasta el tope».
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 22. 3.5 · Editar y restaurar una técnica
+
+En Dirección → Editar técnicas, cambia los dados de una técnica que sepa un PJ. Su ficha debe mostrar el valor nuevo. Restaura el original y comprueba que vuelve. Borra Getsuga Tenshō del catálogo del mundo.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 23. 3.5 · Devolver Verbe
+
+Usa una técnica y, desde su tarjeta, devuelve 2 de Verbe con un motivo. Debe sumarse sin pasar del máximo y aparecer en la tarjeta y en Dirección → Últimas devoluciones.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
