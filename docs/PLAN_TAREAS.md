@@ -196,7 +196,7 @@
 
 - [x] **3.5e · Clones: adaptar los existentes** (hecha: cuerpos elementales al sistema nuevo; réplicas y señuelo sin cambios) (S · Dep.: 3.5b). Mover las técnicas actuales al nuevo sistema o retirarlas.
 
-- [ ] **3.6 · R · Publicar v3.7.0** (S · Dep.: 3.1 a 3.5).
+- [x] **3.6 · R · Publicar v3.7.0** (publicada el 3-nov-2026) (S · Dep.: 3.1 a 3.5).
 
 ## Fase 4 · Contenido (publica v3.8.0)
 
@@ -295,3 +295,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 3-nov-2026 | 1.3–1.8 y pendientes de 2.7 | Claude | Editor del DM y capa de ediciones; ventaja, estados, moneda, devolver Verbe; descanso corto, naturaleza −1, defensas fuera de combate. Getsuga localizada (la borra el autor) | Sin publicar (3.5.0) |
 | 3-nov-2026 | 1.9 | Claude | Release v3.5.0 publicado por el flujo (ZIP, module.json, Ecos-Actualizar.ps1, .bat) | 3.5.0 |
 | 3-nov-2026 | 2.1–2.7 | Claude | Etapas, naturaleza oculta, ramas, reserva por dados, sangre única, oponentes, curación. Release v3.6.0 | 3.6.0 |
+| 3-nov-2026 | 3.1–3.6 | Claude | Choque en cualquier rama, defensas del catálogo, 18 contratécnicas, Canalizando y 27 cargadas, clones con ficha; corrección del alcance en pies (Cuerpo), ventanas y nombres ocultos. Release v3.7.0 | 3.7.0 |
