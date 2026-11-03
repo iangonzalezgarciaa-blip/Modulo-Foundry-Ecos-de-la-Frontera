@@ -158,9 +158,9 @@
 
 - [x] **2.5c · Sangre única: botón de activación** (hecha: «Activar técnicas familiares» con nota y registro) (S · Dep.: 2.5a). Botón del DM «Activar técnicas familiares» para cuando el jugador las descubra por rol. Si el legado es desconocido, queda oculto hasta entonces. Listo cuando el botón cambia el estado y deja registro.
 
-- [ ] **2.6a · Curación y heridas: auditoría** (S · Dep.: —). Revisar cómo se enlazan las dotes de medicina (verbe-medicina.js, 19 líneas; «Médico del Verbe», «Cirujano del Verbe», técnicas de Pulso) con las heridas de la casa («Herida No Tratada»; diario «Reglas de la casa», página «1 · Santuarios, descanso y heridas»; rest-core.js). Entregar docs/AUDITORIA_CURACION.md con los huecos.
+- [x] **2.6a · Curación y heridas: auditoría** (hecha: docs/AUDITORIA_CURACION.md) (S · Dep.: —). Revisar cómo se enlazan las dotes de medicina (verbe-medicina.js, 19 líneas; «Médico del Verbe», «Cirujano del Verbe», técnicas de Pulso) con las heridas de la casa («Herida No Tratada»; diario «Reglas de la casa», página «1 · Santuarios, descanso y heridas»; rest-core.js). Entregar docs/AUDITORIA_CURACION.md con los huecos.
 
-- [ ] **2.6b · Curación y heridas: cambios** (M · Dep.: 2.6a). Que la prueba de Medicina sea valiosa y que el Verbe médico pese (bonos o ventaja según la rama Pulso). Que las heridas graves exijan reposo en cama por días aunque haya curación mágica. Listo cuando el flujo está implementado y probado.
+- [x] **2.6b · Curación y heridas: cambios** (hecha: Pulso y Médico del Verbe en Medicina, cura excelente, magia con reposo; ajuste «Heridas graves piden reposo») (M · Dep.: 2.6a). Que la prueba de Medicina sea valiosa y que el Verbe médico pese (bonos o ventaja según la rama Pulso). Que las heridas graves exijan reposo en cama por días aunque haya curación mágica. Listo cuando el flujo está implementado y probado.
 
 - [ ] **2.7 · R · Publicar v3.6.0** (S · Dep.: 2.1 a 2.6).
 

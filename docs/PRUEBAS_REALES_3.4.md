@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.5.0
+# Preparar la primera prueba real · 3.6.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -147,6 +147,36 @@ Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el pan
 ### 23. 3.5 · Devolver Verbe
 
 Usa una técnica y, desde su tarjeta, devuelve 2 de Verbe con un motivo. Debe sumarse sin pasar del máximo y aparecer en la tarjeta y en Dirección → Últimas devoluciones.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 24. 3.6 · Etapas y naturaleza oculta
+
+Despierta una ficha de prueba en etapa Aprendiz con naturaleza secreta. No debe ver técnicas elementales ni poder aprender otra rama. Abre la siguiente etapa desde Herramientas del DM, pide el entrenamiento de naturaleza, da por terminados los días y haz la prueba.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 25. 3.6 · Reserva por dados
+
+Despierta una ficha con «Tirar dados»: el chat debe mostrar una tirada por nivel y el máximo debe ser su suma más la característica. Súbela un nivel: debe tirar ese nivel. Otra ficha en «Promedio» debe quedar como la tabla.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 26. 3.6 · Una sola sangre
+
+En una ficha con linaje, intenta abrirle una Mirada heredada distinta: debe negarse. Como trasplante sí. Con el linaje secreto, el bloque «Sangre de…» del Inicio debe explicarlo y «Activar técnicas familiares» debe abrirlas.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 27. 3.6 · Oponentes impredecibles
+
+En Diagnóstico, pulsa «Ocultar datos exactos de los enemigos». Con un usuario jugador, comprueba que no ve la barra ni la ficha completa de un PNJ y que el ataque no muestra su CA. Crea dos PNJ con «Verbe variable»: deben salir distintos.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 28. 3.6 · Curación con reposo
+
+Con un PJ con Herida No Tratada, trata con un Maestro de Pulso que tenga Médico del Verbe: la tirada debe llevar ventaja y el bono. Supera la CD por 5: cuenta dos días. Lanza Restauración menor otro día: cuenta dos días y no borra un nivel de golpe.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 

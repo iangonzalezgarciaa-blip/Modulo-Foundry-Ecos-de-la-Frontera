@@ -1,14 +1,14 @@
-# Cobertura declarada del catálogo 3.5.0
+# Cobertura declarada del catálogo 3.6.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **860 técnicas y 219 dotes**.
+El catálogo reúne **861 técnicas y 219 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
-| Forma | 173 | 41 |
+| Forma | 174 | 42 |
 | Velo | 53 | 24 |
 | Cuerpo | 66 | 25 |
 | Mirada | 59 | 30 |
@@ -886,6 +886,7 @@ El catálogo reúne **860 técnicas y 219 dotes**.
 | `vida-cuerpo-paso-danzante` | Paso del danzante | 1 | cuerpo | utility | 0 |
 | `vida-sello-sello-despensa` | Sello de la despensa | 1 | sello | utility | 0 |
 | `vida-sello-etiqueta-almacen` | Etiqueta del almacén | 0 | sello | utility | 0 |
+| `forma-cambiar-naturaleza` | Cambiar naturaleza del Verbe | 2 | forma | utility | 0 |
 
 ## Dotes
 

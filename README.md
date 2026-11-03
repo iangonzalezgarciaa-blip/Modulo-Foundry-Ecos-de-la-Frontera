@@ -1,4 +1,18 @@
-# Ecos de la frontera · Reglas de la casa (v3.5.0)
+# Ecos de la frontera · Reglas de la casa (v3.6.0)
+
+**Novedades de 3.6:**
+- **El Verbe se aprende por etapas:** el DM abre la siguiente cuando el personaje encuentra quién le enseñe.
+- **Naturaleza oculta:** se descubre entrenando. Hay técnica nueva, «Cambiar naturaleza del Verbe».
+- **Ramas más caras:** desde la tercera rama, cada rango cuesta más Trazos.
+- **Reserva por dados:** el Verbe máximo puede salir de dados, con el promedio como alternativa.
+- **Una sola sangre por personaje:** el DM tiene un bloque que se lo explica.
+- **Oponentes impredecibles:**
+  - datos ocultos de los enemigos;
+  - NPC con variación;
+  - lectura del Verbe por tramos.
+- **Curación:**
+  - la Medicina y el Verbe médico pesan más;
+  - las heridas graves piden reposo.
 
 **Novedades de 3.5:**
 - **Técnicas revisadas:** un validador revisa las 860 técnicas; 79 quedaron corregidas, como «Aliento de brasa», que ya no daña a quien la usa y se coloca bien en escenas en pies.
@@ -14,7 +28,7 @@
   - la naturaleza de nacimiento cuesta 1 Verbe menos.
 - **Pruebas en Foundry:** hay ocho casos nuevos en Diagnóstico.
 
-**Preparada para tus pruebas de mesa:** abre **Mesa Ecos → Diagnóstico y pruebas**. Encontrarás versiones, avisos de integración, informe técnico sin datos privados y veintitrés casos para registrar en un cuaderno privado. Ninguna prueba real se declara superada por las comprobaciones de código. [Recorrido de pruebas](docs/PRUEBAS_REALES_3.4.md) · [Guía de funciones 3.4](docs/MESA_3.4.md).
+**Preparada para tus pruebas de mesa:** abre **Mesa Ecos → Diagnóstico y pruebas**. Encontrarás versiones, avisos de integración, informe técnico sin datos privados y veintiocho casos para registrar en un cuaderno privado. Ninguna prueba real se declara superada por las comprobaciones de código. [Recorrido de pruebas](docs/PRUEBAS_REALES_3.4.md) · [Guía de funciones 3.4](docs/MESA_3.4.md).
 
 **Creación verificada:** detecta elecciones repetidas, niveles o valores incoherentes y avances nativos pendientes. El DM aprueba la configuración y decide si activa Ecos. Despertar el Verbe es una concesión independiente. **Qué quiero hacer** propone técnicas por intención, con requisitos y costes, y abre el Verbe filtrado por la opción elegida.
 

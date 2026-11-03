@@ -1039,6 +1039,16 @@ async function tratarMalherido(actor, { curar = false } = {}) {
 const competenteMedicina = a => (Number(a?.system?.skills?.med?.value) || 0) >= 1;
 const esNessa = a => /nessa/i.test(a?.name ?? "");
 const necesitaCuidados = a => !!(nivelHNT(a) || efectoMalherido(a) || totalSecuela(a));
+/** Heridas graves piden reposo (2.6b): la magia acelera la Herida No Tratada pero no la borra de golpe. Ajuste del mundo. */
+const reposoHeridas = () => { try { return game.settings.get(MOD, "heridasReposo") !== false; } catch { return true; } };
+/** El Verbe médico pesa (2.6b): +1 a Medicina por rango de Pulso desde Experto; «Médico del Verbe» tira con ventaja. */
+function apoyoVerbeMedico(sanador) {
+  const v = game.modules.get(MOD)?.api?.verbe;
+  if (!v?.despierto?.(sanador)) return { bono: 0, ventaja: false, texto: "" };
+  const bono = Math.max(0, (Number(v.rangoDe?.(sanador, "pulso")) || 0) - 1), ventaja = !!v.tieneDote?.(sanador, "medico-verbe");
+  const partes = [bono ? `+${bono} por su rango en Pulso` : "", ventaja ? "ventaja por Médico del Verbe" : ""].filter(Boolean);
+  return { bono, ventaja, texto: partes.join(" y ") };
+}
 const cdTratamiento = a => 10 + nivelHNT(a);
 /** El tratamiento de hoy (entre un descanso y el siguiente): { intento, exito, por }. Sin bandera: todavía no hay registro. */
 const curaDeHoy = a => a.getFlag(MOD, "cura") ?? null;
@@ -1071,7 +1081,10 @@ async function aplicarTratamiento(actor, d) {
     if (nh && cortado) {
       L.push(`La Herida No Tratada no avanza hoy (hubo combate, viaje forzado o trabajo pesado), pero queda limpia y vendada.`);
     } else if (nh) {
-      let dd = dia + 1;
+      // Superar la CD por 5 o más (o la magia, con reposo) cuenta dos días de tratamiento.
+      const dosDias = (Number(d.dias) || 0) >= 2 || (!d.magico && Number(d.total) >= Number(d.cd) + 5);
+      if (dosDias) L.push(d.magico ? "La magia acelera la cura, pero la herida pide reposo: cuenta <b>dos días</b> de tratamiento." : "<b>Cura excelente</b> (5 o más sobre la CD): cuenta <b>dos días</b> de tratamiento.");
+      let dd = dia + (dosDias ? 2 : 1);
       let n = nh;
       if (dd >= DIAS_TRATAMIENTO) { n -= 1; dd = 0; }
       await setHNT(actor, n, dd);
@@ -1177,12 +1190,13 @@ async function dialogoCurar(sanador) {
   if (!libres.length) return ui.notifications.info("Ecos de la frontera: hoy ya se trató a todos los heridos. Vuelve a intentarlo después del próximo descanso.");
   const estados = heridos.map(a => `<p><b>${a.name}:</b> ${textoEstadoHerida(a).join(" · ")}</p>`).join("");
   const med = sanador.system.skills?.med?.total ?? 0;
+  const apoyo = apoyoVerbeMedico(sanador);
   const content = `<div class="ecos-dialogo">
-    <p><b>${sanador.name}</b> trata heridas (Medicina ${signo(med)}${comp ? "" : ", sin competencia"}). ${enSantuario() ? "🏠 En el Santuario." : "🌲 Fuera del Santuario: el tratamiento cuenta igual."}</p>
+    <p><b>${sanador.name}</b> trata heridas (Medicina ${signo(med)}${comp ? "" : ", sin competencia"}${apoyo.texto ? `; Verbe médico: ${apoyo.texto}` : ""}). ${enSantuario() ? "🏠 En el Santuario." : "🌲 Fuera del Santuario: el tratamiento cuenta igual."}</p>
     <div class="form-group"><label>Herido</label><select name="paciente">${filas}</select></div>
     ${kit ? `<label class="ecos-check"><input type="checkbox" name="kit" ${comp ? "" : "checked disabled"}> Usar ${kit.name} (quedan ${usosRestantes(kit)}${comp ? "" : "; sin competencia, hace falta"})</label>` : ""}
     ${estados}
-    <p class="ecos-nota">Una vez por día por herido (entre un descanso y el siguiente). Éxito: el día cuenta para la Herida No Tratada, el Malherido queda tratado y esa noche no empeora. Fallo: esa noche tira Constitución. 1 natural: la herida se infecta.</p>
+    <p class="ecos-nota">Una vez por día por herido (entre un descanso y el siguiente). Éxito: el día cuenta para la Herida No Tratada, el Malherido queda tratado y esa noche no empeora. Superar la CD por 5 o más cuenta dos días. Fallo: esa noche tira Constitución. 1 natural: la herida se infecta.</p>
   </div>`;
   const r = await DialogV2.wait({
     window: { title: `Curar · ${sanador.name}`, icon: "fa-solid fa-kit-medical" },
@@ -1200,7 +1214,9 @@ async function dialogoCurar(sanador) {
   const usarKit = !!kit && (!comp || !!r.kit);
   const solo = paciente.id === sanador.id;
   const dc = cdTratamiento(paciente);
-  const roll = await tiradaConSoul(sanador, m => sanador.rollSkill({ skill: "med", target: dc, ...(solo ? { disadvantage: true } : {}) }, { configure: false }, m), "Medicina");
+  const extra = apoyo.bono ? { rolls: [{ parts: [String(apoyo.bono)] }] } : {};
+  const ventaja = apoyo.ventaja && !solo ? { advantage: true } : (solo && !apoyo.ventaja ? { disadvantage: true } : {});
+  const roll = await tiradaConSoul(sanador, m => sanador.rollSkill({ skill: "med", target: dc, ...ventaja, ...extra }, { configure: false }, m), "Medicina");
   if (!roll) return;
   if (usarKit) await gastarUso(kit);
   return alDM({ accion: "tratamiento", actorId: paciente.id, sanador: sanador.name, total: roll.total, cd: dc, fumble: !!roll.isFumble,
@@ -1377,6 +1393,14 @@ async function magiaCuraInterna(actor, d) {
   const sinTratar = malSinTratar(actor);
   if (!n && !sinTratar) return;
   const { DialogV2 } = foundry.applications.api;
+  // Con «heridas graves piden reposo», la magia cuenta como el tratamiento del día con dos días de avance; no borra un nivel.
+  if (reposoHeridas() && n) {
+    if (curaDeHoy(actor)?.exito) return publicar(actor, "✨ Magia curativa", [`<b>${d.objeto}</b> de <b>${d.de}</b> alivia a <b>${actor.name}</b>, pero su herida ya se trató hoy: necesita reposo para seguir cerrando.`]);
+    const ok = await DialogV2.confirm({ window: { title: `Herida No Tratada · ${actor.name}`, icon: "fa-solid fa-hand-sparkles" },
+      content: `<div class="ecos-dialogo"><p><b>${d.de}</b> usó <b>${d.objeto}</b> sobre <b>${actor.name}</b>.</p><p>Las heridas graves piden reposo en cama: la magia cuenta como el tratamiento de hoy y avanza <b>dos días</b> (si hoy no hubo combate, viaje forzado ni trabajo pesado). ${sinTratar ? "Su Malherido queda tratado." : ""}</p></div>`, rejectClose: false });
+    if (!ok) return;
+    return aplicarTratamiento(actor, { sanador: d.de, total: 99, cd: 0, santuario: enSantuario(), magico: true, dias: 2 });
+  }
   const nota = (d.tipo === "manos")
     ? "<p class=\"ecos-nota\">Cuesta 5 puntos de la reserva de Imposición de Manos por nivel. Si el uso no los descontó, descuéntalos a mano.</p>"
     : "";
@@ -4451,6 +4475,11 @@ function registrarAjustes() {
     name: "Reloj de la Barrera", hint: "Solo para el DM. Sube solo cuando corresponde; puedes corregirlo aquí. Cada vez que sube, te susurra un parpadeo.",
     scope: "world", config: true, type: Number, default: 3, range: { min: 0, max: 10, step: 1 },
     onChange: v => avisoReloj(v)
+  });
+  game.settings.register(MOD, "heridasReposo", {
+    name: "Heridas graves piden reposo",
+    hint: "La magia que cura heridas (Restauración menor, Sanar, Imposición de manos, técnicas de Pulso) cuenta como el tratamiento del día y avanza dos días de la Herida No Tratada, en vez de borrar un nivel de golpe. Apagado: como antes.",
+    scope: "world", config: true, type: Boolean, default: true
   });
   game.settings.register(MOD, "danoManual", {
     name: "Contar el daño escrito en la hoja",
