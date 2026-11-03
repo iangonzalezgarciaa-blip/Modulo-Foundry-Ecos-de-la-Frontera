@@ -77,3 +77,28 @@ test('Cambiar naturaleza del Verbe: 3 Trazos para aprenderla; usarla pide 7 día
   await V._prueba.resolverEntreno(a, 16);
   assert.deepEqual(V.estado(a).nats, ['rayo']);
 });
+
+test('una sola sangre: un linaje y una Mirada heredada distinta no se juntan; un trasplante sí', async () => {
+  const lin = D.linajes.find(l => l.req && !l.mirada);
+  const ojo = D.miradas[0];
+  const a = new MockActor(10, { nats: ['fuego'], linaje: lin.id, fuerza: 'plena', linajeVisible: false, miradas: {}, trasplantes: [] });
+  assert.match(V.conflictoSangre(a, { ojo: ojo.id }), /Ya tiene una sangre/);
+  assert.equal(await V.despertarOjo(a, ojo.id, 1), false);
+  await V.despertarOjo(a, ojo.id, 1, true);
+  assert.equal(V.estado(a).miradas[ojo.id], 1);
+  assert.equal(V.conflictoSangre(a), null);
+  const b = new MockActor(10, { nats: ['fuego'], linaje: 'ninguno', fuerza: 'ninguna', miradas: {}, trasplantes: [] });
+  await V.despertarOjo(b, ojo.id, 1);
+  assert.equal(V.estado(b).linaje, ojo.linaje);
+  assert.equal(V.sangreDe(b).tipo, 'mirada');
+  assert.match(V.conflictoSangre(b, { linaje: lin.id }), /Mirada heredada/);
+});
+
+test('activar las técnicas familiares las hace visibles y deja registro', async () => {
+  const lin = D.linajes.find(l => l.req && !l.mirada);
+  const a = new MockActor(10, { nats: ['fuego'], linaje: lin.id, fuerza: 'plena', linajeVisible: false });
+  assert.equal(await V.activarFamilia(a, 'una carta de su madre'), true);
+  assert.equal(V.estado(a).linajeVisible, true);
+  assert.equal(V.estado(a).familiaActiva.nota, 'una carta de su madre');
+  assert.equal(await V.activarFamilia(new MockActor(3, { linaje: 'ninguno' })), false);
+});

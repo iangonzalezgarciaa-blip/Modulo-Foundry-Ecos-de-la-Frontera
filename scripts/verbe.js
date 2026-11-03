@@ -216,6 +216,69 @@ export const ocultaDe = actor => desrevolver(estado(actor)?.oc, actor.id);
 /** La primera naturaleza cuando está oculta (modo «secreta»): la fijó el DM y se descubre entrenando. */
 export const ocultaPrimeraDe = actor => desrevolver(estado(actor)?.oc1, actor.id);
 const veLinaje = actor => dm() || !!estado(actor)?.linajeVisible;
+/**
+ * La sangre del personaje (D5, tarea 2.5): sangre, familia y herencia son lo mismo, y hay una sola por nacimiento.
+ * Una Mirada heredada es esa sangre; un ojo trasplantado no cuenta. El Pacto va aparte (se gana en la historia).
+ */
+export function sangreDe(actor) {
+  const e = estado(actor) ?? {}, lin = linajeDe(actor);
+  const heredadas = Object.keys(e.miradas ?? {}).filter(o => Number(e.miradas[o]) > 0 && !(e.trasplantes ?? []).includes(o));
+  return { linaje: lin, fuerza: e.fuerza ?? "ninguna", visible: !!e.linajeVisible, heredadas, activa: !!e.familiaActiva,
+    tipo: lin?.mirada ? "mirada" : lin?.req ? "herencia" : heredadas.length ? "mirada" : null };
+}
+/** ¿Darle este linaje u ojo heredado le pondría una segunda sangre? Devuelve el motivo o null. */
+export function conflictoSangre(actor, { linaje = undefined, ojo = null } = {}) {
+  const s = sangreDe(actor);
+  const lin = linaje === undefined ? s.linaje : (D?.linajes?.find(l => l.id === linaje) ?? null);
+  if (ojo) {
+    if (lin && lin.mirada !== ojo) return `Ya tiene una sangre (${lin.alias ?? lin.nombre}). Una Mirada heredada sería otra: dásela como trasplante.`;
+    const otra = s.heredadas.find(o => o !== ojo);
+    if (otra) return `Ya tiene otra Mirada heredada (${D.miradas.find(m => m.id === otra)?.nombre ?? otra}). Solo hay una sangre por nacimiento.`;
+    return null;
+  }
+  const otra = s.heredadas.find(o => !lin || lin.mirada !== o);
+  if (lin && otra) return `Tiene una Mirada heredada (${D.miradas.find(m => m.id === otra)?.nombre ?? otra}), que ya es su sangre. Quítasela o márcala como trasplante antes de darle otro linaje.`;
+  return null;
+}
+/** Activar las técnicas familiares (2.5c): el jugador descubre su sangre por rol y desde ahora la ve y la aprende. */
+/**
+ * Migración de 3.6 (2.5a): una Mirada heredada sin linaje pasa a ser su sangre; si alguien tiene dos sangres
+ * (un linaje y otra Mirada heredada), se avisa al DM una vez con la lista para que decida. No se borra nada.
+ */
+export async function revisarSangres() {
+  if (!soyGM() || !D) return [];
+  const conflictos = [];
+  for (const a of game.actors ?? []) {
+    const e = estado(a);
+    if (!e?.despierto) continue;
+    const s = sangreDe(a);
+    if (!s.linaje && s.heredadas.length === 1) {
+      const m = D.miradas.find(x => x.id === s.heredadas[0]);
+      if (m?.linaje && D.linajes.some(l => l.id === m.linaje)) await guardar(a, { linaje: m.linaje, historial: hist(e, `Su Mirada heredada (${m.nombre}) queda como su sangre`) });
+      continue;
+    }
+    const c = conflictoSangre(a) ?? (s.heredadas.length > 1 ? `Tiene ${s.heredadas.length} Miradas heredadas.` : null);
+    if (c) conflictos.push(`${escH(a.name)}: ${escH(c)}`);
+  }
+  let visto = "";
+  try { visto = game.settings.get(MOD, "capaVSangre") ?? ""; } catch { visto = ""; }
+  const firmaC = conflictos.join("|");
+  if (conflictos.length && firmaC !== visto) await susurrarDM("Una sola sangre por personaje", `<p>Desde 3.6, sangre, familia y herencia son lo mismo y hay una por nacimiento (una Mirada heredada cuenta; un trasplante no). Revisa:</p><ul>${conflictos.map(x => `<li>${x}</li>`).join("")}</ul><p>No se cambió nada: decide en Herramientas del DM de cada ficha.</p>`);
+  try { await game.settings.set(MOD, "capaVSangre", firmaC); } catch { /* sin ajuste */ }
+  return conflictos;
+}
+export async function activarFamilia(actor, nota = "") {
+  if (!game.user.isGM) return false;
+  const e = estado(actor), s = sangreDe(actor);
+  if (!s.linaje && !s.heredadas.length) return rechazar("No tiene sangre que activar.", "warn");
+  const n = String(nota ?? "").trim().slice(0, 200);
+  await guardar(actor, { linajeVisible: true, familiaActiva: { fecha: new Date().toISOString(), por: game.user.name, nota: n },
+    historial: hist(e, `Descubre su sangre${s.linaje ? `: ${s.linaje.alias ?? s.linaje.nombre}` : ""}${n ? ` (${n})` : ""}`) });
+  aLaMesa(actor, "✦ Tu sangre despierta", `<p>${escH(actor.name)} descubre de dónde viene: <b>${escH(s.linaje?.alias ?? s.linaje?.nombre ?? "su Mirada")}</b>. Desde ahora sus técnicas familiares aparecen en Aprender, con sus requisitos.</p>`, { soloDueno: true });
+  await asegurarRasgos(actor);
+  await refrescar(actor);
+  return true;
+}
 
 export function nivelDe(actor) {
   if (actor?.type === "character") return Math.clamp(Number(actor.system?.details?.level) || 1, 1, 20);
@@ -1664,6 +1727,13 @@ export function pruebaEntreno(actor) { return serializarActor(actor, async () =>
   if (!roll) return false;
   return resolverEntreno(actor, roll.total);
 }); }
+/** Abre un diario del mundo (y una de sus páginas) por su nombre; avisa si no existe en este mundo. */
+function abrirDiarioPorNombre(nombre, pagina = null) {
+  const j = game.journal?.getName?.(nombre) ?? game.journal?.find?.(x => x.name === nombre);
+  if (!j) return aviso(`No encuentro el diario «${nombre}» en este mundo.`, "warn");
+  const p = pagina ? j.pages?.getName?.(pagina) ?? j.pages?.find?.(x => x.name === pagina) : null;
+  return j.sheet?.render(true, p ? { pageId: p.id } : {});
+}
 export function probarNaturaleza(actor, tec) { return serializarActor(actor, () => probarNaturalezaInterno(actor, tec)); }
 async function probarNaturalezaInterno(actor, tec) {
   const e = estado(actor);
@@ -2204,9 +2274,12 @@ export async function despertarOjo(actor, ojo, etapa, trasplante = false) {
   if (nivelDe(actor)<(m.niveles?.[etapa-1]||1)) return rechazar(`Esta etapa pide nivel ${m.niveles[etapa-1]}.`);
   const antes = Number(e.miradas?.[ojo]) || 0;
   if (etapa <= antes) return rechazar(`Ya tiene ese ojo en la etapa ${antes}.`);
+  const yaTrasplante = (e.trasplantes ?? []).includes(ojo);
+  if (!trasplante && !yaTrasplante) { const c = conflictoSangre(actor, { ojo }); if (c) return rechazar(c, "warn"); }
+  const sangreOjo = !trasplante && !yaTrasplante && !linajeDe(actor) && m.linaje && D.linajes.some(l => l.id === m.linaje) ? { linaje: m.linaje } : {};
   const costo = (m?.trazos ?? [3, 5, 8]).slice(antes, etapa).reduce((t, n) => t + n, 0);
   const texto = `${m?.nombre ?? ojo}: etapa ${etapa} (${costo} Trazos)`;
-  await guardar(actor, { miradas: { [ojo]: etapa }, trasplantes: trasplante ? [...new Set([...(e.trasplantes ?? []), ojo])] : (e.trasplantes ?? []),
+  await guardar(actor, { ...sangreOjo, miradas: { [ojo]: etapa }, trasplantes: trasplante ? [...new Set([...(e.trasplantes ?? []), ojo])] : (e.trasplantes ?? []),
     gastados: (Number(e.gastados) || 0) + costo, historial: hist(e, texto), compras: compra(e, "ojo", { ojo, antes, etapa }, costo, texto) });
   for (const t of D.tecnicas.filter(x => x.rama === "mirada" && x.incl && x.id.startsWith(`mirada-${ojo}-`))) {
     const n = Number(String(t.req ?? "").match(/etapa (\d)/)?.[1]) || 1;
@@ -3073,11 +3146,15 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
           .then(() => asegurarRasgos(this.actor)).then(() => refrescar(this.actor)));
       },
       linaje() {
+        const c = conflictoSangre(this.actor, { linaje: valorDe(this, "linaje") });
+        if (c) return rechazar(c, "warn");
         correr(this, guardar(this.actor, { linaje: valorDe(this, "linaje"), fuerza: valorDe(this, "fuerza"), linajeVisible: marcado(this, "linajeVisible") })
           .then(() => asegurarRasgos(this.actor)).then(() => refrescar(this.actor)));
       },
       oculta() { correr(this, guardar(this.actor, { oc: revolver(valorDe(this, "oculta"), this.actor.id), descubierta: false })); },
       descubrirNat() { correr(this, pedirDescubrimiento(this.actor)); },
+      activarFamilia() { correr(this, activarFamilia(this.actor, valorDe(this, "notaFamilia"))); },
+      abrirDiario(ev, t) { abrirDiarioPorNombre(t.dataset.diario, t.dataset.pagina); },
       cambiarNat() { correr(this, pedirDescubrimiento(this.actor, { tipo: "cambio", de: valorDe(this, "cambioDe"), a: valorDe(this, "cambioA") })); },
       pruebaEntreno() { correr(this, pruebaEntreno(this.actor)); },
       terminarEntreno() { correr(this, terminarEntrenoYa(this.actor)); },
@@ -3293,6 +3370,28 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       </div><p class="ev-nota">La referencia completa queda disponible para excepciones o consultas del DM.</p><button type="button" data-action="guia" data-s="">Abrir referencia completa</button>`;
   }
 
+  /** Bloque solo para el DM (2.5b): la sangre del personaje en lenguaje simple, qué puede aprender y dónde leer más. */
+  #sangreDM() {
+    if (!dm()) return "";
+    const a = this.actor, s = sangreDe(a), lin = s.linaje;
+    const deSangre = t => t.rama === "sangre" || t.sec === "sangre" || (lin?.req && t.req === lin.req) || (t.rama === "mirada" && s.heredadas.some(o => t.id.startsWith(`mirada-${o}-`)));
+    const lista = [...D.tecnicas, ...extraMundo()].filter(t => !t.retirada && deSangre(t) && !conoce(a, t.id));
+    const ya = lista.filter(t => requisitos(a, t).ok), motivos = {};
+    for (const t of lista) { const r = requisitos(a, t); if (!r.ok) motivos[r.motivo] = (motivos[r.motivo] ?? 0) + 1; }
+    const top = Object.entries(motivos).sort((x, y) => y[1] - x[1]).slice(0, 3);
+    const quien = lin ? `<b>${escH(lin.alias ?? lin.nombre)}</b>${lin.real && lin.real !== lin.alias ? ` (${escH(lin.real)})` : ""} · fuerza ${escH(FUERZA[s.fuerza]?.nombre ?? s.fuerza)}` : s.heredadas.length ? `una Mirada heredada (${s.heredadas.map(o => escH(D.miradas.find(m => m.id === o)?.nombre ?? o)).join(", ")})` : "ninguna";
+    const estadoTxt = !lin && !s.heredadas.length ? "No tiene sangre: su camino es el de las ramas comunes. Puedes darle un linaje en Herramientas del DM."
+      : !s.visible ? `<b>Es un secreto:</b> el jugador no sabe de dónde viene y no ve sus técnicas familiares. Cuando lo descubra por rol, pulsa «Activar técnicas familiares».`
+        : ya.length ? `<b>Este jugador puede comenzar a aprender técnicas de su sangre:</b> ${ya.length} disponibles ahora (${ya.slice(0, 4).map(t => escH(t.n)).join(", ")}${ya.length > 4 ? "…" : ""}).`
+          : "Conoce su sangre, pero ahora no tiene técnicas familiares que pueda aprender.";
+    const diario = (n, p, txt) => `<button type="button" data-action="abrirDiario" data-diario="${escH(n)}" ${p ? `data-pagina="${escH(p)}"` : ""}>${txt}</button>`;
+    return `<section class="ev-naturalezas ecos-sangre-dm"><h3>Sangre de ${escH(a.name)} <small>(solo la ves tú)</small></h3>
+      <p>Su sangre: ${quien}${s.tipo === "mirada" ? " · cuenta como su única sangre" : ""}. Solo hay <b>una</b> por nacimiento; un ojo trasplantado y un Pacto no cuentan.</p>
+      <p>${estadoTxt}</p>${top.length && s.visible ? `<p class="ecos-nota">Todavía bloqueado: ${top.map(([m, n]) => `${n} por «${escH(m)}»`).join(" · ")}.</p>` : ""}
+      ${(lin || s.heredadas.length) && !s.visible ? `<p><label>Cómo lo descubrió <input name="notaFamilia" maxlength="200" placeholder="Una carta, un sueño, alguien de su familia…"></label> <button type="button" data-action="activarFamilia"><i class="fa-solid fa-key"></i> Activar técnicas familiares</button></p>` : s.activa ? `<p class="ecos-nota">Activadas el ${escH(new Date(estado(a).familiaActiva.fecha).toLocaleDateString())}${estado(a).familiaActiva.nota ? `: ${escH(estado(a).familiaActiva.nota)}` : ""}.</p>` : ""}
+      <p>Para leer más: ${diario("Mundo 10 · El Verbe por dentro", "", "El Verbe por dentro")} ${diario("Tramas y secretos", "16 · Reglas ocultas de la Sangre", "Reglas ocultas de la Sangre")} ${diario("Tramas y secretos", "17 · Manual del DM del módulo", "Manual del DM del módulo")}</p></section>`;
+  }
+
   #resumen() {
     const a = this.actor;
     const e = estado(a);
@@ -3325,7 +3424,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const mon = monedas ? `<section class="ev-reponer"><div><span class="ev-kicker">RECURSO OPCIONAL</span><h3>${monedas} ${monedas === 1 ? "Moneda Antigua" : "Monedas Antiguas"}</h3><p>Gastas una moneda por botón. Elige energía para ahora o un Trazo para aprender.</p></div><div><button type="button" data-action="moneda" data-uso="verbe">Gastar 1 moneda → quedar en ${recMoneda.valor} Verbe${recMoneda.recResto ? " + 1 punto guardado" : ""}</button>
       <button type="button" data-action="moneda" data-uso="trazo" ${monedasNivel >= 2 ? "disabled" : ""}>Gastar 1 moneda → +1 Trazo</button><small>${monedasNivel} de 2 conversiones a Trazo usadas en este nivel.</small></div></section>` : "";
     const ctl = Number(a.system?.skills?.cvb?.value) || 0;
-    return `${pasos}${el.join("")}
+    return `${this.#sangreDM()}${pasos}${el.join("")}
       <div class="ev-estadisticas"><div><small>Dificultad base (CD)</small><b>${cd}</b><span>Para técnicas con tu característica de Verbe; la actividad aplica sus mejoras.</span></div><div><small>Ataque base con Verbe</small><b>${competencia(a) + modDe(a, e.car) >= 0 ? "+" : ""}${competencia(a) + modDe(a, e.car)}</b><span>La técnica puede usar otra característica.</span></div><div><small>Grado máximo por nivel</small><b>${gradoMax(a)}</b><span>Cada rama también tiene su propio límite.</span></div></div>
       ${mon}${resumenDivino(a)}<details class="ev-ficha-personal"><summary>Mi personaje: afinidades, linaje y otros detalles</summary>
       <table class="ecos-verbe-datos">
@@ -4113,6 +4212,7 @@ Hooks.once("init", () => {
   game.settings.register(MOD, AJ.pend, { scope: "world", config: false, type: Array, default: [] });
   game.settings.register(MOD, AJ.extra, { scope: "world", config: false, type: Array, default: [] });
   // Ediciones del DM sobre el catálogo del módulo: solo las diferencias, para que una actualización no las borre.
+  game.settings.register(MOD, "capaVSangre", { scope: "world", config: false, type: String, default: "" });
   game.settings.register(MOD, AJ.ediciones, { scope: "world", config: false, type: Object, default: { tecnicas: {}, dotes: {} } });
   game.settings.register(MOD, "verbeChoques", {
     name: "Choques del Verbe", hint: "Potencia: el elemento favorable aporta 2 grados; si empatan, Control. Clásico: el ciclo elemental decide antes que el grado.",
@@ -4147,6 +4247,7 @@ Hooks.once("ready", async () => {
     if (!D) return console.warn(`${MOD} | capa V: no encuentro sus datos`);
     BASE = { tecnicas: D.tecnicas, dotes: D.dotes };
     aplicarEdicionesMundo();
+    if (soyGM()) setTimeout(() => revisarSangres().catch(err => console.warn(`${MOD} | sangre`, err)), 3000);
     console.log(`${MOD} | capa V ${D.version}: ${D.tecnicas.length} técnicas (${MODO})`);
   } catch (err) {
     return console.error(`${MOD} | capa V: no pude leer sus datos`, err);
@@ -4154,7 +4255,7 @@ Hooks.once("ready", async () => {
   const api = (game.modules.get(MOD).api ??= {});
   api.verbe = { ofertasActor, corregirGastoSimple, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), usoRapido, despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
-    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
+    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)
       ? documento.setFlag(MOD, "metal", !!metal) : false };
   game.socket.on(`module.${MOD}`, d => { if (d?.capaV && !socketDefensa(d)) manejar(d); });

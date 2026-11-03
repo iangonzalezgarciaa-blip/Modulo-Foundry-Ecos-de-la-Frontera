@@ -6,6 +6,8 @@
 - Naturaleza oculta: al despertar, el DM elige si la primera naturaleza es secreta (la fija él), la elige el jugador al descubrirla o se sabe desde el principio. Las técnicas elementales no se ven ni se compran hasta descubrirla entrenando: desde nivel 5 (o 3 con Entrenado en Forma) y en etapa Practicante; 3 días, Control del Verbe CD 12 y 2 Trazos si la supera. La segunda: 5 días, CD 14 y 3 Trazos, desde nivel 5. «Probar» ya no descubre gratis. El DM puede revelarla ya o dar por terminados los días (tareas 2.1a–c).
 - Técnica nueva «Cambiar naturaleza del Verbe» (Forma, grado 2, nivel 5): 3 Trazos; usarla pide 7 días y Control CD 15 para cambiar una naturaleza por otra. Catálogo: 861 técnicas.
 - Repartirse cuesta más: +1 Trazo por rango desde la tercera rama y +2 desde la quinta (tarea 2.4).
+- Una sola sangre por personaje: sangre, familia y herencia son lo mismo. Una Mirada heredada es su sangre (una Mirada sin linaje queda registrada como tal); un ojo trasplantado y un Pacto no cuentan. El panel no deja dar una segunda sangre y avisa al DM, una vez, de las fichas que ya tenían dos, sin cambiar nada (tarea 2.5a).
+- Bloque «Sangre de…» en el Inicio del panel del Verbe, solo para el DM: qué sangre tiene (o si es secreta), qué técnicas familiares puede aprender ya y qué las bloquea, con botones a «Mundo 10 · El Verbe por dentro», «Reglas ocultas de la Sangre» y «Manual del DM del módulo». Botón «Activar técnicas familiares» para cuando la descubre por rol, con nota y registro (tareas 2.5b y 2.5c).
 
 ## 3.5.0 — 2026-11-03
 
