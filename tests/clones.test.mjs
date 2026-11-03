@@ -32,3 +32,15 @@ test('4.3: veinte formas sin elemento, grados 0 a 5, para quien no tiene natural
   assert.ok(fp.every(t => t.rama === 'forma' && !t.nat && t.g >= 0 && t.g <= 5));
   assert.ok(new Set(fp.map(t => t.g)).size === 6);
 });
+
+test('4.7: cada técnica genérica recibe un icono claro de dnd5e y las dotes uno por categoría', async () => {
+  const { iconoTecnica, iconoDote, esGenerico } = await import('../scripts/verbe-iconos.js');
+  const genericas = D.tecnicas.filter(t => esGenerico(t.item.img));
+  assert.ok(genericas.length > 400);
+  const sin = genericas.filter(t => !iconoTecnica(t.item));
+  assert.equal(sin.length, 0, sin.slice(0, 5).map(t => t.id).join(', '));
+  assert.match(iconoTecnica(D.tecnicas.find(t => t.id === 'cuerpo-palma-desvia').item), /checked-shield/);
+  assert.match(iconoTecnica(D.tecnicas.find(t => t.id === 'forma-pura-dardo').item), /force/);
+  assert.match(iconoDote({ cat: 'defensa' }), /checked-shield/);
+  assert.equal(esGenerico('systems/dnd5e/icons/svg/damage/fire.svg'), false);
+});

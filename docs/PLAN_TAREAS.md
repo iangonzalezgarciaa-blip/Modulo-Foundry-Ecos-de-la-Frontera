@@ -206,11 +206,11 @@
 
 - [x] **4.1c · Magia estándar: entra al choque** (hecha: conjuroChocable y naturalezaConjuro) (M · Dep.: 3.1b, 4.1b). Los conjuros participan en el choque con potencia igual al nivel del espacio y el elemento del mapa.
 
-- [ ] **4.2a · Hechizos PF2e: exportar** (S · Dep.: —). Tarea de Mundo, en «Esperanza Oculta». Macro que exporta los hechizos del sistema PF2e (compendio pf2e.spells-srd, a verificar) a JSON: nombre, rango, tradiciones, rasgos, lanzamiento, alcance, área, objetivo, salvación, duración, texto y rareza. La ejecuta el autor y entrega el archivo.
+- [ ] **4.2a · Hechizos PF2e: exportar** (macro lista: tools/macros/exportar-hechizos-pf2e.js; falta que el autor la ejecute y entregue el JSON) (S · Dep.: —). Tarea de Mundo, en «Esperanza Oculta». Macro que exporta los hechizos del sistema PF2e (compendio pf2e.spells-srd, a verificar) a JSON: nombre, rango, tradiciones, rasgos, lanzamiento, alcance, área, objetivo, salvación, duración, texto y rareza. La ejecuta el autor y entrega el archivo.
 
 - [ ] **4.2b · Hechizos PF2e: filtro de redundancia** (M · Dep.: 4.2a). Comparar por nombre y efecto contra los compendios del mundo D&D (dnd5e.spells, dnd5e.spells24, Chris's Premades Spells, MISC Spells). Salida: lista de «únicos» a convertir y lista de «redundantes» con motivo.
 
-- [ ] **4.2c · Hechizos PF2e: reglas de conversión** (S · Dep.: —). Escribir docs/CONVERSION_PF2E.md: acciones de PF2e (1, 2 y 3 acciones, reacción) a acción, acción adicional, reacción o 1 minuto; rango a nivel de conjuro (truco = nivel 0); intensificar a niveles superiores; CD y salvaciones; condiciones; rasgos a tipos de daño; rareza a coste (D11). Licencia: PF2e Remaster usa ORC y el material anterior OGL (a verificar); como el repo es público, comprobarlo antes de subir texto convertido.
+- [x] **4.2c · Hechizos PF2e: reglas de conversión** (hecha: docs/CONVERSION_PF2E.md; licencia por hechizo según el campo de la exportación) (S · Dep.: —). Escribir docs/CONVERSION_PF2E.md: acciones de PF2e (1, 2 y 3 acciones, reacción) a acción, acción adicional, reacción o 1 minuto; rango a nivel de conjuro (truco = nivel 0); intensificar a niveles superiores; CD y salvaciones; condiciones; rasgos a tipos de daño; rareza a coste (D11). Licencia: PF2e Remaster usa ORC y el material anterior OGL (a verificar); como el repo es público, comprobarlo antes de subir texto convertido.
 
 - [ ] **4.2d · Hechizos PF2e: conversión por lotes** (S por lote · Dep.: 4.2b, 4.2c). Crear lotes de ~10 ítems de conjuro dnd5e (con actividades) en un compendio de mundo nuevo (propuesta: world.ecos-conjuros-pf2e). Registrar cada lote en docs/CONVERSION_PF2E_LOTES.md. Repetir hasta agotar los «únicos».
 
@@ -232,17 +232,17 @@
 
 - [ ] **4.5d · Aplicar permisos** (S · Dep.: 4.5b, 4.5c). Los permisos se cambian desde la interfaz de Foundry o con una macro; un conector de Foundry puede no poder hacerlo (a verificar).
 
-- [ ] **4.6a · Plantillas de NPC: inventario** (S · Dep.: —). Hoy hay 7 plantillas narrativas en el Taller de NPC y 23 plantillas de combate en el diario «4 · Plantillas de combate». Listar huecos según el ambiente de la campaña (Arcegris, la frontera, el Vorrh).
+- [x] **4.6a · Plantillas de NPC: inventario** (hecha: faltaban comercio, contrabando, autoridad imperial, cazadores, culto, desertores, bandidos, portadores, resonantes del bosque y vigías) (S · Dep.: —). Hoy hay 7 plantillas narrativas en el Taller de NPC y 23 plantillas de combate en el diario «4 · Plantillas de combate». Listar huecos según el ambiente de la campaña (Arcegris, la frontera, el Vorrh).
 
-- [ ] **4.6b · Plantillas de NPC: crear ~10 nuevas** (M · Dep.: 4.6a).
+- [x] **4.6b · Plantillas de NPC: crear ~10 nuevas** (hecha: 10 nuevas, 17 en total) (M · Dep.: 4.6a).
 
-- [ ] **4.7a · Iconos: estrategia** (S · Dep.: 0.3). Mapa «rama + elemento → icono». Fuentes permitidas: iconos del núcleo de Foundry, del sistema dnd5e y los 14 SVG de icons/. Fuentes externas solo con licencia libre, registrando la atribución en docs/CREDITOS_ICONOS.md (por ejemplo game-icons.net, que a mi entender exige atribución CC BY 3.0: a verificar).
+- [x] **4.7a · Iconos: estrategia** (hecha: docs/ICONOS.md, solo iconos de dnd5e) (S · Dep.: 0.3). Mapa «rama + elemento → icono». Fuentes permitidas: iconos del núcleo de Foundry, del sistema dnd5e y los 14 SVG de icons/. Fuentes externas solo con licencia libre, registrando la atribución en docs/CREDITOS_ICONOS.md (por ejemplo game-icons.net, que a mi entender exige atribución CC BY 3.0: a verificar).
 
-- [ ] **4.7b · Iconos de técnicas** (M, por lotes de ramas · Dep.: 4.7a). Aplicar vía el proceso de 0.3.
+- [x] **4.7b · Iconos de técnicas** (hecha: al armar la ficha) (M, por lotes de ramas · Dep.: 4.7a). Aplicar vía el proceso de 0.3.
 
-- [ ] **4.7c · Iconos de dotes** (M · Dep.: 4.7a).
+- [x] **4.7c · Iconos de dotes** (hecha: por categoría) (M · Dep.: 4.7a).
 
-- [ ] **4.7d · Iconos de reliquias** (S · Dep.: 4.7a).
+- [x] **4.7d · Iconos de reliquias** (revisada: conservan sus iconos propios) (S · Dep.: 4.7a).
 
 - [ ] **4.8 · R · Publicar v3.8.0** (S · Dep.: 4.1 a 4.7).
 

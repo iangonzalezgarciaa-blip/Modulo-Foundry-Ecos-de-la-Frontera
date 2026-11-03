@@ -8,7 +8,18 @@ export const PLANTILLAS_NPC={
  erudito:{nombre:'Investigador del Verbe',rol:'místico',motivo:'Comprender un fenómeno sin destruir sus pruebas.',uso:'Dispone de una pregunta y un límite ético. Sus técnicas se asignan desde el panel del Verbe.'},
  cuidador:{nombre:'Cuidador de comunidad',rol:'apoyo',motivo:'Mantener con vida a su comunidad con recursos limitados.',uso:'Cuenta con útiles y contactos; sus curaciones requieren acciones y recursos reales.'},
  capitan:{nombre:'Jefe de una formación',rol:'guardian',motivo:'Cumplir una misión preservando a su gente.',uso:'Coordina aliados mediante órdenes narrativas; la plantilla no regala acciones ni bonificaciones.'},
- vinculado:{nombre:'Huésped de una entidad',rol:'hostigador',motivo:'Negociar un objetivo propio con la voluntad de su vínculo.',uso:'El DM concede entidad, nivel de vínculo y técnicas por separado. La plantilla no los desbloquea.'}
+ vinculado:{nombre:'Huésped de una entidad',rol:'hostigador',motivo:'Negociar un objetivo propio con la voluntad de su vínculo.',uso:'El DM concede entidad, nivel de vínculo y técnicas por separado. La plantilla no los desbloquea.'},
+ // 4.6b · Arcegris, la frontera y el borde del bosque profundo
+ mercader:{nombre:'Mercader de la ruta',rol:'civil',motivo:'Cerrar el trato antes de que cierren el paso.',uso:'Tiene mercancía, deudas y rumores del camino. Pagar o regatear abre información.'},
+ contrabandista:{nombre:'Contrabandista del río',rol:'hostigador',motivo:'Pasar la carga sin que la vea la guardia.',uso:'Huye antes que pelear; conoce pasos de agua y quién se deja sobornar.'},
+ recaudador:{nombre:'Recaudador imperial',rol:'apoyo',motivo:'Cobrar lo que el Imperio exige sin perder su escolta.',uso:'Lleva papeles, sellos y escolta. Su autoridad pesa más que su espada.'},
+ cazador:{nombre:'Cazador de recompensas',rol:'tirador',motivo:'Cobrar una presa viva antes que otro.',uso:'Sigue un cartel concreto; puede aliarse si le conviene. Ataca a distancia y pone trampas.'},
+ sacerdote:{nombre:'Voz de una capilla',rol:'apoyo',motivo:'Guardar a su feligresía y los secretos de su culto.',uso:'Cura y consuela con recursos reales; sus milagros no se dan por la plantilla.'},
+ desertor:{nombre:'Desertor armado',rol:'guardian',motivo:'Que nadie lo devuelva a su compañía.',uso:'Pelea bien y desconfía de todos; una oferta de amparo lo cambia todo.'},
+ bandido:{nombre:'Salteador de la frontera',rol:'hostigador',motivo:'Llevarse lo que pueda y salir vivo.',uso:'Ataca en grupo y desde la emboscada; huye si cae su jefe.'},
+ portador:{nombre:'Portador que se esconde',rol:'místico',motivo:'Que nadie descubra lo que lleva en la sangre.',uso:'Su Verbe es más fuerte de lo que aparenta. El DM decide su sangre y su etapa por separado.'},
+ resonante:{nombre:'Resonante del bosque',rol:'místico',motivo:'Responder a una llamada que nadie más oye.',uso:'Habla a medias con algo del bosque profundo. Su conducta es extraña, no siempre hostil.'},
+ vigia:{nombre:'Vigía de la Barrera',rol:'tirador',motivo:'Avisar a tiempo de lo que cruza.',uso:'Ve lejos y avisa antes que pelea; conoce las señales y los turnos de guardia.'}
 };
 export function mediaFormula(formula,datos={}){
  let f=String(formula??'').replace(/@([\w.]+)/g,(_m,k)=>{let n=k.split('.').reduce((o,p)=>o?.[p],datos);return n!==null&&n!==undefined&&typeof n!=='boolean'&&String(n).trim()!==''&&Number.isFinite(Number(n))?String(Number(n)):'?';}).replace(/\s/g,'');

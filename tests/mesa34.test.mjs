@@ -38,7 +38,7 @@ test('la revisión de un NPC detecta Multiataque, áreas, magia, control y resis
 test('presión de encuentro muestra hipótesis, respeta cero daño y admite NPC de VD superior a 20',()=>{
  const p=new MockActor(5);p.system.attributes.hp.max=40;p.system.attributes.ac.value=15;const n=new MockActor();n.type='npc';n.system.details.cr=30;n.system.attributes.hp.max=400;
  const r=estimarEncuentro([p],[{actor:n,cantidad:2,danoRonda:0,blancos:1}]);assert.equal(r.valido,true);assert.equal(r.presion,0);assert.equal(r.unidades,2);assert.match(r.aviso,/No es el cálculo oficial/);
- assert.equal(estimarEncuentro([],[{actor:n}]).valido,false);assert.equal(Object.keys(PLANTILLAS_NPC).length,7);
+ assert.equal(estimarEncuentro([],[{actor:n}]).valido,false);assert.equal(Object.keys(PLANTILLAS_NPC).length,17);
 });
 test('una actividad importada fuerte no queda escondida por la rutina de Ecos',()=>{
  const a=new MockActor();a.type='npc';a.flags[MOD].npcPerfil={danoMedio:10};a.items.push(new MockItem({name:'Impacto mayor',type:'feat',system:{activities:{a:{name:'Impacto',type:'damage',damage:{parts:[{number:8,denomination:6,bonus:''}]}}}}},a));

@@ -45,7 +45,7 @@ export function perfilNpc({vd=1,rol='guardian',nombre='Habitante de Nimerios',en
  if(variacion&&typeof variacion==='object'){const lim=(x,a)=>Math.max(-a,Math.min(a,Number(x)||0));va={pg:lim(variacion.pg,0.25),ca:Math.round(Math.max(-1,Math.min(2,Number(variacion.ca)||0))),dano:lim(variacion.dano,0.25),reserva:lim(variacion.reserva,0.25),margen:lim(variacion.margen,0.25)};
   pg=Math.max(1,Math.round(pg*(1+va.pg)));ca+=va.ca;dano=Math.max(1,Math.round(dano*(1+va.dano)));}
  const ataques=vd>=11?3:vd>=5?2:1,denominacion=dano/ataques<=2?2:dano/ataques<=3?4:6,dados=Math.max(1,Math.round(dano/ataques/((denominacion+1)/2))),competencia=vd<5?2:Math.min(6,2+Math.floor((vd-1)/4));
- if(arquetipo&&!['civil','guardia','rastreador','erudito','cuidador','capitan','vinculado'].includes(arquetipo))throw Error('Plantilla de campaña desconocida.');
+ if(arquetipo&&!['civil','guardia','rastreador','erudito','cuidador','capitan','vinculado','mercader','contrabandista','recaudador','cazador','sacerdote','desertor','bandido','portador','resonante','vigia'].includes(arquetipo))throw Error('Plantilla de campaña desconocida.');
  return {nombre,vd,rol,arquetipo,variacion:va,pg,ca:Math.max(10,Math.min(21,ca)),ataque,cd:8+ataque,velocidad:mov,ataques,dados,denominacion,danoMedio:dados*(denominacion+1)/2*ataques,competencia,
   entorno:String(entorno).slice(0,300),motivacion:String(motivacion).slice(0,600),vinculo:String(vinculo).slice(0,600),
   aviso:'Perfil orientativo de campaña, no una certificación de valor de desafío. El daño por ronda supone que todos los ataques de la rutina impactan. Resistencias, control, áreas, magia, técnicas del Verbe y acciones importadas requieren revisión del DM.'};

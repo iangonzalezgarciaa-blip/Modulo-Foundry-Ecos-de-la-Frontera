@@ -23,6 +23,7 @@ import { problemasTecnica } from "./verbe-validate.js";
 import { tramoReserva, tramoFuerza, tramoVida, queVe } from "./verbe-lectura.js";
 import { cargaDe, bonoCarga, cdInterrupcion, textoCarga } from "./verbe-canalizar.js";
 import { clonDe, limitesClones, repartoClones } from "./verbe-clones.js";
+import { iconoTecnica, iconoDote, esGenerico } from "./verbe-iconos.js";
 import { DADOS_VERBE, dadoNivel, modoReserva, reservaBase, nivelesSinTirar } from "./verbe-reserva.js";
 import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
@@ -1108,6 +1109,7 @@ export function datosItem(actor, tec) {
   meta.cultivo = cul?.nivel ?? 0;
   data.system.description.value = (data.system.description.value ?? "") + fichaCarga(meta) + notaPersonal(actor, tec, extra, inf, cul);
   medidasDelMundo(data);
+  if (esGenerico(data.img)) data.img = iconoTecnica(data) ?? data.img;
   const {firma:anteriorFirma,...metadatos}=meta;
   meta.firma = firma(JSON.stringify([data.name, data.system, data.effects,metadatos]));
   return data;
@@ -1367,7 +1369,7 @@ async function rasgoDote(actor, dote) {
   const actual=actor.items.find(i=>i.getFlag(MOD,F)?.dote===dote.id);
   const nace = (D.innatos ?? []).includes(dote.id);
   const p=dote.poder,aid=idFijo(`d${firma(dote.id)}actividad`),eid=idFijo(`d${firma(dote.id)}efecto`);
-  const data={ name:dote.nombre,type:'feat',img:'systems/dnd5e/icons/svg/items/feature.svg',effects:[],
+  const data={ name:dote.nombre,type:'feat',img:iconoDote(dote),effects:[],
     system:{description:{value:`<h3>Qué ganas</h3>${efectoHTML(dote.textoJ??dote.texto)}<p><b>Para aprender esta dote:</b> ${escH(requisitosDoteTexto(dote))}</p><p>${escH(dote.automatizacion??'Consulta las condiciones en mesa.')}</p>${nace?'<p>Del despertar, sin coste de Trazos.</p>':''}`}},flags:{[MOD]:{[F]:{dote:dote.id}}}};
   if(p){
     const act={_id:aid,name:dote.nombre,type:p.curacion?'heal':'utility',activation:{type:p.tiempo??'bonus',value:1,override:true},duration:{units:p.duracion?'round':'inst',value:p.duracion?p.duracion/6:null,override:true},range:{units:'self',override:true},target:{affects:{type:'self',count:'1'},template:{},override:true},effects:[],uses:{spent:0,recovery:[]},consumption:{targets:[{type:'itemUses',target:'',value:'1',scaling:{mode:'',formula:''}}],scaling:{allowed:false},spellSlot:false}};

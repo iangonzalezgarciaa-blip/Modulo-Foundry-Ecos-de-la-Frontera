@@ -4,6 +4,9 @@
 
 - Magia estándar en el choque: un conjuro ofensivo de D&D se puede interceptar con una técnica. Su potencia es el nivel del espacio y su naturaleza sale del tipo de daño (fuego → Fuego, frío → Agua, relámpago → Rayo, trueno y cortes → Viento, ácido y golpes → Tierra) o de la escuela. Mapa y borrador de lore para aprobar en docs/MAGIA_ESTANDAR.md (tareas 4.1b y 4.1c; 4.1a espera aprobación).
 - 20 formas sin elemento (Forma, grados 0 a 5) para quien no tiene naturaleza: proyectiles, filos, escudos, impulsos, redes, muros y estallidos de Verbe. Catálogo: 912 técnicas (tarea 4.3).
+- Taller de NPC: 10 plantillas nuevas para Arcegris, la frontera y el bosque (mercader, contrabandista, recaudador imperial, cazador de recompensas, voz de una capilla, desertor, salteador, portador escondido, resonante del bosque y vigía de la Barrera); 17 en total (tareas 4.6a y 4.6b).
+- Iconos claros para técnicas y dotes (por naturaleza, tipo de daño, reacción, curación o rama; las dotes por categoría), solo con iconos del sistema dnd5e. Las técnicas con icono propio lo conservan. Guía en docs/ICONOS.md (tareas 4.7a–d).
+- Hechizos de PF2e: reglas de conversión en docs/CONVERSION_PF2E.md y macro para exportarlos desde el mundo PF2e (tools/macros/exportar-hechizos-pf2e.js); el filtro y los lotes esperan ese archivo (tareas 4.2a y 4.2c).
 
 ## 3.7.0 — 2026-11-03
 
