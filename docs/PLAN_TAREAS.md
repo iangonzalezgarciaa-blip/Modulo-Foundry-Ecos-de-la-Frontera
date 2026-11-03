@@ -144,11 +144,11 @@
 
 - [x] **2.2c · Reserva por dados: migración** (hecha: las fichas anteriores quedan en «promedio» = la tabla; al pasar a dados, lo ya ganado queda fijo) (S · Dep.: 2.2b). Los personajes existentes conservan su reserva actual como valor fijo. Pruebas de no regresión.
 
-- [ ] **2.3a · Oponentes impredecibles: ocultar datos exactos** (M · Dep.: —). Revisar qué ven los jugadores de un enemigo (barra de PG, CA, ficha) y qué ajustes de Foundry o midi-qol lo ocultan (a verificar). Aplicar los ajustes y documentarlos. Listo cuando un jugador no puede leer PG ni CA exactos de un enemigo.
+- [x] **2.3a · Oponentes impredecibles: ocultar datos exactos** (hecha: scripts/mesa-oponentes.js, botón en Diagnóstico, docs/OPONENTES_IMPREDECIBLES.md) (M · Dep.: —). Revisar qué ven los jugadores de un enemigo (barra de PG, CA, ficha) y qué ajustes de Foundry o midi-qol lo ocultan (a verificar). Aplicar los ajustes y documentarlos. Listo cuando un jugador no puede leer PG ni CA exactos de un enemigo.
 
-- [ ] **2.3b · Oponentes impredecibles: variación en NPC con Verbe** (M · Dep.: 2.2a). En el Taller de NPC (scripts/mesa\*.js) añadir una opción «Verbe variable»: PG, CA, daño y reserva con variación acotada según rangos y ramas del NPC. Listo cuando dos NPC iguales salen distintos dentro de límites.
+- [x] **2.3b · Oponentes impredecibles: variación en NPC con Verbe** (hecha: «Verbe variable» en el Taller de NPC) (M · Dep.: 2.2a). En el Taller de NPC (scripts/mesa\*.js) añadir una opción «Verbe variable»: PG, CA, daño y reserva con variación acotada según rangos y ramas del NPC. Listo cuando dos NPC iguales salen distintos dentro de límites.
 
-- [ ] **2.3c · Oponentes impredecibles: lectura del Verbe por tramos** (S · Dep.: 2.3a). Revisar lo que ya dan Rastro (por ejemplo «Rastro fino») y las dotes informativas. Hacer que revelen información por tramos (lleno, a medias, poco; rango aproximado) y no cifras exactas. Documentar para el DM.
+- [x] **2.3c · Oponentes impredecibles: lectura del Verbe por tramos** (hecha: scripts/verbe-lectura.js y botón «Leer el Verbe de los marcados») (S · Dep.: 2.3a). Revisar lo que ya dan Rastro (por ejemplo «Rastro fino») y las dotes informativas. Hacer que revelen información por tramos (lleno, a medias, poco; rango aproximado) y no cifras exactas. Documentar para el DM.
 
 - [x] **2.4 · Costes incrementales por rama** (hecha: RECARGO_RAMAS +1 desde la 3.ª, +2 desde la 5.ª) (S · Dep.: —). Hoy: +1 Trazo por rango desde la tercera rama (verbe.js ~309; textos en ~2487, ~3040 y ~3060). Nuevo: el coste extra crece con cada rama adicional (propuesta: +1 desde la tercera, +2 desde la quinta; dejar la fórmula en una constante). Opcional: aplicarlo también al aprender técnicas de ramas no principales. Actualizar tablas y ayuda, y probar. Listo cuando el panel muestra el coste correcto con 1, 3 y 5 ramas.
 

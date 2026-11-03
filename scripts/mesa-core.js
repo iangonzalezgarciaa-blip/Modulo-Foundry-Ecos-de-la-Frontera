@@ -20,7 +20,15 @@ const anclas=[
  [0,4,10,2,1],[0.125,7,11,3,3],[0.25,11,12,3,4],[0.5,20,12,3,6],[1,30,13,4,9],
  [2,45,13,4,14],[3,60,13,5,20],[5,90,15,6,33],[8,130,16,7,49],[11,165,17,8,65],[16,215,18,10,90],[20,270,19,11,115]
 ];
-export function perfilNpc({vd=1,rol='guardian',nombre='Habitante de Nimerios',entorno='',motivacion='',vinculo='',arquetipo=''}={}){
+/**
+ * «Verbe variable» (2.3b): factores acotados para que dos NPC iguales no salgan idénticos. Más rangos del Verbe, más margen
+ * (del 10 % al 25 %). PG y daño en ±margen, CA de −1 a +2, reserva en ±margen. Se guardan con el perfil y se reaplican igual.
+ */
+export function variacionNpc({rangos=0,azar=Math.random}={}){
+ const m=Math.min(0.25,0.10+0.02*Math.max(0,Number(rangos)||0)),u=()=>2*azar()-1,r=x=>Math.round(x*100)/100;
+ return {pg:r(u()*m),ca:Math.max(-1,Math.min(2,Math.round(u()*1.5+0.25))),dano:r(u()*m*0.75),reserva:r(u()*m),margen:r(m)};
+}
+export function perfilNpc({vd=1,rol='guardian',nombre='Habitante de Nimerios',entorno='',motivacion='',vinculo='',arquetipo='',variacion=null}={}){
  vd=Number(vd);if(!Number.isFinite(vd)||vd<0||vd>20||!Number.isInteger(vd)&&![.125,.25,.5].includes(vd))throw Error('Usa valor de desafío 0, 0,125, 0,25, 0,5 o un entero entre 1 y 20.');
  if(!Object.hasOwn(ROLES_NPC,rol))throw Error('Elige un rol válido.');
  nombre=String(nombre).trim().slice(0,100);if(!nombre)throw Error('Escribe un nombre.');
@@ -33,9 +41,12 @@ export function perfilNpc({vd=1,rol='guardian',nombre='Habitante de Nimerios',en
  if(rol==='místico'){pg=Math.round(pg*.75);ca--;}
  if(rol==='apoyo'){pg=Math.round(pg*.9);dano=Math.max(1,Math.round(dano*.7));}
  if(rol==='civil'){pg=Math.max(4,Math.round(pg*.5));ca=10;dano=Math.max(1,Math.round(dano*.4));}
+ let va=null;
+ if(variacion&&typeof variacion==='object'){const lim=(x,a)=>Math.max(-a,Math.min(a,Number(x)||0));va={pg:lim(variacion.pg,0.25),ca:Math.round(Math.max(-1,Math.min(2,Number(variacion.ca)||0))),dano:lim(variacion.dano,0.25),reserva:lim(variacion.reserva,0.25),margen:lim(variacion.margen,0.25)};
+  pg=Math.max(1,Math.round(pg*(1+va.pg)));ca+=va.ca;dano=Math.max(1,Math.round(dano*(1+va.dano)));}
  const ataques=vd>=11?3:vd>=5?2:1,denominacion=dano/ataques<=2?2:dano/ataques<=3?4:6,dados=Math.max(1,Math.round(dano/ataques/((denominacion+1)/2))),competencia=vd<5?2:Math.min(6,2+Math.floor((vd-1)/4));
  if(arquetipo&&!['civil','guardia','rastreador','erudito','cuidador','capitan','vinculado'].includes(arquetipo))throw Error('Plantilla de campaña desconocida.');
- return {nombre,vd,rol,arquetipo,pg,ca:Math.max(10,Math.min(21,ca)),ataque,cd:8+ataque,velocidad:mov,ataques,dados,denominacion,danoMedio:dados*(denominacion+1)/2*ataques,competencia,
+ return {nombre,vd,rol,arquetipo,variacion:va,pg,ca:Math.max(10,Math.min(21,ca)),ataque,cd:8+ataque,velocidad:mov,ataques,dados,denominacion,danoMedio:dados*(denominacion+1)/2*ataques,competencia,
   entorno:String(entorno).slice(0,300),motivacion:String(motivacion).slice(0,600),vinculo:String(vinculo).slice(0,600),
   aviso:'Perfil orientativo de campaña, no una certificación de valor de desafío. El daño por ronda supone que todos los ataques de la rutina impactan. Resistencias, control, áreas, magia, técnicas del Verbe y acciones importadas requieren revisión del DM.'};
 }

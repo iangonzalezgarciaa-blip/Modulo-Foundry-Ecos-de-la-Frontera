@@ -20,6 +20,7 @@ import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from 
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
 import { plantillaEnEscena } from "./verbe-plantillas.js";
 import { problemasTecnica } from "./verbe-validate.js";
+import { tramoReserva, tramoFuerza, tramoVida, queVe } from "./verbe-lectura.js";
 import { DADOS_VERBE, dadoNivel, modoReserva, reservaBase, nivelesSinTirar } from "./verbe-reserva.js";
 import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
@@ -275,6 +276,14 @@ export async function cambiarModoReserva(actor, modo) {
   refrescarPanel(actor.id);
   return true;
 }
+/** Taller de NPC, «Verbe variable» (2.3b): mueve su reserva un porcentaje acotado (±25 % como mucho). */
+export async function variarReservaNpc(actor, pct) {
+  if (!game.user.isGM || !despierto(actor)) return false;
+  const p = Math.max(-0.25, Math.min(0.25, Number(pct) || 0));
+  const e = estado(actor), base = maxVerbe(actor) - (Number(e.maxVariable) || 0), d = Math.round(base * p);
+  await guardar(actor, { maxVariable: d, valor: Math.min(Number(e.valor) || 0, base + d), historial: hist(e, `Verbe variable: ${d >= 0 ? "+" : ""}${d} de reserva`) });
+  return d;
+}
 export async function revisarSangres() {
   if (!soyGM() || !D) return [];
   const conflictos = [];
@@ -391,7 +400,7 @@ export function maxVerbe(actor) {
   if (tieneDote(actor, "eco-sangre") && ["plena", "media"].includes(e.fuerza)) max += (n >= 11 ? 2 : 1) * n;
   const h = herenciaDe(actor);
   if (h?.maxMult) max = Math.floor(max * h.maxMult);
-  return Math.max(1, max + Math.floor(baseDivina * donDivino(linajeDe(actor), e.fuerza, n).reserva) + (Number(e.maxExtra) || 0));
+  return Math.max(1, max + Math.floor(baseDivina * donDivino(linajeDe(actor), e.fuerza, n).reserva) + (Number(e.maxExtra) || 0) + (Number(e.maxVariable) || 0));
 }
 export const limiteNegativo = actor => -Math.floor(maxVerbe(actor) * (tieneDote(actor, "aguante-verbe") ? 0.75 : 0.5));
 const cambiosRecuperacion = (actor, cantidad, estadoActual = estado(actor)) => {
@@ -1223,6 +1232,29 @@ function permisoConcentracion(actor,item,usage,grado){
 /* ------------------------------------------------------------------ */
 
 /** El grado de una criatura: el de su Verbe si despertó, si no la mitad de su nivel o VD (hacia arriba). */
+/**
+ * Leer el Verbe de los objetivos marcados (2.3c): solo tramos, nunca cifras. Lo ve quien lee (y el DM).
+ * Qué se ve depende de las técnicas de Rastro que sabe (Sentir cerca, Sentir lejos, Ver todo el Verbe, El hilo de cada vida).
+ */
+export function lecturaDe(lector, otro) {
+  const ve = queVe(itemsTecnica(lector).map(i => i.getFlag(MOD, F)?.id));
+  if (!ve.size || !otro) return null;
+  const usa = despierto(otro), lin = [];
+  lin.push(usa ? "usa Verbe" : "no notas Verbe en su interior");
+  if (usa && ve.has("fuerza")) lin.push(`su Verbe es ${tramoFuerza(gradoMax(lector), gradoCriatura(otro))}`);
+  if (usa && ve.has("reserva")) lin.push(`su reserva está ${tramoReserva(estado(otro)?.valor, maxVerbe(otro))}`);
+  if (usa && ve.has("naturaleza")) { const n = [...natsDe(otro)].map(x => NATS[x] ?? x); if (n.length) lin.push(`responde a ${n.join(" y ")}`); }
+  if (ve.has("vida")) { const hp = otro.system?.attributes?.hp; if (hp) lin.push(`su cuerpo está ${tramoVida(hp.value, hp.effectiveMax ?? hp.max)}`); }
+  return lin;
+}
+export async function leerObjetivos(lector) {
+  const objetivos = [...(game.user?.targets ?? [])].map(t => t.actor).filter(a => a && a !== lector);
+  if (!queVe(itemsTecnica(lector).map(i => i.getFlag(MOD, F)?.id)).size) return rechazar("Para leer el Verbe de otros necesitas una técnica de Rastro de lectura (Sentir cerca, Sentir lejos…).", "warn");
+  if (!objetivos.length) return rechazar("Marca primero los tokens que quieres leer.", "warn");
+  const filas = objetivos.map(o => `<li><b>${escH(o.token?.name ?? o.prototypeToken?.name ?? o.name)}</b>: ${escH(lecturaDe(lector, o).join("; "))}.</li>`).join("");
+  aLaMesa(lector, "✦ Lees el Verbe", `<ul>${filas}</ul><p class="ecos-nota">Son impresiones, no cifras. Recuerda pagar la técnica que usas para leer si la mesa lo pide.</p>`, { soloDueno: true });
+  return true;
+}
 export function gradoCriatura(a) {
   if (!a) return 0;
   if (despierto(a)) return gradoMax(a);
@@ -3188,6 +3220,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       oculta() { correr(this, guardar(this.actor, { oc: revolver(valorDe(this, "oculta"), this.actor.id), descubierta: false })); },
       descubrirNat() { correr(this, pedirDescubrimiento(this.actor)); },
       activarFamilia() { correr(this, activarFamilia(this.actor, valorDe(this, "notaFamilia"))); },
+      leerObjetivos() { correr(this, leerObjetivos(this.actor)); },
       modoReserva() { correr(this, cambiarModoReserva(this.actor, valorDe(this, "modoReserva")).then(() => asegurarTiradasVerbe(this.actor))); },
       abrirDiario(ev, t) { abrirDiarioPorNombre(t.dataset.diario, t.dataset.pagina); },
       cambiarNat() { correr(this, pedirDescubrimiento(this.actor, { tipo: "cambio", de: valorDe(this, "cambioDe"), a: valorDe(this, "cambioA") })); },
@@ -3377,6 +3410,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const cupos=cuotasPoder(nivelDe(a),dotesActivas(a)),gastados=estado(a).cuotasPoder??{};
     return `${cupos.mayores?`<details class="ev-limites-poder"><summary>Usos altos que te quedan hasta el próximo Descanso Largo</summary><ul><li>Grados 6–8: <b>${Math.max(0,cupos.mayores-(gastados.mayores||0))} de ${cupos.mayores}</b> usos compartidos.</li><li>Grados 9–11: <b>${Math.max(0,cupos.culminaciones-(gastados.culminaciones||0))} de ${cupos.culminaciones}</b> usos compartidos.</li>${cupos.trascendentes?`<li>Dentro de los anteriores, grado 11: <b>${Math.max(0,cupos.trascendentes-(gastados.trascendentes||0))} de ${cupos.trascendentes}</b>.</li>`:""}</ul><p>También cuenta el grado elegido al elevar una técnica. Cada técnica alta conserva su propio uso por Largo. Cambiar de técnica no devuelve usos compartidos.</p></details>`:""}${efectoV(a,"replicas")?`<div class="ev-instruccion"><span><b>Reserva repartida en réplicas: ${Number(estado(a).reservaReplicas)||0} Verbe</b>Una acción ofensiva conjunta por turno. «Usar desde réplica» gasta ese saldo y solo admite grado 0–${capacidadReplicas(a)}. Al disipar, se pierde el saldo restante.</span><button type="button" data-action="cerrarReplicas">Disipar réplicas</button></div>`:""}${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana de uso. Comprueba el grado y el gasto antes de confirmar.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
       <div class="ev-instruccion"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span><b>Si afecta a otro, marca su token antes de usarla.</b> El alcance y las condiciones de cada técnica siguen contando.</span></div>
+      ${queVe(itemsTecnica(a).map(i => i.getFlag(MOD, F)?.id)).size ? `<p><button type="button" data-action="leerObjetivos" data-tooltip="Marca tokens y lee su Verbe por tramos (lleno, a medias, poco; más débil o más fuerte), nunca cifras"><i class="fa-solid fa-eye"></i> Leer el Verbe de los marcados</button></p>` : ""}
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar en mis técnicas</span><input type="search" data-filtro-uso="texto" placeholder="Nombre o efecto…" value="${escH(f.texto)}"></label><label><input type="checkbox" data-filtro-uso="solo" ${f.solo ? "checked" : ""}> Ocultar las bloqueadas por recursos o estado</label></div>
       ${lista.length ? `<div class="ev-tarjetas">${lista.map(({ t, item }) => this.#tarjeta(t, { item })).join("")}</div>` : `<div class="ev-vacio"><h3>${conocidas.length ? "Ninguna coincide con ese filtro" : "Tu primera técnica te espera"}</h3><p>${conocidas.length ? "Quita el filtro para ver los bloqueos y sus motivos." : "Aprende una técnica con Trazos. Después aparecerá aquí lista para usarla."}</p><button type="button" data-action="pestana" data-p="tienda">Ir a Aprender</button></div>`}`;
   }
@@ -4294,7 +4328,7 @@ Hooks.once("ready", async () => {
   const api = (game.modules.get(MOD).api ??= {});
   api.verbe = { ofertasActor, corregirGastoSimple, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), usoRapido, despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
-    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, asegurarTiradasVerbe, cambiarModoReserva, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
+    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, lecturaDe, leerObjetivos, variarReservaNpc, asegurarTiradasVerbe, cambiarModoReserva, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)
       ? documento.setFlag(MOD, "metal", !!metal) : false };
   game.socket.on(`module.${MOD}`, d => { if (d?.capaV && !socketDefensa(d)) manejar(d); });
