@@ -4428,7 +4428,7 @@ function registrarAjustes() {
       publicar(null, v ? "🏠 Los PJ están en un Santuario" : "🌲 Los PJ están a la intemperie", [
         (cfgDesc().regla !== "apagado")
           ? (v ? `El Descanso Largo cuenta como Descanso Largo: recupera ${LARGO_DG[cfgDesc().largo]} en Dados de Golpe (los PG vuelven gastándolos), conjuros y 1 de Agotamiento.`
-            : `El Descanso Largo cuenta como Descanso Corto: no se recuperan espacios de conjuro, solo ${plural(cfgDesc().corto, "Dado de Golpe", "Dados de Golpe")}, y los heridos graves no se curan descansando.`)
+            : `El Descanso Largo cuenta como Descanso Corto: no se recuperan espacios de conjuro${cfgDesc().corto ? `, solo ${plural(cfgDesc().corto, "Dado de Golpe", "Dados de Golpe")}` : " ni Dados de Golpe (solo se gastan)"}, y los heridos graves no se curan descansando.`)
           : (v ? "El Descanso Largo cuenta como Descanso Largo: recupera PG, hasta la mitad del nivel en Dados de Golpe, conjuros y 1 de Agotamiento."
             : "El Descanso Largo cuenta como Descanso Corto: no se recuperan Dados de Golpe ni espacios de conjuro, y los heridos graves no se curan descansando.")
       ], { clase: v ? "ecos-santuario" : "ecos-intemperie" });
@@ -7140,12 +7140,12 @@ async function alternarClimaEscena(escena = canvas?.scene) {
 /*
  * Regla de la casa (Configuración → Ecos de la frontera → «Descansos y Dados de Golpe»):
  * - Descansar no devuelve PG por sí solo: vuelven gastando Dados de Golpe. La magia, las pociones y lo que cura siguen curando.
- * - Un Corto propone 1 Dado de Golpe (2 en Santuario), limitado por un presupuesto compartido de la mitad de un Largo; un Largo en Santuario, la mitad
+ * - Un Corto solo sirve para GASTAR Dados de Golpe: no devuelve ninguno (el DM puede cambiarlo en el ajuste). Un Largo en Santuario devuelve la mitad
  *   del nivel. A la intemperie el Descanso Largo cuenta como corto.
  * - Entre un descanso y el siguiente se gastan como mucho tantos Dados de Golpe como el bonificador de competencia.
  * Usan la regla las hojas que el DM encienda con el botón Ecos de su cabecera («Descansos»), PJ o PNJ.
  */
-const DESC_DEF = { v272: true, regla: "hojas", corto: 1, cortoSantuario: 2, largo: "mitad", tope: "comp", fuera: "no", gastarLargo: true };
+const DESC_DEF = { v272: true, v350: true, regla: "hojas", corto: 0, cortoSantuario: 0, largo: "mitad", tope: "comp", fuera: "no", gastarLargo: true };
 const LARGO_DG = { cuarto: "un cuarto del nivel", mitad: "la mitad del nivel", todos: "todos" };
 const TOPE_DG = { comp: "el bonificador de competencia", mitad: "la mitad del nivel", sin: "sin tope" };
 const EN_DESCANSO_CORTO = new Map();   // uuid → hasta cuándo (ms) dura la ventana de un Descanso Corto en este navegador
@@ -7158,6 +7158,8 @@ function cfgDesc() {
   } catch {
     g = {};
   }
+  // 3.5.0: el Descanso Corto ya no devuelve Dados de Golpe (solo deja gastarlos). Los ajustes guardados antes se corrigen una vez.
+  if (g.v350 !== true) g = { ...g, corto: 0, cortoSantuario: 0, v350: true };
   return { ...DESC_DEF, ...g };
 }
 
@@ -7204,7 +7206,10 @@ function notaReglaDG(actor, tipo) {
   const rec = dgARecuperar(actor, tipo);
   const quedan = dgQuedan(actor);
   const tope = Number.isFinite(quedan) ? ` Puedes gastar <b>${quedan}</b> más (tope: ${TOPE_DG[cfgDesc().tope]}, ${topeDG(actor)}).` : "";
-  return `<b>Descansos de la casa:</b> descansar no devuelve PG; se recuperan gastando Dados de Golpe.${tope} Los cortos comparten un límite de recuperación entre largos: ${Math.floor(recuperacionDGLarga(nivelDG(actor), cfgDesc().largo) / 2)} DG en total. Al terminar recuperas <b>${plural(rec, "Dado de Golpe", "Dados de Golpe")}</b>${(tipo !== "long") && enSantuario() ? " (en Santuario)" : ""}.`;
+  const corto = tipo !== "long";
+  const recTxt = corto && !rec ? "El Descanso Corto <b>no devuelve Dados de Golpe</b>: solo sirve para gastarlos y curarte. Se recuperan con un Descanso Largo."
+    : `Al terminar recuperas <b>${plural(rec, "Dado de Golpe", "Dados de Golpe")}</b>${corto && enSantuario() ? " (en Santuario)" : ""}.${corto ? ` Los cortos comparten un límite de recuperación entre largos: ${Math.floor(recuperacionDGLarga(nivelDG(actor), cfgDesc().largo) / 2)} DG en total.` : ""}`;
+  return `<b>Descansos de la casa:</b> descansar no devuelve PG; se recuperan gastando Dados de Golpe.${tope} ${recTxt}`;
 }
 
 /* El tope y «solo durante un descanso». */
@@ -7273,13 +7278,14 @@ async function dialogoDescansoDG(actor, tipo, config = {}) {
   const filaRec = largo
     ? (gastados ? `<select name="dg">${opciones}</select><div class="ecos-nota">Hasta ${LARGO_DG[cfgDesc().largo]}: ${limite}. Tienes ${gastados} gastados de ${total}.</div>`
       : `Ninguno: no tienes Dados de Golpe gastados.<input type="hidden" name="dg" value="0">`)
-    : `${gastados ? `<b>${plural(Math.min(limite, gastados), "Dado de Golpe", "Dados de Golpe")}</b>` : "Ninguno: no tienes Dados de Golpe gastados"}${enSantuario() ? " (en Santuario)" : ""}.`;
+    : (!limite ? "Ninguno: el Descanso Corto solo sirve para <b>gastar</b> Dados de Golpe. Se recuperan con un Descanso Largo."
+      : `${gastados ? `<b>${plural(Math.min(limite, gastados), "Dado de Golpe", "Dados de Golpe")}</b>` : "Ninguno: no tienes Dados de Golpe gastados"}${enSantuario() ? " (en Santuario)" : ""}.`);
   const despues = grave
     ? "Estás herido grave y fuera de un Santuario: no puedes curarte con Dados de Golpe."
     : (cfgDesc().gastarLargo ? `Al terminar se abre una ventana para <b>gastar</b> ${Number.isFinite(tope) ? `hasta <b>${tope}</b>` : "los"} Dados de Golpe y curarte.`
       : `Puedes gastar ${Number.isFinite(tope) ? `hasta ${tope}` : "los"} Dados de Golpe desde la hoja.`);
   const content = `<div class="ecos-dialogo">
-    <p><b>Descansar no devuelve PG:</b> se recuperan gastando Dados de Golpe (y con magia, pociones o técnicas que curan).</p><p class="ecos-nota">Todos los cortos juntos reponen como máximo la mitad de los DG de un largo, redondeada hacia abajo; se renueva al completar un largo. En nivel 1 puede ser 0: aún puedes gastar tus dados disponibles.</p>
+    <p><b>Descansar no devuelve PG:</b> se recuperan gastando Dados de Golpe (y con magia, pociones o técnicas que curan).</p><p class="ecos-nota">${largo ? "El Descanso Largo devuelve Dados de Golpe; después puedes gastarlos para curarte." : (limite ? "Todos los cortos juntos reponen como máximo la mitad de los DG de un largo, redondeada hacia abajo; se renueva al completar un largo." : "El Descanso Corto no devuelve Dados de Golpe: sirve para gastar los que te quedan.")}</p>
     <table class="ecos-tabla">
       <tr><th>Puntos de Golpe</th><td><b>${hp.value}</b> / ${hp.effectiveMax}</td></tr>
       <tr><th>Dados de Golpe</th><td>${disp} de ${total} disponibles</td></tr>
@@ -7371,7 +7377,7 @@ class GastarDG extends foundry.applications.api.ApplicationV2 {
     classes: ["ecos-gastar-dg"],
     window: { title: "Gastar Dados de Golpe", icon: "fa-solid fa-heart-pulse" },
     position: { width: 400, height: "auto" },
-    actions: { tirar: GastarDG.#tirar, listo: GastarDG.#listo }
+    actions: { tirar: GastarDG.#tirar, todos: GastarDG.#todos, listo: GastarDG.#listo }
   };
 
   constructor(actor, { tipo = "long", recuperados = 0, ...opciones } = {}) {
@@ -7388,12 +7394,37 @@ class GastarDG extends foundry.applications.api.ApplicationV2 {
   static async #tirar(event, target) {
     if (this._tirando) return;
     this._tirando = true;
+    const hp0 = this.actor.system.attributes.hp.value;
     try {
       if (dgQuedan(this.actor) > 0) await this.actor.rollHitDie({ denomination: target.dataset.dado });
     } finally {
       this._tirando = false;
     }
+    avisoCurado(this.actor, hp0, 1);
     if ((dgQuedan(this.actor) <= 0) || !dgDisponibles(this.actor)) return this.close();
+    this.render();
+  }
+
+  /** Gasta dados (el más grande primero) hasta llegar al tope, a los PG máximos o quedarse sin dados. */
+  static async #todos() {
+    if (this._tirando) return;
+    this._tirando = true;
+    const a = this.actor, hp0 = a.system.attributes.hp.value;
+    let n = 0;
+    try {
+      while ((dgQuedan(a) > 0) && dgDisponibles(a) && (a.system.attributes.hp.value < techoPG(a)) && (n < 40)) {
+        const d = dadosDG(a)[0]?.[0];
+        if (!d) break;
+        const antes = a.system.attributes.hp.value;
+        const r = await a.rollHitDie({ denomination: d }, { configure: false });
+        n += 1;
+        if (!r || (a.system.attributes.hp.value <= antes)) break;
+      }
+    } finally {
+      this._tirando = false;
+    }
+    avisoCurado(a, hp0, n);
+    if ((dgQuedan(a) <= 0) || !dgDisponibles(a) || (a.system.attributes.hp.value >= techoPG(a))) return this.close();
     this.render();
   }
 
@@ -7405,9 +7436,7 @@ class GastarDG extends foundry.applications.api.ApplicationV2 {
     const a = this.actor;
     const hp = a.system.attributes.hp;
     const quedan = dgQuedan(a);
-    const dados = (a.type === "npc")
-      ? (dgDisponibles(a) ? [[`d${a.system.attributes.hd.denomination}`, dgDisponibles(a)]] : [])
-      : Object.entries(a.system.attributes.hd?.bySize ?? {}).filter(([, n]) => n > 0);
+    const dados = dadosDG(a);
     const con = a.system.abilities?.con?.mod ?? 0;
     const tope = efectoMalherido(a) ? ` <span class="ecos-nota">(Malherido: no sube de ${topeMalherido(a)})</span>` : "";
     const botones = dados.map(([d, n]) => `<button type="button" data-action="tirar" data-dado="${d}" ${quedan <= 0 ? "disabled" : ""}>
@@ -7420,7 +7449,7 @@ class GastarDG extends foundry.applications.api.ApplicationV2 {
       </table>
       <div class="ecos-dg-botones">${botones || "<p>No te quedan Dados de Golpe.</p>"}</div>
       <p class="ecos-nota">Si cierras la ventana, lo que no gastaste se guarda para otro descanso.</p>
-      <div class="ecos-botones"><button type="button" data-action="listo"><i class="fa-solid fa-check"></i> Listo</button></div>
+      <div class="ecos-botones">${dados.length && (quedan > 0) && (hp.value < techoPG(a)) ? `<button type="button" data-action="todos" data-tooltip="Tira tus dados uno a uno (el más grande primero) hasta el tope del descanso o hasta llenar tus PG"><i class="fa-solid fa-forward"></i> Gastar hasta el tope</button>` : ""}<button type="button" data-action="listo"><i class="fa-solid fa-check"></i> Listo</button></div>
     </div>`;
   }
 
@@ -7432,6 +7461,25 @@ class GastarDG extends foundry.applications.api.ApplicationV2 {
     GASTO_LARGO.delete(this.actor.uuid);
     return super._onClose?.(options);
   }
+}
+
+/** Dados de Golpe disponibles por tamaño, el más grande primero: [["d10", 2], ["d8", 1]]. */
+function dadosDG(a) {
+  if (a.type === "npc") return dgDisponibles(a) ? [[`d${a.system.attributes.hd.denomination}`, dgDisponibles(a)]] : [];
+  return Object.entries(a.system.attributes.hd?.bySize ?? {}).filter(([, n]) => n > 0)
+    .sort(([x], [y]) => (Number(y.slice(1)) || 0) - (Number(x.slice(1)) || 0));
+}
+/** Hasta dónde pueden subir los PG ahora (el máximo, o el tope de Malherido). */
+function techoPG(a) {
+  const max = Number(a.system.attributes.hp.effectiveMax) || 0;
+  return efectoMalherido(a) ? Math.min(max, topeMalherido(a)) : max;
+}
+/** Dice cuánto curó lo gastado, y por qué no subió si no subió. */
+function avisoCurado(a, antes, n) {
+  if (!n) return;
+  const dif = (a.system.attributes.hp.value ?? 0) - (antes ?? 0);
+  if (dif > 0) ui.notifications.info(`${a.name} se cura ${dif} PG (${plural(n, "Dado de Golpe", "Dados de Golpe")}).`);
+  else if (efectoMalherido(a)) ui.notifications.warn(`${a.name} está Malherido: sus PG no suben de ${topeMalherido(a)} hasta tratar la herida.`);
 }
 
 function abrirGastoDG(actor, datos = {}) {
@@ -7472,9 +7520,9 @@ class AjustesDescansos extends foundry.applications.api.ApplicationV2 {
     const d = foundry.utils.expandObject(formData.object);
     const n = (v, def) => Math.clamp(Math.round(Number(v)), 0, 20) || ((Number(v) === 0) ? 0 : def);
     await game.settings.set(MOD, "descansos", {
-      v272: true,
+      v272: true, v350: true,
       regla: (d.regla === "apagado") ? "apagado" : "hojas",
-      corto: n(d.corto, 1), cortoSantuario: n(d.cortoSantuario, 2),
+      corto: n(d.corto, 0), cortoSantuario: n(d.cortoSantuario, 0),
       largo: LARGO_DG[d.largo] ? d.largo : "mitad", tope: TOPE_DG[d.tope] ? d.tope : "comp",
       fuera: (d.fuera === "si") ? "si" : "no", gastarLargo: !!d.gastarLargo
     });
@@ -7516,7 +7564,7 @@ class AjustesDescansos extends foundry.applications.api.ApplicationV2 {
       <p>Con los descansos de la casa, <b>descansar no devuelve PG</b>: se recuperan gastando Dados de Golpe. La magia, las pociones y lo que cura siguen curando igual.</p>
       <table class="ecos-tabla">
         <tr><th>Quién la usa</th><td><select name="regla">${opt({ hojas: "Las hojas con «Descansos» encendido (botón Ecos de cada hoja)", apagado: "Nadie: todas descansan como en el manual" }, c.regla === "apagado" ? "apagado" : "hojas")}</select></td></tr>
-        <tr><th>Descanso Corto</th><td>recupera ${num("corto", c.corto)} Dado(s) de Golpe · en Santuario ${num("cortoSantuario", c.cortoSantuario)}</td></tr>
+        <tr><th>Descanso Corto</th><td>recupera ${num("corto", c.corto)} Dado(s) de Golpe · en Santuario ${num("cortoSantuario", c.cortoSantuario)} <div class="ecos-nota">Recomendado: 0 y 0. Así el corto solo sirve para <b>gastar</b> Dados de Golpe y se recuperan con un Descanso Largo.</div></td></tr>
         <tr><th>Descanso Largo (Santuario)</th><td>recupera <select name="largo">${opt(LARGO_DG, c.largo)}</select> <span class="ecos-nota">(redondeando hacia arriba; a la intemperie cuenta como corto)</span></td></tr>
         <tr><th>Tope por descanso</th><td><select name="tope">${opt(TOPE_DG, c.tope)}</select></td></tr>
         <tr><th>Fuera de un descanso</th><td><select name="fuera">${opt({ no: "No se gastan Dados de Golpe", si: "Se pueden gastar (cuentan para el tope)" }, c.fuera)}</select></td></tr>
@@ -8657,7 +8705,7 @@ async function migrarHojas272() {
     if (Object.keys(u).length) await a.update(u);
     if (pj || de) quedan.push(`${escH(a.name)} (${[pj ? "PJ" : "", de ? "descansos" : ""].filter(Boolean).join(", ")})`);
   }
-  await game.settings.set(MOD, "descansos", { ...DESC_DEF, ...d, v272: true, regla: (regla === "apagado") ? "apagado" : "hojas" });
+  await game.settings.set(MOD, "descansos", { ...DESC_DEF, ...d, v272: true, v350: true, corto: 0, cortoSantuario: 0, regla: (regla === "apagado") ? "apagado" : "hojas" });
   await game.settings.set(MOD, "hojasV272", true);
   susurrarDM("Ecos 2.7.2 · Todo va hoja por hoja", [
     "Ya no cuenta la carpeta. Arriba de cada hoja (PJ o PNJ) tienes el botón <b>Ecos</b>: ahí enciendes o apagas las <b>Reglas de PJ</b>, los <b>Descansos</b> con Dados de Golpe, el <b>Verbe</b> y el <b>secreto</b>. Una hoja nueva nace con todo apagado.",

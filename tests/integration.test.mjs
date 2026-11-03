@@ -107,8 +107,8 @@ test('Cargado impide ofrecer y usar reacciones', async () => {
   assert.equal(await V.usarDefensa(a, 'forma-sustitucion'), false);
 });
 test('una reacción se consume una vez y vuelve al comienzo del turno', async () => {
-  game.combat = { started: true };
   const a = new MockActor(3, { valor: 18 });
+  game.combat = { started: true, combatants: [{ actor: a }] };
   a.items.push(new MockItem(V.datosItem(a, tec('forma-sustitucion')), a));
   assert.equal(await V.usarDefensa(a, 'forma-sustitucion'), true);
   assert.equal(await V.usarDefensa(a, 'forma-sustitucion'), false);
@@ -118,7 +118,7 @@ test('una reacción se consume una vez y vuelve al comienzo del turno', async ()
 test('una técnica elevada a grado 6 consume su uso alto y sigue disponible a grado base', async () => {
   const a = new MockActor(11, { valor: 50, rangos: { forma: 3 },dotes:['senda-forma-1','senda-forma-2','senda-forma-3'] });
   assert.ok(await usar(a, 'fuego-gran-soplo', 3));
-  assert.equal(V.estado(a).valor, 41);
+  assert.equal(V.estado(a).valor, 42); // 9 de grado 6, menos 1 por su naturaleza de nacimiento (fuego)
   assert.equal(await usar(a, 'fuego-gran-soplo', 3), false);
   assert.ok(await usar(a, 'fuego-gran-soplo', 0));
   await V.alDescansar(a, {}, { type: 'long' });
@@ -136,9 +136,9 @@ test('dos activaciones simultáneas no reservan el mismo Verbe', async () => {
   assert.notEqual(V.alConsumir(act, usage, {}, updates), false);
   assert.equal(V.alConsumir(act, {}, {}, {}), false);
   await a.update(updates.actor); await V._prueba.despuesDeUsar(act, usage);
-  assert.equal(V.estado(a).valor, 8);
+  assert.equal(V.estado(a).valor, 9); // 2 menos 1 por naturaleza de nacimiento
   assert.ok(await usar(a, 'fuego-aliento'));
-  assert.equal(V.estado(a).valor, 6);
+  assert.equal(V.estado(a).valor, 8);
 });
 test('Palma que cierra tiene +2d8 configurados por grado adicional', () => {
   const item = V.datosItem(new MockActor(3), tec('pulso-cerrar'));
@@ -334,4 +334,35 @@ test('Control y sus Trazos se guardan juntos y un fallo no concede competencia g
   await V.comprarControl(a);
   assert.equal(a.system.skills.cvb.value, 1); assert.equal(V.estado(a).gastados, 2);
   assert.equal(a.updates.length, 1);
+});
+
+test('la naturaleza de nacimiento cuesta 1 Verbe menos (mínimo 1); la segunda naturaleza cuesta lo normal', () => {
+  const a = new MockActor(5, { valor: 20, nats: ['fuego', 'agua'] });
+  const fuego = tec('fuego-aliento').item.flags['ecos-frontera'].verbe;
+  assert.equal(V.naturalezaPropia(a), 'fuego');
+  assert.equal(V.costoUso(a, fuego, 1), 1);
+  assert.equal(V.costoUso(a, fuego, 3), 4);
+  const b = new MockActor(5, { valor: 20, nats: ['agua', 'fuego'] });
+  assert.equal(V.costoUso(b, fuego, 1), 2);
+  assert.equal(V.costoUso(b, fuego, 3), 5);
+});
+
+test('fuera de combate la reacción no se agota: Sustitución se ofrece cada vez', async () => {
+  game.combat = null;
+  const a = new MockActor(3, { valor: 18 });
+  a.items.push(new MockItem(V.datosItem(a, tec('forma-sustitucion')), a));
+  assert.equal(await V.usarDefensa(a, 'forma-sustitucion'), true);
+  assert.ok(V.defensasDisponibles(a).length);
+});
+
+test('si conoce la defensa pero no le alcanza, se explica el coste en vez de callar', () => {
+  game.combat = null;
+  const a = new MockActor(1, { valor: 0 });
+  a.system.attributes.exhaustion = 4;
+  a.items.push(new MockItem(V.datosItem(a, tec('forma-sustitucion')), a));
+  const bloqueadas = [];
+  assert.equal(V.defensasDisponibles(a, { grado: 4, bloqueadas }).length, 0);
+  assert.equal(bloqueadas[0].id, 'forma-sustitucion');
+  assert.ok(bloqueadas[0].extra > 0);
+  assert.match(bloqueadas[0].motivo, /Agotamiento 4|Verbe/);
 });

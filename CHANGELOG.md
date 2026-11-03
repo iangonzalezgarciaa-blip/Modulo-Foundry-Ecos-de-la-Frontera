@@ -4,6 +4,9 @@
 
 - Validador de técnicas (`npm run validate:techniques` y Diagnóstico de Mesa Ecos, solo DM): áreas sin plantilla, plantillas sin tamaño, daño o salvación que recaen en quien la usa, y técnicas sin acción, alcance o duración. Revisa catálogo, técnicas del mundo y propias de cada ficha (tarea 1.1).
 - 79 técnicas corregidas: «Aliento de brasa» y las demás áreas con origen en ti ya no te alcanzan ni te eligen como objetivo; las áreas descritas sin plantilla la tienen; los «tu próximo golpe suma…» son ahora un efecto sobre ti que se gasta en el siguiente impacto (con los dados de más por rango, afinidad y grado de lanzamiento); los golpes a varios objetivos eligen criaturas. Las plantillas en metros se convierten a pies cuando la escena mide en pies (1,5 m = 5 pies). Sin probar en Foundry real (tarea 1.2).
+- Descanso Corto: ya no devuelve Dados de Golpe, solo deja gastarlos para curarse (se recuperan con el Largo). Los ajustes guardados se corrigen una vez; el DM puede volver a subirlo en «Descansos y Dados de Golpe». La ventana para gastar suma «Gastar hasta el tope» (el dado más grande primero, hasta el tope del descanso o los PG llenos) y avisa cuánto curó o si Malherido no deja subir.
+- Naturaleza de nacimiento (la primera que despertó): sus técnicas e infusiones cuestan 1 Verbe menos, mínimo 1. Explicado en la Ayuda.
+- Defensas contra ataques de PNJ: fuera de combate la reacción ya no queda «gastada» para siempre (la marca de midi-qol no caducaba sin turnos), así que Sustitución se vuelve a ofrecer. Si conoces una defensa pero no puedes usarla (sin Verbe, sin reacción, Agotamiento 4), el chat te dice por qué y cuánto costaría, con el extra por ser un ataque más grande. En las fichas, un área con origen en ti dice «desde ti» en vez de «sobre ti».
 
 ## 3.4.1 — 2026-11-01
 

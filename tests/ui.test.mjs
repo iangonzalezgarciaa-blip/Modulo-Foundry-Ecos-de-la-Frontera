@@ -40,7 +40,7 @@ test('la vista de jugador del DM conserva secretos y oculta la pestaña de admin
   assert.match(html, /Herramientas del DM/);
 });
 test('vista de uso y consumo real coinciden con deuda', async () => {
-  const a = new MockActor(5, { valor: 1 });
+  const a = new MockActor(5, { valor: 0 });
   const item = agregar(a, 'fuego-aliento'), meta = item.getFlag('ecos-frontera', 'verbe');
   const vista = V.previsualizarUso(a, meta), updates = {}, usage = {};
   assert.equal(V.alConsumir({ actor: a, item }, usage, {}, updates), undefined);

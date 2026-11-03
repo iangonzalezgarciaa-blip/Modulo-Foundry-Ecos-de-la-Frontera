@@ -334,6 +334,8 @@ export function natsDe(actor) {
   for (const x of e.natsExtra ?? []) n.add(x);
   return n;
 }
+/** La naturaleza de nacimiento: la primera que despertó. Sus técnicas cuestan 1 Verbe menos (mínimo 1). */
+export const naturalezaPropia = actor => (estado(actor)?.nats ?? [])[0] ?? null;
 /** Las combinaciones que puede usar (las da el DM con la dote). */
 export const combosDe = actor => new Set(estado(actor)?.combos ?? []);
 
@@ -572,6 +574,8 @@ export function costoUso(actor, meta, grado, { infusion = null } = {}) {
     }
   }
   c += ajusteClima(nat, meta);
+  // Tu naturaleza de nacimiento (la primera) te sale más natural: 1 Verbe menos, mínimo 1.
+  if (nat && nat === naturalezaPropia(actor) && c > 1) c -= 1;
   if (grado > 0) c = Math.max(pisoCosto(grado,D.costo), c);
   // Abrir un ojo cuesta 1 por minuto; quien lo lleva trasplantado paga el doble.
   if (meta.rama === "mirada") {
@@ -2382,7 +2386,8 @@ const nombrePacto = p => (dm() ? p : String(p).replace(/\s*\(.*?\)\s*/g, ""));
 const ORDEN_SEC = ["pura", "fuego", "agua", "viento", "tierra", "rayo", "combo", "velo", "cuerpo", "mirada", "sello", "pacto", "pulso", "hilo", "quietud", "rastro", "sangre", "umbral", "vasija", "familia"];
 const TIEMPO_L = { A: "Acción", AA: "Acción adicional", R: "Reacción", "1 min": "1 minuto", "10 min": "10 minutos", "1 h": "1 hora", "8 h": "8 horas", "3 días": "ritual de 3 días" };
 const COMP_L = { GV: "gestos y voz", G: "gestos", V: "voz", "—": "sin gestos ni voz" };
-const alcanceL = a => ({ yo: "sobre ti", toque: "toque", vista: "a la vista" }[a] ?? a);
+/** Con un área, «yo» es el origen de la plantilla (sale de ti y no te alcanza), no «sobre ti». */
+const alcanceL = (a, area = null) => ({ yo: area ? "desde ti" : "sobre ti", toque: "toque", vista: "a la vista" }[a] ?? a);
 const ordenRamaG = t => D.ramas.findIndex(r => r.id === t.rama) * 100 + Math.max(0, ORDEN_SEC.indexOf(t.sec));
 /** Grupo de la tienda: [clave, título, orden]. */
 function grupoDe(t) {
@@ -2554,6 +2559,8 @@ ${h2("lo-mas-fuerte", "Lo más fuerte crece contigo")}
 <ul><li>Las técnicas más fuertes tienen una <b>escalera</b>: una versión chica que se aprende temprano y otras más grandes después. La ficha de cada técnica dice «Crece» con su escalera.</li>
 <li>Las que atan, duermen, sellan o mandan sobre otro, como la Sustitución, <b>cuestan más contra alguien más fuerte que tú</b>: 2 Verbe más por cada grado que su grado (la mitad de su nivel o VD) pase de tu grado máximo. Contra lo chico sirven desde el principio.</li>
 <li>Cada técnica y cada dote dicen al final <b>«Se mejora con»</b>: el grado, el rango de su rama, la afinidad, el cultivo, las dotes y la escuela que la hacen crecer.</li></ul>
+${h2("naturaleza-propia", "Tu naturaleza de nacimiento")}
+<p>La primera naturaleza que despertó en ti es la tuya: sus técnicas (y las que infundes con ella) cuestan <b>1 Verbe menos</b>, nunca menos de 1. La segunda naturaleza y las combinaciones cuestan lo normal.</p>
 ${h2("el-clima", "El clima")}
 <p>Al aire libre el clima del día fortalece o merma los elementos. <b>Se fortalece</b>: sus técnicas cuestan 1 Verbe menos (mínimo 1). <b>Se merma</b>: cuestan 1 Verbe más. Si algo lo ayuda y algo lo estorba a la vez, se anulan. La tarjeta del clima dice cada día, a todos, qué elementos cambian (o que ninguno cambia). Bajo techo no cuenta, y las Miradas, los Sellos y los Pactos no dependen del clima.</p>
 <table><tr><th>Elemento</th><th>Se fortalece con</th><th>Se merma con</th></tr><tr><td><b>Fuego</b></td><td>calor seco (25 °C o más, sin lluvia ni niebla), viento fuerte con cielo seco, tormenta seca, incendio</td><td>lluvia, aguacero, tormenta, aguanieve, nevada, ventisca, frío extremo (−18 °C o menos)</td></tr><tr><td><b>Agua</b></td><td>llovizna, lluvia, aguacero, tormenta, aguanieve</td><td>calor seco (30 °C o más con cielo seco), polvo, humo de incendio, helada sin lluvia (el agua se congela)</td></tr><tr><td><b>Viento</b></td><td>viento fuerte, vendaval, ventisca, tornado, polvo</td><td>aire quieto: calma con niebla, con nubes o con 30 °C o más</td></tr><tr><td><b>Tierra</b></td><td>polvo, tierra seca y firme (despejado o nublado con 20 °C o más), suelo helado sin nieve</td><td>barro (lluvia, aguacero, tormenta), nieve acumulada (nevada, ventisca)</td></tr><tr><td><b>Rayo</b></td><td>tormenta, tormenta seca, granizo, polvo, aire seco y frío (0 °C o menos sin lluvia ni nieve)</td><td>humedad quieta: niebla o llovizna sin viento fuerte</td></tr><tr><td><b>Escarcha</b></td><td>helada (0 °C o menos), aguanieve, nieve, nevada, ventisca, granizo</td><td>calor (30 °C o más), incendio</td></tr><tr><td><b>Raíz</b></td><td>tierra mojada: llovizna, lluvia, aguacero o tormenta sin helada</td><td>suelo helado (−5 °C o menos), sequía (calor seco), polvo</td></tr><tr><td><b>Madera</b></td><td>humedad (niebla, llovizna), lluvia templada (8 a 29 °C)</td><td>incendio, tormenta seca, vendaval, tornado, savia congelada (−5 °C o menos)</td></tr><tr><td><b>Magma</b></td><td>roca seca y tibia (20 °C o más, sin lluvia ni niebla), incendio</td><td>lluvia, aguacero, tormenta, aguanieve, nevada, ventisca, frío extremo</td></tr><tr><td><b>Vapor</b></td><td>niebla, calor húmedo (18 °C o más con lluvia o nubes)</td><td>helada (0 °C o menos), vendaval, ventisca, tornado</td></tr><tr><td><b>Ceniza</b></td><td>incendio, tormenta seca, viento fuerte con cielo seco o nublado</td><td>lluvia, aguacero, tormenta, aguanieve, nevada, ventisca</td></tr><tr><td><b>Tormenta</b></td><td>tormenta, tormenta seca, tornado, granizo, vendaval, nubes que corren (nublado con viento fuerte)</td><td>cielo quieto: calma con niebla, cielo despejado o 30 °C o más</td></tr><tr><td><b>Hierro</b></td><td>tormenta, tormenta seca, frío seco (0 °C o menos sin lluvia ni nieve)</td><td>humedad que oxida: niebla, llovizna, aguanieve</td></tr><tr><td><b>Corriente</b></td><td>lluvia, aguacero, tormenta</td><td>aire seco (polvo, calor seco), agua congelada (−5 °C o menos sin lluvia)</td></tr><tr><td><b>Destello</b></td><td>sol fuerte (despejado con 15 °C o más), tormenta seca</td><td>lo que no deja ver: niebla, polvo, humo, nevada, ventisca</td></tr><tr><td><b>Arena</b></td><td>polvo, viento fuerte con cielo seco o nublado, arena caliente (30 °C o más con cielo seco)</td><td>arena mojada: lluvia, aguacero, tormenta, aguanieve, nevada, ventisca</td></tr></table>
@@ -2917,7 +2924,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const defensa = !compra && !!D.defensas?.[t.id];
     return tarjetaHTML({ id: t.id, nombre: item?.name ?? t.n, texto: textoDe(t), resolucion:resolucionTexto(t), grado: t.g, rama: nombreRama(t.rama),
       naturaleza: meta.infusion || t.nat ? nombreNat(meta.infusion || t.nat) : null,
-      tiempo: TIEMPO_L[t.t] ?? t.t ?? "Ver ficha", alcance: t.alc ? alcanceL(t.alc) : "Ver ficha", area: t.area,
+      tiempo: TIEMPO_L[t.t] ?? t.t ?? "Ver ficha", alcance: t.alc ? alcanceL(t.alc, t.area) : "Ver ficha", area: t.area,
       referencia:t.divina&&!dm()?null:t.origen?.nombre,
       accionesExtra:!compra && Number(meta.g)<=capacidadReplicas(a) && efectoV(a,"replicas") && Object.values(t.item.system.activities).some(x=>["attack","save","damage","heal"].includes(x.type)) ? `<button type="button" data-action="usarReplica" data-id="${escH(t.id)}" ${Number(e.reservaReplicas)<uso.costo||e.accionReplicaUsada?"disabled":""}>Usar desde réplica</button>`:"",
       costo: uso.costo, trazos: compra ? t.trazos : null,
@@ -3172,7 +3179,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const meta = itemsDe(this.actor, t.id)[0]?.getFlag(MOD, F) ?? { ...t.item.flags[MOD][F], infusion: estado(this.actor)?.infusiones?.[t.id] ?? null };
     const costo = previsualizarUso(this.actor, meta).costo;
     return `<details class="ecos-verbe-tec ${sabe ? "sabe" : r.ok ? "puede" : "no"}" data-id="${t.id}" data-tipo="tec"><summary>
-      <span class="gr">Grado ${t.g}</span><span class="nom"><b>${escH(t.n)}</b><small>${escH((t.alias??[]).slice(0,2).join(" · "))}</small><small>${escH([tiempo, t.alc ? alcanceL(t.alc) : null, t.area].filter(Boolean).join(" · "))}</small><small class="ev-efecto-breve">${escH(avanceTexto(textoDe(t)))}</small><small>Abre la ficha para leer todas sus condiciones.</small></span>
+      <span class="gr">Grado ${t.g}</span><span class="nom"><b>${escH(t.n)}</b><small>${escH((t.alias??[]).slice(0,2).join(" · "))}</small><small>${escH([tiempo, t.alc ? alcanceL(t.alc, t.area) : null, t.area].filter(Boolean).join(" · "))}</small><small class="ev-efecto-breve">${escH(avanceTexto(textoDe(t)))}</small><small>Abre la ficha para leer todas sus condiciones.</small></span>
       <span class="vb"><b>${costo} Verbe</b><small>por uso base</small></span><span class="acc">${btn}${!sabe && r.ok && !r.probar ? `<small>Te quedarían ${trazos(this.actor).libres - t.trazos} Trazos</small>` : ""}</span></summary><div class="ecos-verbe-ficha-cont"></div></details>`;
   }
 
@@ -3204,7 +3211,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       <details class="ev-datos-avanzados" open><summary>Qué cuesta y qué necesitas</summary>
       <table class="ecos-verbe-ficha">
         <tr>${f("Rama", `${nombreRama(t.rama)}${t.nat ? ` · ${escH(nombreNat(t.nat))}` : ""}`)}${f("Grado", `${t.g}${t.g >= 6 ? " · una vez por Descanso Largo" : ""}`)}</tr>
-        <tr>${f("Tiempo", escH(TIEMPO_L[t.t] ?? t.t ?? "—"))}${f("Alcance", escH(t.alc ? alcanceL(t.alc) : "—"))}</tr>
+        <tr>${f("Tiempo", escH(TIEMPO_L[t.t] ?? t.t ?? "—"))}${f("Alcance", escH(t.alc ? alcanceL(t.alc, t.area) : "—"))}</tr>
         <tr>${f("Área", escH(t.area ?? "—"))}${f("Duración", escH(durTxt))}</tr>
         <tr>${f("Componentes", escH(COMP_L[t.comp] ?? t.comp ?? "—"))}${f("Tirada", tirada)}</tr>
         <tr>${f("Daño o curación", dano)}${f("Efectos registrados", deja)}</tr>
@@ -3379,9 +3386,12 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
 const ESPERAS = new Map();
 const INCAPAZ = ["incapacitated", "paralyzed", "stunned", "unconscious", "petrified", "dead", "acechado"];
 const noPuedeActuar = actor => INCAPAZ.some(st => actor?.statuses?.has(st));
+/** ¿Está en un combate empezado? Fuera de combate las reacciones no se agotan: la marca de midi-qol no caduca sin turnos. */
+const enCombate = actor => !!game.combat?.started && !!game.combat.combatants?.some?.(c => c.actor === actor || (c.actor?.uuid && c.actor.uuid === actor?.uuid) || (c.actorId && c.actorId === actor?.id));
 function reaccionDisponible(actor) {
   if (noPuedeActuar(actor) || actor?.statuses?.has("cargado")) return false;
-  if (game.combat?.started && estado(actor)?.reaccionUsada) return false;
+  if (!enCombate(actor)) return true;
+  if (estado(actor)?.reaccionUsada) return false;
   try { return !globalThis.MidiQOL?.hasUsedReaction?.(actor); } catch { return true; }
 }
 
@@ -3398,9 +3408,12 @@ export function gradoAtaque(wf) {
 const ojoAbierto = (actor, ojo) => actor?.effects?.some(x => x.getFlag?.(MOD, F)?.ojo === ojo && !x.disabled);
 
 /** Las defensas que puede usar ahora contra un ataque de ese grado (con su costo exacto). */
-export function defensasDisponibles(actor, { grado = 0, area = false } = {}) {
+export function defensasDisponibles(actor, { grado = 0, area = false, bloqueadas = null } = {}) {
   if (!despierto(actor) || !D?.defensas) return [];
-  if (!reaccionDisponible(actor)) return [];
+  if (!reaccionDisponible(actor)) {
+    if (bloqueadas) for (const id of Object.keys(D.defensas)) if (conoce(actor, id)) bloqueadas.push({ id, nombre: itemsDe(actor, id)[0]?.name ?? tecnicaPorId(id, actor)?.n ?? id, motivo: noPuedeActuar(actor) ? "Su estado no le permite reaccionar." : "Ya usó su reacción en esta ronda." });
+    return [];
+  }
   const e = estado(actor);
   const lista = [];
   for (const [id, def] of Object.entries(D.defensas)) {
@@ -3420,7 +3433,7 @@ export function defensasDisponibles(actor, { grado = 0, area = false } = {}) {
     }
     const permiso = evaluarGasto({ valor: Number(e.valor) || 0, costo, limite: limiteNegativo(actor), grado: tec.g,
       agotamiento: Number(actor.system?.attributes?.exhaustion) || 0, reaccion: true, puedeReaccionar: reaccionDisponible(actor) });
-    if (!permiso.ok) continue;
+    if (!permiso.ok) { bloqueadas?.push({ id, nombre: itemsDe(actor, id)[0]?.name ?? tec.n, costo, extra, motivo: permiso.motivo }); continue; }
     const aviso = def.aviso ?? (id === "forma-sustitucion" ? `si hay un objeto de tu tamaño o menor a ${Math.max(tieneDote(actor, "sustitucion-lejana") ? 9 : 3, 3 + 1.5 * (e.cultivos?.[id]?.mejoras ?? []).filter(m=>m === "sust-distancia").length)} m` : "");
     lista.push({ id, nombre: itemsDe(actor, id)[0]?.name ?? tec.n, costo, extra, refleja, area, texto: area ? "sales del área a un objeto fuera de ella y no recibes nada" : def.texto, aviso, g: tec.g });
   }
@@ -3509,12 +3522,12 @@ async function usarDefensaInterno(actor, id, info = {}) {
   if (def.estado && ESTADOS[def.estado]) efectos.push(efectoEstado(def.estado, foundry.utils.randomID()));
   const creados = efectos.length ? await actor.createEmbeddedDocuments("ActiveEffect", efectos) : [];
   try {
-    await guardar(actor, { valor, ...(game.combat?.started ? { reaccionUsada: true } : {}), ...(op.refleja ? { reflejaUsada: true } : {}) });
+    await guardar(actor, { valor, ...(enCombate(actor) ? { reaccionUsada: true } : {}), ...(op.refleja ? { reflejaUsada: true } : {}) });
   } catch (error) {
     for (const ef of creados) await ef.delete();
     throw error;
   }
-  try { await globalThis.MidiQOL?.setReactionUsed?.(actor); } catch { /* sin midi */ }
+  if (enCombate(actor)) try { await globalThis.MidiQOL?.setReactionUsed?.(actor); } catch { /* sin midi */ }
   const que = info.area ? "sale del área a un objeto fuera de ella" : ({ falla: "se cambia por un objeto: el ataque golpea eso", ca: "levanta la guardia", desventaja: "se corre justo a tiempo" }[def.tipo] ?? "se defiende");
   aLaMesa(actor, `✦ ${escH(op.nombre)}`, `<p>${escH(actor.name)} ${que} (${op.costo} Verbe${op.refleja ? ", gratis por Sustitución refleja" : ""}).</p>`);
   if (valor < 0) await sobreesfuerzo(actor, op.g, valor);
@@ -3546,15 +3559,24 @@ async function defenderAtaque(wf) {
   for (const tok of wf.targets ?? []) {
     const actor = tok?.actor;
     if (!actor || !despierto(actor) || actor === wf.actor) continue;
-    if (globalThis.MidiQOL?.hasUsedReaction?.(actor)) continue;
+    // La reacción (dentro o fuera de combate) la revisa defensasDisponibles.
     const ca = Number(actor.system?.attributes?.ac?.value) || 10;
     const critico = !!roll.isCritical;
     if (roll.total < ca && !critico) continue; // va a fallar igual
-    if (!defensasDisponibles(actor, { grado }).length) continue;
+    const bloqueadas = [];
+    if (!defensasDisponibles(actor, { grado, bloqueadas }).length) { avisarDefensaBloqueada(actor, wf, grado, bloqueadas); continue; }
     const v = await preguntarDefensa(actor, { quien: wf.token?.name ?? wf.actor?.name ?? "Alguien", con: wf.item?.name ?? "un ataque", total: roll.total, ca, critico, grado });
     if (v && D.defensas[v]?.tipo === "desventaja") await aplicarDesventaja(wf, roll);
     if (v && (D.defensas[v]?.tipo === "falla" || (!roll.isCritical && roll.total < Number(actor.system?.attributes?.ac?.value)))) excluirBlanco(wf,tok);
   }
+}
+
+/** Conoce una defensa pero no puede usarla ahora: se le dice por qué y cuánto costaría (a su dueño y al DM). */
+function avisarDefensaBloqueada(actor, wf, grado, bloqueadas) {
+  if (!bloqueadas?.length) return null;
+  const mio = gradoMax(actor);
+  const filas = bloqueadas.map(b => `<li><b>${escH(b.nombre)}</b>${Number.isFinite(b.costo) ? ` · costaría ${b.costo} Verbe${b.extra ? ` (incluye ${b.extra} porque el ataque es de grado ${grado} y el tuyo ${mio}: 2 por grado de diferencia)` : ""}` : ""}: ${escH(b.motivo)}</li>`).join("");
+  return aLaMesa(actor, "✦ Defensa no disponible", `<p>${escH(wf?.token?.name ?? wf?.actor?.name ?? "Alguien")} golpea a ${escH(actor.name)} con ${escH(wf?.item?.name ?? "un ataque")}. Tiene Verbe ${Number(estado(actor)?.valor) || 0}.</p><ul>${filas}</ul>`, { soloDueno: true });
 }
 
 /** midi-qol, antes de las salvaciones de un área: Sustitución amplia. */
@@ -3567,7 +3589,7 @@ async function defenderArea(wf) {
   for (const tok of wf.targets ?? []) {
     const actor = tok?.actor;
     if (!actor || !despierto(actor) || actor === wf.actor || !tieneDote(actor, "sustitucion-amplia")) continue;
-    if (globalThis.MidiQOL?.hasUsedReaction?.(actor)) continue;
+    // La reacción (dentro o fuera de combate) la revisa defensasDisponibles.
     if (!defensasDisponibles(actor, { grado, area: true }).length) continue;
     const v=await preguntarDefensa(actor, { quien: wf.token?.name ?? wf.actor?.name ?? "Alguien", con: wf.item?.name ?? "un área", grado, area: true });
     if(v)excluirBlanco(wf,tok);
