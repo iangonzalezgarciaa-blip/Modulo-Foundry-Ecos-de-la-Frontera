@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## Sin publicar
+
+- Choque en cualquier rama: toda técnica ofensiva puede chocar (Cuerpo, Velo, Umbral, Hilo, mentales…), no solo Forma o elementales. Con ventaja elemental sigue la regla de potencia (+2 grados). Sin ventaja elemental, deciden los dados: Control del Verbe + grado de cada técnica. Regla y ejemplos en docs/CHOQUE_4.md; la Ayuda rápida lo explica (tareas 3.1a y 3.1b).
+- La ventana de defensa ofrece cualquier reacción defensiva que sepas (su disparador es recibir un ataque, un golpe, daño o una técnica contra ti), no solo las siete de la lista fija. Las que no tienen automatización se pagan, gastan la reacción y la tarjeta dice qué hacen para que el DM las resuelva (tarea 3.1c).
+
 ## 3.6.0 — 2026-11-03
 
 - Etapas del Verbe: nadie lo usa solo. Aprendiz (1 rama, grado 1), Practicante (2 ramas, grado 3), Iniciado (4 ramas, grado 6) y Pleno (sin límite). El DM abre la siguiente etapa cuando el personaje encuentra por rol quién le enseñe (Herramientas del DM → Etapa del Verbe), con registro de quién. Las fichas anteriores quedan en Pleno: no cambia nada para ellas (tarea 2.1).

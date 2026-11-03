@@ -42,6 +42,8 @@ export function resultadoChoque(gradoA, gradoB, ciclo = 0, modo = "potencia") {
   const a = limitar(entero(gradoA), 0, GRADO_MAXIMO);
   const b = limitar(entero(gradoB), 0, GRADO_MAXIMO);
   if (modo === "clasico" && ciclo) return { gana: Math.sign(ciclo), margen: null, ciclo };
+  // 3.7: sin ventaja elemental deciden los dados (Control del Verbe + grado de cada técnica).
+  if (!ciclo) return { gana: 0, margen: a - b, ciclo: 0, dados: true };
   const margen = a - b + (modo === "clasico" ? 0 : 2 * Math.sign(ciclo));
   return { gana: Math.sign(margen), margen, ciclo };
 }
@@ -129,4 +131,10 @@ export function validarCreacion(f, { propuesta, maxGrado = GRADO_MAXIMO } = {}) 
   if (f.persistente && (!f.conc || f.duracion === "inst.")) errores.push("El daño repetido requiere una duración y Concentración, o una excepción del DM.");
   if (!Number.isInteger(Number(f.estados)) || Number(f.estados) < 0 || Number(f.estados) > 3) errores.push("La cantidad de estados debe estar entre 0 y 3.");
   return { ok: errores.length === 0, errores };
+}
+
+/** Desempate de un choque con las tiradas de Control: sin ventaja elemental suma el grado de cada técnica. */
+export function desempateChoque({ ta, tb, ga = 0, gb = 0, dados = false } = {}) {
+  const x = (Number(ta) || 0) + (dados ? Number(ga) || 0 : 0), y = (Number(tb) || 0) + (dados ? Number(gb) || 0 : 0);
+  return Math.sign(x - y);
 }

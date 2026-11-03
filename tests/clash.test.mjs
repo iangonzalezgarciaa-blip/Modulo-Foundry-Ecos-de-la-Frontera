@@ -49,3 +49,34 @@ test('Ayuda rápida explica disparador, reacción, coste y orden sin mostrar con
   game.user=game.users.get('player');const a=actor(),p=new V.PanelVerbe(a);p.pestana='guia';const html=await p._renderHTML();
   assert.match(html,/¿Cómo chocan dos técnicas/);assert.match(html,/Basta una marca/);assert.match(html,/aunque ya haya gastado su reacción/);assert.doesNotMatch(html,/panteonDM/);
 });
+
+test('3.7: cualquier rama ofensiva choca; sin ventaja elemental deciden Control + grado', async () => {
+  const { resultadoChoque, desempateChoque } = await import('../scripts/verbe-core.js');
+  const cuerpo = D.tecnicas.find(t => t.rama === 'cuerpo' && !t.nat && t.item.system.activation?.type === 'action'
+    && Object.values(t.item.system.activities).some(x => ['attack', 'save'].includes(x.type) && x.damage?.parts?.length)
+    && !t.item.effects?.some(e => e.flags?.['ecos-frontera']?.verbe?.aplicarUsuario));
+  const a = actor(); const i = agregar(a, cuerpo.id);
+  assert.equal(tecnicaChocable(i), true, cuerpo.id);
+  assert.equal(resultadoChoque(2, 4, 0).dados, true);
+  assert.equal(resultadoChoque(2, 4, 0).gana, 0);
+  assert.equal(resultadoChoque(3, 3, -1).gana, -1);
+  assert.equal(desempateChoque({ ta: 15, tb: 12, ga: 2, gb: 4, dados: true }), 1);
+  assert.equal(desempateChoque({ ta: 14, tb: 12, ga: 2, gb: 4, dados: true }), 0);
+  assert.equal(desempateChoque({ ta: 14, tb: 12, ga: 2, gb: 4, dados: false }), 1);
+});
+
+test('3.1c: la ventana de defensa ofrece cualquier reacción defensiva del catálogo, no solo Sustitución', async () => {
+  const { reaccionDefensiva } = await import('../scripts/verbe-clash.js');
+  const defensivas = D.tecnicas.filter(reaccionDefensiva);
+  assert.ok(defensivas.length >= 10, `${defensivas.length}`);
+  const t = defensivas.find(x => !D.defensas[x.id] && x.g <= 3 && !x.req && x.rama === 'cuerpo') ?? defensivas.find(x => !D.defensas[x.id] && x.g <= 3);
+  const a = actor(); agregar(a, t.id); agregar(a, 'forma-sustitucion');
+  const ops = V.defensasDisponibles(a, { grado: 1 });
+  assert.ok(ops.some(o => o.id === 'forma-sustitucion'));
+  const g = ops.find(o => o.id === t.id);
+  assert.ok(g?.generica, t.id);
+  const antes = V.estado(a).valor;
+  assert.equal(await V.usarDefensa(a, t.id, { grado: 1 }), true);
+  assert.equal(V.estado(a).valor, antes - g.costo);
+  assert.equal(reaccionDefensiva(D.tecnicas.find(x => x.id === 'fuego-aliento')), false);
+});

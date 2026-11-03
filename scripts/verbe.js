@@ -14,7 +14,7 @@ import { abrirReliquias } from "./relics.js";
 import { actoresPresentes } from './mesa-actores.js';
 import { prepararRecibo, registrarPaso } from "./mesa-resolucion.js";
 import {avanceTexto,efectoHTML,textoClaro,resolucionTexto,duracionTexto,referenciaHTML,glosarioHTML,escTexto,tablaSangreHTML,huellaTexto} from "./verbe-reading.js";
-import { tecnicaChocable, AYUDA_CHOQUE, PASOS_CHOQUE } from "./verbe-clash.js";
+import { tecnicaChocable, AYUDA_CHOQUE, PASOS_CHOQUE, reaccionDefensiva } from "./verbe-clash.js";
 import { donDivino, asegurarNotaPanteon } from "./verbe-divinity.js";
 import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
@@ -27,7 +27,7 @@ import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferen
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
 import { presupuestoCorto } from "./rest-core.js";
 import { VERSION_REGLAS, recuperarReserva, evaluarGasto, requisitoNatural, crearCola,
-  resultadoChoque, presupuestoTecnica, validarCreacion, LIMITES_CREACION } from "./verbe-core.js";
+  resultadoChoque, desempateChoque, presupuestoTecnica, validarCreacion, LIMITES_CREACION } from "./verbe-core.js";
 import { configurarAtaque, configurarSalvacion, despuesAtaque, normalizarHielo,
   revisarEstados, consumirMetal, metrosEnHoja } from "./verbe-effects.js";
 import { pasoInicial, progresoHTML, estadoUsoHTML, tarjetaHTML, avisosJugadorHTML, ROLES_RAMA } from "./verbe-ui.js";
@@ -2567,8 +2567,8 @@ export async function resolverChoque(A, B, {automatico=false} = {}) {
     };
     const ta = await tirar(A);
     const tb = await tirar(B);
-    gana = ta === tb ? 0 : (ta > tb ? 1 : -1);
-    L.push(`Potencia efectiva igualada: Control ${ta} contra ${tb}.`);
+    gana = desempateChoque({ ta, tb, ga: A.g, gb: B.g, dados: !!resultado.dados });
+    L.push(resultado.dados ? `Sin ventaja elemental deciden los dados: Control ${ta} + grado ${A.g} contra Control ${tb} + grado ${B.g}.` : `Potencia efectiva igualada: Control ${ta} contra ${tb}.`);
   }
   L.push(gana ? `<b>Gana ${escH(gana > 0 ? A.nombre : B.nombre)}</b>: la otra se deshace y la ganadora sigue.` : "<b>Empate</b>: las dos se anulan.");
   if(automatico) await aLaMesa(A.actor,"Choque de técnicas",`<p>${L.slice(0,-1).join("<br>")}</p><p>${gana>0?"La atacante supera la intercepción y continúa contra este objetivo.":gana<0?"La contratécnica intercepta el lanzamiento contra su defensor.":"Empate: las técnicas se anulan contra este objetivo."} El choque no concede un ataque adicional.</p>`);
@@ -3918,6 +3918,19 @@ export function defensasDisponibles(actor, { grado = 0, area = false, bloqueadas
     const aviso = def.aviso ?? (id === "forma-sustitucion" ? `si hay un objeto de tu tamaño o menor a ${Math.max(tieneDote(actor, "sustitucion-lejana") ? 9 : 3, 3 + 1.5 * (e.cultivos?.[id]?.mejoras ?? []).filter(m=>m === "sust-distancia").length)} m` : "");
     lista.push({ id, nombre: itemsDe(actor, id)[0]?.name ?? tec.n, costo, extra, refleja, area, texto: area ? "sales del área a un objeto fuera de ella y no recibes nada" : def.texto, aviso, g: tec.g });
   }
+  // 3.1c: cualquier otra reacción defensiva que sepa (por su disparador en el catálogo), no solo las de la lista fija.
+  if (!area) for (const item of itemsTecnica(actor)) {
+    const meta = item.getFlag(MOD, F), id = meta?.id;
+    if (!id || D.defensas[id] || lista.some(o => o.id === id)) continue;
+    const tec = tecnicaPorId(id, actor);
+    if (!reaccionDefensiva(tec)) continue;
+    const costo = costoUso(actor, meta, tec.g);
+    const permiso = evaluarGasto({ valor: Number(e.valor) || 0, costo, limite: limiteNegativo(actor), grado: tec.g,
+      agotamiento: Number(actor.system?.attributes?.exhaustion) || 0, reaccion: true, puedeReaccionar: reaccionDisponible(actor) });
+    if (!permiso.ok) { bloqueadas?.push({ id, nombre: item.name, costo, extra: 0, motivo: permiso.motivo }); continue; }
+    const texto = String(tec.texto ?? "").split(/(?<=\.)\s/)[0].slice(0, 220);
+    lista.push({ id, nombre: item.name, costo, extra: 0, refleja: false, area: false, texto, aviso: tec.item.system.activation?.condition ?? "", g: tec.g, generica: true });
+  }
   return lista;
 }
 
@@ -3982,6 +3995,15 @@ async function usarDefensaInterno(actor, id, info = {}) {
   const op = defensasDisponibles(actor, { grado: info.grado ?? 0, area: !!info.area }).find(o => o.id === id);
   if (!op) return false;
   const def = D.defensas[id];
+  if (op.generica) {
+    // Reacción del catálogo sin automatización propia: se paga, gasta la reacción y la tarjeta dice qué hace; el DM la resuelve.
+    const e0 = estado(actor), valor0 = (Number(e0.valor) || 0) - op.costo;
+    await guardar(actor, { valor: valor0, ...(enCombate(actor) ? { reaccionUsada: true } : {}) });
+    if (enCombate(actor)) try { await globalThis.MidiQOL?.setReactionUsed?.(actor); } catch { /* sin midi */ }
+    aLaMesa(actor, `✦ ${escH(op.nombre)}`, `<p>${escH(actor.name)} reacciona con <b>${escH(op.nombre)}</b> (${op.costo} Verbe): ${escH(op.texto)}</p><p class="ecos-nota">Esta reacción no se automatiza: el DM resuelve su efecto sobre el ataque.</p>`);
+    if (valor0 < 0) await sobreesfuerzo(actor, op.g, valor0);
+    return true;
+  }
   const e = estado(actor);
   const valor = (Number(e.valor) || 0) - op.costo;
   const changes = [];

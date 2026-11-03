@@ -162,15 +162,15 @@
 
 - [x] **2.6b · Curación y heridas: cambios** (hecha: Pulso y Médico del Verbe en Medicina, cura excelente, magia con reposo; ajuste «Heridas graves piden reposo») (M · Dep.: 2.6a). Que la prueba de Medicina sea valiosa y que el Verbe médico pese (bonos o ventaja según la rama Pulso). Que las heridas graves exijan reposo en cama por días aunque haya curación mágica. Listo cuando el flujo está implementado y probado.
 
-- [ ] **2.7 · R · Publicar v3.6.0** (S · Dep.: 2.1 a 2.6).
+- [x] **2.7 · R · Publicar v3.6.0** (publicada el 3-nov-2026) (S · Dep.: 2.1 a 2.6).
 
 ## Fase 3 · Combate (publica v3.7.0)
 
-- [ ] **3.1a · Choque en cualquier rama: regla escrita** (M · Dep.: 0.1). Hoy el choque solo acepta técnicas ofensivas «elementales o de Forma» (diario «10 · El Verbe · guía revisada»; código en verbe-clash.js y verbe.js). Regla nueva: cualquier técnica ofensiva (Cuerpo, Velo, Umbral, mentales, Hilo, etc.) puede chocar. Resolución: se compara la potencia; si hay ventaja elemental, suma 2 grados (regla actual); si **no** hay ventaja elemental, se decide con un dado (Control del Verbe de ambos). Escribirla primero en docs/CHOQUE_4.md con ejemplos (patada contra Rayo, teletransporte contra Fuego, mental contra física).
+- [x] **3.1a · Choque en cualquier rama: regla escrita** (hecha: docs/CHOQUE_4.md) (M · Dep.: 0.1). Hoy el choque solo acepta técnicas ofensivas «elementales o de Forma» (diario «10 · El Verbe · guía revisada»; código en verbe-clash.js y verbe.js). Regla nueva: cualquier técnica ofensiva (Cuerpo, Velo, Umbral, mentales, Hilo, etc.) puede chocar. Resolución: se compara la potencia; si hay ventaja elemental, suma 2 grados (regla actual); si **no** hay ventaja elemental, se decide con un dado (Control del Verbe de ambos). Escribirla primero en docs/CHOQUE_4.md con ejemplos (patada contra Rayo, teletransporte contra Fuego, mental contra física).
 
-- [ ] **3.1b · Choque en cualquier rama: código** (M · Dep.: 3.1a). Implementarla en verbe-clash.js y enfrentamientoAutomatico. Actualizar tests/clash.test.mjs y la explicación de cinco pasos del panel.
+- [x] **3.1b · Choque en cualquier rama: código** (hecha: tecnicaChocable sin límite de rama; sin ventaja elemental, Control + grado) (M · Dep.: 3.1a). Implementarla en verbe-clash.js y enfrentamientoAutomatico. Actualizar tests/clash.test.mjs y la explicación de cinco pasos del panel.
 
-- [ ] **3.1c · Reacciones: romper el monopolio de Sustitución** (S · Dep.: 3.1b). La ventana de defensa debe ofrecer cualquier reacción o contratécnica válida del personaje, no solo Sustitución (hoy también hay Cortina de agua, Escudo de piedra, Paso falso y Leer el golpe). Listo cuando la lista se arma desde el catálogo por etiqueta de reacción.
+- [x] **3.1c · Reacciones: romper el monopolio de Sustitución** (hecha: reaccionDefensiva por disparador del catálogo) (S · Dep.: 3.1b). La ventana de defensa debe ofrecer cualquier reacción o contratécnica válida del personaje, no solo Sustitución (hoy también hay Cortina de agua, Escudo de piedra, Paso falso y Leer el golpe). Listo cuando la lista se arma desde el catálogo por etiqueta de reacción.
 
 - [ ] **3.2a · Contratécnicas no elementales: Cuerpo e Hilo** (M · Dep.: 0.3, 3.1b). Crear técnicas de reacción o choque con el proceso de 0.3: patadas, golpes, armas suspendidas. Mínimo 2 por rama, grados 0 a 5, con costes.
 
@@ -294,3 +294,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 3-nov-2026 | 1.1, 1.2 | Claude | Validador (860 técnicas, 0 errores, 0 avisos tras corregir 79) y plantillas convertidas a la escena | Sin publicar (3.5.0) |
 | 3-nov-2026 | 1.3–1.8 y pendientes de 2.7 | Claude | Editor del DM y capa de ediciones; ventaja, estados, moneda, devolver Verbe; descanso corto, naturaleza −1, defensas fuera de combate. Getsuga localizada (la borra el autor) | Sin publicar (3.5.0) |
 | 3-nov-2026 | 1.9 | Claude | Release v3.5.0 publicado por el flujo (ZIP, module.json, Ecos-Actualizar.ps1, .bat) | 3.5.0 |
+| 3-nov-2026 | 2.1–2.7 | Claude | Etapas, naturaleza oculta, ramas, reserva por dados, sangre única, oponentes, curación. Release v3.6.0 | 3.6.0 |
