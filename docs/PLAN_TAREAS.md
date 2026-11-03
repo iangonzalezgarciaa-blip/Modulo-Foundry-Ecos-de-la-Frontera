@@ -200,11 +200,11 @@
 
 ## Fase 4 · Contenido (publica v3.8.0)
 
-- [ ] **4.1a · Magia estándar: lore** (M · Dep.: —). Tarea de Mundo. Escribir, para aprobación del autor, por qué la magia de D&D es de aprendizaje común en este mundo y cómo convive con el Verbe. Propuesta: ampliar el diario «Mundo 6 · Magia y misterios», página «1 · Cómo funciona la magia».
+- [ ] **4.1a · Magia estándar: lore** (borrador en docs/MAGIA_ESTANDAR.md; espera aprobación del autor para escribirlo en el diario) (M · Dep.: —). Tarea de Mundo. Escribir, para aprobación del autor, por qué la magia de D&D es de aprendizaje común en este mundo y cómo convive con el Verbe. Propuesta: ampliar el diario «Mundo 6 · Magia y misterios», página «1 · Cómo funciona la magia».
 
-- [ ] **4.1b · Magia estándar: mapa de elementos** (S · Dep.: 4.1a). Tabla «escuela o tipo de daño de D&D → naturaleza del Verbe» en docs/MAGIA_ESTANDAR.md. Aprobación del autor.
+- [x] **4.1b · Magia estándar: mapa de elementos** (hecha: docs/MAGIA_ESTANDAR.md; falta la aprobación del autor) (S · Dep.: 4.1a). Tabla «escuela o tipo de daño de D&D → naturaleza del Verbe» en docs/MAGIA_ESTANDAR.md. Aprobación del autor.
 
-- [ ] **4.1c · Magia estándar: entra al choque** (M · Dep.: 3.1b, 4.1b). Los conjuros participan en el choque con potencia igual al nivel del espacio y el elemento del mapa.
+- [x] **4.1c · Magia estándar: entra al choque** (hecha: conjuroChocable y naturalezaConjuro) (M · Dep.: 3.1b, 4.1b). Los conjuros participan en el choque con potencia igual al nivel del espacio y el elemento del mapa.
 
 - [ ] **4.2a · Hechizos PF2e: exportar** (S · Dep.: —). Tarea de Mundo, en «Esperanza Oculta». Macro que exporta los hechizos del sistema PF2e (compendio pf2e.spells-srd, a verificar) a JSON: nombre, rango, tradiciones, rasgos, lanzamiento, alcance, área, objetivo, salvación, duración, texto y rareza. La ejecuta el autor y entrega el archivo.
 
@@ -216,7 +216,7 @@
 
 - [ ] **4.2e · Hechizos PF2e: biblioteca** (S · Dep.: 4.2d). Diario índice por escuela, nivel y tipo.
 
-- [ ] **4.3 · Formas no elementales** (M · Dep.: 0.3, 2.1a). Crear 20 a 30 técnicas de Forma sin elemento (proyectiles, armas de Verbe, escudos, impulsos), grados 0 a 5, para quien no tenga naturaleza elemental.
+- [x] **4.3 · Formas no elementales** (hecha: 20 técnicas, tools/nimerios/forma-pura.mjs) (M · Dep.: 0.3, 2.1a). Crear 20 a 30 técnicas de Forma sin elemento (proyectiles, armas de Verbe, escudos, impulsos), grados 0 a 5, para quien no tenga naturaleza elemental.
 
 - [ ] **4.4a · Lore del panteón: «Mundo 1 · Dioses y planos»** (M · Dep.: —). Tarea de Mundo. Fuente: diario «Ecos · Panteón y sangre divina (solo DM)», página «Pendiente · actualizar panteón…», y docs/PANTEON_3.2.md. Incorporar jerarquía, completar Nerys y Ashka y, si el autor lo decide, Seyra y Dhoren. Conservar las páginas escritas y los permisos.
 

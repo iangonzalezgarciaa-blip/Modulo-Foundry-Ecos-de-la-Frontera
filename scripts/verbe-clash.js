@@ -28,3 +28,20 @@ export function reaccionDefensiva(t) {
   if (m.ritual) return false;
   return DISPARA_DEFENSA.test(`${sys.activation?.condition ?? ''} ${t.texto ?? ''}`.slice(0, 400));
 }
+/**
+ * Magia estándar en el choque (tareas 4.1b y 4.1c): un conjuro de D&D (no una técnica) choca con potencia igual al
+ * nivel del espacio y con la naturaleza que le da su tipo de daño (o su escuela, si el daño no dice nada).
+ */
+export const DANO_A_NATURALEZA = { fire: 'fuego', cold: 'agua', lightning: 'rayo', thunder: 'viento', acid: 'tierra', bludgeoning: 'tierra', piercing: 'viento', slashing: 'viento' };
+export const ESCUELA_A_NATURALEZA = { evo: 'fuego', con: 'tierra', trs: 'agua', abj: 'tierra', ill: null, enc: null, div: null, nec: null };
+export function conjuroChocable(item, actividad = null) {
+  if (!item || item.type !== 'spell' || item.flags?.['ecos-frontera']?.verbe?.id) return false;
+  if (!['action', 'bonus'].includes(item.system?.activation?.type)) return false;
+  const acts = actividad ? [actividad] : item.system?.activities?.values ? [...item.system.activities.values()] : Object.values(item.system?.activities ?? {});
+  return acts.some(a => ['attack', 'save', 'damage'].includes(a.type) && a.damage?.parts?.some(p => !Array.from(p.types ?? []).includes('healing')));
+}
+export function naturalezaConjuro(item) {
+  const acts = item?.system?.activities?.values ? [...item.system.activities.values()] : Object.values(item?.system?.activities ?? {});
+  for (const a of acts) for (const p of a.damage?.parts ?? []) for (const t of Array.from(p.types ?? [])) if (DANO_A_NATURALEZA[t]) return DANO_A_NATURALEZA[t];
+  return ESCUELA_A_NATURALEZA[item?.system?.school] ?? null;
+}

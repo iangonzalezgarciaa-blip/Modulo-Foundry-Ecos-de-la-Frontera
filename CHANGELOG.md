@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## Sin publicar
+
+- Magia estándar en el choque: un conjuro ofensivo de D&D se puede interceptar con una técnica. Su potencia es el nivel del espacio y su naturaleza sale del tipo de daño (fuego → Fuego, frío → Agua, relámpago → Rayo, trueno y cortes → Viento, ácido y golpes → Tierra) o de la escuela. Mapa y borrador de lore para aprobar en docs/MAGIA_ESTANDAR.md (tareas 4.1b y 4.1c; 4.1a espera aprobación).
+- 20 formas sin elemento (Forma, grados 0 a 5) para quien no tiene naturaleza: proyectiles, filos, escudos, impulsos, redes, muros y estallidos de Verbe. Catálogo: 912 técnicas (tarea 4.3).
+
 ## 3.7.0 — 2026-11-03
 
 - Choque en cualquier rama: toda técnica ofensiva puede chocar (Cuerpo, Velo, Umbral, Hilo, mentales…), no solo Forma o elementales. Con ventaja elemental sigue la regla de potencia (+2 grados). Sin ventaja elemental, deciden los dados: Control del Verbe + grado de cada técnica. Regla y ejemplos en docs/CHOQUE_4.md; la Ayuda rápida lo explica (tareas 3.1a y 3.1b).

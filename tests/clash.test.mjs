@@ -97,3 +97,15 @@ test('3.2: dos contratécnicas por rama no elemental (reacción defensiva y otra
   assert.equal(await V.usarDefensa(a, 'cuerpo-palma-desvia', { grado: 1 }), true);
   assert.ok(a.effects.some(e => e.changes?.some(c => c.key === 'system.attributes.ac.bonus')));
 });
+
+test('4.1c: un conjuro ofensivo de D&D choca con la naturaleza de su daño y la potencia de su nivel', async () => {
+  const { conjuroChocable, naturalezaConjuro } = await import('../scripts/verbe-clash.js');
+  const bola = { type: 'spell', flags: {}, system: { school: 'evo', activation: { type: 'action' }, activities: { a: { type: 'save', damage: { parts: [{ types: ['fire'] }] } } } } };
+  assert.equal(conjuroChocable(bola), true);
+  assert.equal(naturalezaConjuro(bola), 'fuego');
+  const cura = { type: 'spell', flags: {}, system: { activation: { type: 'action' }, activities: { a: { type: 'heal', damage: { parts: [] } } } } };
+  assert.equal(conjuroChocable(cura), false);
+  assert.equal(naturalezaConjuro({ system: { school: 'trs', activities: {} } }), 'agua');
+  const tecnica = D.tecnicas.find(t => t.id === 'fuego-aliento').item;
+  assert.equal(conjuroChocable(tecnica), false);
+});

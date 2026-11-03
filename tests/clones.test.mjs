@@ -25,3 +25,10 @@ test('copias y Verbe por clon: límites por dotes y por la reserva', () => {
   assert.match(repartoClones({ copias: 3, verbe: 2 }, { disponible: 10, limites: lim }).motivo, /de 1 a 2/);
   assert.match(repartoClones({ copias: 1, verbe: 1 }, { disponible: 10, limites: lim }).motivo, /al menos 2/);
 });
+
+test('4.3: veinte formas sin elemento, grados 0 a 5, para quien no tiene naturaleza', () => {
+  const fp = D.tecnicas.filter(t => t.formaPura);
+  assert.equal(fp.length, 20);
+  assert.ok(fp.every(t => t.rama === 'forma' && !t.nat && t.g >= 0 && t.g <= 5));
+  assert.ok(new Set(fp.map(t => t.g)).size === 6);
+});

@@ -14,7 +14,7 @@ import { abrirReliquias } from "./relics.js";
 import { actoresPresentes } from './mesa-actores.js';
 import { prepararRecibo, registrarPaso } from "./mesa-resolucion.js";
 import {avanceTexto,efectoHTML,textoClaro,resolucionTexto,duracionTexto,referenciaHTML,glosarioHTML,escTexto,tablaSangreHTML,huellaTexto} from "./verbe-reading.js";
-import { tecnicaChocable, AYUDA_CHOQUE, PASOS_CHOQUE, reaccionDefensiva } from "./verbe-clash.js";
+import { tecnicaChocable, AYUDA_CHOQUE, PASOS_CHOQUE, reaccionDefensiva, conjuroChocable, naturalezaConjuro } from "./verbe-clash.js";
 import { donDivino, asegurarNotaPanteon } from "./verbe-divinity.js";
 import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
@@ -4385,7 +4385,9 @@ async function elegirContraTecnica(actor,info) {
 
 const choquesWorkflow=new WeakMap(),oposicionesWorkflow=new WeakMap();
 async function choqueAutomatico(wf) {
-  if(!wf||!despierto(wf.actor)||!tecnicaChocable(wf.item,wf.activity))return;
+  // 4.1c: un conjuro de D&D también se puede interceptar (potencia = nivel del espacio; naturaleza según su daño).
+  const conjuro=!!wf&&conjuroChocable(wf.item,wf.activity);
+  if(!wf||(!conjuro&&(!despierto(wf.actor)||!tecnicaChocable(wf.item,wf.activity))))return;
   if(choquesWorkflow.has(wf))return choquesWorkflow.get(wf);
   const trabajo=(async()=>{
     const vistos=new Set();
@@ -4396,7 +4398,8 @@ async function choqueAutomatico(wf) {
       if(!respuesta)continue;
       const item=itemsDe(actor,respuesta.id)[0],m=item?.getFlag(MOD,F);
       if(respuesta.nonce!==estado(actor)?.ultimoUso||!tecnicaChocable(item)||!Number.isInteger(respuesta.grado)||respuesta.grado<m.g||respuesta.grado>gradoUsable(actor,m))continue;
-      const ganador=await resolverChoque({actor:wf.actor,nombre:wf.item.name,nat:wf.item.getFlag(MOD,F).infusion||wf.item.getFlag(MOD,F).nat,g:gradoAtaque(wf)},
+      const mA=wf.item.getFlag?.(MOD,F),natA=conjuro?naturalezaConjuro(wf.item):(mA?.infusion||mA?.nat);
+      const ganador=await resolverChoque({actor:wf.actor,nombre:wf.item.name,nat:natA,g:gradoAtaque(wf)},
         {actor,nombre:item.name,nat:m.infusion||m.nat,g:respuesta.grado},{automatico:true});
       if(ganador<=0)for(const token of [...wf.targets])if(token.actor===actor||token.actor?.uuid===actor.uuid)excluirBlanco(wf,token);
       await registrarPaso(wf,'choque-'+actor.id,'Choque de técnicas',`${actor.name}: ${respuesta.nombre??item.name}, grado ${respuesta.grado}, ${respuesta.costo??'consulta la contratécnica'} Verbe. ${ganador<=0?'Intercepta contra este defensor.':'La amenaza continúa contra este defensor.'}`);
