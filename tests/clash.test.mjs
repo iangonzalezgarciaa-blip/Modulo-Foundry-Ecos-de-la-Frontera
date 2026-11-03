@@ -80,3 +80,20 @@ test('3.1c: la ventana de defensa ofrece cualquier reacción defensiva del catá
   assert.equal(V.estado(a).valor, antes - g.costo);
   assert.equal(reaccionDefensiva(D.tecnicas.find(x => x.id === 'fuego-aliento')), false);
 });
+
+test('3.2: dos contratécnicas por rama no elemental (reacción defensiva y otra para chocar), grados 0 a 5', async () => {
+  const { reaccionDefensiva } = await import('../scripts/verbe-clash.js');
+  const nuevas = D.tecnicas.filter(t => t.contra);
+  assert.equal(nuevas.length, 18);
+  for (const rama of ['cuerpo', 'hilo', 'velo', 'sello', 'rastro', 'umbral', 'quietud', 'vasija', 'pacto']) {
+    const de = nuevas.filter(t => t.rama === rama);
+    assert.equal(de.length, 2, rama);
+    assert.ok(de.every(t => t.g >= 0 && t.g <= 5 && t.costo > 0 && !t.nat));
+    assert.ok(de.some(t => reaccionDefensiva(t)), `${rama}: reacción`);
+    const a = actor(); const i = agregar(a, de.find(t => !reaccionDefensiva(t)).id);
+    assert.equal(tecnicaChocable(i), true, `${rama}: choque`);
+  }
+  const a = actor(); agregar(a, 'cuerpo-palma-desvia');
+  assert.equal(await V.usarDefensa(a, 'cuerpo-palma-desvia', { grado: 1 }), true);
+  assert.ok(a.effects.some(e => e.changes?.some(c => c.key === 'system.attributes.ac.bonus')));
+});

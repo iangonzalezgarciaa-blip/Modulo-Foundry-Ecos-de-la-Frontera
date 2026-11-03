@@ -172,11 +172,11 @@
 
 - [x] **3.1c · Reacciones: romper el monopolio de Sustitución** (hecha: reaccionDefensiva por disparador del catálogo) (S · Dep.: 3.1b). La ventana de defensa debe ofrecer cualquier reacción o contratécnica válida del personaje, no solo Sustitución (hoy también hay Cortina de agua, Escudo de piedra, Paso falso y Leer el golpe). Listo cuando la lista se arma desde el catálogo por etiqueta de reacción.
 
-- [ ] **3.2a · Contratécnicas no elementales: Cuerpo e Hilo** (M · Dep.: 0.3, 3.1b). Crear técnicas de reacción o choque con el proceso de 0.3: patadas, golpes, armas suspendidas. Mínimo 2 por rama, grados 0 a 5, con costes.
+- [x] **3.2a · Contratécnicas no elementales: Cuerpo e Hilo** (hecha: tools/nimerios/contra.mjs) (M · Dep.: 0.3, 3.1b). Crear técnicas de reacción o choque con el proceso de 0.3: patadas, golpes, armas suspendidas. Mínimo 2 por rama, grados 0 a 5, con costes.
 
-- [ ] **3.2b · Contratécnicas no elementales: Velo, Sello y Rastro** (M · Dep.: 3.2a). Mentales, barreras y lectura del golpe. Mismos mínimos.
+- [x] **3.2b · Contratécnicas no elementales: Velo, Sello y Rastro** (hecha) (M · Dep.: 3.2a). Mentales, barreras y lectura del golpe. Mismos mínimos.
 
-- [ ] **3.2c · Contratécnicas no elementales: Umbral, Quietud, Vasija y Pacto** (M · Dep.: 3.2a). Teletransporte, entorno, bestias. Mismos mínimos.
+- [x] **3.2c · Contratécnicas no elementales: Umbral, Quietud, Vasija y Pacto** (hecha) (M · Dep.: 3.2a). Teletransporte, entorno, bestias. Mismos mínimos.
 
 - [ ] **3.3 · Estado «Canalizando» y regla de técnicas cargadas** (M · Dep.: 0.1). Definir en verbe-effects.js el estado «Canalizando»: el usuario no puede reaccionar ni chocar y queda estático (velocidad 0) mientras prepara. La preparación dura 2 o más turnos y cada turno sube potencia, fiabilidad, precisión o coste. Se interrumpe por daño (salvación de CON, CD 10 o la mitad del daño, la mayor), por incapacitación o por movimiento forzado. Explicarlo en la ficha de cada técnica y en la ayuda del panel. Listo cuando una técnica de prueba carga, se interrumpe y se libera. Nota: «Cargado» ya lo usa el Rayo; no reutilizar ese nombre.
 

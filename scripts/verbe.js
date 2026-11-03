@@ -3998,9 +3998,17 @@ async function usarDefensaInterno(actor, id, info = {}) {
   if (op.generica) {
     // Reacción del catálogo sin automatización propia: se paga, gasta la reacción y la tarjeta dice qué hace; el DM la resuelve.
     const e0 = estado(actor), valor0 = (Number(e0.valor) || 0) - op.costo;
+    // Si la técnica trae un efecto sobre quien la usa (un bono de CA, por ejemplo), se pone ahora y se va con ese ataque.
+    const tec = tecnicaPorId(id, actor);
+    const propios = (tec?.item?.effects ?? []).filter(x => x.flags?.[MOD]?.[F]?.aplicarUsuario).map(x => {
+      const f = foundry.utils.deepClone(x); delete f._id; f.origin = itemsDe(actor, id)[0]?.uuid ?? null; f.transfer = false;
+      f.duration = { rounds: 1, seconds: 6, startTime: game.time?.worldTime ?? 0 }; (f.flags.dae ??= {}).specialDuration = ["isAttacked"];
+      return f;
+    });
+    if (propios.length) await actor.createEmbeddedDocuments("ActiveEffect", propios);
     await guardar(actor, { valor: valor0, ...(enCombate(actor) ? { reaccionUsada: true } : {}) });
     if (enCombate(actor)) try { await globalThis.MidiQOL?.setReactionUsed?.(actor); } catch { /* sin midi */ }
-    aLaMesa(actor, `✦ ${escH(op.nombre)}`, `<p>${escH(actor.name)} reacciona con <b>${escH(op.nombre)}</b> (${op.costo} Verbe): ${escH(op.texto)}</p><p class="ecos-nota">Esta reacción no se automatiza: el DM resuelve su efecto sobre el ataque.</p>`);
+    aLaMesa(actor, `✦ ${escH(op.nombre)}`, `<p>${escH(actor.name)} reacciona con <b>${escH(op.nombre)}</b> (${op.costo} Verbe): ${escH(op.texto)}</p><p class="ecos-nota">${propios.length ? "El bono se aplica a este ataque." : "Esta reacción no se automatiza: el DM resuelve su efecto sobre el ataque."}</p>`);
     if (valor0 < 0) await sobreesfuerzo(actor, op.g, valor0);
     return true;
   }

@@ -4,6 +4,7 @@
 
 - Choque en cualquier rama: toda técnica ofensiva puede chocar (Cuerpo, Velo, Umbral, Hilo, mentales…), no solo Forma o elementales. Con ventaja elemental sigue la regla de potencia (+2 grados). Sin ventaja elemental, deciden los dados: Control del Verbe + grado de cada técnica. Regla y ejemplos en docs/CHOQUE_4.md; la Ayuda rápida lo explica (tareas 3.1a y 3.1b).
 - La ventana de defensa ofrece cualquier reacción defensiva que sepas (su disparador es recibir un ataque, un golpe, daño o una técnica contra ti), no solo las siete de la lista fija. Las que no tienen automatización se pagan, gastan la reacción y la tarjeta dice qué hacen para que el DM las resuelva (tarea 3.1c).
+- 18 contratécnicas originales sin elemento, dos por rama (Cuerpo, Hilo, Velo, Sello, Rastro, Umbral, Quietud, Vasija y Pacto), grados 1 a 4: una reacción defensiva que da CA contra ese ataque (aparece en la ventana de defensa y su bono se aplica solo) y una técnica ofensiva para interceptar en un choque. Catálogo: 879 técnicas (tareas 3.2a–c).
 
 ## 3.6.0 — 2026-11-03
 
