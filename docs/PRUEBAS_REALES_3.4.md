@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.8.0
+# Preparar la primera prueba real · 3.9.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -201,6 +201,12 @@ Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el pan
 ### 32. 3.7 · Clones con ficha propia
 
 Con un PJ que sepa Clon de sombra, úsalo y elige 2 de Verbe: debe aparecer «Clon de…» junto a él con 1 PG y 2 de Verbe. Hazle daño: debe desaparecer y el DM ver la ventana de recuerdos. Crea otro y disípalo desde su panel: debe devolver su Verbe.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 33. 3.9 · Música de YouTube
+
+En Mesa Ecos → Control, pega un enlace de YouTube y pulsa Reproducir: un jugador debe oírlo y ver el recuadro abajo a la izquierda. Pausa y Seguir: los dos en el mismo punto. El jugador recarga: retoma donde iba. Añade dos a la cola: al terminar uno suena el siguiente. El volumen y «Silenciar» del jugador solo cambian lo suyo.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 

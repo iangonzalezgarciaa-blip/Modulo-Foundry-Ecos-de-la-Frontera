@@ -55,3 +55,13 @@ test('oponentes: detecta barras y fichas legibles de PNJ y las oculta', async ()
   assert.deepEqual({ ...h }, { prototipos: 1, tokens: 1, fichas: 1, ataque: null });
   assert.equal(revisarOcultacion().ok, true);
 });
+
+test('5.1: enlaces de YouTube y el segundo actual con pausa', async () => {
+  const { idYoutube, segundoActual } = await import('../scripts/mesa-musica.js');
+  assert.equal(idYoutube('https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=10'), 'dQw4w9WgXcQ');
+  assert.equal(idYoutube('https://youtu.be/dQw4w9WgXcQ'), 'dQw4w9WgXcQ');
+  assert.equal(idYoutube('dQw4w9WgXcQ'), 'dQw4w9WgXcQ');
+  assert.equal(idYoutube('https://example.com/x'), null);
+  assert.equal(segundoActual({ desde: 1000, pausadoEn: null }, 11000), 10);
+  assert.equal(segundoActual({ desde: 1000, pausadoEn: 42 }, 99000), 42);
+});

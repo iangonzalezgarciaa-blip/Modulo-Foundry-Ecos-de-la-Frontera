@@ -1,4 +1,8 @@
-# Ecos de la frontera · Reglas de la casa (v3.8.0)
+# Ecos de la frontera · Reglas de la casa (v3.9.0)
+
+**Novedades de 3.9:**
+- **Música:** el DM pega un enlace de YouTube en la Mesa Ecos y suena para todos a la vez, con cola y volumen propio de cada jugador. Usa el reproductor oficial de YouTube.
+- **PF2e:** inventario de lo que ata el módulo a dnd5e, con estimación y preguntas para el autor (docs/PF2E_ACOPLAMIENTO.md).
 
 **Novedades de 3.8:**
 - **Conjuros:** los conjuros de D&D también chocan con las técnicas.

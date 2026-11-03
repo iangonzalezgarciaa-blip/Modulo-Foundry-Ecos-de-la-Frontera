@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 3.9.0 — 2026-11-03
+
+- Música de YouTube en la mesa: en Mesa Ecos → Control el DM pega un enlace y suena para todos a la vez, en el mismo segundo (quien entra tarde empieza donde va). Reproducir, pausa, seguir, siguiente, detener y una cola de hasta 50 que avanza sola. Cada jugador elige su volumen en los ajustes del módulo y puede silenciarlo solo para él. Usa el reproductor oficial incrustado de YouTube, visible abajo a la izquierda; no descarga audio. Informe de módulos parecidos en docs/MUSICA_YOUTUBE.md (tareas 5.1a–c).
+- PF2e: inventario de todo lo atado a dnd5e y midi-qol (fichas, tiradas, actividades, descansos, estados, plantillas, módulos), con estimación de 18 a 26 sesiones, propuesta de capa de sistema y siete decisiones para el autor en docs/PF2E_ACOPLAMIENTO.md (tarea 5.2a). El adaptador espera su aprobación (5.2b).
+- Diagnóstico: un caso real nuevo para la música (33 en total).
+
 ## 3.8.0 — 2026-11-03
 
 - Magia estándar en el choque: un conjuro ofensivo de D&D se puede interceptar con una técnica. Su potencia es el nivel del espacio y su naturaleza sale del tipo de daño (fuego → Fuego, frío → Agua, relámpago → Rayo, trueno y cortes → Viento, ácido y golpes → Tierra) o de la escuela. Mapa y borrador de lore para aprobar en docs/MAGIA_ESTANDAR.md (tareas 4.1b y 4.1c; 4.1a espera aprobación).

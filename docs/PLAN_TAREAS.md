@@ -244,19 +244,19 @@
 
 - [x] **4.7d · Iconos de reliquias** (revisada: conservan sus iconos propios) (S · Dep.: 4.7a).
 
-- [ ] **4.8 · R · Publicar v3.8.0** (S · Dep.: 4.1 a 4.7).
+- [x] **4.8 · R · Publicar v3.8.0** (S · Dep.: 4.1 a 4.7). *Publicada el 3-nov-2026; quedan 4.1a (aprobar lore), 4.2a/b/d/e (datos del mundo PF2e), 4.4 (Seyra y Dhoren) y 4.5 (diarios, con Foundry conectado).*
 
 ## Fase 5 · Proyectos grandes (publica v4.0.0)
 
-- [ ] **5.1a · Música de YouTube: investigación** (S · Dep.: —). Buscar módulos existentes que reproduzcan YouTube sincronizado en Foundry (a verificar que existan). Límites: usar solo el reproductor oficial incrustado; no extraer ni descargar audio (contraviene los términos de YouTube). Entregar un informe con recomendación.
+- [x] **5.1a · Música de YouTube: investigación** (3.9.0, docs/MUSICA_YOUTUBE.md) (S · Dep.: —). Buscar módulos existentes que reproduzcan YouTube sincronizado en Foundry (a verificar que existan). Límites: usar solo el reproductor oficial incrustado; no extraer ni descargar audio (contraviene los términos de YouTube). Entregar un informe con recomendación.
 
-- [ ] **5.1b · Música de YouTube: prototipo** (M · Dep.: 5.1a). Panel del DM: pegar enlace, reproducir, pausar y volumen; cada jugador lo oye en su cliente, sincronizado por socket.
+- [x] **5.1b · Música de YouTube: prototipo** (3.9.0, scripts/mesa-musica.js; sin probar en Foundry) (M · Dep.: 5.1a). Panel del DM: pegar enlace, reproducir, pausar y volumen; cada jugador lo oye en su cliente, sincronizado por socket.
 
-- [ ] **5.1c · Música de YouTube: cola y ajustes** (S · Dep.: 5.1b).
+- [x] **5.1c · Música de YouTube: cola y ajustes** (S · Dep.: 5.1b). (3.9.0: cola de 50, paso automático, volumen por equipo)
 
-- [ ] **5.2a · Compatibilidad PF2e: inventario de acoplamiento** (M · Dep.: 0.1). Hoy el repo no menciona Pathfinder en absoluto (verificado). Listar todo lo atado a dnd5e: campos system.\*, actividades, uso de midi-qol, descansos. Punto de partida: grep -n "dnd5e\\system\\\\midi-qol" scripts/\*.js. Entregar docs/PF2E_ACOPLAMIENTO.md con una estimación del esfuerzo.
+- [x] **5.2a · Compatibilidad PF2e: inventario de acoplamiento** (3.9.0, docs/PF2E_ACOPLAMIENTO.md: 18 a 26 sesiones y siete decisiones del autor) (M · Dep.: 0.1). Hoy el repo no menciona Pathfinder en absoluto (verificado). Listar todo lo atado a dnd5e: campos system.\*, actividades, uso de midi-qol, descansos. Punto de partida: grep -n "dnd5e\\system\\\\midi-qol" scripts/\*.js. Entregar docs/PF2E_ACOPLAMIENTO.md con una estimación del esfuerzo.
 
-- [ ] **5.2b · Compatibilidad PF2e: diseño del adaptador** (M · Dep.: 5.2a). Interfaz común para tiradas, recursos, descansos, actividades, estados y plantillas. **Pausa:** el autor aprueba el diseño antes de seguir.
+- [ ] **5.2b · Compatibilidad PF2e: diseño del adaptador** (M · Dep.: 5.2a). Interfaz común para tiradas, recursos, descansos, actividades, estados y plantillas. **Pausa:** el autor aprueba el diseño antes de seguir. *Propuesta y preguntas al final de docs/PF2E_ACOPLAMIENTO.md; esperando al autor.*
 
 - [ ] **5.2c · Compatibilidad PF2e: refactor del lado dnd5e** (M, repetir por archivo · Dep.: 5.2b). Mover lo específico de dnd5e detrás del adaptador sin cambiar el comportamiento; las pruebas deben seguir en verde.
 
@@ -296,3 +296,5 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 3-nov-2026 | 1.9 | Claude | Release v3.5.0 publicado por el flujo (ZIP, module.json, Ecos-Actualizar.ps1, .bat) | 3.5.0 |
 | 3-nov-2026 | 2.1–2.7 | Claude | Etapas, naturaleza oculta, ramas, reserva por dados, sangre única, oponentes, curación. Release v3.6.0 | 3.6.0 |
 | 3-nov-2026 | 3.1–3.6 | Claude | Choque en cualquier rama, defensas del catálogo, 18 contratécnicas, Canalizando y 27 cargadas, clones con ficha; corrección del alcance en pies (Cuerpo), ventanas y nombres ocultos. Release v3.7.0 | 3.7.0 |
+| 3-nov-2026 | 4.1–4.8 | Claude | Conjuros en el choque, 20 formas puras, 10 plantillas de NPC, iconos, reglas y macro de PF2e; borrador de lore 4.1a para aprobar. Release v3.8.0 | 3.8.0 |
+| 3-nov-2026 | 5.1a–c, 5.2a | Claude | Música de YouTube sincronizada con el reproductor oficial (cola, volumen por equipo); inventario de acoplamiento a dnd5e. 5.2b espera la aprobación del autor. Release v3.9.0 | 3.9.0 |
