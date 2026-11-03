@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## Sin publicar
+
+- Validador de técnicas (`npm run validate:techniques` y Diagnóstico de Mesa Ecos, solo DM): áreas sin plantilla, plantillas sin tamaño, daño o salvación que recaen en quien la usa, y técnicas sin acción, alcance o duración. Revisa catálogo, técnicas del mundo y propias de cada ficha (tarea 1.1).
+- 79 técnicas corregidas: «Aliento de brasa» y las demás áreas con origen en ti ya no te alcanzan ni te eligen como objetivo; las áreas descritas sin plantilla la tienen; los «tu próximo golpe suma…» son ahora un efecto sobre ti que se gasta en el siguiente impacto (con los dados de más por rango, afinidad y grado de lanzamiento); los golpes a varios objetivos eligen criaturas. Las plantillas en metros se convierten a pies cuando la escena mide en pies (1,5 m = 5 pies). Sin probar en Foundry real (tarea 1.2).
+
 ## 3.4.1 — 2026-11-01
 
 - Botón «Verbe» en la barra izquierda (grupo Tokens): lista rápida de técnicas aprendidas para usarlas sin abrir la hoja. Sin probar en Foundry real.

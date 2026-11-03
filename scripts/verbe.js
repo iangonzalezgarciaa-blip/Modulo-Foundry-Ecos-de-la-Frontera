@@ -18,6 +18,7 @@ import { tecnicaChocable, AYUDA_CHOQUE, PASOS_CHOQUE } from "./verbe-clash.js";
 import { donDivino, asegurarNotaPanteon } from "./verbe-divinity.js";
 import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
+import { plantillaEnEscena } from "./verbe-plantillas.js";
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
 import { presupuestoCorto } from "./rest-core.js";
 import { VERSION_REGLAS, recuperarReserva, evaluarGasto, requisitoNatural, crearCola,
@@ -355,6 +356,8 @@ async function efectosShinobi(actor,item,uso) {
   for(const f of fuentes){
     const fl=f.flags[MOD][F], grupo=fl.grupoModo;
     if(grupo)for(const vieja of actor.effects.filter(e=>e.getFlag(MOD,F)?.grupoModo===grupo))await vieja.delete({ecosSinCierre:true});
+    if(fl.golpeSiguiente){const g=fl.golpeSiguiente,n=(Number(g.nBase??g.n)||1)+Math.max(0,(Number(uso?.grado)||Number(meta.g)||0)-(Number(meta.g)||0))*(Number(g.sube)||0);
+      f.changes=(f.changes??[]).map(c=>/\.damage$/.test(c.key)?{...c,value:`${n}d${g.d}[${g.tipo}]`}:c);}
     delete f._id;f.origin=item.uuid;f.duration??={};f.duration.startTime=game.time.worldTime;
     f.duration.startRound=game.combat?.round;f.duration.startTurn=game.combat?.turn;
     const concentraciones=actor.effects.filter(e=>e.statuses?.has('concentrating'));
@@ -714,6 +717,13 @@ export function datosItem(actor, tec) {
     if (meta.universal && ef.duration?.seconds) normal.duration = { ...ef.duration, seconds: ef.duration.seconds * (doble ? 2 : 1) };
     return normal;
   });
+  // «Tu próximo golpe suma…»: el efecto lleva los dados de más por rango, afinidad o cultivo.
+  for (const ef of data.effects ?? []) {
+    const g = ef.flags?.[MOD]?.[F]?.golpeSiguiente;
+    if (!g) continue;
+    g.nBase = (Number(g.n) || 1) + extra;
+    ef.changes = (ef.changes ?? []).map(c => /\.damage$/.test(c.key) ? { ...c, value: `${g.nBase}d${g.d}[${g.tipo}]` } : c);
+  }
   meta.infusion = inf;
   meta.cultivo = cul?.nivel ?? 0;
   data.system.description.value = (data.system.description.value ?? "") + notaPersonal(actor, tec, extra, inf, cul);
@@ -3841,6 +3851,14 @@ Hooks.on("dnd5e.postUseActivity", (activity, usageConfig, results) => {
   final.catch(err=>console.error(`${MOD} | capa V`,err));
 });
 Hooks.on("dnd5e.preRollDamageV2", config => { if (activo()) antesDelDano(config); });
+// El catálogo mide las áreas en metros: si la escena está en pies, la plantilla se convierte (1,5 m = 5 pies) para poder colocarla.
+// Vale para cualquier actividad (también conjuros en pies sobre una escena en metros). Una línea sin ancho ocupa una casilla.
+Hooks.on("dnd5e.preCreateActivityTemplate", (activity, data) => {
+  try {
+    plantillaEnEscena(data, activity?.target?.template?.units, canvas?.scene?.grid?.units);
+    if (data?.t === "ray" && !(Number(data.width) > 0)) data.width = canvas?.dimensions?.distance ?? data.width;
+  } catch (err) { console.warn(`${MOD} | plantilla`, err); }
+});
 // Defensas antes de resolver (midi-qol): las espera la tirada.
 Hooks.on("midi-qol.preCheckHits", async wf => { if (activo()) await enfrentamientoAutomatico(wf).catch(err => console.error(`${MOD} | capa V: defensas`, err)); });
 Hooks.on("midi-qol.preCheckSaves", async wf => { if (activo()) await enfrentamientoAutomatico(wf).catch(err => console.error(`${MOD} | capa V: defensas`, err)); });

@@ -13,9 +13,10 @@
     "balance": "node tools/balance.mjs && node tools/session-audit.mjs",
     "ui:preview": "node tools/preview-ui.mjs && node tools/preview-mesa.mjs && node tools/prepare-playtest.mjs",
     "package": "python3 tools/package.py",
-    "catalog:expand": "node tools/expand-shinobi.mjs && node tools/evolve-catalog.mjs && node tools/expand-divinity.mjs && node tools/expand-vida.mjs && node tools/clarify-catalog.mjs && node tools/build-relics.mjs && node tools/originalizar.mjs && node tools/build-memoria.mjs",
+    "catalog:expand": "node tools/expand-shinobi.mjs && node tools/evolve-catalog.mjs && node tools/expand-divinity.mjs && node tools/expand-vida.mjs && node tools/repair-plantillas.mjs && node tools/clarify-catalog.mjs && node tools/build-relics.mjs && node tools/originalizar.mjs && node tools/build-memoria.mjs",
     "audit:text": "node tools/text-audit.mjs",
-    "audit:balance": "node tools/audit-progression.mjs"
+    "audit:balance": "node tools/audit-progression.mjs",
+    "validate:techniques": "node tools/validate-techniques.mjs"
   },
   "engines": {
     "node": ">=22"

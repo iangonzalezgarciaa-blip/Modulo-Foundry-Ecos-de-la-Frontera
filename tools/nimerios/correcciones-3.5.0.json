@@ -1,0 +1,267 @@
+{
+ "agua-fauces-rio": [
+  "el área excluye al lanzador"
+ ],
+ "agua-ola": [
+  "el área excluye al lanzador"
+ ],
+ "agua-ola-valle": [
+  "el área excluye al lanzador"
+ ],
+ "agua-torrente": [
+  "el área excluye al lanzador"
+ ],
+ "arena-ola": [
+  "el área excluye al lanzador"
+ ],
+ "corriente-mar": [
+  "el área excluye al lanzador"
+ ],
+ "cuerpo-cien-pasos": [
+  "objetivo: criaturas, no el lanzador"
+ ],
+ "cuerpo-doble-palma": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "cuerpo-parte-montanas": [
+  "el daño va a tu próximo golpe, no a ti"
+ ],
+ "cuerpo-pavo-alba": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "cuerpo-tanque-carne": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "cuerpo-tanque-espinas": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "cuerpo-terremoto": [
+  "el área excluye al lanzador"
+ ],
+ "destello-destello": [
+  "el área excluye al lanzador"
+ ],
+ "destello-lanza": [
+  "el área excluye al lanzador"
+ ],
+ "familia-mano-gigante": [
+  "el daño va a tu próximo golpe, no a ti"
+ ],
+ "forma-agua-filo-presion": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "forma-agua-prision-movil": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "forma-bala": [
+  "el área excluye al lanzador"
+ ],
+ "forma-magma-corrosivo": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "forma-ola-aceitosa": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "fuego-aliento": [
+  "el área excluye al lanzador"
+ ],
+ "fuego-anillo": [
+  "el área excluye al lanzador"
+ ],
+ "fuego-cola": [
+  "el daño va a tu próximo golpe, no a ti"
+ ],
+ "fuego-fauces": [
+  "el área excluye al lanzador"
+ ],
+ "fuego-gran-soplo": [
+  "el área excluye al lanzador"
+ ],
+ "fuego-serpiente": [
+  "el área excluye al lanzador"
+ ],
+ "fuego-soplo": [
+  "el área excluye al lanzador"
+ ],
+ "hierro-atraer": [
+  "el área excluye al lanzador"
+ ],
+ "hilo-abanico": [
+  "el área excluye al lanzador"
+ ],
+ "hilo-agujas": [
+  "el área excluye al lanzador"
+ ],
+ "hilo-agujas-rayo": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "hilo-basho-fuego": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "hilo-costura-sombra": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "hilo-cuerda-relampago": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "hilo-espada-explosiva": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "hilo-espiral": [
+  "el área excluye al lanzador"
+ ],
+ "hilo-lluvia": [
+  "el área excluye al lanzador"
+ ],
+ "hilo-raiga": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "hilo-rayo-pantera": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "magma-puno": [
+  "el daño va a tu próximo golpe, no a ti"
+ ],
+ "magma-rio": [
+  "el área excluye al lanzador"
+ ],
+ "mirada-aster-indra": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "mirada-orbe-repeler": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "pacto-colmillos-giro": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "pacto-comadreja": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "pacto-gran-colmillo": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "pacto-mandara": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "pacto-rugido": [
+  "el área excluye al lanzador"
+ ],
+ "quietud-aceite-viento-fuego": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "quietud-agujas-cabello": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "quietud-bosque": [
+  "el área excluye al lanzador"
+ ],
+ "quietud-empuja": [
+  "el área excluye al lanzador"
+ ],
+ "rastro-esconde": [
+  "el área excluye al lanzador"
+ ],
+ "rayo-cielo": [
+  "el área excluye al lanzador"
+ ],
+ "rayo-colmillo": [
+  "el daño va a tu próximo golpe, no a ti"
+ ],
+ "rayo-lanza": [
+  "el área excluye al lanzador"
+ ],
+ "rayo-pulso": [
+  "el área excluye al lanzador"
+ ],
+ "sangre-cristal-dragon": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "sangre-magnetismo-lluvia": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "sangre-varro-bosque": [
+  "el área excluye al lanzador"
+ ],
+ "sangre-vhaeros-aliento": [
+  "el área excluye al lanzador"
+ ],
+ "sangre-vhaeros-amanecer": [
+  "el área excluye al lanzador"
+ ],
+ "tierra-barro": [
+  "plantilla desde el texto"
+ ],
+ "tierra-puno": [
+  "el daño va a tu próximo golpe, no a ti"
+ ],
+ "tormenta-lanza": [
+  "el área excluye al lanzador"
+ ],
+ "tormenta-ojo": [
+  "el área excluye al lanzador"
+ ],
+ "vasija-cabello-primordial": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "vasija-matatabi-azul": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "vasija-ochenta-punos": [
+  "la plantilla ya no apunta al lanzador",
+  "el área excluye al lanzador"
+ ],
+ "velo-pesadilla": [
+  "el área excluye al lanzador"
+ ],
+ "velo-reino": [
+  "el área excluye al lanzador"
+ ],
+ "viento-cielo-partido": [
+  "el área excluye al lanzador"
+ ],
+ "viento-dispersar": [
+  "el área excluye al lanzador"
+ ],
+ "viento-filo-creciente": [
+  "el área excluye al lanzador"
+ ],
+ "viento-huracan": [
+  "el área excluye al lanzador"
+ ],
+ "viento-palmada": [
+  "el área excluye al lanzador"
+ ],
+ "viento-remolino": [
+  "el área excluye al lanzador"
+ ],
+ "viento-tajo": [
+  "el área excluye al lanzador"
+ ]
+}

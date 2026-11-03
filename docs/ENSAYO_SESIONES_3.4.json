@@ -5,19 +5,19 @@
     "linaje": "ninguna",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
-      2,
-      0,
-      0
+      8,
+      8,
+      8
     ],
-    "acciones": 4,
+    "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 22,
-    "gasto": 8,
+    "mediaDados": 49.5,
+    "gasto": 0,
     "corto": 0,
-    "largo": 4
+    "largo": 0
   },
   {
     "nivel": 1,
@@ -25,19 +25,19 @@
     "linaje": "varro",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
-      2,
-      0,
-      0
+      8,
+      8,
+      8
     ],
-    "acciones": 4,
+    "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 22,
-    "gasto": 8,
+    "mediaDados": 49.5,
+    "gasto": 0,
     "corto": 0,
-    "largo": 4
+    "largo": 0
   },
   {
     "nivel": 1,
@@ -45,19 +45,19 @@
     "linaje": "ignis",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
-      2,
-      0,
-      0
+      8,
+      8,
+      8
     ],
-    "acciones": 4,
+    "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 22,
-    "gasto": 8,
+    "mediaDados": 49.5,
+    "gasto": 0,
     "corto": 0,
-    "largo": 4
+    "largo": 0
   },
   {
     "nivel": 1,
@@ -65,19 +65,19 @@
     "linaje": "maethra",
     "inicio": 10,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
-      4,
-      0,
-      0
+      10,
+      10,
+      10
     ],
-    "acciones": 5,
+    "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 27.5,
-    "gasto": 10,
+    "mediaDados": 49.5,
+    "gasto": 0,
     "corto": 0,
-    "largo": 5
+    "largo": 0
   },
   {
     "nivel": 1,
@@ -85,7 +85,7 @@
     "linaje": "ninguna",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       0,
       0,
@@ -105,7 +105,7 @@
     "linaje": "varro",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       0,
       0,
@@ -125,7 +125,7 @@
     "linaje": "ignis",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       0,
       0,
@@ -145,7 +145,7 @@
     "linaje": "maethra",
     "inicio": 10,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       0,
       0,
@@ -165,7 +165,7 @@
     "linaje": "ninguna",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       0,
       0,
@@ -185,7 +185,7 @@
     "linaje": "varro",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       0,
       0,
@@ -205,7 +205,7 @@
     "linaje": "ignis",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       0,
       0,
@@ -225,7 +225,7 @@
     "linaje": "maethra",
     "inicio": 10,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       0,
       0,
@@ -245,7 +245,7 @@
     "linaje": "ninguna",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       2,
       0,
@@ -265,7 +265,7 @@
     "linaje": "varro",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       2,
       0,
@@ -285,7 +285,7 @@
     "linaje": "ignis",
     "inicio": 8,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       2,
       0,
@@ -305,7 +305,7 @@
     "linaje": "maethra",
     "inicio": 10,
     "libres": 2,
-    "tecnicaAlta": "Cola de fuego",
+    "tecnicaAlta": "Brasa",
     "encuentros": [
       4,
       0,

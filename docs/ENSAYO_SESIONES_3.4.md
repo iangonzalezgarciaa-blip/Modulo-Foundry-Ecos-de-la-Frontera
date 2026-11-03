@@ -8,10 +8,10 @@ Las medias de dados no incluyen impacto, salvaciones, mitigación, objetivos mú
 
 | Nivel | Plan | Linaje | Reserva | Verbe tras E1/E2/E3 | Corto | Acciones/tareas | Contratécnicas | Sustituciones | Media de dados ofensivos | Largo final |
 |---:|---|---|---:|---|---:|---:|---:|---:|---:|---:|
-| 1 | ofensiva | ninguna | 8 | 2 / 0 / 0 | +0 | 4 | 0 | 0 | 22.0 | +4 |
-| 1 | ofensiva | varro | 8 | 2 / 0 / 0 | +0 | 4 | 0 | 0 | 22.0 | +4 |
-| 1 | ofensiva | ignis | 8 | 2 / 0 / 0 | +0 | 4 | 0 | 0 | 22.0 | +4 |
-| 1 | ofensiva | maethra | 10 | 4 / 0 / 0 | +0 | 5 | 0 | 0 | 27.5 | +5 |
+| 1 | ofensiva | ninguna | 8 | 8 / 8 / 8 | +0 | 9 | 0 | 0 | 49.5 | +0 |
+| 1 | ofensiva | varro | 8 | 8 / 8 / 8 | +0 | 9 | 0 | 0 | 49.5 | +0 |
+| 1 | ofensiva | ignis | 8 | 8 / 8 / 8 | +0 | 9 | 0 | 0 | 49.5 | +0 |
+| 1 | ofensiva | maethra | 10 | 10 / 10 / 10 | +0 | 9 | 0 | 0 | 49.5 | +0 |
 | 1 | mixta | ninguna | 8 | 0 / 0 / 0 | +0 | 2 | 2 | 0 | 21.0 | +4 |
 | 1 | mixta | varro | 8 | 0 / 0 / 0 | +0 | 2 | 2 | 0 | 21.0 | +4 |
 | 1 | mixta | ignis | 8 | 0 / 0 / 0 | +0 | 2 | 2 | 0 | 21.0 | +4 |

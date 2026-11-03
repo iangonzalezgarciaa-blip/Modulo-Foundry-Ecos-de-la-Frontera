@@ -3,11 +3,16 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {readCatalog,decodeCatalog} from '../tools/catalog.mjs';
 import {potenciaTecnica} from '../tools/nimerios/potencia.mjs';
+import {problemasTecnica} from '../scripts/verbe-validate.js';
 const D=readCatalog(),R=decodeCatalog(fs.readFileSync(new URL('../data/reliquias.txt',import.meta.url),'utf8'));
 test('las 778 técnicas anteriores conservan sus reglas estructuradas e identificadores',()=>{
  const anterior=JSON.parse(fs.readFileSync(new URL('../tools/nimerios/potencia-3.2.1.json',import.meta.url)));
+ // Las corregidas a propósito en 3.5.0 (plantillas y objetivos, tarea 1.2) quedan registradas con su motivo y sin errores.
+ const corregidas=JSON.parse(fs.readFileSync(new URL('../tools/nimerios/correcciones-3.5.0.json',import.meta.url)));
  assert.equal(Object.keys(anterior).length,778);
- for(const[id,huella]of Object.entries(anterior)){const t=D.tecnicas.find(t=>t.id===id);assert.ok(t,id);assert.equal(potenciaTecnica(t),huella,id);}
+ for(const[id,huella]of Object.entries(anterior)){const t=D.tecnicas.find(t=>t.id===id);assert.ok(t,id);
+  if(corregidas[id]){assert.ok(corregidas[id].length,id);assert.deepEqual(problemasTecnica(t).filter(p=>p.nivel==='error'),[],id);continue;}
+  assert.equal(potenciaTecnica(t),huella,id);}
 });
 test('82 utilidades originales refuerzan primero las ramas más pequeñas sin daño o curación gratuitos',()=>{
  assert.equal(D.vida.nuevas,82);const nuevas=D.tecnicas.filter(t=>t.vida);assert.equal(nuevas.length,82);

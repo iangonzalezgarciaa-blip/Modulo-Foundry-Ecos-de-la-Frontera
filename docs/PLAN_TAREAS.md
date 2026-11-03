@@ -108,9 +108,9 @@
 
 ## Fase 1 · Correcciones y control del jugador (publica v3.5.0)
 
-- [ ] **1.1 · Validador de técnicas mal configuradas** (M · Dep.: 0.3). Crear tools/validate-techniques.mjs y una vista en el Diagnóstico de Mesa Ecos (scripts/mesa-diagnostico.js). Reglas mínimas: texto o ficha que habla de cono, línea, esfera, cubo, cilindro o área pero sin plantilla (target.template.type) es un error; técnica de daño con objetivo «uno mismo» sin ser autodaño intencional es un aviso; sin acción, alcance o duración es un aviso. Salida: informe con id de técnica y problema. Antes, revisar si tools/audit-catalog.mjs ya cubre parte. Listo cuando el informe corre sobre las 860 técnicas y hay pruebas.
+- [x] **1.1 · Validador de técnicas mal configuradas** (hecha: scripts/verbe-validate.js, tools/validate-techniques.mjs, sección en Diagnóstico) (M · Dep.: 0.3). Crear tools/validate-techniques.mjs y una vista en el Diagnóstico de Mesa Ecos (scripts/mesa-diagnostico.js). Reglas mínimas: texto o ficha que habla de cono, línea, esfera, cubo, cilindro o área pero sin plantilla (target.template.type) es un error; técnica de daño con objetivo «uno mismo» sin ser autodaño intencional es un aviso; sin acción, alcance o duración es un aviso. Salida: informe con id de técnica y problema. Antes, revisar si tools/audit-catalog.mjs ya cubre parte. Listo cuando el informe corre sobre las 860 técnicas y hay pruebas.
 
-- [ ] **1.2 · Arreglar «Aliento de brasa» y lo que marque el validador** (M · Dep.: 1.1). Que el cono se pueda colocar y que el daño no recaiga en el lanzador. Corregir las demás técnicas señaladas (si son muchas, partir por rama). Listo cuando el validador devuelve 0 errores de plantilla.
+- [x] **1.2 · Arreglar «Aliento de brasa» y lo que marque el validador** (hecha: tools/repair-plantillas.mjs, 79 técnicas, 0 errores y 0 avisos; conversión m→pies en escena) (M · Dep.: 1.1). Que el cono se pueda colocar y que el daño no recaiga en el lanzador. Corregir las demás técnicas señaladas (si son muchas, partir por rama). Listo cuando el validador devuelve 0 errores de plantilla.
 
 - [ ] **1.3 · Eliminar «Getsuga Tenshō»** (S · Dep.: —). Tarea de Mundo. No está en el repo: vive en el ajuste del mundo capaVExtra o en las técnicas propias de algún actor (ver docs/AUDITORIA_MECANICAS.md, línea ~46). Buscar «getsuga» en actores y en ese ajuste (a verificar el nombre exacto del ajuste) y borrarla con confirmación del autor. Listo cuando ya no aparece en ninguna ficha ni en el catálogo del mundo.
 
@@ -291,3 +291,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | Fecha | Tarea | IA o persona | Resultado | Versión |
 |-------|-------|--------------|-----------|---------|
 | 3-nov-2026 | 0.2, 0.3 | Claude | Línea base y guía del catálogo; decisiones 1–4, 7 y 8 respondidas | 3.4.1 (sin versión nueva) |
+| 3-nov-2026 | 1.1, 1.2 | Claude | Validador (860 técnicas, 0 errores, 0 avisos tras corregir 79) y plantillas convertidas a la escena | Sin publicar (3.5.0) |

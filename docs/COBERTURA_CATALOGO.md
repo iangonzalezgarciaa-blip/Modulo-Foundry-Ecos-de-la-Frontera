@@ -291,7 +291,7 @@ El catálogo reúne **860 técnicas y 219 dotes**.
 | `forma-bala` | Bala de Verbe | 3 | forma | save | 0 |
 | `forma-cupula` | Cúpula de Verbe | 5 | forma | utility | 0 |
 | `fuego-dedos` | Dedos de brasa | 0 | forma | attack | 0 |
-| `fuego-cola` | Cola de fuego | 1 | forma | damage | 1 |
+| `fuego-cola` | Cola de fuego | 1 | forma | utility | 2 |
 | `fuego-anillo` | Anillo de fuego | 2 | forma | save | 1 |
 | `fuego-saeta` | Saeta ardiente | 3 | forma | attack | 1 |
 | `fuego-humo-negro` | Humo negro | 4 | forma | save | 2 |
@@ -308,21 +308,21 @@ El catálogo reúne **860 técnicas y 219 dotes**.
 | `viento-vacio` | Vacío | 3 | forma | save | 1 |
 | `viento-dispersar` | Dispersar | 4 | forma | save | 2 |
 | `viento-filo-creciente` | Filo creciente | 6 | forma | save | 1 |
-| `tierra-puno` | Puño de piedra | 0 | forma | damage | 0 |
+| `tierra-puno` | Puño de piedra | 0 | forma | utility | 1 |
 | `tierra-parapeto` | Parapeto | 1 | forma | utility | 0 |
 | `tierra-cienaga` | Ciénaga | 2 | forma | save | 1 |
 | `tierra-pilares` | Pilares | 3 | forma | save | 2 |
 | `tierra-coraza` | Coraza de roca | 4 | forma | utility | 0 |
 | `tierra-montana` | Montaña que cae | 8 | forma | save | 1 |
 | `rayo-estatica` | Estática | 0 | forma | attack | 0 |
-| `rayo-colmillo` | Colmillo eléctrico | 1 | forma | damage | 1 |
+| `rayo-colmillo` | Colmillo eléctrico | 1 | forma | utility | 2 |
 | `rayo-red` | Red eléctrica | 2 | forma | save | 2 |
 | `rayo-pulso` | Pulso eléctrico | 3 | forma | save | 1 |
 | `rayo-trueno-cae` | Trueno que cae | 5 | forma | save | 1 |
 | `rayo-cuerpo` | Cuerpo de rayo | 6 | forma | utility | 0 |
 | `escarcha-espejos` | Espejos de hielo | 5 | forma | utility | 0 |
 | `madera-casa` | Casa de madera | 3 | forma | utility | 0 |
-| `magma-puno` | Puño de magma | 2 | forma | damage | 2 |
+| `magma-puno` | Puño de magma | 2 | forma | utility | 3 |
 | `vapor-geiser` | Géiser | 4 | forma | save | 1 |
 | `hierro-arena` | Arena de hierro | 4 | forma | save | 1 |
 | `tormenta-lanza` | Lanza de tormenta | 6 | forma | save | 2 |
@@ -380,7 +380,7 @@ El catálogo reúne **860 técnicas y 219 dotes**.
 | `rastro-cazar` | Cazar la firma | 4 | rastro | utility | 0 |
 | `rastro-red` | Red de sentidos | 6 | rastro | utility | 0 |
 | `familia-sombra-imita` | Sombra que imita | 2 | forma | save | 0 |
-| `familia-mano-gigante` | Mano gigante | 1 | cuerpo | damage | 0 |
+| `familia-mano-gigante` | Mano gigante | 1 | cuerpo | utility | 1 |
 | `familia-voz-mente` | Voz en la mente | 1 | velo | utility | 0 |
 | `familia-tinta-bestia` | Bestia de tinta | 3 | sello | utility | 0 |
 | `familia-enjambre-escudo` | Escudo de insectos | 2 | pacto | utility | 0 |
@@ -413,7 +413,7 @@ El catálogo reúne **860 técnicas y 219 dotes**.
 | `forma-ultima` | Forma última | 11 | forma | save | 0 |
 | `velo-mundo-entero` | Velo del mundo entero | 10 | velo | save | 1 |
 | `velo-sueno-sin-fin` | El sueño que no termina | 11 | velo | save | 1 |
-| `cuerpo-parte-montanas` | Golpe que parte montañas | 10 | cuerpo | damage | 0 |
+| `cuerpo-parte-montanas` | Golpe que parte montañas | 10 | cuerpo | utility | 1 |
 | `cuerpo-sin-techo` | Cuerpo sin techo | 11 | cuerpo | utility | 0 |
 | `sello-valle` | Sello del valle | 10 | sello | utility | 0 |
 | `sello-nombre` | Sello del nombre | 11 | sello | save | 0 |
