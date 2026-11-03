@@ -17,7 +17,7 @@ Estado de partida: `npm test` → 238 pruebas, 238 pasan, 0 fallan.
 | Tras usar la actividad | scripts/verbe.js | `despuesDeUsar`; enganche `dnd5e.postUseActivity` | 1134 · 3807 |
 | Compra de técnicas / requisitos | scripts/verbe.js | `tecnicaPorId` y siguientes (sección «Técnicas: requisitos, compra y armado») | 319 |
 | Puede aprender (devuelve `probar`) | scripts/verbe.js | `requisitos(actor, tec)` | 453 (comentario en 450) |
-| **Coste de rangos** (+1 Trazo desde la tercera rama) | scripts/verbe.js | `costoRango` (la línea del +1 es `if (e.principal !== rama && orden >= 2 …) c += 1`) | 304 (el +1 en 311) |
+| **Coste de rangos** (+1 Trazo desde la tercera rama, +2 desde la quinta; v3.6) | scripts/verbe.js | `RECARGO_RAMAS`, `recargoRama`, `costoRango` | buscar `RECARGO_RAMAS` |
 | Orden de ramas por personaje | scripts/verbe.js | `ordenRama` | 298 |
 | **«Probar» naturaleza (hoy gratis)** | scripts/verbe.js | `probarNaturaleza` → `probarNaturalezaInterno` | 1477 · 1478 |
 | Cultivo de técnicas | scripts/verbe.js | `cultivar` → `cultivarInterno` | 1493 · 1494 |

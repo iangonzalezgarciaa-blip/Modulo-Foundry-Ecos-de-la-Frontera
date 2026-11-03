@@ -8,9 +8,9 @@ const base = (sys = {}, extra = {}) => ({ id: 'prueba', n: 'Prueba', texto: '', 
   activities: { a: { type: 'save', damage: { parts: [{ number: 2, denomination: 6 }] } } }, ...sys } } });
 const codigos = t => problemasTecnica(t).map(p => `${p.nivel}:${p.codigo}`);
 
-test('el validador corre sobre las 860 técnicas y no quedan errores ni avisos', () => {
+test('el validador corre sobre las 861 técnicas y no quedan errores ni avisos', () => {
   const r = validarTecnicas(D.tecnicas);
-  assert.equal(r.total, 860);
+  assert.equal(r.total, 861);
   assert.equal(r.errores, 0, JSON.stringify(r.problemas.slice(0, 5)));
   assert.equal(r.avisos, 0, JSON.stringify(r.problemas.slice(0, 5)));
 });

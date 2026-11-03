@@ -32,8 +32,8 @@ test('búsqueda de jugador excluye diarios privados, páginas sin permiso, actor
  const {entradas}=await entradasCampana({compendios:true});const texto=JSON.stringify(entradas);assert.match(texto,/pista del puente/);assert.doesNotMatch(texto,/secreto|spoiler|Revelación|Artefacto/);assert.equal(leidos,0);
  assert.equal(entradas.some(e=>e.tipo.startsWith('Técnica')),false);assert.equal(entradas.some(e=>e.tipo.startsWith('Reliquia')),false);
 });
-test('el DM busca en las 860 técnicas y 78 reliquias con su fuente, sin inventar respuestas',async()=>{
- const {entradas}=await entradasCampana();assert.equal(entradas.filter(e=>e.tipo.startsWith('Técnica')).length,860);assert.equal(entradas.filter(e=>e.tipo.startsWith('Reliquia')).length,78);
+test('el DM busca en las 861 técnicas y 78 reliquias con su fuente, sin inventar respuestas',async()=>{
+ const {entradas}=await entradasCampana();assert.equal(entradas.filter(e=>e.tipo.startsWith('Técnica')).length,861);assert.equal(entradas.filter(e=>e.tipo.startsWith('Reliquia')).length,78);
  const r=buscarEntradas(entradas,'baliza campamento');assert.ok(r.some(e=>e.catalogo==='vida-umbral-baliza-campamento'));
 });
 test('el adaptador abre modos reales de Plutonium y apunta a la ficha elegida',async()=>{

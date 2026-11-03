@@ -164,3 +164,15 @@ test('una tercera técnica del turno se rechaza sin cobrar y el turno siguiente 
   const antes=V.estado(a).valor;assert.equal(await usar(a,'rayo-arco'),false);assert.equal(V.estado(a).valor,antes);
   await V._prueba.inicioDeTurno({combatant:{actor:a}});assert.ok(await usar(a,'rayo-arco'));
 });
+
+test('repartirse cuesta: +1 Trazo por rango desde la tercera rama y +2 desde la quinta', () => {
+  const a = new MockActor(10, { principal: 'forma', ordenRamas: ['forma', 'cuerpo', 'velo', 'pulso', 'hilo'], rangos: { forma: 1, cuerpo: 1, velo: 1, pulso: 1, hilo: 1 } });
+  const base = n => D.rangos[n].trazos;
+  assert.equal(V.costoRango(a, 'forma', 2), base(2) - 1);
+  assert.equal(V.costoRango(a, 'cuerpo', 2), base(2));
+  assert.equal(V.costoRango(a, 'velo', 2), base(2) + 1);
+  assert.equal(V.costoRango(a, 'pulso', 2), base(2) + 1);
+  assert.equal(V.costoRango(a, 'hilo', 2), base(2) + 2);
+  assert.equal(V.costoRango(a, 'sello', 1), base(1) + 2); // una rama nueva va al final: sexta
+  assert.deepEqual([0, 1, 2, 3, 4, 7].map(V.recargoRama), [0, 0, 1, 1, 2, 2]);
+});

@@ -132,11 +132,11 @@
 
 ## Fase 2 · Reglas núcleo (publica v3.6.0)
 
-- [ ] **2.1a · Naturaleza oculta: estado** (M · Dep.: 0.1). Guardar la naturaleza primaria y la secundaria como dato oculto (flags) que el jugador no ve ni usa hasta descubrirla. Mientras tanto, las técnicas elementales quedan bloqueadas. Listo cuando un personaje con naturaleza oculta no ve ni compra técnicas elementales.
+- [x] **2.1a · Naturaleza oculta: estado** (hecha: natModo, oc1; las elementales no se ven ni se compran hasta descubrirla) (M · Dep.: 0.1). Guardar la naturaleza primaria y la secundaria como dato oculto (flags) que el jugador no ve ni usa hasta descubrirla. Mientras tanto, las técnicas elementales quedan bloqueadas. Listo cuando un personaje con naturaleza oculta no ve ni compra técnicas elementales.
 
-- [ ] **2.1b · Naturaleza oculta: descubrimiento pagado** (M · Dep.: 2.1a). Cambiar «Probar» (verbe.js ~1476, hoy gratis): ahora paga Trazos y exige entrenamiento con prueba de dados (Control del Verbe, CD a definir y documentar) y días (usar el sistema de verbe-training.js). Resultado: descubre o no. Listo cuando el flujo completo funciona y tiene pruebas.
+- [x] **2.1b · Naturaleza oculta: descubrimiento pagado** (hecha: scripts/verbe-etapas.js; primera 3 días, CD 12, 2 Trazos; segunda 5 días, CD 14, 3 Trazos; técnica «Cambiar naturaleza del Verbe» 3 Trazos, 7 días, CD 15; etapas del Verbe con botón del DM) (M · Dep.: 2.1a). Cambiar «Probar» (verbe.js ~1476, hoy gratis): ahora paga Trazos y exige entrenamiento con prueba de dados (Control del Verbe, CD a definir y documentar) y días (usar el sistema de verbe-training.js). Resultado: descubre o no. Listo cuando el flujo completo funciona y tiene pruebas.
 
-- [ ] **2.1c · Naturaleza oculta: control del DM** (S · Dep.: 2.1b). Panel para que el DM fije la naturaleza en secreto, la revele, o deje elegir al jugador, caso a caso. Listo cuando el DM puede ocultar, revelar y cambiar el modo por personaje.
+- [x] **2.1c · Naturaleza oculta: control del DM** (hecha: Herramientas del DM → Naturaleza secreta y Etapa del Verbe) (S · Dep.: 2.1b). Panel para que el DM fije la naturaleza en secreto, la revele, o deje elegir al jugador, caso a caso. Listo cuando el DM puede ocultar, revelar y cambiar el modo por personaje.
 
 - [ ] **2.2a · Reserva por dados: modelo** (M · Dep.: 0.1). Diseñar la tirada de Verbe por nivel desde el despertar, como los PG: dado por nivel con promedio cercano al incremento de la tabla actual y SIN mínimo (D3). Ubicar la tabla actual (tarea 0.1). Guardar las tiradas por actor. Opción por personaje: tirar o usar promedio (decide el DM). Documentar la fórmula. Listo cuando una simulación en tools/balance.mjs da totales cercanos a la tabla en promedio.
 
@@ -150,7 +150,7 @@
 
 - [ ] **2.3c · Oponentes impredecibles: lectura del Verbe por tramos** (S · Dep.: 2.3a). Revisar lo que ya dan Rastro (por ejemplo «Rastro fino») y las dotes informativas. Hacer que revelen información por tramos (lleno, a medias, poco; rango aproximado) y no cifras exactas. Documentar para el DM.
 
-- [ ] **2.4 · Costes incrementales por rama** (S · Dep.: —). Hoy: +1 Trazo por rango desde la tercera rama (verbe.js ~309; textos en ~2487, ~3040 y ~3060). Nuevo: el coste extra crece con cada rama adicional (propuesta: +1 desde la tercera, +2 desde la quinta; dejar la fórmula en una constante). Opcional: aplicarlo también al aprender técnicas de ramas no principales. Actualizar tablas y ayuda, y probar. Listo cuando el panel muestra el coste correcto con 1, 3 y 5 ramas.
+- [x] **2.4 · Costes incrementales por rama** (hecha: RECARGO_RAMAS +1 desde la 3.ª, +2 desde la 5.ª) (S · Dep.: —). Hoy: +1 Trazo por rango desde la tercera rama (verbe.js ~309; textos en ~2487, ~3040 y ~3060). Nuevo: el coste extra crece con cada rama adicional (propuesta: +1 desde la tercera, +2 desde la quinta; dejar la fórmula en una constante). Opcional: aplicarlo también al aprender técnicas de ramas no principales. Actualizar tablas y ayuda, y probar. Listo cuando el panel muestra el coste correcto con 1, 3 y 5 ramas.
 
 - [ ] **2.5a · Sangre única: unificar** (M · Dep.: 0.1). Unificar nombres y datos: sangre, familia y herencia son lo mismo (D5). Una sola por personaje. Revisar verbe-divinity.js y la rama Sangre; validar y migrar. Listo cuando no se pueden tener dos linajes.
 

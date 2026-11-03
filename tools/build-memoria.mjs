@@ -52,4 +52,4 @@ for(let i=0;i<R.reliquias.length;i++){
 D.memoriaNimerios={version:1,entradas};R.version=4;
 writeCatalog(D);fs.writeFileSync(url,encodeCatalog(R));
 fs.writeFileSync(new URL('../docs/MEMORIA_NIMERIOS_3.4.md',import.meta.url),'# Memoria de Nimerios · 3.4\n\nLas entradas de referencia conservan el panteón existente. Los relatos nuevos son propuestas del autor para adoptar, editar o descartar desde el cuaderno privado; no reemplazan lore escrito ni añaden poder. Las comunidades y rutas se pueden situar en cualquier región de Nimerios.\n\n'+entradas.map(e=>`## ${e.nombre} · ${e.tipo}\n\nEstado: ${e.estado}.\n\n${e.publico}\n\nPara el DM: ${e.dm}\n`).join('\n')+'\n');
-console.log(`Memoria de Nimerios: ${entradas.length} entradas, 860 técnicas clasificadas por intención, 78 relatos de reliquia.`);
+console.log(`Memoria de Nimerios: ${entradas.length} entradas, ${D.tecnicas.length} técnicas clasificadas por intención, 78 relatos de reliquia.`);

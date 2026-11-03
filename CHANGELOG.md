@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## Sin publicar
+
+- Etapas del Verbe: nadie lo usa solo. Aprendiz (1 rama, grado 1), Practicante (2 ramas, grado 3), Iniciado (4 ramas, grado 6) y Pleno (sin límite). El DM abre la siguiente etapa cuando el personaje encuentra por rol quién le enseñe (Herramientas del DM → Etapa del Verbe), con registro de quién. Las fichas anteriores quedan en Pleno: no cambia nada para ellas (tarea 2.1).
+- Naturaleza oculta: al despertar, el DM elige si la primera naturaleza es secreta (la fija él), la elige el jugador al descubrirla o se sabe desde el principio. Las técnicas elementales no se ven ni se compran hasta descubrirla entrenando: desde nivel 5 (o 3 con Entrenado en Forma) y en etapa Practicante; 3 días, Control del Verbe CD 12 y 2 Trazos si la supera. La segunda: 5 días, CD 14 y 3 Trazos, desde nivel 5. «Probar» ya no descubre gratis. El DM puede revelarla ya o dar por terminados los días (tareas 2.1a–c).
+- Técnica nueva «Cambiar naturaleza del Verbe» (Forma, grado 2, nivel 5): 3 Trazos; usarla pide 7 días y Control CD 15 para cambiar una naturaleza por otra. Catálogo: 861 técnicas.
+- Repartirse cuesta más: +1 Trazo por rango desde la tercera rama y +2 desde la quinta (tarea 2.4).
+
 ## 3.5.0 — 2026-11-03
 
 - Validador de técnicas (`npm run validate:techniques` y Diagnóstico de Mesa Ecos, solo DM): áreas sin plantilla, plantillas sin tamaño, daño o salvación que recaen en quien la usa, y técnicas sin acción, alcance o duración. Revisa catálogo, técnicas del mundo y propias de cada ficha (tarea 1.1).

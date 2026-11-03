@@ -5,8 +5,9 @@ export const escapar = s => String(s ?? "").replace(/[&<>"']/g, c => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 })[c]);
 
-export function pasoInicial({ naturalezas = [], principal, tecnicas = 0 } = {}) {
-  if (!naturalezas.length) return 1;
+export function pasoInicial({ naturalezas = [], principal, tecnicas = 0, natOculta = false } = {}) {
+  // Con la naturaleza oculta no se elige al empezar: se descubre entrenando.
+  if (!naturalezas.length && !natOculta) return 1;
   if (!principal) return 2;
   return tecnicas > 0 ? 4 : 3;
 }

@@ -20,6 +20,7 @@ import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from 
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
 import { plantillaEnEscena } from "./verbe-plantillas.js";
 import { problemasTecnica } from "./verbe-validate.js";
+import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
 import { presupuestoCorto } from "./rest-core.js";
@@ -212,6 +213,8 @@ export const linajeDe = actor => D?.linajes?.find(l => l.id === estado(actor)?.l
 const conSangre = actor => { const e = estado(actor); return !!(linajeDe(actor) && e?.fuerza && e.fuerza !== "ninguna"); };
 const herenciaDe = actor => (conSangre(actor) && linajeDe(actor)?.req ? linajeDe(actor) : null);
 export const ocultaDe = actor => desrevolver(estado(actor)?.oc, actor.id);
+/** La primera naturaleza cuando está oculta (modo «secreta»): la fijó el DM y se descubre entrenando. */
+export const ocultaPrimeraDe = actor => desrevolver(estado(actor)?.oc1, actor.id);
 const veLinaje = actor => dm() || !!estado(actor)?.linajeVisible;
 
 export function nivelDe(actor) {
@@ -355,14 +358,22 @@ function ordenRama(actor, rama) {
   return i < 0 ? orden.length : i;
 }
 
+/**
+ * Repartirse cuesta (D4, tarea 2.4): cada rango de una rama que no es la principal paga de más según en qué
+ * puesto la empezaste a entrenar. Posición 0 = la primera rama. Cambiar aquí la fórmula cambia panel y ayuda.
+ */
+export const RECARGO_RAMAS = [{ desde: 2, extra: 1 }, { desde: 4, extra: 2 }];
+export function recargoRama(orden) {
+  return RECARGO_RAMAS.reduce((c, r) => (orden >= r.desde ? r.extra : c), 0);
+}
 export function costoRango(actor, rama, nuevo) {
   const e = estado(actor) ?? {};
   let c = D.rangos[nuevo]?.trazos ?? 99;
   if (e.principal === rama || (tieneDote(actor, "rama-segunda") && e.segunda === rama)) c -= 1;
   if (rama === "sangre") c += FUERZA[e.fuerza ?? "plena"]?.extra ?? 0;
-  // Repartirse cuesta: desde la tercera rama con Entrenado o más, cada rango cuesta 1 Trazo más.
+  // Repartirse cuesta: +1 Trazo por rango desde la tercera rama y +2 desde la quinta (la dote que lo permite perdona la tercera).
   const orden = ordenRama(actor, rama);
-  if (e.principal !== rama && orden >= 2 && !(orden === 2 && efectosDotes(actor).some(ef => ef.repartirse))) c += 1;
+  if (e.principal !== rama && !(orden === 2 && efectosDotes(actor).some(ef => ef.repartirse))) c += recargoRama(orden);
   return Math.max(0, c);
 }
 
@@ -483,7 +494,8 @@ export function concederArtefacto(actor,id){
 export function naturalezaVisible(actor, tec) {
   if (!tec.nat || (!NATS[tec.nat] && !D.combos[tec.nat]) || conoce(actor, tec.id)) return true;
   if (D.combos[tec.nat]) return combosDe(actor).has(tec.nat);
-  return natsDe(actor).has(tec.nat) || (natsDe(actor).size < 2 && !(estado(actor)?.probadas ?? []).includes(tec.nat));
+  // Las técnicas de una naturaleza que no conoce no se ven hasta descubrirla (D1).
+  return natsDe(actor).has(tec.nat);
 }
 export function opcionesNaturaleza(actor, tipo) {
   const nats = natsDe(actor), e = estado(actor);
@@ -513,6 +525,8 @@ export function requisitos(actor, tec) {
   const e = estado(actor);
   if (!e?.despierto) return { ok: false, motivo: "No despertó." };
   if (conoce(actor, tec.id)) return { ok: false, motivo: "Ya la sabe." };
+  const etapa = permisoEtapa(e, { rama: tec.rama, grado: Number(tec.g) || 0, ramasDeTecnicas: itemsTecnica(actor).map(i => i.getFlag(MOD, F)?.rama) });
+  if (!etapa.ok) return etapa;
   const acceso = accesoShinobi(tec.item?.flags?.[MOD]?.[F] ?? tec, contextoShinobi(actor), false);
   if (!acceso.ok) return acceso;
   const obtencion=accesoObtencion(tec.item.flags[MOD][F],{nivel:nivelDe(actor),dotes:dotesActivas(actor)});
@@ -543,11 +557,13 @@ export function requisitos(actor, tec) {
   const previa = tec.req ? porNombre(tec.req) : null;
   if (previa && !conoce(actor, previa.id)) return { ok: false, motivo: `Pide saber ${previa.n}.` };
   // Naturaleza
-  let probar = false;
+  // Naturaleza (D1): las técnicas elementales se abren al descubrir la naturaleza entrenando, no probando.
+  const probar = false;
   if (tec.nat && NATS[tec.nat] && !natsDe(actor).has(tec.nat)) {
     if (natsDe(actor).size >= 2) return { ok: false, motivo: "Ya conoce dos naturalezas. Una naturaleza adicional exige su dote y elección en Mejorar." };
-    if ((e.probadas ?? []).includes(tec.nat)) return { ok: false, motivo: `Su Verbe no responde a ${NATS[tec.nat]}.` };
-    probar = true;
+    return { ok: false, motivo: natsDe(actor).size
+      ? `Es de ${NATS[tec.nat]}, que no es tu naturaleza. Tu segunda naturaleza se descubre entrenando (Mejorar → Tus elementos).`
+      : "Aún no descubriste tu naturaleza: se descubre entrenando (Mejorar → Tus elementos). Mientras tanto, aprende técnicas sin elemento." };
   }
   if (D.combos[tec.nat] && !combosDe(actor).has(tec.nat)) return { ok: false, motivo: `Pide la combinación ${nombreNat(tec.nat)}.` };
   const pideDM = /maestro/.test(tec.req ?? "");
@@ -908,7 +924,9 @@ export async function dialogoDespertar(actor) {
   const html = `<div class="ecos-verbe-form">
     <p>Despierta a <b>${escH(actor.name)}</b>. Desde ahí su hoja muestra la barra, la habilidad Control y el panel.</p>
     <label>Característica <select name="car">${opciones(Object.entries(CARS), caracteristicaSugerida(actor))}</select></label>
-    <label>Primera naturaleza <select name="nat"><option value="">Que la elija el jugador</option>${opciones(Object.entries(NATS), "")}</select></label>
+    <label>Etapa del Verbe <select name="etapa">${opciones(ETAPAS.filter(x => x.n > 0).map(x => [x.n, `${x.n} · ${x.nombre}`]), 1)}</select> <small>quién le enseña decide cuánto se abre; luego subes la etapa con «Abrir la siguiente etapa»</small></label>
+    <label>Primera naturaleza <select name="natModo">${opciones(Object.entries(MODOS_NATURALEZA), "secreta")}</select></label>
+    <label>Cuál <select name="nat"><option value="">Al azar (secreta) o la que elija el jugador</option>${opciones(Object.entries(NATS), "")}</select> <small>solo la ves tú si es secreta</small></label>
     <label>Naturaleza oculta <select name="oculta">${opciones(Object.entries(NATS), oculta)}</select> <small>sorteada; solo la ves tú</small></label>
     <label>Linaje <select name="linaje" data-desc="linaje">${opciones(paresLinaje(), portador ? linPortador : "ninguno")}</select></label>
     <label>Fuerza de la sangre <select name="fuerza" data-desc="fuerza">${opciones(Object.entries(FUERZA).map(([k, v]) => [k, v.nombre]), portador ? "plena" : "ninguna")}</select></label>
@@ -933,23 +951,27 @@ export async function dialogoDespertar(actor) {
 
 export async function despertar(actor, o) {
   if (!game.user.isGM) return false;
-  const nat = o.nat || null;
+  // Cómo se conoce la primera naturaleza (2.1c): secreta (la fija el DM), la elige el jugador al descubrirla, o visible desde el principio.
+  const natModo = MODOS_NATURALEZA[o.natModo] ? o.natModo : (o.nat ? "visible" : "elige");
+  const nat = o.nat || (natModo === "secreta" ? Object.keys(NATS)[Math.floor(Math.random() * 5)] : null);
   let oculta = o.oculta || null;
   if (oculta && oculta === nat) oculta = otraNat(nat);
+  const etapa = Math.max(1, Math.min(ETAPA_MAX, Math.trunc(Number(o.etapa)) || 1));
   const e = {
-    despierto: true, car: o.car || caracteristicaSugerida(actor), nats: nat ? [nat] : [], oc: revolver(oculta, actor.id), descubierta: false,
+    despierto: true, car: o.car || caracteristicaSugerida(actor), nats: natModo === "visible" && nat ? [nat] : [], oc: revolver(oculta, actor.id), descubierta: false,
+    natModo, oc1: natModo === "secreta" ? revolver(nat, actor.id) : null, etapa, maestros: [],
     probadas: [], linaje: o.linaje || "ninguno", fuerza: o.fuerza || "ninguna", linajeVisible: !!o.linajeVisible, principal: o.principal || null,
     segunda: null, maestria: null, escuela: null, rangos: {}, ordenRamas: [], abiertas: [], afinidad: {}, trazosExtra: 0, gastados: 0,
     dotes: [...(D.innatos ?? [])], natsExtra: [], combos: [], miradas: {}, trasplantes: [], pactos: [], cerrojos: 0, cultivos: {}, infusiones: {}, propias: [],
     monedas: {}, reserva: null, reservaUsada: false, despertarLibre: false, nivel: o.nivel ? Number(o.nivel) : null, valor: 0,
-    historial: [`Despierta en el nivel ${nivelDe(actor)}`]
+    historial: [`Despierta en el nivel ${nivelDe(actor)} · etapa ${datosEtapa(etapa).nombre}`]
   };
   if (e.principal) { e.rangos[e.principal] = 1; e.ordenRamas.push(e.principal); }
   await actor.update({ [`flags.${MOD}.${F}`]: e });
   if (o.lleno) await actor.update({ [`flags.${MOD}.${F}.valor`]: maxVerbe(actor) });
   await asegurarRasgos(actor);
   const lin = linajeDe(actor);
-  await susurrarDM(`${escH(actor.name)} despierta`, `<p>${CARS[e.car]} · naturaleza ${NATS[nat] ?? "por elegir"} · oculta <b>${NATS[oculta] ?? "—"}</b> · linaje ${escH(lin ? `${lin.alias ?? lin.nombre} (${lin.real ?? lin.nombre})` : "ninguno")} (${FUERZA[e.fuerza].nombre}${e.linajeVisible ? "" : ", no lo sabe"}) · rama principal ${e.principal ? nombreRama(e.principal) : "por elegir"}.</p><p>Reserva ${maxVerbe(actor)} · ${trazos(actor).libres} Trazos para gastar en su panel.</p>`);
+  await susurrarDM(`${escH(actor.name)} despierta`, `<p>Etapa <b>${datosEtapa(etapa).nombre}</b> · ${CARS[e.car]} · naturaleza ${NATS[nat] ?? "por elegir"} (${{ secreta: "secreta: la descubre entrenando", elige: "la elige al descubrirla", visible: "la sabe" }[natModo]}) · oculta <b>${NATS[oculta] ?? "—"}</b> · linaje ${escH(lin ? `${lin.alias ?? lin.nombre} (${lin.real ?? lin.nombre})` : "ninguno")} (${FUERZA[e.fuerza].nombre}${e.linajeVisible ? "" : ", no lo sabe"}) · rama principal ${e.principal ? nombreRama(e.principal) : "por elegir"}.</p><p>Reserva ${maxVerbe(actor)} · ${trazos(actor).libres} Trazos para gastar en su panel.</p>`);
   if (MODO === "activo") aLaMesa(actor, `✦ ${escH(actor.name)}`, "<p>Algo se abre por dentro y empieza a correr. Su hoja tiene ahora el panel del Verbe (botón «Verbe» arriba de la hoja).</p>", { soloDueno: true });
   await asegurarGuia();
   return e;
@@ -1354,7 +1376,7 @@ async function manejarInterno(d, { interno = false } = {}) {
       if (!remitente || !atacante?.testUserPermission(remitente, "OWNER")) return;
       await consumirMetal(actor, Array.isArray(d.efectoIds) ? d.efectoIds.slice(0, 20).map(String) : []);
     } else if (d.accion === "capaVPedir" && actor) {
-      if (!["tecnica", "crear", "dote", "afinidad"].includes(d.tipo) || !d.datos || typeof d.datos !== "object") return;
+      if (!["tecnica", "crear", "dote", "afinidad", "naturaleza"].includes(d.tipo) || !d.datos || typeof d.datos !== "object") return;
       if (JSON.stringify(d.datos).length > 16000) return;
       const pend = foundry.utils.deepClone(game.settings.get(MOD, AJ.pend) ?? []);
       const clave = firma(JSON.stringify([actor.id, d.tipo, d.datos]));
@@ -1408,6 +1430,7 @@ async function aprobarInterno(pid, si = true) {
   }
   else if (p.tipo === "dote") resultado = await comprarDote(actor, d.id, { aprobado: true });
   else if (p.tipo === "afinidad") resultado = await subirAfinidad(actor, d.nat, { aprobado: true });
+  else if (p.tipo === "naturaleza") resultado = await iniciarEntrenoNaturaleza(actor, d, { aprobado: true });
   if (resultado !== true) return false;
   await game.settings.set(MOD, AJ.pend, pend.filter(x => x.id !== pid));
   aLaMesa(actor, "Aprobado", `<p>El DM aprobó: ${escH(p.titulo ?? p.tipo)}.</p>`, { soloDueno: true });
@@ -1541,6 +1564,106 @@ async function subirAfinidadInterno(actor, nat, { aprobado = false } = {}) {
 }
 
 /** Probar una técnica de una naturaleza que no tiene: si es su oculta, la descubre. No gasta nada. */
+/* ---------- Etapas del Verbe y descubrimiento de la naturaleza (2.1) ---------- */
+/** El DM abre la siguiente etapa (o vuelve a una anterior) cuando el personaje encuentra quién le enseñe. */
+export function cambiarEtapa(actor, delta = 1, quien = "") { return serializarActor(actor, () => cambiarEtapaInterno(actor, delta, quien)); }
+async function cambiarEtapaInterno(actor, delta, quien) {
+  if (!game.user.isGM || !despierto(actor)) return false;
+  const e = estado(actor), antes = etapaDe(e), despues = Math.max(1, Math.min(ETAPA_MAX, antes + Math.sign(Number(delta) || 0)));
+  if (despues === antes) return rechazar(antes >= ETAPA_MAX ? "Ya está en la última etapa." : "Ya está en la primera etapa.", "warn");
+  const nota = String(quien ?? "").trim().slice(0, 120);
+  const et = datosEtapa(despues);
+  await guardar(actor, { etapa: despues, maestros: [...(e.maestros ?? []), { etapa: despues, quien: nota, fecha: new Date().toISOString() }].slice(-20),
+    historial: hist(e, `Etapa ${et.nombre}${nota ? ` (le enseña ${nota})` : ""}`) });
+  aLaMesa(actor, `✦ ${despues > antes ? "Se abre una etapa" : "Vuelve a una etapa"} del Verbe`, `<p>${nota && despues > antes ? `Con la guía de <b>${escH(nota)}</b>, el` : "El"} Verbe de ${escH(actor.name)} llega a la etapa <b>${et.nombre}</b>. ${escH(et.texto)}</p>`, { soloDueno: true });
+  refrescarPanel(actor.id);
+  return true;
+}
+/** Estado del descubrimiento de naturaleza para el panel. */
+export function estadoDescubrimiento(actor) {
+  const e = estado(actor) ?? {};
+  // En modo visible la primera se elige en Inicio; solo la segunda se descubre entrenando.
+  const tipo = modoNaturaleza(e) === "visible" && !natsDe(actor).size ? null : siguienteDescubrimiento(e, { conocidas: natsDe(actor).size });
+  const req = requisitoDescubrir(e, { tipo, nivel: nivelDe(actor), rangoForma: rangoDe(actor, "forma") });
+  const entreno = e.entrenoNat ?? null;
+  return { tipo, req, entreno, faltan: diasRestantes(entreno, game.time?.worldTime ?? 0), elegir: e.elegirNat ?? null, modo: modoNaturaleza(e) };
+}
+/** Empieza el entrenamiento (lo aprueba el DM): días de reloj del mundo y luego una prueba de Control del Verbe. */
+async function iniciarEntrenoNaturaleza(actor, d = {}, { aprobado = false } = {}) {
+  const e = estado(actor);
+  const tipo = d.tipo === "cambio" ? "cambio" : siguienteDescubrimiento(e, { conocidas: natsDe(actor).size });
+  const base = tipo === "cambio" ? { ok: conoce(actor, "forma-cambiar-naturaleza") && !e.entrenoNat, motivo: "Pide saber «Cambiar naturaleza del Verbe» y no estar entrenando.", ...DESCUBRIR.cambio }
+    : requisitoDescubrir(e, { tipo, nivel: nivelDe(actor), rangoForma: rangoDe(actor, "forma") });
+  if (!base.ok) return rechazar(base.motivo, "warn");
+  if (base.trazos && trazos(actor).libres < base.trazos) return rechazar(`Cuesta ${base.trazos} Trazos y tiene ${trazos(actor).libres}.`, "warn");
+  if (tipo === "cambio" && !(natsDe(actor).has(d.de) && NATS[d.a] && !natsDe(actor).has(d.a))) return rechazar("Elige una naturaleza tuya y otra que no tengas.", "warn");
+  if (!game.user.isGM || !aprobado) return pedirAlDM(actor, "naturaleza", { tipo, de: d.de ?? null, a: d.a ?? null },
+    tipo === "cambio" ? `cambiar ${NATS[d.de]} por ${NATS[d.a]}` : `entrenar para descubrir ${DESCUBRIR[tipo].nombre}`,
+    `${base.dias} días de entrenamiento y una prueba de Control del Verbe CD ${base.cd}${base.trazos ? `. Si la supera, paga ${base.trazos} Trazos` : ""}.`);
+  const ahora = Number(game.time?.worldTime) || 0;
+  await guardar(actor, { entrenoNat: { tipo, cd: base.cd, trazos: base.trazos, dias: base.dias, desde: ahora, hasta: ahora + base.dias * 86400, de: d.de ?? null, a: d.a ?? null },
+    historial: hist(e, `Empieza a entrenar: ${tipo === "cambio" ? "cambiar de naturaleza" : DESCUBRIR[tipo].nombre} (${base.dias} días)`) });
+  aLaMesa(actor, "✦ Entrenamiento del Verbe", `<p>${escH(actor.name)} empieza a entrenar ${tipo === "cambio" ? "para cambiar su naturaleza" : `para descubrir ${DESCUBRIR[tipo].nombre}`}: <b>${base.dias} días</b> (avanzan con el calendario del mundo). Después, una prueba de Control del Verbe CD ${base.cd}.</p>`, { soloDueno: true });
+  refrescarPanel(actor.id);
+  return true;
+}
+export function pedirDescubrimiento(actor, d = {}) { return serializarActor(actor, () => iniciarEntrenoNaturaleza(actor, d, { aprobado: game.user.isGM })); }
+/** El DM da por terminados los días (si no se usa el calendario). */
+export async function terminarEntrenoYa(actor) {
+  if (!game.user.isGM) return false;
+  const e = estado(actor); if (!e?.entrenoNat) return false;
+  await guardar(actor, { entrenoNat: { ...e.entrenoNat, hasta: Number(game.time?.worldTime) || 0 } });
+  refrescarPanel(actor.id);
+  return true;
+}
+/** Resuelve un resultado de la prueba. Pura en lo posible: la usa la prueba y el DM. */
+async function resolverEntreno(actor, total) {
+  const e = estado(actor), en = e.entrenoNat;
+  if (!en) return false;
+  const exito = Number(total) >= Number(en.cd);
+  if (!exito) {
+    await guardar(actor, { entrenoNat: null, intentosNat: (Number(e.intentosNat) || 0) + 1, historial: hist(e, `No supera la prueba (${total} contra CD ${en.cd})`) });
+    aLaMesa(actor, "El Verbe no responde todavía", `<p>${escH(actor.name)} saca ${total} contra CD ${en.cd}. No gasta Trazos; puede volver a entrenar cuando el DM lo apruebe.</p>`, { soloDueno: true });
+    refrescarPanel(actor.id);
+    return false;
+  }
+  const cambios = { entrenoNat: null, gastados: (Number(e.gastados) || 0) + (Number(en.trazos) || 0) };
+  let texto;
+  if (en.tipo === "cambio") {
+    cambios.nats = (e.nats ?? []).map(n => (n === en.de ? en.a : n));
+    cambios.natsExtra = (e.natsExtra ?? []).map(n => (n === en.de ? en.a : n));
+    if (ocultaDe(actor) === en.de && e.descubierta) cambios.oc = revolver(en.a, actor.id);
+    texto = `Cambia su naturaleza: ${NATS[en.de]} por ${NATS[en.a]}`;
+  } else if (modoNaturaleza(e) === "elige") {
+    cambios.elegirNat = en.tipo;
+    texto = `Descubre ${DESCUBRIR[en.tipo].nombre}: la elige`;
+  } else if (en.tipo === "primera") {
+    const nat = ocultaPrimeraDe(actor) ?? Object.keys(NATS)[Math.floor(Math.random() * 5)];
+    cambios.nats = [nat];
+    if (ocultaDe(actor) === nat) cambios.oc = revolver(otraNat(nat), actor.id);
+    texto = `Descubre su naturaleza: ${NATS[nat]}`;
+  } else {
+    cambios.descubierta = true;
+    texto = `Descubre su segunda naturaleza: ${NATS[ocultaDe(actor)] ?? "—"}`;
+  }
+  cambios.historial = hist(e, `${texto} (${total} contra CD ${en.cd}${en.trazos ? `, ${en.trazos} Trazos` : ""})`);
+  if (en.trazos) cambios.compras = compra(e, "naturaleza", { tipo: en.tipo }, en.trazos, texto);
+  await guardar(actor, cambios);
+  aLaMesa(actor, "✦ El Verbe responde", `<p>${escH(actor.name)} saca ${total} contra CD ${en.cd}. ${cambios.elegirNat ? "Su Verbe se abre a un elemento: <b>elígelo en su panel</b> (Mejorar → Tus elementos)." : escH(texto) + "."}</p>`, { soloDueno: true });
+  await asegurarRasgos(actor);
+  await refrescar(actor);
+  return true;
+}
+/** Al terminar los días: tira Control del Verbe (con la ventana nativa) y resuelve. */
+export function pruebaEntreno(actor) { return serializarActor(actor, async () => {
+  const e = estado(actor), en = e?.entrenoNat;
+  if (!en) return false;
+  if (diasRestantes(en, game.time?.worldTime ?? 0) > 0) return rechazar(`Faltan ${diasRestantes(en, game.time?.worldTime ?? 0)} días de entrenamiento.`, "warn");
+  const r = await actor.rollSkill?.({ skill: "cvb", target: en.cd }, {}, { data: { flavor: `Control del Verbe · entrenamiento (CD ${en.cd})` } });
+  const roll = Array.isArray(r) ? r[0] : r;
+  if (!roll) return false;
+  return resolverEntreno(actor, roll.total);
+}); }
 export function probarNaturaleza(actor, tec) { return serializarActor(actor, () => probarNaturalezaInterno(actor, tec)); }
 async function probarNaturalezaInterno(actor, tec) {
   const e = estado(actor);
@@ -2636,7 +2759,7 @@ ${tablaG(["Nivel", ...[1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 20].map(String)], [["Re
 ${h2("trazos", "Trazos")}
 <p>Ganas 4 por nivel; quien despierta en el nivel N recibe 4 × N + 4 de una vez. El DM da más por hitos de la historia. Lo que compras es para siempre.</p>
 ${tablaG(["Qué", "Trazos"], [["Técnica de grado 0", "1"], ["Técnica de grado 1 a 11", "su grado"], ["Técnica rara o combinada", "+1"],
-    ["Rango: Entrenado, Experto, Maestro, Legendario, Mítico", "1, 3, 5, 8 y 10 (1 menos en la rama principal; 1 más desde la tercera rama)"],
+    ["Rango: Entrenado, Experto, Maestro, Legendario, Mítico", "1, 3, 5, 8 y 10 (1 menos en la rama principal; 1 más desde la tercera rama y 2 más desde la quinta)"],
     ["Dote", "2 a 4"], ["Control del Verbe: competencia y pericia", "2 y 3"], ["Afinidad: Entrenada y Maestra", "2 y 4"],
     ["Cultivo: Pulida, Dominada, Propia", "1, 2 y 3"], ["Cerrojo", "su grado"], ["Crear una técnica", "grado + 1"]])}
 ${h2("tecnicas-y-grados", "Técnicas y grados")}
@@ -2696,6 +2819,9 @@ ${h2("lo-mas-fuerte", "Lo más fuerte crece contigo")}
 <ul><li>Las técnicas más fuertes tienen una <b>escalera</b>: una versión chica que se aprende temprano y otras más grandes después. La ficha de cada técnica dice «Crece» con su escalera.</li>
 <li>Las que atan, duermen, sellan o mandan sobre otro, como la Sustitución, <b>cuestan más contra alguien más fuerte que tú</b>: 2 Verbe más por cada grado que su grado (la mitad de su nivel o VD) pase de tu grado máximo. Contra lo chico sirven desde el principio.</li>
 <li>Cada técnica y cada dote dicen al final <b>«Se mejora con»</b>: el grado, el rango de su rama, la afinidad, el cultivo, las dotes y la escuela que la hacen crecer.</li></ul>
+${h2("etapas", "Etapas del Verbe y tu naturaleza")}
+<p>Nadie usa el Verbe solo. Cuando encuentras a alguien que te enseñe (un maestro o un aprendiz), el DM abre tu siguiente <b>etapa</b>: ${ETAPAS.filter(x => x.n > 0).map(x => `<b>${x.nombre}</b> (${Number.isFinite(x.ramas) ? `${x.ramas} rama${x.ramas === 1 ? "" : "s"}, hasta grado ${x.grado}` : "sin límite"})`).join(", ")}.</p>
+<p>Tu <b>naturaleza</b> (tu elemento) y la segunda están ocultas hasta que las descubres <b>entrenando</b>: desde nivel 5, o nivel 3 con Entrenado en Forma, y en etapa Practicante. La primera pide ${DESCUBRIR.primera.dias} días y una prueba de Control del Verbe CD ${DESCUBRIR.primera.cd} (${DESCUBRIR.primera.trazos} Trazos si la superas); la segunda, ${DESCUBRIR.segunda.dias} días y CD ${DESCUBRIR.segunda.cd} (${DESCUBRIR.segunda.trazos} Trazos). Hasta entonces aprendes técnicas sin elemento. La técnica <b>Cambiar naturaleza del Verbe</b> (3 Trazos) cambia una naturaleza por otra con 7 días y CD 15.</p>
 ${h2("naturaleza-propia", "Tu naturaleza de nacimiento")}
 <p>La primera naturaleza que despertó en ti es la tuya: sus técnicas (y las que infundes con ella) cuestan <b>1 Verbe menos</b>, nunca menos de 1. La segunda naturaleza y las combinaciones cuestan lo normal.</p>
 ${h2("el-clima", "El clima")}
@@ -2884,9 +3010,14 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         const e = estado(this.actor);
         const cambios = {
           nat: () => {
+            if (!(modoNaturaleza(e) === "visible" && !(e.nats ?? []).length) && !e.elegirNat) { rechazar("Tu naturaleza se descubre entrenando (Mejorar → Tus elementos).", "warn"); return null; }
+            if (e.elegirNat === "segunda") {
+              if (natsDe(this.actor).has(v)) { rechazar("Esa ya es tu naturaleza.", "warn"); return null; }
+              return { oc: revolver(v, this.actor.id), elegirNat: null, descubierta: true, historial: hist(e, `Descubre su segunda naturaleza: ${NATS[v]}`) };
+            }
             let oc = ocultaDe(this.actor);
             if (oc === v) oc = otraNat(v);
-            return { nats: [v], oc: revolver(oc, this.actor.id), historial: hist(e, `Elige su naturaleza: ${NATS[v]}${t.dataset.destino ? " (el destino)" : ""}`) };
+            return { nats: [v], oc: revolver(oc, this.actor.id), elegirNat: null, historial: hist(e, `Elige su naturaleza: ${NATS[v]}${t.dataset.destino ? " (el destino)" : ""}`) };
           },
           principal: () => ({ principal: v, rangos: { [v]: Math.max(1, rangoDe(this.actor, v)) }, ordenRamas: [...new Set([v, ...(e.ordenRamas ?? [])])],
             historial: hist(e, `Elige su rama principal: ${nombreRama(v)}${t.dataset.destino ? " (el destino)" : ""}`) }),
@@ -2946,6 +3077,19 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
           .then(() => asegurarRasgos(this.actor)).then(() => refrescar(this.actor)));
       },
       oculta() { correr(this, guardar(this.actor, { oc: revolver(valorDe(this, "oculta"), this.actor.id), descubierta: false })); },
+      descubrirNat() { correr(this, pedirDescubrimiento(this.actor)); },
+      cambiarNat() { correr(this, pedirDescubrimiento(this.actor, { tipo: "cambio", de: valorDe(this, "cambioDe"), a: valorDe(this, "cambioA") })); },
+      pruebaEntreno() { correr(this, pruebaEntreno(this.actor)); },
+      terminarEntreno() { correr(this, terminarEntrenoYa(this.actor)); },
+      etapaMas() { correr(this, cambiarEtapa(this.actor, 1, valorDe(this, "maestro"))); },
+      etapaMenos() { correr(this, cambiarEtapa(this.actor, -1, "")); },
+      natModo() { correr(this, guardar(this.actor, { natModo: valorDe(this, "natModo") })); },
+      ocultaPrimera() { correr(this, guardar(this.actor, { oc1: revolver(valorDe(this, "ocultaPrimera"), this.actor.id) })); },
+      revelarNat() {
+        const a = this.actor, e = estado(a);
+        if (!natsDe(a).size) { const n = ocultaPrimeraDe(a) ?? valorDe(this, "ocultaPrimera"); if (n) correr(this, guardar(a, { nats: [n], entrenoNat: null, historial: hist(e, `El DM revela su naturaleza: ${NATS[n]}`) }).then(() => refrescar(a))); }
+        else if (!e.descubierta && ocultaDe(a)) correr(this, guardar(a, { descubierta: true, entrenoNat: null, historial: hist(e, `El DM revela su segunda naturaleza: ${NATS[ocultaDe(a)]}`) }).then(() => refrescar(a)));
+      },
       escuela() { correr(this, guardar(this.actor, { escuela: valorDe(this, "escuela") || null })); },
       darTecnica() {
         const tec = tecnicaPorId(valorDe(this, "darTecnica"), this.actor);
@@ -3074,9 +3218,26 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
           : (uso.extra ? `Incluye ${uso.extra} Verbe extra por el objetivo marcado.` : t.g > 0 && gradoUsable(a, meta) > t.g ? "Puedes elevar el grado en la ventana de uso; el coste aumentará." : "Marca el objetivo si afecta a otra criatura.") });
   }
 
+  /** Etapa del Verbe y descubrimiento de la naturaleza, explicado para el jugador (2.1). */
+  #etapaYNaturaleza() {
+    const a = this.actor, e = estado(a), et = datosEtapa(etapaDe(e)), sig = ETAPAS[et.n + 1];
+    const d = estadoDescubrimiento(a), nat = DESCUBRIR[d.entreno?.tipo ?? d.tipo] ?? null;
+    let natHTML = "";
+    if (d.elegir) natHTML = `<p><b>Tu Verbe se abrió a un elemento.</b> Elígelo: es para siempre (solo el DM puede cambiarlo).</p><p><select name="nat">${opciones(Object.entries(NATS).filter(([n]) => !natsDe(a).has(n)), "")}</select> <button type="button" data-action="elegir" data-campo="nat">Elegir</button></p>`;
+    else if (d.entreno) natHTML = d.faltan > 0
+      ? `<p><b>Entrenando</b> ${d.entreno.tipo === "cambio" ? `para cambiar ${escH(NATS[d.entreno.de])} por ${escH(NATS[d.entreno.a])}` : `para descubrir ${nat.nombre}`}: faltan <b>${d.faltan} día${d.faltan === 1 ? "" : "s"}</b> del calendario del mundo. Después harás una prueba de Control del Verbe CD ${d.entreno.cd}.</p>${dm() ? `<p><button type="button" data-action="terminarEntreno">DM: dar por terminados los días</button></p>` : ""}`
+      : `<p><b>Terminaste el entrenamiento.</b> Haz la prueba de Control del Verbe CD ${d.entreno.cd}${d.entreno.trazos ? `; si la superas, pagas ${d.entreno.trazos} Trazos` : ""}. Si fallas, no pierdes Trazos y puedes volver a entrenar.</p><p><button type="button" data-action="pruebaEntreno"><i class="fa-solid fa-dice-d20"></i> Hacer la prueba</button></p>`;
+    else if (d.tipo) natHTML = d.req.ok
+      ? `<p><b>Puedes descubrir ${nat.nombre}.</b> Necesitas a alguien que te guíe: ${nat.dias} días de entrenamiento y una prueba de Control del Verbe CD ${nat.cd}. Si la superas, pagas ${nat.trazos} Trazos.</p><p><button type="button" data-action="descubrirNat">Pedir el entrenamiento al DM</button></p>`
+      : `<p><b>${d.tipo === "primera" ? "Tu naturaleza" : "Tu segunda naturaleza"} está oculta.</b> ${escH(d.req.motivo)} Mientras tanto, aprende técnicas sin elemento.</p>`;
+    const cambio = conoce(a, "forma-cambiar-naturaleza") && !d.entreno && natsDe(a).size
+      ? `<p><b>Cambiar naturaleza del Verbe:</b> <select name="cambioDe">${opciones([...natsDe(a)].map(n => [n, NATS[n] ?? n]), "")}</select> por <select name="cambioA">${opciones(Object.entries(NATS).filter(([n]) => !natsDe(a).has(n)), "")}</select> <button type="button" data-action="cambiarNat">Pedir el entrenamiento (7 días, CD 15)</button></p>` : "";
+    return `<section class="ev-naturalezas"><h3>Tu etapa del Verbe: ${et.nombre}</h3><p>${escH(et.texto)}</p>${sig ? `<p class="ecos-nota">Siguiente: <b>${sig.nombre}</b> (${Number.isFinite(sig.ramas) ? `hasta ${sig.ramas} ramas y grado ${sig.grado}` : "sin límite de etapa"}). La abre el DM cuando encuentres por rol a un maestro o a un aprendiz que te enseñe.</p>` : ""}${natHTML}${cambio}</section>`;
+  }
+
   #inicio() {
     const a = this.actor, e = estado(a), tecnicas = itemsTecnica(a).length;
-    const paso = pasoInicial({ naturalezas: [...natsDe(a)], principal: e.principal, tecnicas });
+    const paso = pasoInicial({ naturalezas: [...natsDe(a)], principal: e.principal, tecnicas, natOculta: modoNaturaleza(e) !== "visible" });
     const titulos = ["", "¿Qué elemento responde a ti?", "¿Cómo quieres usar tu poder?", "Aprende tu primera técnica", "Ya puedes entrar en acción"];
     let contenido;
     if (paso === 1) contenido = `<p>Elige el primer elemento que manejará tu personaje. Aquí «naturaleza» significa elemento. Funciona con cualquier especialidad y no te enseña técnicas por sí solo. Verás una confirmación antes de guardarlo.</p><div class="ev-elecciones">${Object.entries(NATS).map(([n, nombre]) => `<button type="button" class="ev-eleccion ${n}" data-action="elegir" data-campo="nat" data-valor="${n}"><span class="ev-elemento" aria-hidden="true">${({ fuego: "✦", agua: "≈", viento: "≋", tierra: "◆", rayo: "ϟ" })[n]}</span><strong>${nombre}</strong><small>${escH(ESTADOS[ESTADO_NAT[n][0]].texto)}</small><span>Elegir ${nombre} →</span></button>`).join("")}</div>`;
@@ -3153,7 +3314,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       : "Desconocido. Hay cosas de tu sangre que no tienes manera de saber; si las hay, aparecen jugando.";
     const oc = ocultaDe(a);
     const ocFila = e.descubierta ? `Descubriste una segunda naturaleza: ${NATS[oc] ?? ""}.`
-      : `Puede que tu Verbe responda a otra naturaleza que no conoces. Se intenta descubrir con «Probar» en Aprender; si responde, aprender la técnica cuesta los Trazos indicados.${dm() && oc ? ` <i>Oculta: ${NATS[oc]}</i>` : ""}`;
+      : `Puede que tu Verbe responda a otra naturaleza que no conoces. Se descubre entrenando (Mejorar → Tus elementos): días con guía y una prueba de Control del Verbe.${dm() && oc ? ` <i>Oculta: ${NATS[oc]}</i>` : ""}`;
     const cerrAbierto = efectoV(a, "cerrojo");
     const cerr = (Number(e.cerrojos) || 0) ? `<h3>Ocho Cerrojos</h3><p>${D.cerrojos.filter(c => c.n <= e.cerrojos).map(c =>
       `<button type="button" data-action="cerrojo" data-n="${c.n}" data-tooltip="${escH(c.da)} · cuesta ${costoGrado(c.grado)} Verbe y una prueba de Control CD ${10 + (2 * c.n)} · ${c.pg ? `${c.pg} PG por turno` : "sin PG"}">Abrir hasta el ${c.n} · ${escH(c.nombre)}</button>`).join(" ")}
@@ -3217,7 +3378,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       }).join("") : "";
       const cerradaPor = { pulso: "Se abre con la dote Control fino del Verbe (Mejorar → Dotes).", mirada: "Se abre si despierta un ojo, en la historia.",
         pacto: "Se abre con un pacto que se gana en la historia.", sangre: "Se abre con una herencia de sangre. No tienes manera de saber si la tienes; si es así, la historia lo dirá." }[r.id] ?? "La abre el DM.";
-      const extra = (c !== null && !principal && ordenRama(a, r.id) >= 2) ? " (incluye 1 de más por ser tu tercera rama o más)" : "";
+      const rec = (c !== null && !principal) ? recargoRama(ordenRama(a, r.id)) : 0;
+      const extra = rec ? ` (incluye ${rec} de más por ser tu ${ordenRama(a, r.id) >= 4 ? "quinta" : "tercera"} rama o más)` : "";
       const ahora = abierta
         ? `Rango <b>${nombreRango(rg)}</b> · por nivel y rango llegas hasta <b>grado ${Math.min(gradoMax(a), rangoGrado(rg))}</b>${rg >= 2 ? ` · +${rg - 1} dado${rg > 2 ? "s" : ""} al dañar o curar` : ""}.`
         : "<b>Cerrada</b>.";
@@ -3237,9 +3399,10 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const cerr = Number(e.cerrojos) || 0;
     const sigC = D.cerrojos[cerr];
     return `${intro("Cada rama es un tipo de técnica (Forma, Velo, Cuerpo…).", "Tu rango en una rama dice hasta qué grado puedes aprender técnicas de ella. Se sube con Trazos; desde Experto, sus técnicas que dañan o curan tiran dados de más y ganas los dones de la rama.",
-      `<p>Tu <b>rama principal</b> empieza en Entrenado gratis, cada rango le cuesta 1 Trazo menos y sus dones llegan un rango antes. Desde la <b>tercera rama</b> que entrenes, cada rango cuesta 1 Trazo más: conviene especializarse.</p>${tabla}`, "ramas-y-rangos")}
+      `<p>Tu <b>rama principal</b> empieza en Entrenado gratis, cada rango le cuesta 1 Trazo menos y sus dones llegan un rango antes. Desde la <b>tercera rama</b> que entrenes, cada rango cuesta 1 Trazo más, y desde la <b>quinta</b>, 2 más: conviene especializarse.</p>${tabla}`, "ramas-y-rangos")}
       ${filas}
-      <section class="ev-naturalezas"><h3>Tus elementos</h3><p>${[...natsDe(a)].map(nombreNat).join(", ") || "Elige tu primera naturaleza en Inicio"}. ${natsDe(a).size >= 2 ? "Las otras naturalezas se cierran en Aprender." : "Puedes descubrir tu segunda naturaleza probando una técnica."}</p>
+      ${this.#etapaYNaturaleza()}
+      <section class="ev-naturalezas"><h3>Tus elementos</h3><p>${[...natsDe(a)].map(nombreNat).join(", ") || (modoNaturaleza(e) === "visible" ? "Elige tu primera naturaleza en Inicio" : "Aún no descubriste tu naturaleza")}. ${natsDe(a).size >= 2 ? "Las otras naturalezas se cierran en Aprender." : "Tu naturaleza (y la segunda) se descubre entrenando: mira arriba qué te pide."}</p>
       ${opcionesNaturaleza(a, "tercera").length ? `<p>Tu dote abre una elección adicional: <select name="terceraElegir">${opciones(opcionesNaturaleza(a,"tercera").map(n=>[n,nombreNat(n)]), "")}</select> <button type="button" data-action="naturalezaExtra" data-tipo="tercera">Elegir tercera naturaleza</button></p>` : ""}
       ${opcionesNaturaleza(a,"combo").length ? `<p>Combina dos elementos conocidos: <select name="comboElegir">${opciones(opcionesNaturaleza(a,"combo").map(n=>[n,`${nombreNat(n)} (${D.combos[n].de.map(nombreNat).join(" + ")})`]), "")}</select> <button type="button" data-action="naturalezaExtra" data-tipo="combo">Abrir combinación</button></p>` : ""}
       <p>${combosDe(a).size ? `Combinaciones abiertas: ${[...combosDe(a)].map(nombreNat).join(", ")}. Todas sus técnicas aparecen en Aprender; las de mayor grado muestran sus requisitos.` : "Naturaleza combinada abre una combinación desde nivel 9 con maestro; Tercera naturaleza abre otro elemento desde nivel 7 con maestro. Una tercera naturaleza no concede por sí sola una combinación."}</p></section>
@@ -3500,6 +3663,15 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         <p>Enseñar una técnica gratis: <select name="darTecnica" data-desc="tec">${opciones(todas, "")}</select> <button type="button" data-action="darTecnica">Enseñar</button></p>
         <div class="ecos-verbe-desc" data-de="darTecnica"></div>
         <p>Técnicas que sabe:</p><ul>${sabe || "<li>Ninguna.</li>"}</ul>`)}
+      ${sec("Etapa del Verbe (quién le enseña)", `<p>Está en la etapa <b>${datosEtapa(etapaDe(e)).nombre}</b> (${etapaDe(e)} de ${ETAPA_MAX}). ${escH(datosEtapa(etapaDe(e)).texto)}</p>
+        <p>Cuando encuentre por rol a un maestro o a un aprendiz que le enseñe, ábrele la siguiente: más ramas y más grado. El jugador lo ve en su panel y en el chat.</p>
+        <p><label>Quién le enseña <input name="maestro" maxlength="120" placeholder="Nombre del maestro o del aprendiz"></label> <button type="button" data-action="etapaMas" ${etapaDe(e) >= ETAPA_MAX ? "disabled" : ""}><i class="fa-solid fa-unlock"></i> Abrir la siguiente etapa</button> <button type="button" data-action="etapaMenos" ${etapaDe(e) <= 1 ? "disabled" : ""}>Volver una etapa</button></p>
+        <table class="ecos-tabla">${ETAPAS.filter(x => x.n > 0).map(x => `<tr${x.n === etapaDe(e) ? ' class="activa"' : ""}><th>${x.n} · ${x.nombre}</th><td>${escH(x.texto)}</td></tr>`).join("")}</table>
+        ${(e.maestros ?? []).length ? `<p class="ecos-nota">Registro: ${(e.maestros ?? []).map(m => `${datosEtapa(m.etapa).nombre}${m.quien ? ` (${escH(m.quien)})` : ""}`).join(" · ")}</p>` : ""}`)}
+      ${sec("Naturaleza secreta", `<p>Modo: <select name="natModo">${opciones(Object.entries(MODOS_NATURALEZA), modoNaturaleza(e))}</select> <button type="button" data-action="natModo">Guardar modo</button></p>
+        <p>Primera naturaleza ${natsDe(a).size ? `ya descubierta: <b>${[...natsDe(a)].map(n => NATS[n] ?? n).join(", ")}</b>` : `oculta: <select name="ocultaPrimera">${opciones(Object.entries(NATS), ocultaPrimeraDe(a) ?? "")}</select> <button type="button" data-action="ocultaPrimera">Fijar en secreto</button>`}</p>
+        <p>Se descubre entrenando: ${DESCUBRIR.primera.dias} días y Control CD ${DESCUBRIR.primera.cd} (${DESCUBRIR.primera.trazos} Trazos) desde nivel 5 o nivel 3 con Entrenado en Forma, y en etapa Practicante o más. La segunda: ${DESCUBRIR.segunda.dias} días, CD ${DESCUBRIR.segunda.cd}, ${DESCUBRIR.segunda.trazos} Trazos, desde nivel 5.</p>
+        <p><button type="button" data-action="revelarNat">Revelar ya, sin entrenamiento</button>${estado(a)?.entrenoNat ? ` <button type="button" data-action="terminarEntreno">Dar por terminados los días</button>` : ""}</p>`)}
       ${sec("Naturalezas y linaje", `<p>Oculta: <select name="oculta">${opciones(Object.entries(NATS), ocultaDe(a))}</select> <button type="button" data-action="oculta">Cambiar</button> ${e.descubierta ? "(ya la descubrió)" : ""} · probadas sin suerte: ${(e.probadas ?? []).map(n => NATS[n]).join(", ") || "ninguna"}</p>
         <p>Dar una naturaleza: <select name="natsExtra">${opciones(Object.entries(NATS).filter(([k]) => !natsDe(a).has(k)), "")}</select> <button type="button" data-action="lista" data-campo="natsExtra" data-texto="naturaleza">Dar</button>
           · combinación: <select name="combos">${opciones(Object.entries(D.combos).filter(([k]) => !combosDe(a).has(k)).map(([k, v]) => [k, `${v.nombre} (${v.de.map(n => NATS[n]).join(" + ")})`]), "")}</select> <button type="button" data-action="lista" data-campo="combos" data-texto="combinación">Dar</button></p>
@@ -3982,7 +4154,7 @@ Hooks.once("ready", async () => {
   const api = (game.modules.get(MOD).api ??= {});
   api.verbe = { ofertasActor, corregirGastoSimple, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), usoRapido, despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
-    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
+    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)
       ? documento.setFlag(MOD, "metal", !!metal) : false };
   game.socket.on(`module.${MOD}`, d => { if (d?.capaV && !socketDefensa(d)) manejar(d); });
@@ -4122,4 +4294,4 @@ Hooks.on("updateCombat", (combat, cambios) => {
 });
 
 /** Para las pruebas fuera de Foundry. */
-export const _prueba = { aplicarDesventaja, defenderAtaque, despuesDeUsar, ponerDespertar, ponerOjo, alQuitarEfecto, inicioDeTurno, manejar, crearAprobada, asegurarRasgos, choqueAutomatico, choqueNativo, elegirContraTecnica, pagarContraTecnica, opcionesChoque, excluirBlanco, enfrentamientoAutomatico };
+export const _prueba = { revolver, resolverEntreno, iniciarEntrenoNaturaleza, aplicarDesventaja, defenderAtaque, despuesDeUsar, ponerDespertar, ponerOjo, alQuitarEfecto, inicioDeTurno, manejar, crearAprobada, asegurarRasgos, choqueAutomatico, choqueNativo, elegirContraTecnica, pagarContraTecnica, opcionesChoque, excluirBlanco, enfrentamientoAutomatico };
