@@ -128,7 +128,7 @@
 
 - [x] **1.8 · Botón devolver Verbe (solo DM)** (hecha: Dirección y tarjeta, con registro) (S · Dep.: —). Desde v3.4.0 existe una corrección parcial (scripts/mesa-resolucion.js: solo usos simples, solo GM principal, solo el último uso). Auditar su alcance, ponerla visible en Mesa Ecos y en el recibo del chat, y permitir una cantidad manual con registro para recursos complejos. Listo cuando el DM devuelve Verbe desde un botón visible, con registro.
 
-- [ ] **1.9 · R · Publicar v3.5.0** (S · Dep.: 1.1 a 1.8). Versión, CHANGELOG, pruebas, empaquetado y GitHub Release según AGENTS.md.
+- [x] **1.9 · R · Publicar v3.5.0** (publicada el 3-nov-2026: Release v3.5.0 con ZIP, module.json y actualizador) (S · Dep.: 1.1 a 1.8). Versión, CHANGELOG, pruebas, empaquetado y GitHub Release según AGENTS.md.
 
 ## Fase 2 · Reglas núcleo (publica v3.6.0)
 
@@ -293,3 +293,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 3-nov-2026 | 0.2, 0.3 | Claude | Línea base y guía del catálogo; decisiones 1–4, 7 y 8 respondidas | 3.4.1 (sin versión nueva) |
 | 3-nov-2026 | 1.1, 1.2 | Claude | Validador (860 técnicas, 0 errores, 0 avisos tras corregir 79) y plantillas convertidas a la escena | Sin publicar (3.5.0) |
 | 3-nov-2026 | 1.3–1.8 y pendientes de 2.7 | Claude | Editor del DM y capa de ediciones; ventaja, estados, moneda, devolver Verbe; descanso corto, naturaleza −1, defensas fuera de combate. Getsuga localizada (la borra el autor) | Sin publicar (3.5.0) |
+| 3-nov-2026 | 1.9 | Claude | Release v3.5.0 publicado por el flujo (ZIP, module.json, Ecos-Actualizar.ps1, .bat) | 3.5.0 |
