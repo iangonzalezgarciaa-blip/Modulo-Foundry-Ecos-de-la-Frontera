@@ -1,4 +1,4 @@
-# Cobertura declarada del catálogo 3.10.0
+# Cobertura declarada del catálogo 3.11.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
@@ -493,7 +493,7 @@ El catálogo reúne **912 técnicas y 222 dotes**.
 | `quietud-esfera-sabia-mayor` | Gran esfera del equilibrio | 6 | quietud | attack | 0 |
 | `quietud-esfera-sabia-colosal` | Esfera colosal del equilibrio | 8 | quietud | attack | 0 |
 | `quietud-estrella-sabia` | Estrella del viento sabio | 8 | quietud | save | 0 |
-| `quietud-seis-caminos` | Quietud de los sendas del firmamento | 10 | quietud | utility | 1 |
+| `quietud-seis-caminos` | Quietud de las sendas del firmamento | 10 | quietud | utility | 1 |
 | `quietud-estrella-colosal` | Estrella que cubre el cielo | 11 | quietud | save | 0 |
 | `rastro-ocultar-firma` | Silencio de la firma | 1 | rastro | utility | 1 |
 | `rastro-firma-aliados` | Reconocer al compañero | 2 | rastro | utility | 0 |
@@ -604,7 +604,7 @@ El catálogo reúne **912 técnicas y 222 dotes**.
 | `mirada-aster-magatama` | Joyas del guardián | 7 | mirada | save | 0 |
 | `mirada-aster-arco` | Arco del guardián | 6 | mirada | attack | 0 |
 | `mirada-aster-indra` | Flecha del cielo de Arvem | 11 | mirada | save | 0 |
-| `mirada-orbe-abrir` | Abrir el Ojo de los sendas del firmamento | 0 | mirada | utility | 0 |
+| `mirada-orbe-abrir` | Abrir el Ojo de las sendas del firmamento | 0 | mirada | utility | 0 |
 | `mirada-orbe-atraer` | Mano de la atracción | 4 | mirada | save | 0 |
 | `mirada-orbe-repeler` | Círculo de repulsión | 5 | mirada | save | 0 |
 | `mirada-orbe-absorber` | Palmas del sendero hambriento | 6 | mirada | utility | 0 |
