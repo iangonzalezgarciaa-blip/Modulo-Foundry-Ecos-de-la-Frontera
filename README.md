@@ -1,4 +1,4 @@
-# Ecos de la frontera (v3.12.0)
+# Ecos de la frontera (v3.13.0)
 
 **Ecos de la frontera** es un módulo para **Foundry VTT** que añade a tus partidas de **Dungeons & Dragons 5e** y **Pathfinder 2 ed** las reglas de la casa de la campaña del mismo nombre. Está en español.
 
@@ -10,7 +10,7 @@ No hace falta saber programar para usarlo. Se instala desde Foundry, como cualqu
 - **El Verbe.** Un sistema de poderes propio con más de 900 técnicas, dotes, ramas, naturalezas (fuego, agua, viento, tierra, rayo) y linajes. Cada jugador lo maneja desde un panel con filtros, favoritas y un «así se resuelve, paso a paso» con los números de su ficha.
 - **Lo que cualquiera puede intentar.** Todas las hojas traen Golpe sin armas y acciones para las seis características:
   - Fuerza: Presa, Empujón.
-  - Destreza: Zancadilla, Desarmar, Esquivar, Esconderse.
+  - Destreza: Zancadilla, Desarmar, Esquivar, Esconderse, Interponerse.
   - Constitución: Aguantar, Sacudirse.
   - Inteligencia: Evaluar al enemigo, Planear.
   - Sabiduría: Buscar, Leer al rival.
@@ -18,6 +18,7 @@ No hace falta saber programar para usarlo. Se instala desde Foundry, como cualqu
 
   Las dificultades salen de tus propias estadísticas.
 - **El 20 y el 1.** Un 20 natural ya no duplica el daño. A cambio, el 20 y el 1 traen consecuencias con sabor en ataques, salvaciones y pruebas, para todos por igual.
+- **Combate táctico.** Diez reglas que premian el engaño, el plan, rodear al enemigo y conocerlo: Desprevenido, Rodear, Plan maestro, moral de los PNJ, secuaces, técnicas combinadas, Interponerse, terreno que se usa y Evaluar que te dice lo que ganaste. Valen para todos, con bandos para peleas de tres o más grupos, y el Director las enciende o apaga en la Mesa.
 - **Trabajo y economía.** Oficios por horas, encargos, prestigio, un mercadillo con tiendas y la Moneda Antigua (que también se cambia por Trazos o en el mercader extraño).
 - **Mesa Ecos.** Herramientas del Director de Juego en una sola ventana: estado del grupo, tablas, taller de PNJ, diagnóstico y música de YouTube sincronizada para todos.
 - **Diarios.** Guías para los jugadores y compendios para el Director, que el módulo crea y mantiene al día. Lo que es secreto solo lo ve el Director.

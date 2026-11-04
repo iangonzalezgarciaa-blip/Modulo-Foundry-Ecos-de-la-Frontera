@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.12.0
+# Preparar la primera prueba real · 3.13.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -237,6 +237,12 @@ Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el pan
 ### 38. 3.12 · Acciones de cualquiera, el 20 y el 1, armas y mercader
 
 Abre la hoja de un PJ: debe tener Golpe sin armas y «Acciones de Fuerza… de Carisma». Usa Presa con un enemigo marcado: salva FUE o DES y, si falla, queda Agarrado. Saca un 20 en un ataque: el daño no se duplica y sale la tabla del 20. Usa una técnica de Cuerpo: pregunta «¿Con qué atacas?». Con espada y escudo, una técnica con Gestos avisa de las manos. En Mesa Ecos → Control, sortea el mercader extraño y compra algo con Monedas Antiguas. En el panel del Verbe, «Cambiar Monedas» da 1 Trazo por 2 Monedas.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 39. 3.13 · Combate táctico y diarios ordenados
+
+Recarga el mundo como DM. En «Reglas de la casa» debe aparecer «14 · Combate táctico», y los diarios «Ecos · …» del DM que estaban sueltos deben estar en «Mesa, tramas y personajes [DM]», numerados. En Mesa Ecos → Control, «Combate táctico» debe estar encendido. Pon a un PJ y un aliado en lados opuestos de un enemigo: el ataque cuerpo a cuerpo del PJ suma +2 «Desprevenido». Usa Fintar: si el enemigo falla, queda Desprevenido. Marca a un PNJ como secuaz y hazle 1 de daño: cae a 0 PG. Marca a un líder enemigo y déjalo a 0 PG: el DM recibe en privado las salvaciones de moral. Usa Evaluar al enemigo con un blanco marcado: llega un susurro con lo que ganaste.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 

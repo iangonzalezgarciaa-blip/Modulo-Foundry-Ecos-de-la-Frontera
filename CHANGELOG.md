@@ -1,5 +1,23 @@
 # Historial de cambios
 
+## 3.13.0 — 2026-11-04
+
+- Combate táctico: diez reglas de la casa para todos los PJ y PNJ, con condiciones cerradas y un resultado fijo. Se encienden y apagan todas a la vez o una a una en Mesa Ecos → Control. Regla escrita para todos en «Reglas de la casa · 14 · Combate táctico» y detalle en docs/COMBATE_TACTICO.md.
+  - Desprevenido: un solo estado, +2 a todo ataque contra quien lo tenga, sin acumularse. Lo ponen Fintar y Leer al rival (ya no bajan la CA).
+  - Rodear: con un aliado justo en el lado opuesto del blanco, tu ataque cuerpo a cuerpo es contra un Desprevenido.
+  - El engaño elige el golpe: si fallan tu Distraer o tu Fintar por 5 o más, tu siguiente 20 contra ellos elige el efecto en vez de sortearlo.
+  - Plan maestro: con 20 o más en Planear, al empezar el combate eliges a un aliado que actúa primero.
+  - Moral de los PNJ: si cae su líder o la mitad de su bando, salvan Sabiduría CD 10 o quedan Desmoralizados (huyen o se rinden). El módulo tira y avisa al DM.
+  - Secuaces: el PNJ marcado cae con cualquier daño.
+  - Técnicas combinadas: dos aliados con técnicas del Verbe de naturalezas que combinan, en turnos seguidos, sobre el mismo blanco: 2d6 más del tipo de la combinación y sus estados.
+  - Interponerse: reacción nueva en «Acciones de Destreza» para proteger a un aliado a 1,5 m.
+  - Terreno vivo: el DM nombra regiones de la escena «Terreno vivo: lámpara», «…: aceite», «…: cornisa»; Aprovechar el terreno las descubre y se usan con un botón.
+  - Evaluar automático: Evaluar al enemigo con un blanco marcado le susurra al jugador lo que ganó, en un orden fijo.
+- Bandos: cada token es de un bando. Sin más, sale de su disposición (amistoso, neutral, hostil). Para tres o más bandos, el DM crea bandos con nombre y los asigna a los tokens seleccionados; también marca líderes, secuaces y criaturas únicas.
+- Diarios ordenados: los diarios del DM que crea Ecos y estaban sueltos pasan a «Mesa, tramas y personajes [DM]», numerados a continuación de los que hay. No toca los que ya están en una carpeta ni renombra los que renombraste. «sequencerDatabase» va a «Módulos (no tocar)».
+- PF2e: borrador de los dioses del panteón como deidades de PF2e en el mundo del autor (diario del DM, no en el repositorio).
+- Diagnóstico: un caso real nuevo (39 en total).
+
 ## 3.12.0 — 2026-11-04
 
 - Acciones de cualquiera: todas las hojas reciben «Golpe sin armas» y seis rasgos, «Acciones de Fuerza» a «de Carisma», con 31 acciones que cualquiera puede intentar dentro y fuera del combate. Entre ellas: Presa, Empujón, Zancadilla, Desarmar, Esquivar, Ponerse a cubierto, Voltereta, Birlar, Polvo en los ojos, Apuntar, Esconderse, Aguantar, Sacudirse, Evaluar al enemigo, Planear, Aprovechar el terreno, Buscar, Leer al rival, Ayudar, Fintar, Intimidar, Provocar, Distraer, Arengar y Parlamentar. Las CD salen de la característica de quien actúa (8 + modificador + competencia). Si la clase trae un golpe sin armas mejor (monje, pugilista), manda el de la clase. Llegan a los PJ al cargar el mundo, a toda hoja nueva o importada y a los PNJ al entrar en escena o en combate; la Mesa tiene un botón para todas a la vez. Regla escrita para todos en «Reglas de la casa · 12 · Lo que cualquiera puede intentar».

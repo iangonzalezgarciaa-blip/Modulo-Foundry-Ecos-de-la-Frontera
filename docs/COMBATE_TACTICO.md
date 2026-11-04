@@ -1,42 +1,106 @@
-# Combates más tácticos y el lore en PF2e (propuestas, 4-nov-2026)
+# Combate táctico (versión 3.13)
 
-*El autor pidió combates más dinámicos y menos matemáticos, que premien el engaño, el plan y conocer al enemigo, y empezar a preparar el mundo para PF2e. La primera parte ya está hecha en 3.12. La segunda son propuestas: ninguna se programa sin su visto bueno.*
+*Reglas de la casa para que el combate premie el engaño, el plan, moverse bien y conocer al enemigo. El autor aprobó las diez el 4-nov-2026 con dos condiciones: cada regla con condiciones cerradas y un resultado concreto, y todo bajo un interruptor global que vale para todos los PJ y PNJ, con bandos para cuando hay tres o más grupos.*
 
-## Lo que ya trae 3.12
+Los jugadores tienen la misma regla escrita en el mundo, en **Reglas de la casa · 14 · Combate táctico**. La página se crea sola al cargar el mundo y no se pisa si el DM la edita.
 
-| Idea del autor | Cómo queda |
+## Encender y apagar
+
+En **Mesa Ecos → Control → Combate táctico**:
+
+- **Encendido** apaga o enciende todo a la vez.
+- Debajo hay una casilla por regla. Una regla apagada no hace nada, aunque el resto siga encendido.
+- Por defecto, todo encendido.
+
+Las acciones de las hojas (Fintar, Leer al rival, Interponerse, Planear, Evaluar al enemigo, Aprovechar el terreno) siguen en las hojas aunque el combate táctico esté apagado. Lo que se apaga es lo que el módulo hace solo con ellas.
+
+## Bandos
+
+Cada token pertenece a un bando. «Aliado» quiere decir del mismo bando, y «enemigo», de cualquier otro.
+
+| Disposición del token | Bando por defecto |
 |---|---|
-| Engañar en combate («mezclarse entre los clones para clavarle la técnica») | **Distraer** (Carisma): si falla la salvación de Sabiduría, tu próximo ataque contra él tiene ventaja. Con clones, ilusiones o humo, salva con desventaja. **Fintar** le baja 2 la CA para tu ataque de este turno. |
-| Premiar la táctica y el plan | **Planear** (Inteligencia, Investigación CD 15): tú y tantos aliados como tu INT tenéis +1d4 una vez, si seguís el plan. **Aprovechar el terreno** convierte una lámpara, una cuesta o un barril en +2 o en desventaja para su salvación. |
-| Saber del enemigo (como «Recordar conocimiento» de PF2e) | **Evaluar al enemigo** (Inteligencia): CD 10 + VD. Te da su salvación más débil, una resistencia o qué hace mejor, y una cosa más por cada 5 que pases. **Leer al rival** (Sabiduría) te dice qué hará en su turno. Ya existía «Leer el Verbe» para medir la reserva de otro por tramos. |
-| Que cualquiera pueda intentar cosas | Presa, Empujón, Zancadilla, Desarmar, Esquivar, Ponerse a cubierto, Voltereta, Birlar, Polvo en los ojos, Apuntar, Esconderse, Aguantar, Sacudirse, Resistir, Buscar, Ayudar, Serenarse, Intimidar, Provocar, Arengar y Parlamentar, en todas las hojas. Las CD salen de tus estadísticas. |
-| Éxitos y fracasos que importen | **El 20 y el 1**: el 20 ya no duplica el daño. Saca un efecto como derribar, desarmar, abrir una herida o romper la guardia. El 1 saca uno como caer, perder el arma o darle la espalda. Igual en salvaciones y pruebas. |
+| Amistoso | Aliados |
+| Neutral | Neutrales |
+| Hostil | Enemigos |
+| Secreto | Secretos |
 
-## Propuestas para aprobar
+**Tres o más bandos** (por ejemplo, el grupo contra unos bandidos contra la guardia):
 
-Cada una dice qué cambia en la mesa y cuánto trabajo es (P = poco, M = medio).
+1. En la Mesa, escribe el nombre en **Nuevo bando** y pulsa **Crear bando**.
+2. Selecciona en la escena los tokens de ese bando.
+3. Elige el bando en la lista y pulsa **Asignar a los seleccionados**.
 
-1. **Desprevenido, un solo estado (P).** Fintar, Leer al rival, rodear a alguien o atacarle por la espalda le ponen el mismo estado: −2 a la CA, sin sumarse. Es el «off-guard» de PF2e. Así hay un solo número que recordar.
-2. **Rodear (P).** Si un aliado está justo en el lado opuesto del enemigo, este queda Desprevenido contra los dos. Es más suave que la ventaja del flanqueo opcional de 5e y premia moverse.
-3. **El engaño elige el golpe (P).** Si tu Distraer o tu Fintar sale por 5 o más, tu siguiente impacto no tira en la tabla del 20: eliges tú el efecto. Engañar bien rinde más que pegar fuerte.
-4. **Plan maestro (M).** Un plan con tres condiciones que se cumplen en la mesa (el DM las anota al planear) da al grupo una «jugada preparada»: un aliado actúa antes en la iniciativa o hace una acción adicional ese turno. El que planeó elige quién.
-5. **Moral de los PNJ (M).** Cuando un grupo enemigo pierde a su líder o a la mitad de los suyos, la Mesa Ecos le pide al DM una salvación de Sabiduría CD 10. Si la falla, huye o se rinde. Las peleas acaban por lógica, no por agotar PG.
-6. **Secuaces (P).** Los PNJ marcados como secuaces caen con un golpe que los alcance. Hay menos cuentas y más héroes contra multitudes.
-7. **Técnicas combinadas (M).** Dos personajes con Verbe que usan técnicas en turnos seguidos sobre el mismo blanco, con naturalezas que forman combinación (Fuego + Viento = Ceniza), suman el efecto de la combinación. Es el trabajo en equipo de la serie con las reglas que ya hay.
-8. **Interponerse (P).** Una reacción para todos: cuando atacan a un aliado a 1,5 m de ti, le das +2 a la CA. Si aun así impacta, el golpe es para ti.
-9. **Terreno vivo (M).** El DM marca en la escena (con las regiones de Foundry 14) cosas que se pueden usar: una lámpara, un barril de aceite, una cornisa. Con «Aprovechar el terreno» se descubren y se usan con un botón.
-10. **Evaluar automático (M).** Al usar «Evaluar al enemigo» con un blanco marcado, la Mesa le susurra al jugador lo que gane: salvación más débil, resistencias, vulnerabilidades. Respeta lo que «no tienes manera de saber».
+Un bando asignado manda sobre la disposición. Para devolver un token a su bando por disposición, asígnale Aliados, Enemigos o Neutrales.
 
-## Llevar el lore a PF2e
+Con los mismos tokens seleccionados, tres botones más:
 
-Un mundo de Foundry funciona con un solo sistema. Para jugar en PF2e en el mismo mundo de ficción hace falta un mundo PF2e aparte, con el mismo lore. Así se haría:
+- **Marcar o quitar líder**: para la moral.
+- **Marcar o quitar secuaz**: para los secuaces.
+- **Marcar o quitar «única»**: Evaluar contra ella cuesta 5 más.
 
-1. **Diarios (P).** Los diarios no dependen del sistema. Se copian a un compendio de un módulo local, solo en el PC del autor y nunca en el repositorio público (lleva secretos de campaña). Ese módulo se activa en el mundo PF2e. Entran Mundo 0 a 10, la Biblioteca, las Reglas de la casa y las Tramas.
-2. **Dioses (M).** Cada dios del panteón como «deidad» de PF2e: edictos, anatemas, dominios, arma predilecta y fuente divina. El borrador va a un diario del DM del mundo, no al repositorio, porque mezcla nombres verdaderos y secretos. Lo revisa el autor.
-3. **Pueblos (M).** Los pueblos de Mundo 4 se asignan a ascendencias y herencias de PF2e: thri-kreen y kree, gnomos de las Torres, enanos de las Moradas, dracónidos juramentados. Cuando falte una, se hace la ascendencia propia.
-4. **Reglas de la casa (con 5.2d).** Las páginas con cifras de dnd5e reciben su versión PF2e cuando el adaptador esté hecho: descansos, heridas, el Verbe y el 20 y el 1, que en PF2e se engancha a los críticos y fallos críticos.
-5. **Conjuros (4.2d).** Los 1 386 conjuros únicos de PF2e ya filtrados van al compendio `world.ecos-conjuros-pf2e`, por lotes.
+## Las diez reglas
 
-## Para decidir
+| # | Regla | Cuándo, exactamente | Qué pasa | Lo hace el módulo |
+|---|---|---|---|---|
+| 1 | **Desprevenido** | La criatura tiene el estado Desprevenido. Lo ponen Fintar (hasta el final del turno de quien fintó) y Leer al rival (hasta el final del siguiente turno de quien leyó), si falla la salvación. | Todo ataque contra ella suma +2. No se acumula: dos fuentes siguen siendo +2. | Suma el +2 en la tirada de ataque, con la etiqueta «Desprevenido». |
+| 2 | **Rodear** | Atacas cuerpo a cuerpo a una criatura a 1,5 m de ti. Un aliado tuyo, consciente y no incapacitado, también está a 1,5 m de ella. La línea entre el centro de tu casilla y el de la suya cruza su espacio por lados opuestos o por esquinas opuestas. | Está Desprevenida contra ese ataque: +2. No se suma al Desprevenido de Fintar. | Lo mide en la escena al atacar con un blanco marcado. |
+| 3 | **El engaño elige el golpe** | Fallas la salvación de Distraer o de Fintar por 5 o más: tu total es la CD − 5 o menos. | Si quien te engañó saca un 20 natural en un ataque contra ti antes del final de su siguiente turno, no se sortea el efecto del 20: lo elige él entre los ocho. | La tarjeta del 20 muestra ocho botones «Elegir» en vez del sorteo. |
+| 4 | **Plan maestro** | Sacas 20 o más en Planear (Investigación), y el combate empieza en la hora siguiente. | Al empezar el combate eliges a un aliado de tu bando. Su iniciativa pasa a ser la más alta + 1, así que actúa primero. El plan se gasta. | Al empezar el combate abre el diálogo a quien planeó y cambia la iniciativa. |
+| 5 | **Moral de los PNJ** | En un combate, un bando de PNJ pierde a su líder (marcado por el DM), o cae a 0 PG la mitad de los que empezaron. Cada motivo cuenta una vez por combate. | Cada PNJ de ese bando que sigue en pie salva Sabiduría CD 10. Si falla, queda **Desmoralizado**: en su turno usa Correr para alejarse de sus enemigos por la ruta más segura. Si no puede alejarse, se rinde: suelta lo que tiene en las manos y no ataca. Dura hasta el final del combate, o hasta que un aliado use una acción para Arengarlo. No afecta a no muertos, constructos, cienos ni a quien es inmune a Asustado. | Tira las salvaciones, pone el estado y le susurra el resultado al DM. El DM mueve a los que huyen. |
+| 6 | **Secuaces** | El DM marcó al PNJ como secuaz. | Cualquier daño lo deja a 0 PG. Si supera una salvación contra un efecto que hace la mitad, no recibe nada. | Lo aplica al recibir daño. |
+| 7 | **Técnicas combinadas** | Dos criaturas distintas del mismo bando dañan a la misma criatura con técnicas del Verbe de naturaleza Fuego, Agua, Viento, Tierra o Rayo. La segunda llega en el turno justo siguiente al de la primera. Sus naturalezas forman combinación. | La criatura recibe además 2d6 del tipo de la combinación y sus estados (tabla de abajo). | Lo detecta al aplicar el daño de la segunda técnica. |
+| 8 | **Interponerse** | Reacción. Una criatura que ves ataca a un aliado a 1,5 m de ti. No estás Incapacitado ni Agarrado, y tu velocidad no es 0. | El aliado tiene +2 a la CA contra ese ataque (estado Protegido, hasta el final de ese turno). Si aun así impacta, el daño lo recibes tú en vez de él. | Es una acción de la hoja («Acciones de Destreza»). Marca al aliado como blanco y úsala: le pone Protegido. Si el ataque impacta, el DM te aplica el daño a ti. |
+| 9 | **Terreno vivo** | El DM dibujó en la escena una región llamada «Terreno vivo: …». Sacas 12 o más en Aprovechar el terreno. | Te dice qué hay a 9 m o menos. Usarlo cuesta tu acción. Quien está dentro salva contra 8 + tu INT + tu competencia, y si falla recibe lo que diga el elemento (tabla de abajo). | Revela las regiones en el chat con un botón «Usarlo» y resuelve las salvaciones, el daño y los estados. |
+| 10 | **Evaluar automático** | Usas Evaluar al enemigo con un blanco marcado. | La CD es 10 + su VD, con +5 si tiene acciones legendarias o el DM la marcó como única. Si la superas, recibes en privado un dato, y uno más por cada 5 que pases. El orden es: su salvación más débil, sus resistencias e inmunidades, lo que le hace más daño, su salvación más fuerte y su CA. | Te susurra los datos. Lo que no ganaste no aparece. |
 
-Marca qué propuestas (1 a 10) quieres y si empiezo por los diarios (paso 1) del lore en PF2e.
+### Combinaciones (regla 7)
+
+| Naturalezas | Combinación | Daño extra | Estados |
+|---|---|---|---|
+| Fuego + Agua | Vapor | 2d6 fuego | Ardiendo |
+| Fuego + Viento | Ceniza | 2d6 fuego | Ardiendo |
+| Fuego + Tierra | Magma | 2d6 fuego | Ardiendo y Embarrado |
+| Fuego + Rayo | Destello | 2d6 radiante | Cargado |
+| Agua + Viento | Escarcha | 2d6 frío | Helado |
+| Agua + Tierra | Raíz | 2d6 perforante | Embarrado |
+| Agua + Rayo | Tormenta | 2d6 relámpago | Desequilibrado y Cargado |
+| Viento + Tierra | Arena | 2d6 contundente | Embarrado |
+| Tierra + Rayo | Hierro | 2d6 perforante | Cargado |
+| Viento + Rayo | No combinan | — | — |
+
+### Terreno vivo (regla 9)
+
+El nombre de la región decide qué es. Por ejemplo, «Terreno vivo: lámpara del techo» o «Terreno vivo: barril de aceite».
+
+| Si el nombre dice | Es | Salvación | Si falla |
+|---|---|---|---|
+| lámpara, candelabro, antorcha, brasero | Lámpara o fuego | DES | 2d6 fuego y Ardiendo |
+| aceite, grasa, hielo, barro | Suelo resbaladizo | DES | Derribado |
+| cornisa, borde, precipicio, barandilla | Borde | FUE | Cae: 2d6 contundente y Derribado abajo |
+| escombro, techo, viga, estantería, derrumbe | Derrumbe | DES | 3d6 contundente y Apresado |
+| cuerda, red, cadena, telar | Cuerdas | DES | Apresado |
+| humo, polvo, harina, ceniza | Humo o polvo | CON | Cegado hasta el final de su próximo turno |
+| agua, charco, río, cubo | Agua | Ninguna | Empapado |
+| cualquier otra cosa | Lo que diga el DM | — | Lo describe el DM |
+
+## Ordenar los diarios
+
+Al cargar el mundo, el módulo junta los diarios del DM que crea él y que estén sueltos: panteón, compendio del Verbe, archivo de reliquias, memoria de Nimerios, cuaderno de sesión y pruebas de mesa. Los manda a la carpeta **Mesa, tramas y personajes [DM]**, numerados a continuación de los que ya tiene. Si esa carpeta no existe, crea **Ecos (solo DM)**.
+
+- Solo renombra los que aún tienen el nombre de fábrica («Ecos · …»). Si renombraste uno, conserva tu nombre.
+- Nunca mueve un diario que ya está en una carpeta.
+- «sequencerDatabase» va a **Módulos (no tocar)**, si esa carpeta existe.
+- No cambia los permisos.
+
+## El lore en PF2e
+
+Un mundo de Foundry funciona con un solo sistema, así que el mundo PF2e será un mundo aparte con el mismo lore.
+
+| Paso | Estado |
+|---|---|
+| Dioses: cada dios del panteón como deidad de PF2e (edictos, anatemas, atributo, fuente divina, santificación, habilidad, arma, dominios) | Borrador escrito en el mundo del autor, en **Mundo 1 · 27 · Los dioses en PF2e (borrador)**, solo DM. No va en el repositorio porque mezcla secretos de campaña. Espera la revisión del autor. |
+| Diarios: Mundo 0 a 10, la Biblioteca, las Reglas de la casa y las Tramas en un compendio de un módulo local, solo en el PC del autor | Siguiente paso. Nunca en el repositorio público. |
+| Pueblos como ascendencias y herencias de PF2e | Pendiente. |
+| Reglas de la casa con cifras de PF2e | Con el adaptador (5.2d). |
+| Conjuros de PF2e al compendio `world.ecos-conjuros-pf2e` | Con la tarea 4.2d. |

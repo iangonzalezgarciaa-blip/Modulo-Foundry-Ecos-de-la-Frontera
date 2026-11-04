@@ -12,7 +12,8 @@
 import { cambio } from "./compat.js";
 
 const MOD = "ecos-frontera";
-export const VERSION_ACCIONES = 1;
+export const VERSION_ACCIONES = 2;
+const DESPREVENIDO = "ecosDesprevenido";
 const S = "systems/dnd5e/icons/svg/";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const ACT = { action: "Acción", bonus: "Acción adicional", reaction: "Reacción", special: "Durante tu movimiento o fuera de combate" };
@@ -70,6 +71,9 @@ export const ACCIONES = [
       texto: "Arena, ceniza o sal a la cara. Si falla, queda Cegado hasta el final de su próximo turno. Una vez por combate contra la misma criatura: después ya se cuida. Se quita con «Sacudirse»." },
     { id: "apuntar", nombre: "Apuntar", act: "bonus", tipo: "utility", efecto: { nombre: "Apuntando", img: `${S}abilities/dexterity.svg`, cambios: [["system.bonuses.rwak.attack", "add", "2"]] }, pf2e: null,
       texto: "Solo si no te has movido este turno: +2 a tus ataques a distancia hasta el final del turno. Después tu velocidad es 0 hasta el final del turno." },
+    { id: "interponerse", nombre: "Interponerse", act: "reaction", tipo: "utility", alcance: 5,
+      efecto: { nombre: "Protegido", img: "systems/dnd5e/icons/svg/checked-shield.svg", cambios: [["system.attributes.ac.bonus", "add", "2"]], turnos: 1 }, pf2e: null,
+      texto: "Cuando una criatura que ves ataca a un aliado que está a 1,5 m de ti: el aliado tiene +2 a la CA contra ese ataque (pon este efecto en él). Si aun así impacta, el daño lo recibes tú en vez de él. No puedes si estás Incapacitado, Agarrado o con velocidad 0." },
     { id: "esconderse", nombre: "Esconderse", act: "action", tipo: "check", pericias: ["ste"], cdFija: 15, pf2e: "Hide / Sneak",
       texto: "Fuera de la vista y con algo que te tape: Sigilo CD 15. Si lo logras, ponte el estado Escondido: los demás te buscan con su Percepción contra tu tirada." }
   ] },
@@ -96,8 +100,8 @@ export const ACCIONES = [
     { id: "buscar", nombre: "Buscar", act: "action", tipo: "check", pericias: ["prc", "inv"], pf2e: "Seek",
       texto: "Buscas a alguien escondido (contra su Sigilo) o algo oculto: una trampa, una puerta, una huella." },
     { id: "leer", nombre: "Leer al rival", act: "action", tipo: "save", salv: ["cha"], cd: "wis", alcance: 30,
-      efecto: { nombre: "Leído", img: `${S}abilities/wisdom.svg`, cambios: [["system.attributes.ac.bonus", "add", "-2"]] }, pf2e: null,
-      texto: "Le miras los hombros, los pies, la respiración. Si falla, hasta el final de tu siguiente turno tiene −2 a la CA y el DM te dice qué piensa hacer en su próximo turno." },
+      efecto: { nombre: "Desprevenido", img: "systems/dnd5e/icons/svg/statuses/surprised.svg", statuses: [DESPREVENIDO] }, pf2e: null,
+      texto: "Le miras los hombros, los pies, la respiración. Si falla, queda Desprevenido hasta el final de tu siguiente turno (todo ataque contra él suma +2) y el DM te dice qué piensa hacer en su próximo turno." },
     { id: "ayudar", nombre: "Ayudar", act: "action", tipo: "utility", alcance: 5, pf2e: "Aid",
       texto: "Das ventaja al próximo ataque de un aliado contra una criatura a 1,5 m de ti, o a su próxima prueba si sabes ayudar con eso. Antes de tu siguiente turno." },
     { id: "serenarse", nombre: "Serenarse", act: "action", tipo: "check", car: "wis", pf2e: null,
@@ -105,8 +109,8 @@ export const ACCIONES = [
   ] },
   { car: "cha", acciones: [
     { id: "fintar", nombre: "Fintar", act: "bonus", tipo: "save", salv: ["wis"], cd: "cha", alcance: 5,
-      efecto: { nombre: "Engañado", img: `${S}abilities/charisma.svg`, cambios: [["system.attributes.ac.bonus", "add", "-2"]], turnos: 1 }, pf2e: "Feint",
-      texto: "Un amago antes de golpear. Si falla, tiene −2 a la CA hasta el final de tu turno." },
+      efecto: { nombre: "Desprevenido", img: "systems/dnd5e/icons/svg/statuses/surprised.svg", statuses: [DESPREVENIDO], turnos: 1 }, pf2e: "Feint",
+      texto: "Un amago antes de golpear. Si falla, queda Desprevenido hasta el final de tu turno: todo ataque contra él suma +2. Si falla por 5 o más, tu próximo 20 contra él elige el efecto." },
     { id: "intimidar", nombre: "Intimidar", act: "action", tipo: "save", salv: ["wis"], cd: "cha", alcance: 30,
       efecto: { nombre: "Intimidado", statuses: ["frightened"], img: `${S}statuses/frightened.svg` }, pf2e: "Demoralize",
       texto: "Una amenaza que se cree. Si falla, queda Asustado de ti hasta el final de su próximo turno. Si la supera, no vuelve a caer en todo el combate." },

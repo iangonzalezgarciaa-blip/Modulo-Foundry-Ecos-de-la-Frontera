@@ -29,6 +29,8 @@ import "./azar.js";
 import "./acciones-comunes.js";
 import "./tecnica-arma.js";
 import "./mercader.js";
+import "./combate-tactico.js";
+import "./ordenar-diarios.js";
 import "./nombres-mundo.js";
 import { motivoPausaMoneda } from "./mesa-control.js";
 import { crearCola } from "./verbe-core.js";

@@ -193,6 +193,7 @@ En dnd5e, Ecos las pone en cada hoja. En PF2e casi todas ya existen como accione
 | Birlar | Steal / Palm an Object |
 | Polvo en los ojos | — (acción propia de Ecos) |
 | Apuntar | — (acción propia de Ecos) |
+| Interponerse | — (acción propia de Ecos) |
 | Esconderse | Hide / Sneak |
 | Aguantar | — (acción propia de Ecos) |
 | Sacudirse | — (acción propia de Ecos) |
@@ -210,3 +211,5 @@ En dnd5e, Ecos las pone en cada hoja. En PF2e casi todas ya existen como accione
 | Distraer | Create a Diversion |
 | Arengar | — (acción propia de Ecos) |
 | Parlamentar | — (acción propia de Ecos) |
+
+El estado Desprevenido del combate táctico (3.13) es el *off-guard* de PF2e, y Rodear es su *flanking*. En PF2e se usan los del sistema; las otras ocho reglas tácticas se adaptan con 5.2d.

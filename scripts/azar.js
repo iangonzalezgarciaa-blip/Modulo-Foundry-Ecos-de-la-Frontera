@@ -1,5 +1,6 @@
 import {dadoNatural,tablaAzar,tablaAzarGuia,CONTEXTOS_AZAR,REGLA_AZAR} from './azar-core.js';
 import {paginaReglas} from './acciones-comunes.js';
+import {regla} from './combate-tactico.js';
 import {infoTirada,cambio,objetivosMensaje} from './compat.js';
 const MOD='ecos-frontera',locks=new Map();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -34,18 +35,26 @@ export async function proponerAzar(m){
   const fila=tablaAzar(contexto,natural,nivel(actor))[indice-1];
   const datos={actorUuid:actor.uuid,contexto,natural,indice,nivel:nivel(actor),estado:'pendiente',combate:combate?.id??null,turno,creado:ahora,origen:m.id,
    objetivo:objetivosMensaje(m)[0]?.uuid??null};
+  // 3.13 · El engaño elige el golpe: si el blanco cayó en su Distraer o Fintar por 5 o más, el 20 no se sortea.
+  if(contexto==='ataque'&&natural===20&&datos.objetivo&&regla('engano')){
+   const blanco=await fromUuid(datos.objetivo),f=blanco?.getFlag?.(MOD,'engano'),c=game.combat;
+   const vigente=f?.autor===actor.uuid&&(!f.hasta||!c?.started||c.round<f.hasta.ronda||(c.round===f.hasta.ronda&&c.turn<=f.hasta.turno));
+   if(vigente){datos.elegir=true;await blanco.unsetFlag(MOD,'engano');}
+  }
   const whisper=arr(m.whisper).map(x=>typeof x==='string'?x:x.id);
+  const opciones=datos.elegir?`<p><b>Engaño:</b> ${esc(actor.name)} elige el efecto.</p><ol>${tablaAzar(contexto,natural,nivel(actor)).map(f=>`<li><b>${esc(f.nombre)}</b>: ${esc(f.texto)} <button type="button" data-ecos-azar="aprobar" data-fila="${f.indice}">Elegir</button></li>`).join('')}</ol>`:`<p><b>${indice}. ${esc(fila.nombre)}</b> · escala de nivel ${datos.nivel}</p><p>${esc(fila.texto)}</p>`;
   await ChatMessage.create({speaker:m.speaker,whisper,blind:!!m.blind,
-   content:`<section class="ecos-azar"><h3>${natural===1?'Contratiempo':'Oportunidad'} · ${esc(actor.name)} · ${natural} natural</h3><p><b>${indice}. ${esc(fila.nombre)}</b> · escala de nivel ${datos.nivel}</p><p>${esc(fila.texto)}</p><p>Propuesta pendiente del DM. Conserva el resultado normal de la tirada. No se acumula con otro efecto de esta tabla.</p><button type="button" data-ecos-azar="aprobar">Aprobar y registrar</button> <button type="button" data-ecos-azar="descartar">Descartar</button></section>`,flags:{[MOD]:{azar:datos}}});
+   content:`<section class="ecos-azar"><h3>${natural===1?'Contratiempo':'Oportunidad'} · ${esc(actor.name)} · ${natural} natural</h3>${opciones}<p>Propuesta pendiente del DM. Conserva el resultado normal de la tirada. No se acumula con otro efecto de esta tabla.</p>${datos.elegir?'':'<button type="button" data-ecos-azar="aprobar">Aprobar y registrar</button> '}<button type="button" data-ecos-azar="descartar">Descartar</button></section>`,flags:{[MOD]:{azar:datos}}});
   return datos;
  });locks.set(actor.uuid,trabajo);try{return await trabajo;}finally{if(locks.get(actor.uuid)===trabajo)locks.delete(actor.uuid);}
 }
-export async function resolverAzar(m,aprobar){
+export async function resolverAzar(m,aprobar,fila=null){
  if(!game.user.isGM||!gm())return false;const clave='mensaje:'+m.id;if(locks.has(clave))return false;locks.set(clave,true);
- try{return await resolverAzarInterno(m,aprobar);}finally{locks.delete(clave);}
+ try{return await resolverAzarInterno(m,aprobar,fila);}finally{locks.delete(clave);}
 }
-async function resolverAzarInterno(m,aprobar){
- const d=m.getFlag?.(MOD,'azar');if(!d||d.estado!=='pendiente')return false;
+async function resolverAzarInterno(m,aprobar,elegida=null){
+ const d0=m.getFlag?.(MOD,'azar');if(!d0||d0.estado!=='pendiente')return false;
+ const d=d0.elegir&&Number(elegida)>=1&&Number(elegida)<=8?{...d0,indice:Number(elegida)}:d0;
  const actor=await fromUuid(d.actorUuid);if(!actor)return false;
  const fila=tablaAzar(d.contexto,d.natural,d.nivel)[d.indice-1];if(!fila)return false;
  const combate=game.combat?.started?game.combat:null;
@@ -93,7 +102,7 @@ Hooks.once('init',()=>{
 });
 Hooks.on('createChatMessage',m=>{proponerAzar(m).catch(err=>console.error(`${MOD} | d20`,err));});
 function decorar(m,html){const d=m.getFlag?.(MOD,'azar');if(!d)return;const el=html instanceof HTMLElement?html:html?.[0];if(!el)return;
- for(const b of el.querySelectorAll('[data-ecos-azar]')){b.hidden=!game.user.isGM||!gm()||d.estado!=='pendiente';if(b.dataset.ecosEnlazado)continue;b.dataset.ecosEnlazado='si';b.addEventListener('click',async()=>{b.disabled=true;try{await resolverAzar(m,b.dataset.ecosAzar==='aprobar');}catch(err){ui.notifications.error('No se pudo aplicar el resultado; revisa la consola.');console.error(err);}finally{b.disabled=false;}});}
+ for(const b of el.querySelectorAll('[data-ecos-azar]')){b.hidden=!game.user.isGM||!gm()||d.estado!=='pendiente';if(b.dataset.ecosEnlazado)continue;b.dataset.ecosEnlazado='si';b.addEventListener('click',async()=>{b.disabled=true;try{await resolverAzar(m,b.dataset.ecosAzar==='aprobar',b.dataset.fila?Number(b.dataset.fila):null);}catch(err){ui.notifications.error('No se pudo aplicar el resultado; revisa la consola.');console.error(err);}finally{b.disabled=false;}});}
  if(d.estado!=='pendiente'&&!el.querySelector('.ecos-azar-estado')){const p=document.createElement('p');p.className='ecos-azar-estado';p.textContent=`Estado: ${d.estado}. Los ajustes de tiradas y consecuencias narrativas se resuelven en mesa.`;el.append(p);}
 }
 Hooks.on('renderChatMessageHTML',decorar);
