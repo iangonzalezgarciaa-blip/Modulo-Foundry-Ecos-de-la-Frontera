@@ -1,4 +1,9 @@
-# Ecos de la frontera · Reglas de la casa (v3.9.1)
+# Ecos de la frontera · Reglas de la casa (v3.10.0)
+
+**Novedades de 3.10:**
+- **Foundry 14 y dnd5e 6:** compatibilidad revisada con el mundo abierto; estado de cada módulo en docs/COMPATIBILIDAD_14.md.
+- **Mis técnicas:** filtros por tipo, favoritas y «Así se resuelve, paso a paso» con los números de tu ficha.
+- **Música:** botón para repetir la canción.
 
 **Instalar o actualizar:** en la pantalla de inicio de Foundry, Módulos → Instalar módulo y pega este manifiesto:
 

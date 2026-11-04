@@ -1,5 +1,16 @@
 # Historial de cambios
 
+## 3.10.0 — 2026-11-03
+
+- Foundry 14 y dnd5e 6: revisado con el mundo abierto (14.370 y 6.0.6). Ecos lee los mensajes nuevos del chat de dnd5e 6 (tipo y datos propios) y los viejos. Vuelven a funcionar la tabla del d20, la Moneda Antigua en salvaciones de muerte (ya no se ofrece dos veces), la magia que cura heridas sobre los objetivos de la tarjeta y la retirada de objetivos protegidos tras un choque. Las tiradas ocultas de PNJ usan el modo de mensaje nuevo. Efectos, borrados de claves y modos de tirada sin avisos de obsolescencia. Detalle en docs/COMPATIBILIDAD_14.md.
+- Estados del Verbe (Empapado, Ardiendo, Desequilibrado, Embarrado, Cargado, Canalizando, Helado) registrados donde dnd5e 6 los busca: vuelven a verse en el HUD del token. Desequilibrado y Embarrado dan su desventaja nativa de dnd5e aunque midi-qol esté apagado.
+- Taller de NPC: con dnd5e 6 escribe la CA fija y la velocidad en sus campos nuevos.
+- Correcciones: la Mesa Ecos daba un error al abrirse por primera vez; el editor de técnicas del DM no abría.
+- Mis técnicas, más interactivo: filtros por tipo (Ataque, Salvación, Curación, Apoyo, Defensa, Cargadas, Favoritas) con su cuenta, estrella para fijar favoritas arriba y en cada técnica las cifras de tu ficha (bono de ataque o CD y característica, daño o curación) y un «Así se resuelve, paso a paso» con lo que pagas, quién tira, qué pasa si impacta o falla, los estados que deja con su explicación, la duración y la concentración. También en Aprender.
+- Música: botón «Repetir» para que la canción vuelva a empezar para todos al terminar.
+- module.json: verificado con Foundry 14 y dnd5e 6.0.6 (sigue funcionando con Foundry 13 y dnd5e 5.2.5).
+- Diagnóstico: tres casos reales nuevos (36 en total).
+
 ## 3.9.1 — 2026-11-03
 
 - Actualización nativa de Foundry: el repositorio pasa a público por decisión del autor y `module.json` anuncia el manifiesto estable (`releases/latest/download/module.json`) y el ZIP de cada versión. Foundry avisa y actualiza el módulo solo, desde Módulos → Buscar actualizaciones. El actualizador de Windows (`Ecos-Actualizar.ps1` y su BAT) queda retirado: los Releases ya no lo adjuntan; las copias instaladas se detienen con su BAT («Detener»).

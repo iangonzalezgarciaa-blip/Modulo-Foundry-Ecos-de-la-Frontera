@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.9.1
+# Preparar la primera prueba real · 3.10.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -207,6 +207,24 @@ Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el pan
 ### 33. 3.9 · Música de YouTube
 
 En Mesa Ecos → Control, pega un enlace de YouTube y pulsa Reproducir: un jugador debe oírlo y ver el recuadro abajo a la izquierda. Pausa y Seguir: los dos en el mismo punto. El jugador recarga: retoma donde iba. Añade dos a la cola: al terminar uno suena el siguiente. El volumen y «Silenciar» del jugador solo cambian lo suyo.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 34. 3.10 · Foundry 14 y dnd5e 6 sin midi-qol
+
+Con un PJ despierto, usa una técnica de ataque marcando un enemigo: debe salir la ventana Normal / Ventaja / Desventaja y tirar el ataque; luego el daño desde la tarjeta. Usa una de salvación con área: debe pedirte colocar la región. Saca un 1 natural con un PJ: debe ofrecer la Moneda Antigua. En combate, una tirada de d20 debe proponer la tabla del d20.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 35. 3.10 · Mis técnicas: filtros, favoritas y paso a paso
+
+Abre el panel del Verbe → Mis técnicas. Pulsa los filtros por tipo (Ataque, Salvación…): la lista cambia y el número coincide. Marca una estrella: esa técnica sube arriba y sigue marcada al reabrir. Despliega «Así se resuelve, paso a paso»: debe mostrar el bono de ataque o la CD y el daño de la ficha.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 36. 3.10 · Repetir canción
+
+En Mesa Ecos → Control, pon un video corto y pulsa «Repetir: no» para que diga «sí». Al terminar, debe volver a empezar para todos a la vez. Desactívalo: al terminar debe pasar al siguiente de la cola.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 

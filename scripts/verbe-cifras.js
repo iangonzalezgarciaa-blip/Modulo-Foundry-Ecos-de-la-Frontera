@@ -27,7 +27,9 @@ const TEXTOS_ES = {
   unconscious: "Cae Derribado e Incapacitado; no se entera de nada. Un golpe a 1,5 m que lo alcance es crítico.",
   invisible: "No se le ve sin magia o sentidos especiales. Sus ataques tienen ventaja y los ataques contra él, desventaja."
 };
-const nombreCaracteristica = k => globalThis.CONFIG?.DND5E?.abilities?.[k]?.label ?? ABREV[k] ?? k;
+const CORTO = { str: "FUE", dex: "DES", con: "CON", int: "INT", wis: "SAB", cha: "CAR" };
+// Primero el castellano propio: dnd5e 6 todavía no trae traducción y sus etiquetas salen en inglés.
+const nombreCaracteristica = k => ABREV[k] ?? globalThis.CONFIG?.DND5E?.abilities?.[k]?.label ?? k;
 const nombreDano = k => TIPOS_DANO[k] ?? globalThis.CONFIG?.DND5E?.damageTypes?.[k]?.label ?? k ?? "";
 
 /** Clasificación para los filtros del panel. */
@@ -82,7 +84,7 @@ export function cifrasActividad(item, { estados = {} } = {}) {
   if (act.type === "save" || act.save) {
     const hab = lista(act.save?.ability).filter(Boolean);
     const cd = Number(act.save?.dc?.value) || Number(l.save?.match?.(/\d+/)?.[0]) || null;
-    if (hab.length || cd) c.salvacion = { habilidades: hab.map(nombreCaracteristica), cd };
+    if (hab.length || cd) c.salvacion = { habilidades: hab.map(nombreCaracteristica), cortas: hab.map(k => CORTO[k] ?? String(k).toUpperCase()), cd };
     const onSave = act.damage?.onSave;
     c.alSuperar = onSave === "half" ? "mitad" : onSave === "none" ? "nada" : onSave === "full" ? "todo" : null;
   }
@@ -103,7 +105,7 @@ export function cifrasActividad(item, { estados = {} } = {}) {
     const info = estados[st];
     const cfg = lista(globalThis.CONFIG?.statusEffects).find(s => s.id === st);
     const local = cfg?.name ? (globalThis.game?.i18n?.localize?.(cfg.name) ?? cfg.name) : null;
-    c.estados.push({ id: st, nombre: info?.name ?? (local && !/^[A-Z0-9]+\.[A-Za-z.]+$/.test(local) ? local : null) ?? ESTADOS_ES[st] ?? ef.name ?? st, texto: info?.texto ?? TEXTOS_ES[st] ?? "" });
+    c.estados.push({ id: st, nombre: info?.name ?? ESTADOS_ES[st] ?? (local && !/^[A-Z0-9]+\.[A-Za-z.]+$/.test(local) ? local : null) ?? ef.name ?? st, texto: info?.texto ?? TEXTOS_ES[st] ?? "" });
   }
   return c;
 }
@@ -137,7 +139,7 @@ export function chipsCifras(c) {
   if (!c) return [];
   const out = [];
   if (c.ataque) out.push(`Ataque ${c.ataque}`);
-  if (c.salvacion) out.push(`${c.salvacion.cd ? `CD ${c.salvacion.cd} ` : ""}${c.salvacion.habilidades.map(h => h.slice(0, 3).toUpperCase()).join("/")}`.trim());
+  if (c.salvacion) out.push(`${c.salvacion.cd ? `CD ${c.salvacion.cd} ` : ""}${(c.salvacion.cortas ?? c.salvacion.habilidades.map(h => h.slice(0, 3).toUpperCase())).join("/")}`.trim());
   if (c.dano.length) out.push(c.dano.join(" + "));
   if (c.curacion) out.push(`Cura ${c.curacion}`);
   if (c.concentracion) out.push("Concentración");

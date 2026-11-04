@@ -2,10 +2,10 @@
   "id": "ecos-frontera",
   "title": "Ecos de la frontera · Reglas de la casa",
   "description": "Herramientas de Nimerios para Foundry 13 y dnd5e: 912 técnicas, 222 dotes, 78 reliquias, creación verificada, recibos de resolución, búsqueda por intención, memoria de campaña, revisión de NPC, encuentros y diagnóstico.",
-  "version": "3.9.1",
+  "version": "3.10.0",
   "url": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera",
   "manifest": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera/releases/latest/download/module.json",
-  "download": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera/releases/download/v3.9.1/ecos-frontera-3.9.1.zip",
+  "download": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera/releases/download/v3.10.0/ecos-frontera-3.10.0.zip",
   "authors": [
     {
       "name": "Iangonz"
@@ -13,7 +13,7 @@
   ],
   "compatibility": {
     "minimum": "13",
-    "verified": "13"
+    "verified": "14"
   },
   "relationships": {
     "systems": [
@@ -21,7 +21,8 @@
         "id": "dnd5e",
         "type": "system",
         "compatibility": {
-          "minimum": "5.2.5"
+          "minimum": "5.2.5",
+          "verified": "6.0.6"
         }
       }
     ],
@@ -44,12 +45,12 @@
       {
         "id": "midi-qol",
         "type": "module",
-        "reason": "Combate automático (las Monedas Antiguas se integran con midi)"
+        "reason": "Combate automático con dnd5e 5 (todavía no declara soporte para dnd5e 6; sin él, Ecos usa el flujo nativo de dnd5e)"
       },
       {
         "id": "seasons-and-stars",
         "type": "module",
-        "reason": "Calendario de Arcegris y aviso de cada día"
+        "reason": "Calendario de Arcegris y aviso de cada día (solo Foundry 13; en Foundry 14 Ecos sigue llevando el día sin él)"
       },
       {
         "id": "monks-tokenbar",

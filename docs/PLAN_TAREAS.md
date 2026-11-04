@@ -299,3 +299,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 3-nov-2026 | 4.1–4.8 | Claude | Conjuros en el choque, 20 formas puras, 10 plantillas de NPC, iconos, reglas y macro de PF2e; borrador de lore 4.1a para aprobar. Release v3.8.0 | 3.8.0 |
 | 3-nov-2026 | 5.1a–c, 5.2a | Claude | Música de YouTube sincronizada con el reproductor oficial (cola, volumen por equipo); inventario de acoplamiento a dnd5e. 5.2b espera la aprobación del autor. Release v3.9.0 | 3.9.0 |
 | 3-nov-2026 | Actualizaciones | Claude | El autor hizo público el repositorio: manifiesto y descarga nativos de Foundry; se retira el actualizador de Windows. Release v3.9.1 | 3.9.1 |
+| 3-nov-2026 | Compatibilidad | Claude | Foundry 14.370 y dnd5e 6.0.6 revisados con el mundo abierto: mensajes del chat, modos, efectos, estados, taller de NPC; panel del Verbe con filtros, favoritas y paso a paso; repetir canción. Release v3.10.0 | 3.10.0 |
