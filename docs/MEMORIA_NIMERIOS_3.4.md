@@ -356,19 +356,19 @@ Para el DM: Depredador de dioses, exterior a los Primeros. Sin linaje jugable or
 
 ## Seyra · Panteón
 
-Estado: propuesta.
+Estado: referencia.
 
-Clasificación de campaña: menor. Entrada propuesta para revisión del autor.
+Clasificación de campaña: menor. Entrada del panteón de la campaña.
 
-Para el DM: Propuesta nueva: los nudos y el rescate; nació de plegarias a la última voz de Ashka. No reemplaza a Ashka.
+Para el DM: Diosa menor joven: los nudos y el rescate; nació de plegarias a la última voz de Ashka. No es Ashka ni la reemplaza.
 
 ## Dhoren · Panteón
 
-Estado: propuesta.
+Estado: referencia.
 
-Clasificación de campaña: menor. Entrada propuesta para revisión del autor.
+Clasificación de campaña: menor. Entrada del panteón de la campaña.
 
-Para el DM: Propuesta nueva: dinteles, cerraduras y refugios; antiguo discípulo de Varro elevado por guardianes de puentes.
+Para el DM: Dios menor joven de las Luces: dinteles, cerraduras y refugios; aprendiz de Varro elevado por guardianes de puentes.
 
 ## Rayo negro · Tradiciones
 

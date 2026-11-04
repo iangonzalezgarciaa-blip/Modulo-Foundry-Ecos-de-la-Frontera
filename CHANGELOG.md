@@ -1,5 +1,17 @@
 # Historial de cambios
 
+## 3.11.0 — 2026-11-04
+
+- Compendios del Verbe en los diarios (tareas 4.5b–d): «11 · Compendio del Verbe» en las reglas de la casa, con las 13 ramas, los rangos, las naturalezas y sus combinaciones y las 222 dotes por categoría, sin secretos de campaña; lo ven el DM y los dueños de un personaje despertado, igual que la guía. Y un diario aparte «Ecos · Compendio del Verbe (solo DM)» con Miradas y su origen, pactos, escuelas, lo que abre cada tradición, hito, bestia y artefacto, las dotes que concede el DM y el recuento de técnicas por rama y grado. Se crean solos al cargar el mundo y no se pisan si los editas. Inventario de diarios y permisos en docs/DIARIOS_INVENTARIO.md (4.5a).
+- Panteón (tarea 4.4): Seyra y Dhoren pasan a canon como dioses menores jóvenes; sus herencias ya no dicen «propuesta». Los diarios del mundo del autor se completaron por el puente de Foundry (no van en el repositorio).
+- Corrección: desde 3.3, algunos textos que decían «Sangre Antigua» mostraban el nombre de una técnica de Maethra («Pide: Jardín del Primer Sueño» en Raíces que agarran y Bosque de un día, el Despertar y un don legendario), y la herencia de Maethra perdía su rasgo y su Despertar en el panel. Vuelven a decir «Sangre Antigua».
+- Corrección: «de los sendas del firmamento» pasa a «de las sendas del firmamento» en los nombres y textos donde salía.
+- Compatibilidad: con dnd5e 6, adv-reminder 5.1.2 daba un error en cada prueba de habilidad porque busca una función que dnd5e movió de sitio. Ecos le devuelve un alias y el error desaparece (probado en Foundry 14).
+- Probado en Foundry 14 con el mundo abierto: los filtros, las favoritas y el paso a paso de Mis técnicas; los estados del Verbe en la lista de estados; la lectura de las tiradas de dnd5e 6 para la tabla del d20 y la Moneda Antigua; las tiradas ocultas al DM.
+- PF2e: diseño del adaptador con las decisiones del autor y ocho propuestas para aprobar en docs/PF2E_ADAPTADOR.md (tarea 5.2b). Las herramientas de conversión de conjuros pasan a tools/pf2e/ y se usan sobre la instalación local.
+- Limpieza: fuera el actualizador de Windows, sus pruebas y el modo privado de publicación; en releases/ solo queda el ZIP de la versión actual.
+- Diagnóstico: un caso real nuevo para los compendios (37 en total).
+
 ## 3.10.0 — 2026-11-03
 
 - Foundry 14 y dnd5e 6: revisado con el mundo abierto (14.370 y 6.0.6). Ecos lee los mensajes nuevos del chat de dnd5e 6 (tipo y datos propios) y los viejos. Vuelven a funcionar la tabla del d20, la Moneda Antigua en salvaciones de muerte (ya no se ofrece dos veces), la magia que cura heridas sobre los objetivos de la tarjeta y la retirada de objetivos protegidos tras un choque. Las tiradas ocultas de PNJ usan el modo de mensaje nuevo. Efectos, borrados de claves y modos de tirada sin avisos de obsolescencia. Detalle en docs/COMPATIBILIDAD_14.md.

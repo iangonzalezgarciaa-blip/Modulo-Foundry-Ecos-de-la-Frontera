@@ -6,9 +6,10 @@ import {MockActor,MockItem,resetEnvironment,collection} from './helpers/foundry.
 import * as V from '../scripts/verbe.js';
 const D=readCatalog(),l=id=>D.linajes.find(l=>l.id===id),t=id=>D.tecnicas.find(t=>t.id===id);
 beforeEach(()=>{resetEnvironment();V.usarDatos(D,'activo');delete globalThis.JournalEntry;});
-test('seis Primeros, Maethra mayor y ampliaciones menores explícitas',()=>{
+test('seis Primeros, Maethra mayor y Seyra y Dhoren ya en el canon',()=>{
   assert.deepEqual(D.panteon.filter(d=>d.jerarquia==='primordial').map(d=>d.id).sort(),['ashka','ignis','maethra','nerys','orun','thalos']);
-  assert.equal(D.panteon.filter(d=>d.propuesto).length,2);assert.ok(D.panteon.filter(d=>d.propuesto).every(d=>d.jerarquia==='menor'));
+  assert.equal(D.panteon.filter(d=>d.propuesto).length,0);assert.ok(['seyra','dhoren'].every(id=>D.panteon.find(d=>d.id===id)?.jerarquia==='menor'));
+  assert.ok(D.linajes.filter(l=>['seyra','dhoren'].includes(l.id)).every(l=>!/propuest|pendiente/i.test(l.texto)));
   assert.equal(D.linajes.some(l=>l.id==='ozhar'),false);assert.deepEqual(validateCatalog(D),[]);
   assert.equal(D.tecnicas.filter(t=>t.divina).length,24);
 });

@@ -45,7 +45,7 @@ Si se queda activo no rompe nada: solo instala versiones más nuevas que la inst
 
 ## Para el desarrollo
 
-- `package.json` declara `ecosUpdateMode: public`.
 - `module.json` lleva `manifest` (la dirección estable del último Release) y `download` (el ZIP de su versión).
 - El flujo de publicación rechaza un manifiesto cuya descarga no apunte al ZIP de esa versión.
-- El código del actualizador de Windows sigue en `tools/windows/` con sus pruebas, por si se vuelve al modo privado. Volver al modo privado exige una orden del autor.
+- El código del actualizador de Windows se eliminó del repositorio (queda en el historial de git).
+- En `releases/` solo queda el ZIP de la versión actual; los anteriores están en sus GitHub Releases.

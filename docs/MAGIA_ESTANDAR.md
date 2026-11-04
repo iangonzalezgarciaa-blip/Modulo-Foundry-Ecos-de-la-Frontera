@@ -1,10 +1,22 @@
 # Magia estándar y el Verbe (3.8, tareas 4.1a–c)
 
-## 4.1a · Lore (propuesta para aprobar)
+## 4.1a · Lore (aprobado y escrito)
 
-> En Nimerios la magia de los libros es un oficio. Se aprende como se aprende a forjar o a leer las estrellas: con maestros, cuadernos y años de práctica. No pide nacer con nada: pide estudio y un foco. Por eso hay magos en las academias, clérigos en las capillas y hechiceros de pueblo que aprendieron tres trucos de su abuela. El Verbe es otra cosa. Es la energía propia de cada cuerpo, se despierta, se entrena por etapas con quien ya lo domina y responde a una naturaleza. Un mago no necesita Verbe para lanzar una Bola de fuego; un usuario del Verbe no necesita libro para soltar su fuego. Cuando las dos cosas se cruzan en combate, la energía choca igual: un conjuro de fuego y una técnica de agua se empujan como dos corrientes, y la más fuerte, o la que el elemento favorece, se impone.
+El autor lo aprobó el 3-nov-2026 con un pedido: que la magia y el Verbe tengan el mismo origen. La magia moldea la realidad, el Verbe usa la energía interna y ninguno existe sin el otro. La versión final está en el diario «Mundo 6 · Magia y misterios», página «1 · Cómo funciona la magia», sección nueva «La magia y el Verbe» al final. No se tocó lo ya escrito.
 
-Dónde va: diario «Mundo 6 · Magia y misterios», página «1 · Cómo funciona la magia», como sección nueva al final. Pendiente de que el autor lo apruebe; no se escribió en el mundo.
+**Resumen.** Las dos nacen del sueño de Maethra:
+
+- La magia toma el sueño que corre por fuera (las líneas bajo la tierra) y moldea la realidad.
+- El Verbe toma el sueño de dentro de cada cosa viva y lo usa como energía.
+
+Ninguna existe sin la otra:
+
+- un conjuro necesita una mente viva que sueña con su propio Verbe aunque esté dormido;
+- el Verbe se llena del sueño de fuera: un cuerpo que no sueña no tiene Verbe.
+
+Casi nadie lo sabe; los fareros lo sospechan. En combate chocan igual (regla del 4.1c).
+
+No añade reglas nuevas: la recuperación de Verbe y el cristal mudo siguen como estaban.
 
 ## 4.1b · Mapa de elementos
 

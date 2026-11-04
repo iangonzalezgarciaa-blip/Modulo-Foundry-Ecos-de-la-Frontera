@@ -58,7 +58,7 @@ test('informe técnico omite actores, diarios, rutas y credenciales aunque exist
  const r=diagnosticoMesa(),s=JSON.stringify(r);assert.doesNotMatch(s,/SECRETO_DEL_PERSONAJE|SECRETO_DIARIO/);assert.equal(r.core,'13.350');assert.ok(r.incidencias.some(x=>x.codigo==='mesa:revision'));
 });
 test('un jugador no registra pruebas privadas ni adopta lore',async()=>{
- game.user=game.users.get('player');assert.equal(await registrarPrueba('creacion','correcto','nota'),false);assert.equal(await adoptarMemoria('rama:forma','adoptado'),false);assert.equal(await cuadernoMemoria(),null);assert.equal(PRUEBAS_REALES.length,36);
+ game.user=game.users.get('player');assert.equal(await registrarPrueba('creacion','correcto','nota'),false);assert.equal(await adoptarMemoria('rama:forma','adoptado'),false);assert.equal(await cuadernoMemoria(),null);assert.equal(PRUEBAS_REALES.length,37);
 });
 test('174 entradas de memoria mantienen el panteón y distinguen propuestas de referencia',()=>{
  const es=D.memoriaNimerios?.entradas;assert.equal(es?.length,174);assert.equal(es.filter(e=>e.tipo==='Panteón').length,22);assert.equal(es.filter(e=>e.tipo==='Reliquias').length,78);
@@ -101,8 +101,11 @@ test('el registro de pruebas reales empieza pendiente y guarda resultados solo e
 test('la guía revisada crea una página nueva y conserva las anotaciones de las páginas existentes',async()=>{
  diariosSimulados();CONST.DOCUMENT_OWNERSHIP_LEVELS={NONE:0,OBSERVER:2};CONST.JOURNAL_ENTRY_PAGE_FORMATS={HTML:1};
  const j=await JournalEntry.create({name:'Reglas de la casa',flags:{},pages:[{name:'Guía antigua',text:{content:'Notas del autor en la guía antigua'},flags:{[MOD]:{verbe:{guia:1}}}}]});
- await V.asegurarGuia();assert.equal(j.pages.length,2);assert.equal(j.pages[0].text.content,'Notas del autor en la guía antigua');
- const nueva=j.pages[1];nueva.text.content+='<p>Mi explicación personal.</p>';await V.asegurarGuia();assert.equal(j.pages.length,2);assert.match(nueva.text.content,/Mi explicación personal/);assert.doesNotMatch(nueva.text.content,/tiene tres <b>etapas/);
+ await V.asegurarGuia();assert.equal(j.pages.length,3,'guía antigua, guía revisada y compendio (3.11)');assert.equal(j.pages[0].text.content,'Notas del autor en la guía antigua');
+ const nueva=j.pages[1];nueva.text.content+='<p>Mi explicación personal.</p>';await V.asegurarGuia();assert.equal(j.pages.length,3);assert.match(nueva.text.content,/Mi explicación personal/);assert.doesNotMatch(nueva.text.content,/tiene tres <b>etapas/);
+ const compendio=j.pages[2];assert.equal(compendio.name,'11 · Compendio del Verbe');assert.match(compendio.text.content,/Compendio del Verbe/);assert.equal(compendio.ownership.default,0);
+ compendio.text.content+='<p>Nota del DM.</p>';await V.asegurarGuia();assert.match(compendio.text.content,/Nota del DM/,'no pisa un compendio editado');
+ const dm=game.journal.find(x=>x.getFlag(MOD,'compendioDM'));assert.ok(dm,'diario del DM creado');assert.equal(dm.ownership.default,0);assert.equal(dm.pages.length,1);assert.match(dm.pages[0].text.content,/solo DM/);
 });
 test('el vencimiento de una reliquia alcanza la instancia no vinculada sin cambiar al actor base',async()=>{
  const base=new MockActor(),instancia=new MockActor();base.id=instancia.id='misma-base';base.uuid='Actor.base';instancia.uuid='Scene.escena.Token.uno.Actor.base';game.actors=collection([base]);

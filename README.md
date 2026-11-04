@@ -1,4 +1,10 @@
-# Ecos de la frontera · Reglas de la casa (v3.10.0)
+# Ecos de la frontera · Reglas de la casa (v3.11.0)
+
+**Novedades de 3.11:**
+- **Compendios del Verbe en los diarios:** uno para jugadores (ramas, naturalezas y todas las dotes, sin secretos) y otro solo para el DM. Inventario de diarios en docs/DIARIOS_INVENTARIO.md.
+- **Panteón:** Seyra y Dhoren ya son canon; vuelve a decir «Sangre Antigua» donde salía el nombre de una técnica.
+- **adv-reminder** deja de dar error en las pruebas de habilidad con dnd5e 6.
+- **PF2e:** diseño del adaptador para aprobar en docs/PF2E_ADAPTADOR.md.
 
 **Novedades de 3.10:**
 - **Foundry 14 y dnd5e 6:** compatibilidad revisada con el mundo abierto; estado de cada módulo en docs/COMPATIBILIDAD_14.md.

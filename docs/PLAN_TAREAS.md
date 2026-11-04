@@ -200,15 +200,15 @@
 
 ## Fase 4 · Contenido (publica v3.8.0)
 
-- [ ] **4.1a · Magia estándar: lore** (borrador en docs/MAGIA_ESTANDAR.md; espera aprobación del autor para escribirlo en el diario) (M · Dep.: —). Tarea de Mundo. Escribir, para aprobación del autor, por qué la magia de D&D es de aprendizaje común en este mundo y cómo convive con el Verbe. Propuesta: ampliar el diario «Mundo 6 · Magia y misterios», página «1 · Cómo funciona la magia».
+- [x] **4.1a · Magia estándar: lore** (aprobado el 3-nov-2026 con el ajuste «mismo origen»; escrito en «Mundo 6 · 1 · Cómo funciona la magia») (M · Dep.: —). Tarea de Mundo. Escribir, para aprobación del autor, por qué la magia de D&D es de aprendizaje común en este mundo y cómo convive con el Verbe. Propuesta: ampliar el diario «Mundo 6 · Magia y misterios», página «1 · Cómo funciona la magia».
 
 - [x] **4.1b · Magia estándar: mapa de elementos** (hecha: docs/MAGIA_ESTANDAR.md; falta la aprobación del autor) (S · Dep.: 4.1a). Tabla «escuela o tipo de daño de D&D → naturaleza del Verbe» en docs/MAGIA_ESTANDAR.md. Aprobación del autor.
 
 - [x] **4.1c · Magia estándar: entra al choque** (hecha: conjuroChocable y naturalezaConjuro) (M · Dep.: 3.1b, 4.1b). Los conjuros participan en el choque con potencia igual al nivel del espacio y el elemento del mapa.
 
-- [ ] **4.2a · Hechizos PF2e: exportar** (macro lista: tools/macros/exportar-hechizos-pf2e.js; falta que el autor la ejecute y entregue el JSON) (S · Dep.: —). Tarea de Mundo, en «Esperanza Oculta». Macro que exporta los hechizos del sistema PF2e (compendio pf2e.spells-srd, a verificar) a JSON: nombre, rango, tradiciones, rasgos, lanzamiento, alcance, área, objetivo, salvación, duración, texto y rareza. La ejecuta el autor y entrega el archivo.
+- [x] **4.2a · Hechizos PF2e: exportar** (hecha el 3-nov-2026 leyendo el compendio del sistema PF2e 8.6.1 del disco, sin mundo PF2e: 2.017 hechizos en Data/ecos-pf2e/hechizos-pf2e.json del PC del autor; herramienta tools/pf2e/exportar_hechizos.py)
 
-- [ ] **4.2b · Hechizos PF2e: filtro de redundancia** (M · Dep.: 4.2a). Comparar por nombre y efecto contra los compendios del mundo D&D (dnd5e.spells, dnd5e.spells24, Chris's Premades Spells, MISC Spells). Salida: lista de «únicos» a convertir y lista de «redundantes» con motivo.
+- [x] **4.2b · Hechizos PF2e: filtro de redundancia** (hecha: 1.386 únicos y 631 redundantes en Data/ecos-pf2e/filtro-pf2e.json; tools/pf2e/filtrar_redundantes.py) (M · Dep.: 4.2a).
 
 - [x] **4.2c · Hechizos PF2e: reglas de conversión** (hecha: docs/CONVERSION_PF2E.md; licencia por hechizo según el campo de la exportación) (S · Dep.: —). Escribir docs/CONVERSION_PF2E.md: acciones de PF2e (1, 2 y 3 acciones, reacción) a acción, acción adicional, reacción o 1 minuto; rango a nivel de conjuro (truco = nivel 0); intensificar a niveles superiores; CD y salvaciones; condiciones; rasgos a tipos de daño; rareza a coste (D11). Licencia: PF2e Remaster usa ORC y el material anterior OGL (a verificar); como el repo es público, comprobarlo antes de subir texto convertido.
 
@@ -218,19 +218,19 @@
 
 - [x] **4.3 · Formas no elementales** (hecha: 20 técnicas, tools/nimerios/forma-pura.mjs) (M · Dep.: 0.3, 2.1a). Crear 20 a 30 técnicas de Forma sin elemento (proyectiles, armas de Verbe, escudos, impulsos), grados 0 a 5, para quien no tenga naturaleza elemental.
 
-- [ ] **4.4a · Lore del panteón: «Mundo 1 · Dioses y planos»** (M · Dep.: —). Tarea de Mundo. Fuente: diario «Ecos · Panteón y sangre divina (solo DM)», página «Pendiente · actualizar panteón…», y docs/PANTEON_3.2.md. Incorporar jerarquía, completar Nerys y Ashka y, si el autor lo decide, Seyra y Dhoren. Conservar las páginas escritas y los permisos.
+- [x] **4.4a · Lore del panteón: «Mundo 1 · Dioses y planos»** (hecha el 4-nov-2026 por el puente de Foundry: jerarquía en «1 · Índice de los dioses», Nerys y Ashka completadas en «7», páginas nuevas «25 · Seyra» y «26 · Dhoren» como dioses menores jóvenes, por decisión del autor) (M · Dep.: —). Tarea de Mundo. Fuente: diario «Ecos · Panteón y sangre divina (solo DM)», página «Pendiente · actualizar panteón…», y docs/PANTEON_3.2.md. Incorporar jerarquía, completar Nerys y Ashka y, si el autor lo decide, Seyra y Dhoren. Conservar las páginas escritas y los permisos.
 
-- [ ] **4.4b · Lore del panteón: «Mundo 10 · El Verbe por dentro»** (M · Dep.: 4.4a). Añadir herencias nuevas, crecimiento primigenio, técnicas y los dos hitos. Separar sangre, Mirada, tradición y culto.
+- [x] **4.4b · Lore del panteón: «Mundo 10 · El Verbe por dentro»** (hecha: seis herencias nuevas en «1 · Herencias»; crecimiento primigenio, técnicas, los dos hitos y la diferencia entre sangre, Mirada, tradición y culto en «0 · Qué hay aquí») (M · Dep.: 4.4a). Añadir herencias nuevas, crecimiento primigenio, técnicas y los dos hitos. Separar sangre, Mirada, tradición y culto.
 
-- [ ] **4.4c · Lore del panteón: «Tramas · Los portadores y sus dones»** (S · Dep.: 4.4a). Enlazar la progresión de Maethra (Eco, Paso, Voz, Señorío) sin adelantar revelaciones. Revisar las versiones para jugadores antes de revelar nombres verdaderos.
+- [x] **4.4c · Lore del panteón: «Tramas · Los portadores y sus dones»** (hecha: cada etapa con su técnica, nivel mínimo y el techo de cada portador según su sangre, sin revelaciones nuevas; la nota del panteón queda como «Hecho») (S · Dep.: 4.4a). Enlazar la progresión de Maethra (Eco, Paso, Voz, Señorío) sin adelantar revelaciones. Revisar las versiones para jugadores antes de revelar nombres verdaderos.
 
-- [ ] **4.5a · Diarios y compendios: inventario y permisos** (S · Dep.: —). Tarea de Mundo. Informe de qué diarios existen, qué ven los jugadores y qué falta por rama, dote, reliquia y naturaleza.
+- [x] **4.5a · Diarios y compendios: inventario y permisos** (hecha: docs/DIARIOS_INVENTARIO.md, 56 diarios, sin fugas en lo que ven los jugadores) (S · Dep.: —). Tarea de Mundo. Informe de qué diarios existen, qué ven los jugadores y qué falta por rama, dote, reliquia y naturaleza.
 
-- [ ] **4.5b · Diarios para jugadores** (M · Dep.: 4.5a). Ampliar, sin secretos, el compendio de cada cosa.
+- [x] **4.5b · Diarios para jugadores** (3.11: «11 · Compendio del Verbe», generado por scripts/verbe-compendio.js) (M · Dep.: 4.5a). Ampliar, sin secretos, el compendio de cada cosa.
 
-- [ ] **4.5c · Diarios solo para el DM** (M · Dep.: 4.5a). Lo mismo, con notas de uso y secretos.
+- [x] **4.5c · Diarios solo para el DM** (3.11: «Ecos · Compendio del Verbe (solo DM)») (M · Dep.: 4.5a). Lo mismo, con notas de uso y secretos.
 
-- [ ] **4.5d · Aplicar permisos** (S · Dep.: 4.5b, 4.5c). Los permisos se cambian desde la interfaz de Foundry o con una macro; un conector de Foundry puede no poder hacerlo (a verificar).
+- [x] **4.5d · Aplicar permisos** (S · Dep.: 4.5b, 4.5c). Los permisos se cambian desde la interfaz de Foundry o con una macro; un conector de Foundry puede no poder hacerlo (verificado: el conector no puede). *3.11: los pone el propio módulo al crear los compendios (el de jugadores, como la guía; el del DM, cerrado).*
 
 - [x] **4.6a · Plantillas de NPC: inventario** (hecha: faltaban comercio, contrabando, autoridad imperial, cazadores, culto, desertores, bandidos, portadores, resonantes del bosque y vigías) (S · Dep.: —). Hoy hay 7 plantillas narrativas en el Taller de NPC y 23 plantillas de combate en el diario «4 · Plantillas de combate». Listar huecos según el ambiente de la campaña (Arcegris, la frontera, el Vorrh).
 
@@ -256,7 +256,7 @@
 
 - [x] **5.2a · Compatibilidad PF2e: inventario de acoplamiento** (3.9.0, docs/PF2E_ACOPLAMIENTO.md: 18 a 26 sesiones y siete decisiones del autor) (M · Dep.: 0.1). Hoy el repo no menciona Pathfinder en absoluto (verificado). Listar todo lo atado a dnd5e: campos system.\*, actividades, uso de midi-qol, descansos. Punto de partida: grep -n "dnd5e\\system\\\\midi-qol" scripts/\*.js. Entregar docs/PF2E_ACOPLAMIENTO.md con una estimación del esfuerzo.
 
-- [ ] **5.2b · Compatibilidad PF2e: diseño del adaptador** (M · Dep.: 5.2a). Interfaz común para tiradas, recursos, descansos, actividades, estados y plantillas. **Pausa:** el autor aprueba el diseño antes de seguir. *Propuesta y preguntas al final de docs/PF2E_ACOPLAMIENTO.md; esperando al autor.*
+- [ ] **5.2b · Compatibilidad PF2e: diseño del adaptador** (M · Dep.: 5.2a). Interfaz común para tiradas, recursos, descansos, actividades, estados y plantillas. **Pausa:** el autor aprueba el diseño antes de seguir. *Diseño escrito el 4-nov-2026 con las siete decisiones del autor: docs/PF2E_ADAPTADOR.md. Esperando que apruebe o corrija las propuestas A a H.*
 
 - [ ] **5.2c · Compatibilidad PF2e: refactor del lado dnd5e** (M, repetir por archivo · Dep.: 5.2b). Mover lo específico de dnd5e detrás del adaptador sin cambiar el comportamiento; las pruebas deben seguir en verde.
 
@@ -278,13 +278,17 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 
 4.  Estados cuando ataca un NPC: se mantiene el supuesto (decide el DM; el jugador que defiende recibe aviso y puede usar reacciones o recursos). (1.6)
 
-5.  Seyra y Dhoren: **pendiente**, preguntar al llegar a 4.4a.
+5.  Seyra y Dhoren: **sí, como dioses menores jóvenes** (respuesta del 3-nov-2026). (4.4)
 
-6.  Licencias de PF2e: **pendiente**, comprobar en 4.2c.
+6.  Licencias de PF2e: el contenido de PF2e importado de su mundo **queda en su mundo** y no se sube al repositorio público (respuesta del 3-nov-2026). (4.2, 5.2)
 
 7.  **Naturaleza:** se descubre como en la serie, desde un nivel equivalente a *chunin* (nivel 5) o a un *genin* muy entrenado (nivel 3 con rango Entrenado en Forma). «3 Trazos, 7 días, CD 15» es el precio de una técnica aparte: **Cambiar naturaleza del Verbe**. Además, el Verbe se aprende **por etapas**: nadie lo usa al empezar, y si conocen a un maestro o a un aprendiz por rol, el DM pulsa un botón que les abre la siguiente etapa y más ramas. Debe quedar muy claro para el DM. (2.1)
 
 8.  **Ramas:** +1 Trazo por rango desde la 3.ª rama y +2 desde la 5.ª. (2.4)
+
+9.  **PF2e (5.2b):** agotamiento → Fatigado y Drenado; descanso corto → Tratar heridas y Reenfocar, con recuperaciones más largas que en PF2e (la muerte definitiva es más difícil a cambio); heridas → Moribundo y Herido más las reglas de la casa; Moneda Antigua → Puntos de Héroe; técnicas → acciones con coste en Verbe; un solo módulo. (respuestas del 3-nov-2026)
+
+10. **Lore 4.1a:** aprobado, con el matiz de que la magia y el Verbe tienen el mismo origen: una moldea la realidad, la otra usa la energía interna, y no existe una sin la otra. (respuesta del 3-nov-2026)
 
 ## Registro de progreso
 
@@ -300,3 +304,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 3-nov-2026 | 5.1a–c, 5.2a | Claude | Música de YouTube sincronizada con el reproductor oficial (cola, volumen por equipo); inventario de acoplamiento a dnd5e. 5.2b espera la aprobación del autor. Release v3.9.0 | 3.9.0 |
 | 3-nov-2026 | Actualizaciones | Claude | El autor hizo público el repositorio: manifiesto y descarga nativos de Foundry; se retira el actualizador de Windows. Release v3.9.1 | 3.9.1 |
 | 3-nov-2026 | Compatibilidad | Claude | Foundry 14.370 y dnd5e 6.0.6 revisados con el mundo abierto: mensajes del chat, modos, efectos, estados, taller de NPC; panel del Verbe con filtros, favoritas y paso a paso; repetir canción. Release v3.10.0 | 3.10.0 |
+| 4-nov-2026 | 4.1a, 4.2a–b, 4.4, 4.5, 5.2b | Claude | Lore de la magia aprobado y escrito; 2 017 conjuros de PF2e exportados y 1 386 únicos tras el filtro (en el mundo del autor); panteón en los diarios; inventario de diarios y compendios del Verbe; diseño del adaptador PF2e; prueba en vivo de 3.10; alias para adv-reminder; limpieza del actualizador de Windows. Release v3.11.0 | 3.11.0 |

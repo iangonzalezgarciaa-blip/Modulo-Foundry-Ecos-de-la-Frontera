@@ -51,3 +51,19 @@ test('3.10: borrar claves, duración y modo de los mensajes', () => {
   assert.equal(modoNormal('public'), 'public');
   assert.deepEqual(opcionesModo('gm'), { rollMode: 'gmroll' });
 });
+
+test('puente de ritmo de viaje: añade el alias que adv-reminder busca en dnd5e 6, sin pisar uno existente', async () => {
+  const { puenteRitmoViaje } = await import('../scripts/compat.js');
+  const llamadas = [];
+  const TravelField = { getTravelPaceMode(pace, skill) { llamadas.push([this === TravelField, pace, skill]); return { advantage: false, disadvantage: pace === 'fast' }; } };
+  const sistema = { dataModels: { shared: { MovementField: class {} }, actor: { TravelField } } };
+  assert.equal(puenteRitmoViaje(sistema), true);
+  assert.deepEqual(sistema.dataModels.shared.MovementField.getTravelPaceMode('fast', 'prc'), { advantage: false, disadvantage: true });
+  assert.deepEqual(llamadas, [[true, 'fast', 'prc']]);
+  assert.equal(puenteRitmoViaje(sistema), false, 'no lo vuelve a poner');
+  const propio = () => 'dnd5e 5';
+  const viejo = { dataModels: { shared: { MovementField: { getTravelPaceMode: propio } }, actor: { TravelField } } };
+  assert.equal(puenteRitmoViaje(viejo), false);
+  assert.equal(viejo.dataModels.shared.MovementField.getTravelPaceMode, propio);
+  assert.equal(puenteRitmoViaje({}), false);
+});

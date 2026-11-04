@@ -14,7 +14,7 @@
 | Borrar una clave con «-=» está obsoleto; en su lugar va `_del`. | Funcionaba, pero avisaba. | Doce sitios usan `_del` en Foundry 14. |
 | El gancho `renderChatMessage` está obsoleto y se elimina en Foundry 15. | Ecos lo escuchaba además de `renderChatMessageHTML`. | Solo escucha `renderChatMessageHTML`. |
 | `bringToFront` falla si la ventana todavía no terminó de dibujarse. | Abrir la Mesa Ecos daba un error en la consola. | La ventana se trae al frente cuando ya está dibujada. |
-| Las colecciones de documentos no tienen `flatMap`. | El editor de técnicas del DM no abría. El fallo venía de antes de Foundry 14. | Corregido; falta abrirlo en el mundo para confirmarlo. Desde ahí se borra Getsuga. |
+| Las colecciones de documentos no tienen `flatMap`. | El editor de técnicas del DM no abría. El fallo venía de antes de Foundry 14. | Corregido. El autor lo usó en su mundo para borrar Getsuga. |
 
 ### dnd5e 6
 
@@ -48,7 +48,7 @@ Pueden funcionar, pero conviene vigilarlos:
 
 | Módulo | Riesgo |
 |---|---|
-| adv-reminder 5.1.2 (verificado con dnd5e 5.2.5) | Toca las tiradas, que cambiaron en dnd5e 6. Si una ventana de tirada falla, desactívalo primero. |
+| adv-reminder 5.1.2 (verificado con dnd5e 5.2.5) | Daba un error en cada prueba de habilidad: llama a `dnd5e.dataModels.shared.MovementField.getTravelPaceMode`, que dnd5e 6 movió a `dnd5e.dataModels.actor.TravelField`. Desde 3.11, Ecos añade el alias al arrancar y el error desaparece (probado). El resto de sus recordatorios no se revisó: si una ventana de tirada falla, desactívalo primero. |
 | dnd5e-content-manager 1.6.0 (dnd5e 5.3) | Compendios: bajo riesgo. |
 | simple-weather 2.2.2 (Foundry 13) | Ecos traduce su tarjeta del clima. Si deja de salir el clima, revisa sus actualizaciones. |
 | token-attacher, wall-height, image-hover, alchemist-import (Foundry 13), routinglib (Foundry 11) | Sin relación con Ecos. |
@@ -67,6 +67,22 @@ Pueden funcionar, pero conviene vigilarlos:
   - no se ve el calendario de Arcegris en la pantalla.
 
   Revisa si hay versión nueva. Pasar el calendario al calendario propio de Foundry 14 queda pendiente, porque hay que probar la conversión de fechas con tu reloj del mundo.
+
+## Prueba en vivo del 4 de noviembre (3.10.0, antes de publicar 3.11)
+
+Hecha con el mundo abierto desde «Ian Navegador», sobre el personaje de prueba:
+
+| Qué | Resultado |
+|---|---|
+| Mis técnicas: filtros por tipo | Las cuentas coinciden (7 en total: 2 de ataque, 1 de salvación, 1 de curación, 2 de apoyo, 1 cargada). Filtrar por Ataque deja solo esas dos. |
+| Favoritas | La estrella sube la técnica arriba, aparece el filtro «★ Favoritas 1» y sigue marcada al cerrar y reabrir el panel. |
+| Paso a paso | Muestra el bono de ataque o la CD con la característica, el daño o la curación de la ficha, el coste en Verbe y los estados que deja. |
+| Estados del Verbe | Están en la lista de estados de Foundry (Empapado, Ardiendo, Canalizando, Desequilibrado y Embarrado, entre otros). |
+| Tiradas de dnd5e 6 | Una prueba de Atletismo se lee como habilidad: en combate propone la tabla del d20 de habilidad y fuera de él, la de escena. |
+| Tiradas ocultas | Una tirada con el modo «gm» llega susurrada a los DM. |
+| adv-reminder | Sin el alias, error en cada prueba de habilidad; con el alias de 3.11, ninguno. |
+
+Sin probar todavía: la música (necesita reproducir un video para todos) y colocar la región de una técnica de área.
 
 ## Pruebas
 

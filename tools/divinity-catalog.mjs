@@ -20,8 +20,8 @@ export const panteon = [
   ['ikkra','Ikkra','sueno','Sueño de Maethra: libélulas de vidrio y vigilancia.'],
   ['ahnkree','Ahn-Kree','sueno','El sueño con mayor poder y fieles de Maethra: retorno y Dinastía. No sabe que es un sueño.'],
   ['ozhar','Ozhar','ajeno','Depredador de dioses, exterior a los Primeros. Sin linaje jugable ordinario.'],
-  ['seyra','Seyra','menor','Propuesta nueva: los nudos y el rescate; nació de plegarias a la última voz de Ashka. No reemplaza a Ashka.',true],
-  ['dhoren','Dhoren','menor','Propuesta nueva: dinteles, cerraduras y refugios; antiguo discípulo de Varro elevado por guardianes de puentes.',true]
+  ['seyra','Seyra','menor','Diosa menor joven: los nudos y el rescate; nació de plegarias a la última voz de Ashka. No es Ashka ni la reemplaza.'],
+  ['dhoren','Dhoren','menor','Dios menor joven de las Luces: dinteles, cerraduras y refugios; aprendiz de Varro elevado por guardianes de puentes.']
 ].map(([id,nombre,jerarquia,texto,propuesto=false])=>({id,nombre,jerarquia,texto,propuesto}));
 
 export const linajesNuevos = [
@@ -29,8 +29,8 @@ export const linajesNuevos = [
   {id:'ashka',alias:'Sangre de vendaval',req:'Última voz',rasgo:{ae:[['system.attributes.movement.walk',2,'3']]},despertar:{vuelo:12},texto:'Tu velocidad a pie aumenta 3 m. El viento guarda una voz de Ashka; no la ha resucitado.',forma:'Alas del mensaje: vuelo de 12 m durante el Despertar, sin turnos o acciones adicionales.'},
   {id:'gracefeel',alias:'Sangre de despedida',req:'Llama serena',rasgo:{dr:['necrotic']},despertar:{dr:['radiant']},texto:'Resistencia al daño necrótico. Afinidad con despedidas y almas que aún no se han ido; no concede resurrección.',forma:'Llama de tránsito: también resistencia al radiante durante el Despertar.'},
   {id:'cazador',alias:'Sangre de rastro',req:'Caza sin rostro',rasgo:{ae:[['system.skills.sur.bonuses.check',2,'2']]},despertar:{ac:1},texto:'+2 a las pruebas de Supervivencia de la hoja. No localiza automáticamente a cualquiera ni atraviesa protecciones.',forma:'La caza velada: +1 CA durante el Despertar.'},
-  {id:'seyra',alias:'Sangre de nudo',req:'Nudo del rescate',rasgo:{ae:[['system.skills.ath.bonuses.check',2,'2']]},despertar:{nado:9},texto:'+2 a las pruebas de Atletismo de la hoja. Su patrona es una ampliación propuesta, pendiente de fijar en el lore.',forma:'Cuerda de agua: velocidad de nado 9 m durante el Despertar; no concede respirar bajo el agua.'},
-  {id:'dhoren',alias:'Sangre de umbral firme',req:'Dintel guardado',rasgo:{ae:[['system.skills.prc.bonuses.check',2,'2']]},despertar:{ac:1},texto:'+2 a las pruebas de Percepción de la hoja. Su patrono es una ampliación propuesta, pendiente de fijar en el lore.',forma:'El guardián del dintel: +1 CA durante el Despertar.'}
+  {id:'seyra',alias:'Sangre de nudo',req:'Nudo del rescate',rasgo:{ae:[['system.skills.ath.bonuses.check',2,'2']]},despertar:{nado:9},texto:'+2 a las pruebas de Atletismo de la hoja. Su patrona, Seyra, es una diosa menor joven que trae de vuelta a los que se pierden.',forma:'Cuerda de agua: velocidad de nado 9 m durante el Despertar; no concede respirar bajo el agua.'},
+  {id:'dhoren',alias:'Sangre de umbral firme',req:'Dintel guardado',rasgo:{ae:[['system.skills.prc.bonuses.check',2,'2']]},despertar:{ac:1},texto:'+2 a las pruebas de Percepción de la hoja. Su patrono, Dhoren, es un dios menor joven que guarda puertas y refugios.',forma:'El guardián del dintel: +1 CA durante el Despertar.'}
 ];
 
 const madre='maethra', limite='No despierta a Maethra ni altera Pilares, Barreras o almas. Conserva los requisitos, acciones y cuotas del Verbe.';

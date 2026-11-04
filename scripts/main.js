@@ -30,7 +30,7 @@ import { motivoPausaMoneda } from "./mesa-control.js";
 import { crearCola } from "./verbe-core.js";
 import { recuperacionDGLarga, presupuestoCorto, ajustarRecuperacionDG } from "./rest-core.js";
 import { tipoCuracionVerbe, tratarHeridaConPulso } from "./verbe-medicina.js";
-import { infoTirada, opcionesModo, modoDeMensaje, modoActual, modoNormal, modosNuevos, objetivosMensaje, cambio, quitar } from "./compat.js";
+import { infoTirada, opcionesModo, modoDeMensaje, modoActual, modoNormal, modosNuevos, objetivosMensaje, cambio, quitar, puenteRitmoViaje } from "./compat.js";
 
 const MOD = "ecos-frontera";
 const RUTA = `modules/${MOD}`;
@@ -4587,6 +4587,7 @@ function registrarAjustes() {
 
 Hooks.once("init", () => {
   registrarAjustes();
+  try { if (puenteRitmoViaje()) console.log(`${MOD} | dnd5e 6: alias de getTravelPaceMode para módulos antiguos (adv-reminder)`); } catch (err) { console.warn(`${MOD} | puente de ritmo de viaje`, err); }
   game.keybindings.register(MOD, "megaMenu", {
     name: "Abrir el Menú del DM (o el de los jugadores)",
     hint: "Todo el módulo y todos los botones de la barra izquierda, ordenados por uso y explicados.",

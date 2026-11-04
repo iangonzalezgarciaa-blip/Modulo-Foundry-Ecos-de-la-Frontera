@@ -22,6 +22,7 @@ import { plantillaEnEscena } from "./verbe-plantillas.js";
 import { objetivosMensaje, filtrarObjetivosMensaje, consumoMensaje, duracionFinita, quitar } from "./compat.js";
 import { cifrasActividad, pasosUso, chipsCifras, tipoUso, actividadDe, TIPOS_USO } from "./verbe-cifras.js";
 import { problemasTecnica } from "./verbe-validate.js";
+import { compendioJugadoresHTML, compendioDMHTML } from "./verbe-compendio.js";
 import { tramoReserva, tramoFuerza, tramoVida, queVe } from "./verbe-lectura.js";
 import { cargaDe, bonoCarga, cdInterrupcion, textoCarga } from "./verbe-canalizar.js";
 import { clonDe, limitesClones, repartoClones } from "./verbe-clones.js";
@@ -3205,16 +3206,61 @@ ${h2("lo-que-no-sabes", "Lo que no sabes")}
 <p>Hay cosas que no tienes manera de saber todavía: de dónde viene tu sangre, si tu Verbe responde a otra naturaleza, qué despierta en ti con el tiempo. Si existen, aparecen jugando.</p>`;
 }
 
-/** Crea o pone al día la página de la guía y quién la ve. */
-export async function asegurarGuia() {
-  if (!soyGM() || !D) return;
-  const diario = diarioReglas();
-  if (!diario) return;
+/** Quién ve la guía y el compendio: el DM y los dueños de un actor que despertó. */
+function quienVeGuia() {
   const ownership = { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE };
   for (const u of game.users.filter(x => !x.isGM)) {
     const ve = (MODO === "activo") && game.actors.some(a => despierto(a) && a.testUserPermission(u, "OWNER"));
     ownership[u.id] = ve ? CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER : CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE;
   }
+  return ownership;
+}
+
+/** Crea o pone al día la guía, los dos compendios (3.11) y quién los ve. */
+export async function asegurarGuia() {
+  await asegurarGuiaPagina();
+  await asegurarCompendios().catch(err => console.error(`${MOD} | compendios del Verbe`, err));
+}
+
+/**
+ * 4.5b y 4.5c (3.11): «11 · Compendio del Verbe» en las reglas de la casa, con los mismos permisos que la guía, y un
+ * diario aparte «Ecos · Compendio del Verbe (solo DM)». Se crean una vez; solo se reescriben si nadie los editó.
+ */
+export async function asegurarCompendios() {
+  // Con la capa del Verbe apagada no se crea nada: los compendios solo sirven si se juega con el Verbe.
+  if (!soyGM() || !D || !globalThis.JournalEntry || MODO !== "activo") return null;
+  const HTML = CONST.JOURNAL_ENTRY_PAGE_FORMATS.HTML;
+  const poner = async (diario, bandera, nombre, html, ownership, orden) => {
+    const pag = diario.pages.find(p => p.getFlag(MOD, F)?.[bandera]);
+    if (!pag) {
+      const [nueva] = await diario.createEmbeddedDocuments("JournalEntryPage", [{ name: nombre, type: "text", ...(orden != null ? { sort: orden } : {}), ownership,
+        text: { content: html, format: HTML }, flags: { [MOD]: { [F]: { [bandera]: 1, [`${bandera}Huella`]: huellaTexto(html) } } } }]);
+      return nueva;
+    }
+    const cambios = {};
+    const intacta = huellaTexto(pag.text?.content ?? "") === pag.getFlag(MOD, F)?.[`${bandera}Huella`];
+    if (pag.text?.content !== html && intacta) { cambios["text.content"] = html; cambios[`flags.${MOD}.${F}.${bandera}Huella`] = huellaTexto(html); }
+    if (Object.entries(ownership).some(([k, v]) => (pag.ownership?.[k] ?? CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE) !== v)) cambios.ownership = ownership;
+    if (Object.keys(cambios).length) await pag.update(cambios);
+    return pag;
+  };
+  const reglas = diarioReglas();
+  const jugadores = reglas ? await poner(reglas, "compendio", "11 · Compendio del Verbe", compendioJugadoresHTML(D), quienVeGuia(),
+    Math.max(0, ...reglas.pages.map(p => p.sort ?? 0)) + 100000) : null;
+  const nadie = { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE };
+  for (const u of game.users.filter(x => !x.isGM)) nadie[u.id] = CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE;
+  let diarioDM = game.journal.find(j => j.getFlag(MOD, "compendioDM"));
+  if (!diarioDM) diarioDM = await JournalEntry.create({ name: "Ecos · Compendio del Verbe (solo DM)", ownership: nadie, flags: { [MOD]: { compendioDM: 1 } }, pages: [] });
+  else if (Object.entries(nadie).some(([k, v]) => (diarioDM.ownership?.[k] ?? 0) !== v)) await diarioDM.update({ ownership: nadie }, { diff: false, recursive: false });
+  const dm = await poner(diarioDM, "compendioDM", "Compendio del Verbe (solo DM)", compendioDMHTML(D), nadie, null);
+  return { jugadores, dm };
+}
+
+async function asegurarGuiaPagina() {
+  if (!soyGM() || !D) return;
+  const diario = diarioReglas();
+  if (!diario) return;
+  const ownership = quienVeGuia();
   const html = htmlGuia();
   const pag = paginaGuia();
   if (!pag || pag.getFlag(MOD,F)?.guiaRevision!==3) {
@@ -4625,7 +4671,7 @@ Hooks.once("ready", async () => {
   const api = (game.modules.get(MOD).api ??= {});
   api.verbe = { ofertasActor, corregirGastoSimple, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), usoRapido, despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
-    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, disiparClon, canalizar, liberarCanalizada, interrumpirCanal, rangoDe, tieneDote, lecturaDe, leerObjetivos, variarReservaNpc, asegurarTiradasVerbe, cambiarModoReserva, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
+    deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, disiparClon, canalizar, liberarCanalizada, interrumpirCanal, rangoDe, tieneDote, lecturaDe, leerObjetivos, variarReservaNpc, asegurarTiradasVerbe, cambiarModoReserva, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, asegurarCompendios, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)
       ? documento.setFlag(MOD, "metal", !!metal) : false };
   game.socket.on(`module.${MOD}`, d => { if (d?.capaV && !socketDefensa(d)) manejar(d); });

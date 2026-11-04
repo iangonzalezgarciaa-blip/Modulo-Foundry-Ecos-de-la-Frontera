@@ -1,0 +1,172 @@
+# Compatibilidad con PF2e: diseño del adaptador (tarea 5.2b)
+
+*Escrito el 4-nov-2026 sobre la versión 3.11.0, a partir del inventario de `docs/PF2E_ACOPLAMIENTO.md` (5.2a) y de las respuestas del autor del 3-nov-2026. **Pausa:** antes de empezar 5.2c el autor aprueba este diseño y contesta las propuestas marcadas con ❓.*
+
+## Lo que decidió el autor
+
+| Tema | Decisión |
+|---|---|
+| Agotamiento de la casa y deuda de Verbe | Fatigado y Drenado de PF2e. |
+| Descanso corto y Dados de Golpe | Tratar heridas y Reenfocar. El sistema se adapta para que **recuperarse lleve más tiempo de lo normal**: la campaña hace más difícil la muerte definitiva a cambio de alargar mucho las recuperaciones. |
+| Heridas | Moribundo y Herido de PF2e, más las reglas de la casa encima (Malherido, Herida No Tratada, Secuela). |
+| Moneda Antigua | Puntos de Héroe de PF2e. |
+| Técnicas | Acciones con coste en Verbe. |
+| Módulos | Un solo módulo para los dos sistemas. |
+| Licencias | El contenido de PF2e (ORC) que se importe del mundo del autor queda en su mundo. Nunca se sube al repositorio público. |
+
+## La capa del sistema
+
+Una carpeta `scripts/sistema/` con tres archivos:
+
+- `index.js` elige la implementación según `game.system.id` y exporta un solo objeto, `sistema`.
+- `dnd5e.js` mueve ahí lo que hoy está repartido por `main.js`, `verbe.js` y los demás. Se comporta igual que ahora.
+- `pf2e.js` es la implementación nueva (5.2d).
+
+El resto del módulo deja de leer `system.*`, `CONFIG.DND5E` o los hooks `dnd5e.*` directamente. Todo pasa por `sistema`. `scripts/compat.js`, que ya separa Foundry 13 y 14 y dnd5e 5 y 6, se integra en `dnd5e.js`.
+
+### Funciones
+
+| Grupo | Función | Qué devuelve o hace | dnd5e | PF2e |
+|---|---|---|---|---|
+| **Ficha** | `pg(actor)` | `{ valor, max, temp }` | `system.attributes.hp` | `system.attributes.hp` (sin `sp`) |
+| | `curar(actor, n, origen)` / `danar(actor, n, tipo, origen)` | Aplica y devuelve lo aplicado | `applyDamage` | `actor.applyDamage` con el `DamageRoll` de PF2e |
+| | `velocidad(actor)` / `fijarVelocidad(cambios)` | Metros a pie y otros movimientos | `movement.speeds` (6) o `movement` (5) | `system.attributes.speed` |
+| | `ca(actor)` | Número | `attributes.ac.value` | `attributes.ac.value` |
+| | `resistencias(actor)` | `{ resiste, vulnerable, inmune }` con claves de Ecos | `traits.dr/dv/di` | `attributes.resistances/weaknesses/immunities` |
+| | `nivel(actor)` | Nivel o VD | `details.level` / `details.cr` | `details.level.value` |
+| **Cambios** | `cambiosDeEfecto(lista)` | Traduce los 117 cambios del catálogo (CA, movimiento, ataque cuerpo a cuerpo, resistencias) | Efecto activo con `type` o `mode` | Reglas de objeto: `FlatModifier`, `BaseSpeed`, `Resistance` |
+| **Tiradas** | `tirarHabilidad(actor, clave, op)` | Mensaje de chat | `rollSkill` | `actor.skills[clave].roll()` |
+| | `tirarSalvacion(actor, clave, op)` | Mensaje de chat | `rollSavingThrow` | `actor.saves[clave].roll()` |
+| | `leerTirada(mensaje)` | `{ tipo, habilidad, caracteristica, natural, grado }` | `infoTirada` de `compat.js` | `flags.pf2e.context` (`type`, `outcome`) |
+| | `gradoDeExito(total, cd, natural)` | `critico`, `exito`, `fallo`, `falloCritico` | Solo éxito o fallo (el crítico sale del 20 natural) | Las cuatro, con el ±10 de PF2e |
+| **Técnicas** | `datosTecnica(meta)` | El objeto del sistema para la ficha | `feat` con una actividad (`datosItem`) | `action` con rasgos, coste en acciones y reglas |
+| | `alUsarTecnica(fn)` | Engancha el gasto de Verbe y el choque | `dnd5e.postUseActivity` | `preCreateChatMessage` con el `context` de PF2e |
+| **Descansos** | `alDescansar(tipo, fn)` | `"corto"` o `"largo"` | `preShortRest`, `restCompleted`… | `"corto"`: Tratar heridas o Reenfocar; `"largo"`: `restForTheNight` |
+| **Estados** | `aplicarEstado(actor, id, valor)` / `quitarEstado(actor, id)` | | `ActiveEffect` con `statuses` | Objeto `condition` con valor, o efecto propio de Ecos |
+| | `alCrearEstado(fn)` | Para la pregunta antes de poner un estado | `preCreateActiveEffect` | `preCreateItem` |
+| **Áreas** | `areaDeTecnica(meta)` | `{ forma, metros }` | Región de dnd5e 6 | Estallido, cono, emanación o línea, en pies |
+| **Recursos de la casa** | `agotamiento(actor)` / `sumarAgotamiento(actor, n)` | Nivel de la casa (0 a 6) | `attributes.exhaustion` | Fatigado y Drenado (ver abajo) |
+| | `moneda(actor)` / `gastarMoneda(actor)` | Monedas Antiguas | `currency.soul` | Puntos de Héroe |
+| | `muerte(actor)` | `{ moribundo, herido, exitos, fallos }` | Salvaciones de muerte | Moribundo y Herido |
+
+**Lo que no pasa por la capa** porque ya es de Ecos: la reserva de Verbe (`flags.ecos-frontera`), los Trazos, el catálogo, las etapas, el choque, la Mesa Ecos, el calendario, el azar y los diarios.
+
+## Cómo queda cada regla en PF2e
+
+### Agotamiento y deuda de Verbe
+
+PF2e no tiene niveles de agotamiento. La capa los traduce así:
+
+| Agotamiento de la casa | En PF2e |
+|---|---|
+| 1 | Fatigado |
+| 2 a 5 | Fatigado y Drenado 1 a 4 |
+| 6 | La muerte de la casa, igual que en dnd5e |
+
+- Lo que hoy da 1 nivel de Agotamiento sigue dando 1 nivel: el Despertar, el Esfuerzo Excesivo, una salvación fallida por deuda de Verbe.
+- ❓ **Propuesta A.** Fatigado se quita como en PF2e, con una noche entera de descanso. Drenado baja 1 por noche **solo en un Santuario**; fuera de él no baja.
+
+### Descanso corto: Tratar heridas y Reenfocar
+
+El «rato» de la casa pasa a ser una actividad de exploración de 10 minutos:
+
+- **Tratar heridas** (Medicina) recupera PG como en PF2e. Es lo que en dnd5e hacían los Dados de Golpe.
+- **Reenfocar** recupera Verbe con el mismo presupuesto breve compartido de hoy («Respiro» y «Aliento»), que sigue siendo menor que el del descanso largo.
+- La regla 3.5 («el corto solo gasta Dados de Golpe») desaparece: en PF2e no hay Dados de Golpe.
+
+Para que recuperarse lleve más tiempo:
+
+- ❓ **Propuesta B.** La inmunidad de Tratar heridas sube de 1 hora a **8 horas**: una cura por persona en cada tramo de viaje.
+- ❓ **Propuesta C.** «Descansar por la noche» fuera de un Santuario cura la **mitad** de lo normal (mod. de CON × nivel ÷ 2). Dentro, lo normal. Coincide con el Verbe, que ya recupera la mitad en el Santuario y un cuarto a la intemperie.
+
+### Heridas: Moribundo, Herido y las reglas de la casa
+
+- Caer a 0 PG usa Moribundo y Herido de PF2e. El aviso «Acechado por la Muerte» de Ecos se dispara al entrar en Moribundo.
+- **Malherido**, **Herida No Tratada** y **Secuela** siguen siendo efectos de Ecos con sus mismos textos. Pasan a ser efectos de PF2e con reglas de objeto: el −1 a pruebas o a CA se convierte en `FlatModifier`.
+- La magia que cura heridas y el reposo de heridas funcionan igual, leyendo la curación de PF2e.
+
+Para que la muerte definitiva sea más difícil y la recuperación más larga:
+
+- ❓ **Propuesta D.** Se muere en **Moribundo 5** en vez de 4 (el Condenado de PF2e sigue restando).
+- ❓ **Propuesta E.** Herido no baja con Tratar heridas. Solo baja con una noche entera en un Santuario, de 1 en 1.
+
+### Moneda Antigua: Puntos de Héroe
+
+- Repetir una tirada con una Moneda Antigua pasa a ser gastar un Punto de Héroe. El aviso del 1 natural sigue saliendo, ahora para cualquier fallo crítico.
+- La recuperación heroica de PF2e (gastar todos los Puntos de Héroe para no morir) queda activa: encaja con una muerte definitiva más difícil.
+- ❓ **Propuesta F.** PF2e limita los Puntos de Héroe a 3. Claudia tiene 8 Monedas. Opciones: subir el máximo con una regla de objeto para quien lleva monedas, o guardar las de más como objeto de tesoro «Moneda Antigua» y convertirlas cuando gaste una.
+- ❓ **Propuesta G.** Los mercaderes que aceptan Monedas Antiguas cobran en Puntos de Héroe.
+
+### Técnicas: acciones con coste en Verbe
+
+Cada técnica se vuelve un objeto `action` de PF2e:
+
+- **Coste en acciones**, según la activación de hoy:
+
+  | dnd5e | PF2e |
+  |---|---|
+  | Acción | ◆◆ (dos acciones) |
+  | Acción adicional | ◆ (una acción) |
+  | Reacción | ⤾ (reacción) |
+  | Sin acción | ◇ (libre) |
+  | 1 minuto o más | Actividad de exploración |
+
+- **Rasgos:** `ecos-verbe`, la rama, la naturaleza y `concentrate` o `manipulate` según pida Concentración o Gestos.
+- **Ataque:** tirada contra la CA con el modificador de Control del Verbe. En PF2e es una habilidad de Saber propia, «Saber del Verbe», que Ecos crea al despertar.
+- **Salvación:** las de «mitad con éxito» son salvaciones básicas (crítico nada, éxito mitad, fallo entero, fallo crítico doble). Las de estado son no básicas: el fallo crítico alarga o empeora el estado.
+- **CD:** 10 + el modificador de Saber del Verbe.
+- **Coste:** se paga en Verbe como hoy, con la misma vista previa, el mismo límite de técnicas por turno y la misma deuda.
+- ❓ **Propuesta H.** En 5.2d los dados de daño y curación quedan iguales que en dnd5e. Se reajustan después de la prueba en «Esperanza Oculta» (5.2e), porque en PF2e los personajes tienen más PG desde el nivel 1.
+
+### Estados
+
+- Los estados de dnd5e que tienen par en PF2e se aplican con su objeto `condition`. Ejemplos: Derribado → Prone; Apresado → Restrained; Asustado → Frightened 1.
+- Los propios del Verbe (Empapado, Ardiendo, Canalizando, Desequilibrado, Embarrado…) son efectos de Ecos con reglas de objeto.
+- La pregunta antes de poner un estado cuelga de `preCreateItem`.
+
+### Áreas
+
+- Esfera → estallido.
+- Cono → cono.
+- Cubo o cilindro → emanación o estallido, según el centro.
+- Línea → línea.
+
+Las medidas se pasan de metros a pies con `convertirMedida`, como hoy.
+
+### midi-qol
+
+No existe en PF2e. Lo que hoy cuelga de sus hooks pasa al chat de PF2e: ataque, daño y salvación ya se resuelven desde la tarjeta. En dnd5e 6, midi-qol sigue fuera hasta que publique soporte, y Ecos ya funciona sin él (3.10).
+
+## Un solo módulo
+
+- **`module.json`:** `relationships.systems` declara dnd5e (mínimo 5.2.5) y pf2e (mínimo 7, verificado 8.6.1).
+- **Arranque:** cada archivo que hoy registra hooks de dnd5e los registra a través de `sistema`. Si el sistema no es ninguno de los dos, Ecos avisa y no carga las capas de combate.
+- **Catálogo:** `data/verbe.txt` es el mismo para los dos sistemas. `datosTecnica` lo traduce al cargar.
+- **Contenido de PF2e:** los conjuros convertidos (4.2d) van al compendio `world.ecos-conjuros-pf2e` del mundo del autor. Las herramientas de `tools/pf2e/` leen la instalación local y escriben fuera del repositorio.
+
+## Pruebas
+
+- Cada función de la capa tiene una prueba con dobles de dnd5e y de PF2e (`tests/sistema-dnd5e.test.mjs` y `tests/sistema-pf2e.test.mjs`).
+- Las 296 pruebas de hoy siguen pasando después de cada archivo que se mueva en 5.2c.
+- La prueba en Foundry de 5.2e se hace en un mundo PF2e de prueba («Esperanza Oculta» o uno nuevo) con un personaje despertado.
+
+## Orden de trabajo y estimación
+
+| Paso | Qué | Sesiones cortas |
+|---|---|---|
+| 5.2c | Escribir `sistema/dnd5e.js` y mover a él, archivo por archivo, sin cambiar el comportamiento: primero `verbe.js` y luego `main.js`, `relics.js`, `verbe-effects.js`, `verbe-plantillas.js`, `mesa-*.js` | 6 a 8 |
+| 5.2d | `sistema/pf2e.js`, por áreas: ficha, tiradas, técnicas, descansos, estados, recursos de la casa | 9 a 14 |
+| 5.2e | Prueba en un mundo PF2e y ajuste de cifras (Propuesta H) | 3 a 4 |
+
+## Preguntas para el autor
+
+Contesta sí, no u otra cosa a cada una:
+
+- **A.** Drenado baja 1 por noche solo en un Santuario.
+- **B.** La inmunidad de Tratar heridas sube a 8 horas.
+- **C.** Fuera de un Santuario, la noche cura la mitad.
+- **D.** Se muere en Moribundo 5.
+- **E.** Herido solo baja con una noche en un Santuario.
+- **F.** Para las Monedas de más (más de 3): ¿subir el máximo de Puntos de Héroe, o guardarlas como objeto?
+- **G.** Los mercaderes cobran en Puntos de Héroe.
+- **H.** Los dados quedan iguales hasta la prueba.

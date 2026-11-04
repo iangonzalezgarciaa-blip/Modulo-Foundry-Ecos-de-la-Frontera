@@ -8,6 +8,7 @@
  *  - dnd5e 6: los mensajes del chat tienen tipo y datos propios (`message.type` y `message.system`) en vez de
  *    `flags.dnd5e.roll`, `flags.dnd5e.targets` y `flags.dnd5e.use.consumed`.
  * Cada función acepta los dos formatos, así el módulo sigue funcionando en Foundry 13 con dnd5e 5.2.
+ * 3.11: `puenteRitmoViaje` devuelve a dnd5e 6 una función que otros módulos todavía buscan en su sitio viejo.
  */
 const TIPOS = { 0: "custom", 1: "multiply", 2: "add", 3: "downgrade", 4: "upgrade", 5: "override" };
 const NUMEROS = Object.fromEntries(Object.entries(TIPOS).map(([n, t]) => [t, Number(n)]));
@@ -107,4 +108,18 @@ export function duracionFinita(ef) {
   const d = ef?.duration ?? {};
   if ("units" in d || "expiry" in d) return Number(d.value) > 0; // Foundry 14: no se leen las claves viejas (avisan)
   return Number(d.seconds) > 0 || Number(d.rounds) > 0 || Number(d.turns) > 0;
+}
+
+/* ---------- Puentes para módulos de terceros escritos para dnd5e 5 ---------- */
+/**
+ * adv-reminder 5.1.2 llama a `dnd5e.dataModels.shared.MovementField.getTravelPaceMode`, que en dnd5e 6 pasó a
+ * `dnd5e.dataModels.actor.TravelField`. Sin el alias, cada prueba de habilidad lanza un error en su gancho
+ * (la tirada sale igual, pero sin sus recordatorios). Solo añade el alias si falta y si existe la función nueva.
+ * Devuelve true si lo añadió.
+ */
+export function puenteRitmoViaje(sistema = globalThis.dnd5e) {
+  const mov = sistema?.dataModels?.shared?.MovementField, viaje = sistema?.dataModels?.actor?.TravelField;
+  if (!mov || typeof mov.getTravelPaceMode === "function" || typeof viaje?.getTravelPaceMode !== "function") return false;
+  Object.defineProperty(mov, "getTravelPaceMode", { value: (...args) => viaje.getTravelPaceMode(...args), configurable: true, writable: true });
+  return true;
 }

@@ -56,19 +56,3 @@ test('no publica un manifiesto cuya descarga apunta a otra versión', async t =>
   const m = JSON.parse(fs.readFileSync(file)); m.download = m.download.replace('v1.2.3','v0.0.1'); fs.writeFileSync(file, JSON.stringify(m));
   await assert.rejects(publicar(e.args), /no apunta/); assert.equal(e.estado.calls.length, 0);
 });
-test('modo privado adjunta el ayudante y no exige enlaces públicos', async t => {
-  const e = entorno(t); e.estado.esperados = 4;
-  fs.writeFileSync(path.join(e.root, 'package.json'), JSON.stringify({ version: '1.2.3', ecosUpdateMode: 'private' }));
-  fs.writeFileSync(path.join(e.root, 'module.json'), JSON.stringify({ version: '1.2.3' }));
-  fs.mkdirSync(path.join(e.root, 'tools/windows'), { recursive: true });
-  fs.writeFileSync(path.join(e.root, 'tools/windows/Ecos-Actualizar.ps1'), '# ayudante de prueba');
-  fs.writeFileSync(path.join(e.root, 'tools/windows/Ecos-Autoactualizacion.bat'), '@echo off');
-  await publicar(e.args);
-  assert.deepEqual(e.estado.calls, ['crear','ecos-frontera-1.2.3.zip','module.json','Ecos-Actualizar.ps1','Ecos-Autoactualizacion.bat','publicar']);
-  assert.match(e.estado.release.body, /Actualización privada/);
-});
-test('modo privado rechaza anunciar una actualización nativa sin autenticación', async t => {
-  const e = entorno(t);
-  fs.writeFileSync(path.join(e.root, 'package.json'), JSON.stringify({ version: '1.2.3', ecosUpdateMode: 'private' }));
-  await assert.rejects(publicar(e.args), /modo privado/); assert.equal(e.estado.calls.length, 0);
-});

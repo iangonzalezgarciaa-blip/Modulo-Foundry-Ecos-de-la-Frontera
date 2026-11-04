@@ -184,10 +184,3 @@ test('la ficha explica requisitos estructurados aunque ya se cumplan',async()=>{
   V.PanelVerbe.DEFAULT_OPTIONS.actions.ficha.call(p,{preventDefault(){}},{dataset:{id:'mirada-aster-luna'}});
   assert.match(config.content,/etapa 4/);assert.match(config.content,/abrir para usar/);assert.match(config.content,/Luna de la pesadilla/);
 });
-test('las copias embebidas del notificador son idénticas al archivo fuente',()=>{
-  const normal=s=>s.replaceAll('\r\n','\n').trim();const source=normal(fs.readFileSync(new URL('../tools/windows/Ecos-Notificar.ps1',import.meta.url),'utf8'));
-  for(const f of ['Ecos-Actualizar.ps1','Ecos-Autoactualizacion.bat']){
-    const s=normal(fs.readFileSync(new URL('../tools/windows/'+f,import.meta.url),'utf8'));
-    const embedded=s.match(/\$wrapper = @'\n([\s\S]*?)\n'@/);assert.ok(embedded,f);assert.equal(normal(embedded[1]),source,f);
-  }
-});

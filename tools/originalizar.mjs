@@ -5,7 +5,21 @@ import {reemplazar,nombresReliquias} from './nimerios/nombres.mjs';
 import {fichaLecturaHTML,huellaTexto} from '../scripts/verbe-reading.js';
 const D=readCatalog(),compat=JSON.parse(fs.readFileSync(new URL('./nimerios/compatibilidad-3.2.1.json',import.meta.url),'utf8'));
 const extra={};
-for(const t of D.tecnicas)for(const a of t.alias??[])if(a&&a!==t.n&&a.length>3)extra[a]=reemplazar(t.n);
+// 3.11: las técnicas de sangre llevan como alias el nombre visible de su linaje («Sangre Antigua», «Sangre de aurora»…).
+// Ese alias no es un nombre ajeno que traducir: si entra en el mapa, cualquier texto que diga «Sangre Antigua» pasa a
+// llamarse como la última técnica de Maethra. Pasaba desde 3.3 («Pide: Jardín del Primer Sueño»).
+const deLinaje=new Set(D.linajes.flatMap(l=>[l.alias,l.req,l.herencia]).filter(Boolean));
+for(const t of D.tecnicas)for(const a of t.alias??[])if(a&&a!==t.n&&a.length>3&&!deLinaje.has(a))extra[a]=reemplazar(t.n);
+// Repara lo que ese error ya dejó escrito en el catálogo, fuera de la propia técnica.
+const tecJardin=D.tecnicas.find(t=>t.id==='divino-madre-jardin'),JARDIN=tecJardin?.n??'Jardín del Primer Sueño';
+function repararJardin(o){
+ if(!o||typeof o!=='object'||o===tecJardin)return;
+ for(const [k,v]of Object.entries(o)){
+  if(typeof v==='string'&&v.includes(JARDIN))o[k]=v.replaceAll(JARDIN,'Sangre Antigua');
+  else if(v&&typeof v==='object')repararJardin(v);
+ }
+}
+repararJardin(D);
 // Los requisitos y los identificadores siguen siendo los mismos. No se altera ninguna regla.
 const tecnicos=new Set(['id','_id','identifier','previa','key','value','modo','grupoModo','modosConcedidos','familiaUso','artefacto','bestia','hito','tradicion','herencia','req','pacto','linaje','rango','car','type','reference']);
 function recorrer(o){
