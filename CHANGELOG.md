@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 3.15.0 — 2026-11-04
+
+- Conjuros de PF2e en el mundo (tarea 4.2d): los 1.386 conjuros únicos de PF2e, convertidos a dnd5e con las reglas de 4.2c, entran solos (si está el archivo convertido en tu carpeta de datos) al compendio «Conjuros de PF2e (Ecos)» al cargar el mundo, en carpetas por nivel. Cada uno trae su actividad (ataque, salvación, daño, curación o utilidad), su escalado a niveles superiores, el texto en castellano sin enlaces de PF2e, su fuente y su licencia. El conversor (tools/pf2e/convertir_conjuros.py) corre en tu PC y el texto de Paizo no entra al repositorio. Listas de clase y el glosario «Cómo leer los conjuros de PF2e» en «Listas de conjuros de PF2e (Ecos)». Detalle en docs/CONVERSION_PF2E.md.
+- La lupa: en el libro de conjuros de cada hoja, cada nivel trae una lupa que abre el buscador de dnd5e con tu lista de clase y los niveles que puedes lanzar, con D&D y PF2e juntos. Los conjuros elegidos entran a tu hoja. El mago sigue el Manual: 6 de nivel 1 al empezar y 2 por nivel, gratis; el resto se copia al libro por 50 po y 2 horas por nivel (los raros de PF2e cuestan más) y el oro se descuenta solo. Las demás clases los añaden sin coste y preparan los que su clase diga.
+- Resonancia del Verbe (aprobada por el autor): dote gratis al despertar el Verbe. +1 al ataque y +1 a la CD de los conjuros normales afines a tu naturaleza o a una rama en la que tengas rango. Tablas en docs/MAGIA_ESTANDAR.md.
+- Mesa → Control: botón «Importar conjuros de PF2e».
+- Diagnóstico: un caso real nuevo (41 en total).
+
 ## 3.14.0 — 2026-11-04
 
 - D&D primero (pedido del autor: «respetar D&D base… que sean complementarias; odio matar mecánicas»). Nada de Ecos quita ni cambia una regla del Manual; lo que ya existe en D&D o en PF2e se resuelve como allí y lo de Ecos se suma. Detalle en docs/COMBATE_TACTICO.md, «D&D primero».

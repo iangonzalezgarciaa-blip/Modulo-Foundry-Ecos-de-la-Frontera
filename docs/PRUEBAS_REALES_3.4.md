@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.14.0
+# Preparar la primera prueba real · 3.15.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -249,6 +249,12 @@ Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el pan
 ### 40. 3.14 · D&D primero
 
 Saca un 20 natural en un ataque: los dados de daño se tiran dos veces (crítico del Manual) y además sale la tabla del 20. En la hoja de un pícaro o bardo con Pericia en Engaño, usa Fintar: la CD de la tarjeta es 8 + su Engaño, mayor que la de un guerrero con el mismo Carisma. Presa sigue con 8 + FUE + competencia. Ponte detrás de una mesa y usa Ponerse a cubierto: queda cobertura de tres cuartos (+5), no media. En «12 · Lo que cualquiera puede intentar», cada fila dice si es regla base del Manual o de Ecos.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 41. 3.15 · Conjuros de PF2e, la lupa y Resonancia
+
+Recarga el mundo como DM y espera un minuto: aparece el compendio «Conjuros de PF2e (Ecos)» con carpetas por nivel, y «Listas de conjuros de PF2e (Ecos)» con el glosario. En la hoja de un mago, en el libro de conjuros, pulsa la lupa de Nivel 1: el buscador muestra conjuros de D&D y de PF2e de la lista de mago. Elige uno: si te quedan gratis, entra sin coste; si no, pide copiarlo por 50 po y 2 horas por nivel. Despierta el Verbe de una hoja: recibe la dote «Resonancia del Verbe». Con naturaleza Fuego, la CD de un conjuro de fuego sube 1 en la hoja y su ataque suma +1.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 

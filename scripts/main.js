@@ -32,6 +32,8 @@ import "./mercader.js";
 import "./combate-tactico.js";
 import "./ordenar-diarios.js";
 import "./nombres-mundo.js";
+import "./conjuros.js";
+import "./resonancia.js";
 import { motivoPausaMoneda } from "./mesa-control.js";
 import { crearCola } from "./verbe-core.js";
 import { recuperacionDGLarga, presupuestoCorto, ajustarRecuperacionDG } from "./rest-core.js";

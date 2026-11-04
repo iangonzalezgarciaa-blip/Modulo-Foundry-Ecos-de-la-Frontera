@@ -1,6 +1,6 @@
 # Conversión de hechizos de PF2e a dnd5e (3.8, tareas 4.2a–e)
 
-Estado (3-nov-2026): 4.2a, 4.2b y 4.2c hechas. Faltan los lotes (4.2d) y la biblioteca (4.2e).
+Estado (4-nov-2026): 4.2a, 4.2b, 4.2c y 4.2d hechas. Falta la biblioteca (4.2e).
 
 ## 4.2a · Exportar (hecha)
 
@@ -52,7 +52,30 @@ Por rareza: 826 comunes, 382 poco comunes, 168 raros y 10 únicos.
 
 Chris's Premades y MISC Spells no se compararon: no están instalados en el mundo actual.
 
-**Siguiente paso (4.2d).** Convertir por lotes de unos 10 en el compendio del mundo `world.ecos-conjuros-pf2e`, empezando por los trucos y el rango 1. Se hace desde Foundry con el mundo abierto, leyendo `filtro-pf2e.json` desde tu carpeta de datos. Al ritmo de un lote por tanda son unos 140 lotes: conviene priorizar por tradición o por lo que vayan a usar tus jugadores.
+## 4.2d · Conversión (hecha, 3.15)
+
+En vez de 140 lotes a mano, un conversor aplica las reglas de 4.2c a los 1.386 de una vez, y el módulo los lleva al compendio. Registro por nivel en `docs/CONVERSION_PF2E_LOTES.md`.
+
+| Qué | Dónde |
+|---|---|
+| Conversor | `tools/pf2e/convertir_conjuros.py`. Se ejecuta en `Data/ecos-pf2e/` con `python convertir_conjuros.py <carpeta del pack de hechizos de PF2e>` (el pack da los iconos). |
+| Resultado | `Data/ecos-pf2e/conjuros-dnd5e.json` en tu PC (no en el repositorio: lleva texto de Paizo). |
+| Importador | `scripts/conjuros.js`. Al cargar el mundo, el DM lleva el archivo al compendio `world.ecos-conjuros-pf2e` («Conjuros de PF2e (Ecos)») si cambió; la Mesa tiene el botón «Importar conjuros de PF2e». |
+| Listas de clase | Compendio `world.ecos-listas-pf2e`: una página de lista de dnd5e por clase, registrada en el buscador de dnd5e, y el glosario «Cómo leer los conjuros de PF2e». |
+
+**Qué hace el conversor con cada hechizo:**
+
+- Nombre en castellano con el inglés entre paréntesis («Explosión ácida (Acidic Burst)»), para buscar en los dos idiomas.
+- Nivel, tiempo de lanzamiento, alcance, área, objetivo y duración con las tablas de 4.2c. «Concentrar» y «manipular» pasan a componentes verbal y somático; «sostenido», a Concentración.
+- Una actividad de dnd5e: ataque de conjuro si el hechizo ataca; salvación (CON, DES o SAB, con la mitad si es básica) si pide salvación; daño o curación si solo hace eso; y utilidad para el resto. El daño se tira con los dados del hechizo; el persistente queda en el texto.
+- **Potenciado a niveles superiores:** como un nivel de espacio equivale a dos rangos, «Potenciado (+1)» suma el doble por nivel; «(+2)», lo mismo por nivel; «(+3)» o «(+4)», cada dos niveles. En los trucos, igual por cada salto de dnd5e (niveles 5, 11 y 17).
+- Escuela: la del rasgo si el hechizo es anterior al Remaster; si no, la que dicen sus rasgos (ilusión, mental, teletransporte, polimorfia, detección, vacío, curación…). Sin pistas: Evocación si hace daño, Transmutación si no.
+- Texto en castellano sin los enlaces de PF2e: daños, pruebas, plantillas y acciones pasan a texto de D&D («salvación de Destreza (la mitad si la supera)», «3d6 de daño de veneno»). Fortaleza, Reflejos y Voluntad pasan a Constitución, Destreza y Sabiduría.
+- **Grados de éxito:** si supera, lo de Éxito; si falla, lo de Fallo; con un 20 natural, lo de Éxito crítico, y con un 1 natural, lo de Fallo crítico. Así la regla de D&D manda (dos resultados) y los críticos de PF2e se enganchan al 20 y al 1, como el resto de Ecos.
+- Cada conjuro cita su fuente, su licencia (ORC u OGL), sus tradiciones y su rareza, y una nota que explica la conversión.
+- Listas de clase por tradición: arcana → mago y hechicero; ocultista → bardo y brujo; divina → clérigo y paladín; primigenia → druida y explorador.
+
+**Resultado:** 102 trucos y 405, 377, 272, 144, 53 y 33 conjuros de nivel 1 a 6.
 
 ## 4.2c · Reglas
 
