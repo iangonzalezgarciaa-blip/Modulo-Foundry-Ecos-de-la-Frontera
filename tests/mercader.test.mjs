@@ -8,11 +8,12 @@ test('3.12: precios en Monedas Antiguas por rareza; las reliquias valen una más
   assert.equal(pagoPorVenta('veryRare'), 2); assert.equal(pagoPorVenta('veryRare', true), 5); assert.equal(pagoPorVenta('uncommon'), 1);
 });
 
-test('Trazos por Monedas: 2 por Trazo y como mucho 2 Trazos por nivel en total', () => {
-  assert.equal(trazosComprables(8, 3, 0), 4);
-  assert.equal(trazosComprables(8, 1, 0), 2);
-  assert.equal(trazosComprables(8, 3, 5), 1);
-  assert.equal(trazosComprables(1, 10, 0), 0);
+test('3.17: Trazos por Monedas como en la guía del Verbe: 1 por Trazo y como mucho 2 en cada nivel', () => {
+  assert.equal(trazosComprables(8, 0), 2);
+  assert.equal(trazosComprables(8, 1), 1);
+  assert.equal(trazosComprables(8, 2), 0);
+  assert.equal(trazosComprables(1, 0), 1);
+  assert.equal(trazosComprables(0, 0), 0);
 });
 
 test('el surtido sale sin repetir, con precio, y solo con cosas que se venden', () => {

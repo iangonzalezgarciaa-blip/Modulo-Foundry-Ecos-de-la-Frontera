@@ -1,6 +1,6 @@
 /**
  * Monedas Antiguas (3.12, pedido del autor): todo lo raro o fuerte del mundo tiene precio en Monedas.
- *  - En el panel del Verbe: 2 Monedas = 1 Trazo, hasta 2 Trazos por nivel de personaje en total.
+ *  - En el panel del Verbe: 1 Moneda = 1 Trazo, como mucho 2 en cada nivel (la regla de la guía del Verbe; desde 3.17).
  *  - El mercader extraño: el único que acepta Monedas. El DM sortea un surtido de 15 objetos raros o fuertes
  *    (reliquias del Archivo y objetos mágicos de los compendios) y lo muestra en el chat; los jugadores compran desde
  *    la tarjeta. También compra lo raro que le traigan: las reliquias, a precio entero; lo demás, a mitad.
@@ -9,7 +9,9 @@
 const MOD = "ecos-frontera";
 export const PRECIO = { uncommon: 1, rare: 2, veryRare: 4, legendary: 7 };
 export const NOMBRE_RAREZA = { uncommon: "poco común", rare: "rara", veryRare: "muy rara", legendary: "legendaria" };
-export const MONEDAS_POR_TRAZO = 2, TRAZOS_POR_NIVEL = 2, SURTIDO = 15;
+// La regla del Verbe (guía de jugadores): 1 Moneda Antigua = 1 Trazo, como mucho 2 en cada nivel. En 3.12 este botón
+// cobraba 2 por Trazo con otra cuenta; desde 3.17 usa la misma regla y la misma cuenta que el panel del Verbe.
+export const MONEDAS_POR_TRAZO = 1, TRAZOS_POR_NIVEL = 2, SURTIDO = 15;
 const PESO = { uncommon: 4, rare: 3, veryRare: 2, legendary: 1 };
 
 /** Lo que cuesta en Monedas (null si no se vende: común, artefacto o sin rareza). Las reliquias del Archivo, 1 más. */
@@ -17,11 +19,10 @@ export const precioMonedas = (rareza, reliquia = false) => (PRECIO[rareza] ? PRE
 /** Lo que paga el mercader: busca reliquias, así que esas las paga enteras; lo demás, a mitad (mínimo 1). */
 export const pagoPorVenta = (rareza, reliquia = false) => { const p = precioMonedas(rareza, reliquia); return p == null ? null : reliquia ? p : Math.max(1, Math.floor(p / 2)); };
 
-/** Cuántos Trazos se pueden comprar ahora: por Monedas y por el tope de 2 por nivel. */
-export function trazosComprables(monedas, nivel, yaComprados = 0) {
+/** Cuántos Trazos se pueden comprar ahora: una Moneda por Trazo y como mucho 2 en el nivel actual. */
+export function trazosComprables(monedas, yaEsteNivel = 0) {
   const porMonedas = Math.floor((Number(monedas) || 0) / MONEDAS_POR_TRAZO);
-  const tope = Math.max(0, TRAZOS_POR_NIVEL * Math.max(1, Number(nivel) || 1) - (Number(yaComprados) || 0));
-  return Math.max(0, Math.min(porMonedas, tope));
+  return Math.max(0, Math.min(porMonedas, TRAZOS_POR_NIVEL - (Number(yaEsteNivel) || 0)));
 }
 
 /** Surtido al azar, sin repetir, con más cosas poco comunes que legendarias. `rng` devuelve [0, 1). */
@@ -107,12 +108,9 @@ async function vender(actor, itemId, usuario) {
 }
 
 async function trazos(actor, n, usuario) {
-  const ya = Number(actor.getFlag(MOD, "trazosPorMonedas")) || 0, max = trazosComprables(monedas(actor), nivelDe(actor), ya);
-  n = Math.min(Math.max(0, Math.trunc(Number(n) || 0)), max);
-  const darTrazos = game.modules.get(MOD).api?.verbe?.darTrazos;
-  if (!n || !darTrazos) return aviso(usuario, "No se pudo hacer el cambio.");
-  await actor.update({ "system.currency.soul": monedas(actor) - n * MONEDAS_POR_TRAZO, [`flags.${MOD}.trazosPorMonedas`]: ya + n });
-  await darTrazos(actor, n);
+  const V = game.modules.get(MOD).api?.verbe;
+  if (!V?.gastarMoneda) return aviso(usuario, "No se pudo hacer el cambio.");
+  for (let i = 0; i < Math.max(0, Math.trunc(Number(n) || 0)); i++) if (await V.gastarMoneda(actor, "trazo") === false) break;
 }
 
 function aviso(usuarioId, texto) {
@@ -144,12 +142,14 @@ async function elegirVenta(actor) {
 
 /** Panel del Verbe: cambiar Monedas Antiguas por Trazos. */
 export async function cambiarPorTrazos(actor) {
-  const ya = Number(actor?.getFlag(MOD, "trazosPorMonedas")) || 0, max = trazosComprables(monedas(actor), nivelDe(actor), ya);
-  if (!max) return ui.notifications.info(`${actor.name} tiene ${monedas(actor)} Monedas Antiguas. Hacen falta ${MONEDAS_POR_TRAZO} por Trazo, y el tope es ${TRAZOS_POR_NIVEL} Trazos por nivel (ya cambió ${ya}).`);
+  const V = game.modules.get(MOD).api?.verbe, e = V?.estado?.(actor);
+  if (!e?.despierto) return ui.notifications.info("Los Trazos son del Verbe: hace falta tenerlo despierto.");
+  const ya = Number(e.monedas?.[nivelDe(actor)]) || 0, max = trazosComprables(monedas(actor), ya);
+  if (!max) return ui.notifications.info(`${actor.name} tiene ${monedas(actor)} Monedas Antiguas. Cada una se vuelve 1 Trazo, como mucho ${TRAZOS_POR_NIVEL} en cada nivel (en este ya cambió ${ya}).`);
   const n = await foundry.applications.api.DialogV2.prompt({ window: { title: "Monedas Antiguas por Trazos" }, rejectClose: false,
-    content: `<p>${MONEDAS_POR_TRAZO} Monedas Antiguas = 1 Trazo. Puedes cambiar hasta <b>${max}</b> ahora (el tope es ${TRAZOS_POR_NIVEL} por nivel; ya cambiaste ${ya}).</p><label>Trazos <input type="number" name="n" min="1" max="${max}" value="1"></label>`,
+    content: `<p>1 Moneda Antigua = 1 Trazo, como mucho ${TRAZOS_POR_NIVEL} en cada nivel. Ahora puedes cambiar hasta <b>${max}</b> (en este nivel ya cambiaste ${ya}).</p><label>Trazos <input type="number" name="n" min="1" max="${max}" value="1"></label>`,
     ok: { label: "Cambiar", callback: (ev, b) => Number(b.form.elements.n.value) } });
-  if (n) await alDM({ op: "trazos", actorUuid: actor.uuid, n });
+  if (n) await trazos(actor, Math.min(n, max), game.user.id);
 }
 
 if (globalThis.Hooks) {

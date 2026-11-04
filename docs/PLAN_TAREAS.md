@@ -310,3 +310,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 4-nov-2026 | Pedido del autor | Claude | D&D primero: vuelve el crítico del Manual; las acciones del Manual se resuelven como en el Manual y las de Ecos usan la pericia; Ponerse a cubierto sube la cobertura; Rodear cede al flanqueo de la Guía del DM. Release v3.14.0 | 3.14.0 |
 | 4-nov-2026 | 4.2d y pedidos del autor | Claude | 1.386 conjuros de PF2e al compendio del mundo con listas de clase; lupa de conjuros en las hojas (mago según el Manual); dote Resonancia del Verbe. Release v3.15.0 | 3.15.0 |
 | 4-nov-2026 | Pedido del autor | Claude | Resonancia del Verbe: curación afín +1 PG por dado (Agua o Pulso); elementos de PF2e para los conjuros sin daño. Release v3.16.0 | 3.16.0 |
+| 4-nov-2026 | Corrección | Claude | Monedas por Trazos con la regla de la guía (1 por 1, 2 por nivel). Release v3.17.0 | 3.17.0 |

@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.17.0 — 2026-11-04
+
+- Corrección: el botón «Cambiar Monedas» del panel del Verbe (3.12) cobraba 2 Monedas Antiguas por Trazo y llevaba su propia cuenta, distinta de la regla de la guía del Verbe. Ahora sigue la guía: 1 Moneda = 1 Trazo, como mucho 2 en cada nivel, con la misma cuenta que el panel.
+
 ## 3.16.0 — 2026-11-04
 
 - Resonancia del Verbe, como la pidió el autor: con una naturaleza descubierta, los conjuros normales de ese elemento se potencian. Además del +1 al ataque y a la CD, una curación afín cura 1 PG más por dado. Las curaciones son de Agua (o de la rama Pulso), y los conjuros de PF2e sin daño toman la naturaleza de su elemento (fuego, agua, frío, aire, tierra, metal, madera, electricidad) antes que la de su escuela. El daño sigue como en el Manual.
