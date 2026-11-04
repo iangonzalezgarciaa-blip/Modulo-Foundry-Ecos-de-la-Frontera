@@ -9,94 +9,104 @@ export function escalaAzar(nivel){
  const n=Math.max(1,Math.min(20,Math.trunc(Number(nivel)||1))),competencia=2+Math.floor((n-1)/4);
  return {nivel:n,bono:Math.min(3,Math.ceil(competencia/2)),temporal:competencia,metros:1.5};
 }
-// Cada fila es una alternativa, nunca una acumulación con las otras siete.
+// 3.12 (pedido del autor): el 20 natural ya no duplica el daño; a cambio, el 20 y el 1 traen consecuencias que se notan,
+// lógicas para un éxito o un fracaso tremendos. Cada fila es una alternativa, nunca una acumulación con las otras siete.
+// [nombre, texto, tipo de efecto automático, valor, sobre quién]. Tipos: ca (±{bono}), paso (±1,5 m por punto),
+// estado (un estado de dnd5e), pgTemp (PG temporales = competencia). «objetivo»: se aplica al blanco de la tirada.
 const adversos={
  ataque:[
- ['Guardia abierta','Hasta el inicio de tu próximo turno, tu CA baja {bono}.','ca',-1],
- ['Paso inseguro','En tu próximo turno tu velocidad de caminar baja 1,5 m, como mínimo a 1,5 m.','paso',-1],
- ['Ruido del impacto','Tu intento produce un ruido claramente audible. El DM decide quién puede oírlo; no crea enemigos.'],
- ['Agarre incómodo','Antes de tu próximo ataque debes recolocar el arma o tus manos usando tu interacción gratuita con objeto. Si no puedes, el DM permite soltar un objeto; nunca destruye equipo.'],
- ['Lectura del adversario','El objetivo entiende tu intención inmediata. La siguiente prueba tuya de Engaño contra él antes del final de tu próximo turno recibe −{bono}.'],
- ['Retroceso breve','Puedes elegir permanecer en tu espacio o retroceder 1,5 m a un espacio seguro, visible y sin peligro. El DM resuelve el movimiento normal y posibles ataques de oportunidad; nunca obliga a caer.'],
- ['Molestia pasajera','La próxima prueba de habilidad de Fuerza o Destreza que hagas antes del final de tu siguiente turno recibe −{bono}. No afecta ataques ni salvaciones.'],
- ['Tensión revelada','El DM describe una apertura o señal de cansancio. Un enemigo que pueda verla sabe que esa maniobra te costó esfuerzo; no obtiene un ataque, acción o daño gratis.']
+ ['Pierdes el equilibrio','Quedas Derribado.','estado','prone'],
+ ['Se te escapa el arma','Lo que usabas cae a 1,5 m de ti. Recogerlo es tu interacción con un objeto. Una técnica sin arma te deja la mano entumecida: tu próximo ataque con ella recibe −{bono}.'],
+ ['Guardia abierta','Hasta el inicio de tu próximo turno tu CA baja {bono}.','ca',-1],
+ ['Golpe al aliado','Si hay un aliado a 1,5 m del objetivo, salva Destreza contra 10 + tu bono de ataque o recibe la mitad del daño que habrías hecho.'],
+ ['Te tuerces','En tu próximo turno tu velocidad baja 3 m, como mínimo a 1,5 m.','paso',-2],
+ ['Le das la espalda','El objetivo puede usar su reacción ahora para hacerte un ataque cuerpo a cuerpo, si te alcanza.'],
+ ['Arma trabada','Tu próximo ataque con esa arma o técnica tiene desventaja.'],
+ ['Te delatas','Si estabas escondido, todos saben dónde estás. Si no, el enemigo más cercano tiene ventaja en su próximo ataque contra ti.']
  ],
  salvacion:[
- ['Equilibrio precario','En tu próximo turno tu velocidad de caminar baja 1,5 m, como mínimo a 1,5 m.','paso',-1],
- ['Defensa forzada','Hasta el inicio de tu próximo turno, tu CA baja {bono}. No añade daño al efecto que originó la salvación.','ca',-1],
- ['Atención dividida','Tu próxima prueba de Percepción antes del final de tu siguiente turno recibe −{bono}.'],
- ['Señal evidente','Tu reacción al peligro es visible o audible para quien pueda percibirte. No revela criaturas ocultas por sí sola ni altera el resultado de la salvación.'],
- ['Gesto incómodo','Tu próxima prueba de Acrobacias o Atletismo antes del final de tu siguiente turno recibe −{bono}.'],
- ['Respiración entrecortada','Hablas con dificultad hasta el inicio de tu siguiente turno. Puedes comunicar frases cortas y lanzar conjuros con normalidad; no añade Silencio o Incapacitado.'],
- ['Rastro del peligro','Queda en ti una señal no dañina del efecto hasta que la limpies durante un minuto. No impone estados ni nuevas tiradas.'],
- ['Posición comprometida','El DM señala una cobertura o apoyo que debes volver a evaluar. No pierde su protección hasta que las reglas normales o un cambio real del escenario lo indiquen.']
+ ['Te dura más','El efecto que fallaste dura un asalto más.'],
+ ['Al suelo','Además, quedas Derribado.','estado','prone'],
+ ['Sueltas lo que tienes','Se te cae lo que sostienes en una mano (tú eliges cuál).'],
+ ['Sin reacción','Pierdes tu reacción hasta el inicio de tu próximo turno.'],
+ ['Guardia rota','Hasta el inicio de tu próximo turno tu CA baja {bono}.','ca',-1],
+ ['Pánico','Quedas Asustado de la fuente del efecto hasta el final de tu próximo turno.','estado','frightened'],
+ ['Tambaleo','En tu próximo turno tu velocidad baja 3 m, como mínimo a 1,5 m.','paso',-2],
+ ['Marcado','Tu próxima salvación antes del final de tu siguiente turno tiene desventaja.']
  ],
  habilidad:[
- ['Apoyo inestable','En tu próximo turno tu velocidad de caminar baja 1,5 m, como mínimo a 1,5 m.','paso',-1],
- ['Herramienta desplazada','La herramienta que usas queda a tu alcance en un apoyo seguro si lo hay. Recuperarla usa tu interacción normal; no se pierde ni se rompe.'],
- ['Detalle anunciado','Alguien que pueda percibirte nota qué tarea intentabas hacer. No conoce información que no pudiera percibir.'],
- ['Preparación incompleta','La siguiente prueba de habilidad para esa misma tarea, antes del final de tu próximo turno, recibe −{bono}. No afecta ataques o salvaciones.'],
- ['Pequeño retraso','La tarea necesita un detalle adicional que puedes completar con una interacción normal o durante el minuto siguiente. No consume otra acción de combate.'],
- ['Señal confusa','Un aliado que te vea pide aclaración de tu intención. Puedes responder normalmente; no le quita acciones ni altera su siguiente tirada.'],
+ ['Te enredas','Quedas Derribado.','estado','prone'],
+ ['Herramienta perdida','Lo que usabas cae a 3 m. Si era frágil, se daña: el DM dice si aún sirve.'],
+ ['Llamas la atención','El enemigo más cercano te elige: su próximo ataque contra ti tiene ventaja.'],
+ ['Te lastimas','Recibes {temporal} de daño contundente: un mal golpe, un tirón, una caída.'],
+ ['Mala lectura','El DM te da un dato equivocado pero creíble sobre lo que intentabas.'],
  ['Guardia distraída','Hasta el inicio de tu próximo turno tu CA baja {bono}.','ca',-1],
- ['Rastro de actividad','Dejas una señal de tu trabajo que el DM describe. No produce daño, recursos gastados ni una alarma automática.']
+ ['Sin poder repetir','No puedes volver a intentar lo mismo hasta el final de tu próximo turno.'],
+ ['Arrastras a otro','Un aliado que te ayudaba o estaba a 1,5 m tiene desventaja en su próxima tirada.']
  ],
  escena:[
- ['Tiempo extra','La tarea tarda hasta un minuto adicional o un 10 % de su duración normal, el menor de ambos. No rompe por sí solo un plazo importante.'],
- ['Limpieza necesaria','Queda suciedad o desorden pequeño. Un minuto y medios ordinarios bastan para corregirlo; no destruye materiales ni contamina alimentos.'],
- ['Pregunta incómoda','Una persona presente puede pedir una aclaración. Responder o negarte sigue siendo tu decisión; no impone hostilidad ni confesiones.'],
- ['Huella del intento','Dejas una señal perceptible de la tarea. Detectarla requiere las condiciones y pruebas normales.'],
- ['Medida repetida','Antes de repetir exactamente esta tarea necesitas un minuto para revisar el procedimiento. No habilita repetir una prueba que el DM considera definitiva.'],
- ['Dato incompleto','El DM ofrece una pista parcial que ya podrías percibir y señala qué falta comprobar. No transforma un fracaso en éxito ni fabrica información falsa obligatoria.'],
- ['Pequeña distracción','Tu próxima prueba de habilidad sobre esta misma tarea en los siguientes diez minutos recibe −{bono}. No afecta ataques o salvaciones.'],
- ['Bulto mal colocado','Un objeto propio usado en la tarea queda en un lugar seguro que puedas recuperar. No desaparece, se rompe ni se entrega a un enemigo.']
+ ['El doble de tiempo','Tardas el doble de lo normal.'],
+ ['Se rompe','La herramienta o el material se daña: hay que repararlo o reponerlo antes de volver a usarlo.'],
+ ['Te ven','Alguien que no debía te ve o te oye.'],
+ ['Mala impresión','Quien te vio se lleva una mala imagen: −1 al Prestigio con su gente, o hoy no te ayuda.'],
+ ['Pista falsa','El DM te da un dato equivocado pero creíble.'],
+ ['Te lastimas','Recibes {temporal} de daño: un corte, un golpe, una torcedura.'],
+ ['Sin segunda vez','No puedes volver a intentarlo hasta mañana o hasta cambiar de método.'],
+ ['Haces ruido','Llamas la atención de algo cercano: el DM decide si trae una complicación.']
  ]
 };
 const favorables={
  ataque:[
- ['Guardia firme','Hasta el inicio de tu próximo turno tu CA aumenta {bono}.','ca',1],
- ['Paso decidido','En tu próximo turno tu velocidad de caminar aumenta 1,5 m. No concede movimiento inmediato ni evita ataques de oportunidad.','paso',1],
- ['Lectura del terreno','El DM señala una cobertura o apoyo que ya puedas percibir. Aprovecharlo sigue requiriendo movimiento y acciones normales.'],
- ['Maniobra clara','Un aliado que te vea entiende tu intención inmediata. No obtiene acciones, daño o ventaja automática.'],
- ['Pulso firme','Tu siguiente prueba de habilidad para mantener el equilibrio antes del final de tu próximo turno recibe +{bono}.'],
- ['Rastro del adversario','Reconoces un detalle de equipo o estilo que el objetivo haya mostrado. No revela estadísticas, resistencias o secretos no observables.'],
- ['Control del espacio','Puedes dar una indicación breve a un aliado que te oiga. El DM ofrece una opción de posición segura visible, sin mover tokens automáticamente.'],
- ['Ánimo sereno','Puedes describir un gesto de seguridad sin coste adicional. El próximo chequeo de Interpretación o Persuasión sobre este enfrentamiento dentro de diez minutos recibe +{bono}.']
+ ['Lo derribas','El impacto lo tira al suelo: queda Derribado.','estado','prone','objetivo'],
+ ['Lo desarmas','Lo que sostiene en una mano sale volando 3 m en la dirección que elijas.'],
+ ['Lo dejas sin aire','Pierde su reacción hasta el inicio de su próximo turno.'],
+ ['Herida abierta','Queda Sangrando: al inicio de cada uno de sus turnos recibe {temporal} de daño, hasta que alguien use una acción para cortarlo (Medicina CD 10) o reciba curación.','estado','bleeding','objetivo'],
+ ['Guardia rota','Hasta el inicio de tu próximo turno, los ataques de tus aliados contra él tienen ventaja.'],
+ ['Lo empujas','Lo apartas 3 m de ti en línea recta. Si choca contra algo sólido, recibe {temporal} de daño contundente.'],
+ ['Golpe preciso','Un dado del daño de este golpe cuenta con su valor máximo.'],
+ ['Te creces','Ganas {temporal} PG temporales y tu próximo ataque antes del final de tu siguiente turno recibe +{bono}.','pgTemp',1]
  ],
  salvacion:[
- ['Defensa medida','Hasta el inicio de tu próximo turno tu CA aumenta {bono}.','ca',1],
- ['Pie seguro','En tu próximo turno tu velocidad de caminar aumenta 1,5 m. No concede desplazamiento inmediato.','paso',1],
- ['Comprender el peligro','El DM describe una señal del peligro que acabas de percibir. No revela estadísticas ni elimina efectos ya aplicados.'],
- ['Aviso oportuno','Puedes advertir de viva voz a un aliado que te oiga. No cambia una salvación ya tirada ni concede ventaja automática.'],
- ['Control recuperado','Tu próxima prueba de Acrobacias o Atletismo antes del final de tu siguiente turno recibe +{bono}.'],
- ['Atención despierta','Tu próxima prueba de Percepción antes del final de tu siguiente turno recibe +{bono}.'],
- ['Ruta advertida','Reconoces un paso seguro visible que el DM señala. Recorrerlo usa tu movimiento normal.'],
- ['Serenidad compartida','Un aliado que te perciba entiende una señal de calma. No elimina miedo, encantamiento, Concentración ni otros estados.']
+ ['Te sacudes','Además, terminas un estado que ya tuvieras: Asustado, Hechizado, Cegado, Ensordecido o Envenenado.'],
+ ['Contraataque','Si quien te forzó la salvación está a 1,5 m, puedes usar tu reacción para atacarlo ahora.'],
+ ['Esquiva perfecta','Te mueves 3 m sin provocar ataques de oportunidad.'],
+ ['Aguante','Ganas {temporal} PG temporales.','pgTemp',1],
+ ['Lo lees','Hasta el inicio de tu próximo turno tu CA aumenta {bono}.','ca',1],
+ ['Ánimo','Un aliado que te vea suma +{bono} a su próxima tirada antes del final de tu siguiente turno.'],
+ ['Se lo devuelves','Quien lo lanzó tiene desventaja en su próxima tirada de ataque.'],
+ ['Te creces','Tu próxima salvación en este combate tiene ventaja.']
  ],
  habilidad:[
- ['Trabajo bien dispuesto','Tu siguiente prueba de habilidad sobre la misma tarea antes del final de tu próximo turno recibe +{bono}.'],
- ['Herramienta a mano','Dejas una herramienta propia a tu alcance. Usarla conserva su coste normal de interacción y acción.'],
- ['Pista visible','El DM señala un detalle de la tarea que puedas percibir ahora. No concede éxito ni información secreta automática.'],
- ['Guardia cuidadosa','Hasta el inicio de tu próximo turno tu CA aumenta {bono}.','ca',1],
- ['Ayuda comprensible','Explicas en una frase cómo podría ayudar un aliado. La acción Ayudar conserva todos sus requisitos.'],
- ['Paso preparado','En tu próximo turno tu velocidad de caminar aumenta 1,5 m.','paso',1],
- ['Claridad de intención','El objetivo de una conversación entiende tu propuesta. Su opinión y voluntad siguen siendo propias.'],
- ['Procedimiento recordado','Recuerdas una preparación útil ya conocida para esta tarea. Aplicarla conserva su tiempo, materiales y pruebas normales.']
+ ['Sin gastar nada','No consumes la herramienta, la munición ni el material; si tardaba más de una acción, tardas la mitad.'],
+ ['Ves algo más','El DM te dice algo útil del enemigo o del lugar que no habías preguntado.'],
+ ['Ventaja ganada','Tu próxima tirada contra el mismo objetivo o sobre la misma tarea tiene ventaja.'],
+ ['Por dos','Tu éxito también vale para un aliado que intentaba lo mismo.'],
+ ['Paso libre','En tu próximo turno tu velocidad aumenta 3 m.','paso',2],
+ ['Guardia alta','Hasta el inicio de tu próximo turno tu CA aumenta {bono}.','ca',1],
+ ['Te ven hacerlo','Los enemigos dudan: el más cercano tiene desventaja en su próximo ataque.'],
+ ['Aliento','Ganas {temporal} PG temporales.','pgTemp',1]
  ],
  escena:[
- ['Tiempo aprovechado','Si la tarea tiene éxito, ahorras hasta un minuto o un 10 % de su duración normal, el menor. No reduce tiempos de descanso, fabricación o aprendizaje reglados.'],
- ['Orden ejemplar','Terminas con herramientas y materiales propios ordenados. No crea objetos ni ahorra componentes consumidos por las reglas.'],
- ['Detalle útil','El DM ofrece un detalle adicional perceptible de la tarea. No obliga a revelar un secreto ni una solución completa.'],
- ['Buena disposición','Una persona que ya esté dispuesta a escucharte aprecia tu cuidado. No queda Hechizada ni acepta demandas automáticamente.'],
- ['Preparación acertada','La próxima prueba de habilidad sobre esta misma tarea dentro de diez minutos recibe +{bono}.'],
- ['Explicación clara','Puedes explicar a un compañero lo que realmente has aprendido. Comprenderlo no concede competencias, idiomas ni acceso a técnicas.'],
- ['Recuerdo preciso','Recuerdas un dato de la escena que hayas percibido; el DM lo confirma o indica qué falta comprobar.'],
- ['Camino despejado','Reconoces una comodidad o acceso ordinario ya visible que facilita organizar la siguiente tarea. No crea recursos, tesoros o rutas secretas.']
+ ['La mitad de tiempo','Tardas la mitad de lo normal.'],
+ ['Algo más','Además, encuentras algo que no buscabas: una pista, un objeto o un dato (el DM decide qué).'],
+ ['Buena fama','Quien te vio te recuerda: +1 al Prestigio con su gente o un favor pequeño.'],
+ ['Sin gastar','No consumes el material ni la herramienta.'],
+ ['Contagias','Un aliado que te vio tiene ventaja en su próxima prueba para lo mismo.'],
+ ['Atajo','Encuentras un método, un camino o un contacto: tu próxima prueba igual recibe +{bono}.'],
+ ['Impresionas','Alguien importante presente cambia su actitud hacia ti un paso a mejor.'],
+ ['Lo sabías','Recuerdas algo de tu vida que te sirve aquí: el DM te da un dato ligado a tu trasfondo.']
  ]
 };
 export function tablaAzar(contexto,natural,nivel=1){
  const e=escalaAzar(nivel),tabla=(natural===1?adversos:natural===20?favorables:null)?.[contexto];if(!tabla)return [];
- return tabla.map(([nombre,texto,tipo,signo],i)=>({indice:i+1,nombre,texto:texto.replaceAll('{bono}',e.bono),contexto,natural,nivel:e.nivel,
-  ...(tipo?{efecto:{tipo,valor:tipo==='ca'?signo*e.bono:signo*e.metros}}:{})}));
+ const valor=(tipo,v)=>tipo==='ca'?v*e.bono:tipo==='paso'?v*e.metros:tipo==='pgTemp'?v*e.temporal:v;
+ return tabla.map(([nombre,texto,tipo,v,quien],i)=>({indice:i+1,nombre,texto:texto.replaceAll('{bono}',e.bono).replaceAll('{temporal}',e.temporal),contexto,natural,nivel:e.nivel,
+  ...(tipo?{efecto:{tipo,valor:valor(tipo,v),...(quien?{quien}:{})}}:{})}));
 }
-export const REGLA_AZAR='Se usa el primer d20 válido de cada criatura en cada turno global de combate. Un área con varias tiradas de la misma criatura cuenta una vez. Fuera de combate solo se propone un resultado por criatura cada diez minutos de juego, para tareas significativas que valida el DM. El 1 o el 20 de una habilidad o salvación conserva el éxito o fracaso normal de la prueba. Los ataques conservan su crítico normal, sin daño crítico adicional de esta tabla. Se excluyen muerte, iniciativa, Concentración y tiradas de Control de un choque. Los efectos no se acumulan, no quitan turnos, destruyen equipo ni causan daño o recuperaciones de recursos. El DM puede descartar una propuesta que no encaje. Los efectos de un turno vencen al terminar el siguiente turno propio y se retiran al acabar el combate; el texto de CA puede indicar un final anterior.';
+export const REGLA_AZAR='Desde 3.12, un 20 natural en un ataque ya no duplica el daño: sigue impactando siempre y, a cambio, saca un efecto al azar de la tabla de golpes tremendos. Un 1 natural saca uno de pifia. Lo mismo en salvaciones y pruebas, para todos por igual, PJ y PNJ: el 1 o el 20 conserva el éxito o fracaso normal y añade su consecuencia. En combate cuenta cada 20 de ataque; lo demás (los 1 y las salvaciones o pruebas) solo si es el primer d20 de esa criatura en el turno, para no castigar los ataques extra y para que un área cuente una vez. Fuera de combate, una propuesta por criatura cada diez minutos de juego. Se excluyen muerte, iniciativa, Concentración y las tiradas de Control de un choque. El DM aprueba cada propuesta: los cambios de CA, velocidad, estados y PG temporales se aplican solos (al que tiró o a su blanco); lo demás lo narra la mesa. Los efectos no se acumulan entre sí y los de un turno vencen al terminar el siguiente turno propio.';
+
+/** Para la página de reglas: la tabla sin nivel, con B (1 a 3 según el nivel) y C (tu competencia). */
+export function tablaAzarGuia(contexto,natural){
+ const tabla=(natural===1?adversos:natural===20?favorables:null)?.[contexto]??[];
+ return tabla.map(([nombre,texto,tipo,v,quien],i)=>({indice:i+1,nombre,texto:texto.replaceAll('{bono}','B').replaceAll('{temporal}','C'),auto:!!tipo,objetivo:quien==='objetivo'}));
+}

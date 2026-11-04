@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.11.0
+# Preparar la primera prueba real · 3.12.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -231,6 +231,12 @@ Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el pan
 ### 37. 3.11 · Compendios del Verbe
 
 Recarga el mundo como DM. En «Reglas de la casa» debe aparecer «11 · Compendio del Verbe» con ramas, naturalezas y dotes, y un diario «Ecos · Compendio del Verbe (solo DM)». Un jugador sin personaje despertado no ve ninguno de los dos; uno con personaje despertado ve solo el primero. Haz una prueba de habilidad: la consola no debe mostrar errores de adv-reminder.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 38. 3.12 · Acciones de cualquiera, el 20 y el 1, armas y mercader
+
+Abre la hoja de un PJ: debe tener Golpe sin armas y «Acciones de Fuerza… de Carisma». Usa Presa con un enemigo marcado: salva FUE o DES y, si falla, queda Agarrado. Saca un 20 en un ataque: el daño no se duplica y sale la tabla del 20. Usa una técnica de Cuerpo: pregunta «¿Con qué atacas?». Con espada y escudo, una técnica con Gestos avisa de las manos. En Mesa Ecos → Control, sortea el mercader extraño y compra algo con Monedas Antiguas. En el panel del Verbe, «Cambiar Monedas» da 1 Trazo por 2 Monedas.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 

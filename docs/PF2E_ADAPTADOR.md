@@ -1,6 +1,6 @@
 # Compatibilidad con PF2e: diseño del adaptador (tarea 5.2b)
 
-*Escrito el 4-nov-2026 sobre la versión 3.11.0, a partir del inventario de `docs/PF2E_ACOPLAMIENTO.md` (5.2a) y de las respuestas del autor del 3-nov-2026. **Pausa:** antes de empezar 5.2c el autor aprueba este diseño y contesta las propuestas marcadas con ❓.*
+*Escrito el 4-nov-2026 sobre la versión 3.11.0, a partir del inventario de `docs/PF2E_ACOPLAMIENTO.md` (5.2a) y de las respuestas del autor del 3-nov-2026. El 4-nov-2026 el autor aprobó las propuestas A a H, con los matices de E, F y G (al final). Con eso se puede empezar 5.2c.*
 
 ## Lo que decidió el autor
 
@@ -64,7 +64,7 @@ PF2e no tiene niveles de agotamiento. La capa los traduce así:
 | 6 | La muerte de la casa, igual que en dnd5e |
 
 - Lo que hoy da 1 nivel de Agotamiento sigue dando 1 nivel: el Despertar, el Esfuerzo Excesivo, una salvación fallida por deuda de Verbe.
-- ❓ **Propuesta A.** Fatigado se quita como en PF2e, con una noche entera de descanso. Drenado baja 1 por noche **solo en un Santuario**; fuera de él no baja.
+- ✅ **Propuesta A (aprobada).** Fatigado se quita como en PF2e, con una noche entera de descanso. Drenado baja 1 por noche **solo en un Santuario**; fuera de él no baja.
 
 ### Descanso corto: Tratar heridas y Reenfocar
 
@@ -76,8 +76,8 @@ El «rato» de la casa pasa a ser una actividad de exploración de 10 minutos:
 
 Para que recuperarse lleve más tiempo:
 
-- ❓ **Propuesta B.** La inmunidad de Tratar heridas sube de 1 hora a **8 horas**: una cura por persona en cada tramo de viaje.
-- ❓ **Propuesta C.** «Descansar por la noche» fuera de un Santuario cura la **mitad** de lo normal (mod. de CON × nivel ÷ 2). Dentro, lo normal. Coincide con el Verbe, que ya recupera la mitad en el Santuario y un cuarto a la intemperie.
+- ✅ **Propuesta B (aprobada).** La inmunidad de Tratar heridas sube de 1 hora a **8 horas**: una cura por persona en cada tramo de viaje.
+- ✅ **Propuesta C (aprobada).** «Descansar por la noche» fuera de un Santuario cura la **mitad** de lo normal (mod. de CON × nivel ÷ 2). Dentro, lo normal. Coincide con el Verbe, que ya recupera la mitad en el Santuario y un cuarto a la intemperie.
 
 ### Heridas: Moribundo, Herido y las reglas de la casa
 
@@ -87,15 +87,15 @@ Para que recuperarse lleve más tiempo:
 
 Para que la muerte definitiva sea más difícil y la recuperación más larga:
 
-- ❓ **Propuesta D.** Se muere en **Moribundo 5** en vez de 4 (el Condenado de PF2e sigue restando).
-- ❓ **Propuesta E.** Herido no baja con Tratar heridas. Solo baja con una noche entera en un Santuario, de 1 en 1.
+- ✅ **Propuesta D (aprobada).** Se muere en **Moribundo 5** en vez de 4 (el Condenado de PF2e sigue restando).
+- ✅ **Propuesta E (aprobada).** Herido no baja con Tratar heridas. Solo baja con una noche entera en un Santuario, de 1 en 1.
 
 ### Moneda Antigua: Puntos de Héroe
 
 - Repetir una tirada con una Moneda Antigua pasa a ser gastar un Punto de Héroe. El aviso del 1 natural sigue saliendo, ahora para cualquier fallo crítico.
 - La recuperación heroica de PF2e (gastar todos los Puntos de Héroe para no morir) queda activa: encaja con una muerte definitiva más difícil.
-- ❓ **Propuesta F.** PF2e limita los Puntos de Héroe a 3. Claudia tiene 8 Monedas. Opciones: subir el máximo con una regla de objeto para quien lleva monedas, o guardar las de más como objeto de tesoro «Moneda Antigua» y convertirlas cuando gaste una.
-- ❓ **Propuesta G.** Los mercaderes que aceptan Monedas Antiguas cobran en Puntos de Héroe.
+- ✅ **Propuesta F (aprobada).** PF2e limita los Puntos de Héroe a 3. Claudia tiene 8 Monedas. Opciones: subir el máximo con una regla de objeto para quien lleva monedas, o guardar las de más como objeto de tesoro «Moneda Antigua» y convertirlas cuando gaste una.
+- ✅ **Propuesta G (aprobada).** Los mercaderes que aceptan Monedas Antiguas cobran en Puntos de Héroe.
 
 ### Técnicas: acciones con coste en Verbe
 
@@ -116,7 +116,7 @@ Cada técnica se vuelve un objeto `action` de PF2e:
 - **Salvación:** las de «mitad con éxito» son salvaciones básicas (crítico nada, éxito mitad, fallo entero, fallo crítico doble). Las de estado son no básicas: el fallo crítico alarga o empeora el estado.
 - **CD:** 10 + el modificador de Saber del Verbe.
 - **Coste:** se paga en Verbe como hoy, con la misma vista previa, el mismo límite de técnicas por turno y la misma deuda.
-- ❓ **Propuesta H.** En 5.2d los dados de daño y curación quedan iguales que en dnd5e. Se reajustan después de la prueba en «Esperanza Oculta» (5.2e), porque en PF2e los personajes tienen más PG desde el nivel 1.
+- ✅ **Propuesta H (aprobada).** En 5.2d los dados de daño y curación quedan iguales que en dnd5e. Se reajustan después de la prueba en «Esperanza Oculta» (5.2e), porque en PF2e los personajes tienen más PG desde el nivel 1.
 
 ### Estados
 
@@ -158,15 +158,55 @@ No existe en PF2e. Lo que hoy cuelga de sus hooks pasa al chat de PF2e: ataque, 
 | 5.2d | `sistema/pf2e.js`, por áreas: ficha, tiradas, técnicas, descansos, estados, recursos de la casa | 9 a 14 |
 | 5.2e | Prueba en un mundo PF2e y ajuste de cifras (Propuesta H) | 3 a 4 |
 
-## Preguntas para el autor
+## Respuestas del autor (4-nov-2026)
 
-Contesta sí, no u otra cosa a cada una:
+| | Propuesta | Respuesta |
+|---|---|---|
+| A | Drenado baja 1 por noche solo en un Santuario | Sí. |
+| B | La inmunidad de Tratar heridas sube a 8 horas | Sí. |
+| C | Fuera de un Santuario, la noche cura la mitad | Sí. |
+| D | Se muere en Moribundo 5 | Sí. |
+| E | Herido solo baja con una noche en un Santuario | Sí, **salvo que intervenga Verbe médico (rama Pulso, «Médico del Verbe») o magia de alto nivel**, que también lo bajan. |
+| F | Monedas de más de 3 | **Se guardan como objeto** «Moneda Antigua». Además, todo lo raro o fuerte del mundo debe poder cambiarse por Monedas: Trazos en el panel del Verbe y el mercader extraño (ver abajo). Esto se hace ya en dnd5e (3.12). |
+| G | Los mercaderes cobran en Puntos de Héroe | **Solo el mercader extraño**, el que tiene un rastro de Verbe. El resto cobra en dinero. |
+| H | Los dados quedan iguales hasta la prueba | Sí. Además, en los dos sistemas el 20 natural ya no duplica el daño: el 20 y el 1 dan efectos al azar en ataques, pruebas y salvaciones, para todos por igual (3.12). |
 
-- **A.** Drenado baja 1 por noche solo en un Santuario.
-- **B.** La inmunidad de Tratar heridas sube a 8 horas.
-- **C.** Fuera de un Santuario, la noche cura la mitad.
-- **D.** Se muere en Moribundo 5.
-- **E.** Herido solo baja con una noche en un Santuario.
-- **F.** Para las Monedas de más (más de 3): ¿subir el máximo de Puntos de Héroe, o guardarlas como objeto?
-- **G.** Los mercaderes cobran en Puntos de Héroe.
-- **H.** Los dados quedan iguales hasta la prueba.
+**El mercader extraño.** Solo él acepta Monedas Antiguas. Puede sentir el Verbe y anda recuperando reliquias para llevárselas y sacarles provecho; eso cambiará el mundo más adelante. Los jugadores no lo saben: él siempre dice que sabe qué hacer con ellas. Su tienda tiene un surtido al azar de unos 15 objetos raros o fuertes que el DM vuelve a sortear con un botón en cada visita.
+
+## Acciones de cualquiera en PF2e (3.12)
+
+En dnd5e, Ecos las pone en cada hoja. En PF2e casi todas ya existen como acciones básicas o de habilidad, y el adaptador usa las del sistema. Las que no existen se crean como acciones de Ecos con el mismo texto.
+
+| Ecos | PF2e |
+|---|---|
+| Presa | Grapple |
+| Empujón: derribar | Trip |
+| Empujón: apartar | Shove |
+| Lanzar a quien sujetas | — (acción propia de Ecos) |
+| Abrirse paso | — (acción propia de Ecos) |
+| Escapar o forzar | Escape / Force Open |
+| Zancadilla | Trip |
+| Desarmar | Disarm |
+| Esquivar | — (acción propia de Ecos) |
+| Ponerse a cubierto | Take Cover |
+| Voltereta | Tumble Through |
+| Birlar | Steal / Palm an Object |
+| Polvo en los ojos | — (acción propia de Ecos) |
+| Apuntar | — (acción propia de Ecos) |
+| Esconderse | Hide / Sneak |
+| Aguantar | — (acción propia de Ecos) |
+| Sacudirse | — (acción propia de Ecos) |
+| Resistir | — (acción propia de Ecos) |
+| Evaluar al enemigo | Recall Knowledge |
+| Planear | — (acción propia de Ecos) |
+| Aprovechar el terreno | — (acción propia de Ecos) |
+| Buscar | Seek |
+| Leer al rival | — (acción propia de Ecos) |
+| Ayudar | Aid |
+| Serenarse | — (acción propia de Ecos) |
+| Fintar | Feint |
+| Intimidar | Demoralize |
+| Provocar | — (acción propia de Ecos) |
+| Distraer | Create a Diversion |
+| Arengar | — (acción propia de Ecos) |
+| Parlamentar | — (acción propia de Ecos) |

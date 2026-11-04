@@ -4,6 +4,8 @@
 
 Cualquier técnica **ofensiva** puede chocar: la que ataca o pide salvación y hace daño, de cualquier rama (Forma, Cuerpo, Velo, Umbral, Hilo, mentales…). No chocan las curaciones, las utilidades, los rituales, las que solo te refuerzan a ti ni las reacciones.
 
+**Desde 3.12, solo chocan las técnicas que cuestan Verbe.** Una técnica de coste 0 es demasiado débil: no abre la ventana de choque cuando ataca y no se ofrece para chocar. Subida de grado, si ya cuesta Verbe, sí choca. Los conjuros de D&D siguen chocando (4.1c), porque gastan su espacio.
+
 Cómo se resuelve un choque (regla «potencia», la de siempre):
 
 1. **Con ventaja elemental** (una naturaleza vence a la otra en el ciclo): la favorecida suma **2 grados** de potencia y gana el grado mayor. Si empatan, ambos tiran Control del Verbe; si vuelven a empatar, se anulan. Es la regla de antes.

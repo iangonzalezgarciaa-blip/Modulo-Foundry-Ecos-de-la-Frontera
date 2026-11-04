@@ -26,6 +26,10 @@ import { CALENDARIO, eventosDelDia, faseLunar, diaCampana, sumarDias, mesPrimerA
 import "./verbe.js";
 import "./mesa.js";
 import "./azar.js";
+import "./acciones-comunes.js";
+import "./tecnica-arma.js";
+import "./mercader.js";
+import "./nombres-mundo.js";
 import { motivoPausaMoneda } from "./mesa-control.js";
 import { crearCola } from "./verbe-core.js";
 import { recuperacionDGLarga, presupuestoCorto, ajustarRecuperacionDG } from "./rest-core.js";
@@ -94,7 +98,15 @@ function esPJ(actor) {
 const nivelPJ = actor => ((actor?.type === "npc")
   ? Math.max(1, Math.round(Number(actor.system.details?.cr) || 1))
   : Math.max(1, Number(actor?.system?.details?.level) || 1));
-const esResistente = actor => actor?.getFlag(MOD, "portador") === true;
+/**
+ * 3.12: «la sangre que responde» es la Sangre Antigua de Maethra (pedido del autor). Si la hoja ya tiene linaje del Verbe,
+ * manda el linaje: Maethra con la sangre activa. Si todavía no tiene linaje, vale la marca antigua de las hojas que la tenían.
+ */
+export const esResistente = actor => {
+  const v = actor?.getFlag(MOD, "verbe");
+  if (v?.linaje) return v.linaje === "maethra" && !!v.fuerza && v.fuerza !== "ninguna";
+  return actor?.getFlag(MOD, "portador") === true;
+};
 
 const efectoStatus = (actor, id) => actor.effects.find(e => e.statuses.has(id));
 const efectoMalherido = actor => efectoStatus(actor, "malherido");
@@ -7660,10 +7672,8 @@ const FUNCIONES_HOJA = [
     k: "verbe", n: "Verbe", ic: "fa-droplet",
     d: "La capa del Verbe en esta hoja. Al despertarla eliges el linaje y la naturaleza, y la hoja gana su barra y su panel. Mientras no la despiertes, nada del Verbe se ve en la hoja."
   },
-  {
-    k: "portador", n: "Sangre que responde (secreto)", ic: "fa-hourglass-half",
-    d: "Solo lo ves tú. Un golpe de daño masivo no lo mata y, al caer a 0 PG, te avisa de que su sangre puede responder (Tramas · 3). Funciona junto con las Reglas de PJ."
-  }
+  // 3.12: el botón «Sangre que responde (secreto)» se retiró: ahora es la Sangre Antigua de Maethra, que se asigna
+  // como linaje en el panel del Verbe (pestaña DM) y se descubre jugando.
 ];
 
 /** ¿Está encendida esa función en la hoja? */
@@ -7835,12 +7845,12 @@ function htmlHojas(filtro = "personajes") {
       <img src="${escH(a.img)}" alt="">
       <span class="ecos-hoja-nombre"><a data-action="abrirHoja" data-id="${a.id}">${escH(a.name)}</a>
         <small>${a.type === "npc" ? "PNJ" : "Personaje"} · ${nivel}${d ? ` · de ${escH(d)}` : ""}${(a.type === "character") && a.hasPlayerOwner && !algo(a) ? ` · <b>nueva: sin nada encendido</b>` : ""}</small></span>
-      <span class="ecos-hoja-chips">${chip(a, "pj", "PJ")}${chip(a, "descansos", "Descansos")}${vb}${chip(a, "portador", "Secreto")}
+      <span class="ecos-hoja-chips">${chip(a, "pj", "PJ")}${chip(a, "descansos", "Descansos")}${vb}
         <button type="button" class="ecos-chip" data-action="funcionesHoja" data-id="${a.id}" data-tooltip="Todas las funciones de esta hoja, explicadas"><i class="fa-solid fa-sliders"></i></button></span>
     </li>`;
   }).join("");
   const filtroBtn = (k, et) => `<button type="button" data-action="filtroHojas" data-f="${k}" class="${filtro === k ? "activo" : ""}">${et}</button>`;
-  return `<p class="ecos-nota">Cada hoja enciende sus funciones por separado: <b>PJ</b> (reglas de supervivencia, Trabajar/Mercado/Curar, Prestigio, grupo), <b>Descansos</b> (PG solo con Dados de Golpe), <b>Verbe</b> (despertar o abrir su panel) y <b>Secreto</b> (la sangre que responde; solo tú lo ves). Lo mismo está en el botón <b>Ecos</b> arriba de cada hoja. Una hoja nueva nace con todo apagado.</p>
+  return `<p class="ecos-nota">Cada hoja enciende sus funciones por separado: <b>PJ</b> (reglas de supervivencia, Trabajar/Mercado/Curar, Prestigio, grupo), <b>Descansos</b> (PG solo con Dados de Golpe), <b>Verbe</b> (despertar o abrir su panel). La sangre que responde ya no es un botón: es la Sangre Antigua de Maethra, que das como linaje en el panel del Verbe. Lo mismo está en el botón <b>Ecos</b> arriba de cada hoja. Una hoja nueva nace con todo apagado.</p>
     ${nuevas.length ? `<p class="ecos-fn-aviso">Hojas de jugadores sin nada encendido: <b>${nuevas.map(a => escH(a.name)).join(", ")}</b>.</p>` : ""}
     <div class="ecos-botones ecos-filtros">${filtroBtn("personajes", "Personajes y lo encendido")}${filtroBtn("pnj", "PNJ")}${filtroBtn("todas", "Todas")}</div>
     <ul class="ecos-hojas">${filas || "<li>No hay hojas.</li>"}</ul>`;

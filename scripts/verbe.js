@@ -23,6 +23,7 @@ import { objetivosMensaje, filtrarObjetivosMensaje, consumoMensaje, duracionFini
 import { cifrasActividad, pasosUso, chipsCifras, tipoUso, actividadDe, TIPOS_USO } from "./verbe-cifras.js";
 import { problemasTecnica } from "./verbe-validate.js";
 import { compendioJugadoresHTML, compendioDMHTML } from "./verbe-compendio.js";
+import { aplicarNombresMundo, nombresDelMundo } from "./nombres-mundo.js";
 import { tramoReserva, tramoFuerza, tramoVida, queVe } from "./verbe-lectura.js";
 import { cargaDe, bonoCarga, cdInterrupcion, textoCarga } from "./verbe-canalizar.js";
 import { clonDe, limitesClones, repartoClones } from "./verbe-clones.js";
@@ -3362,6 +3363,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     actions: {
       pestana(ev, t) { this.pestana = t.dataset.p; this.abiertos = null; this.render(); },
       tipoUso(ev, t) { this.filtroUso.tipo = t.dataset.t || "todas"; this.render(); },
+      monedasTrazos(ev) { ev?.preventDefault?.(); Promise.resolve(game.modules.get(MOD).api?.mercader?.trazos?.(this.actor)).catch(err => console.error(`${MOD} | monedas por Trazos`, err)).finally(() => setTimeout(() => this.render(), 800)); },
       favorita(ev, t) {
         ev?.preventDefault?.();
         const id = t.dataset.id, favs = new Set(estado(this.actor)?.favoritas ?? []);
@@ -3625,7 +3627,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       <div class="ev-identidad"><span class="ev-kicker">EL VERBE · NIVEL ${nivelDe(a)}</span><strong>${escH(a.name)}</strong><small>${e.principal ? nombreRama(e.principal) : "Tu aventura empieza aquí"}${e.nats?.length ? ` · ${[...natsDe(a)].map(n => escH(nombreNat(n))).join(" + ")}` : ""}</small></div>
       <div class="ecos-verbe-res"><div class="ev-recurso-titulo"><b><i class="fa-solid fa-droplet" aria-hidden="true"></i> Verbe <span>${v} / ${max}</span></b><small>ENERGÍA PARA USAR</small></div><div class="ecos-verbe-barra grande ${v < 0 ? "negativo" : ""}" role="meter" aria-label="${v < 0 ? "Deuda de Verbe" : "Reserva de Verbe"}" aria-valuemin="${v < 0 ? limiteNegativo(a) : 0}" aria-valuemax="${max}" aria-valuenow="${v}" aria-valuetext="${v} de ${max} de Verbe"><div style="width:${pct * 100}%"></div></div>
         <small>${v < 0 ? "Estás en deuda: recuperarla cuesta el doble." : "Se gasta al usar técnicas; vuelve al descansar."}</small></div>
-      <div class="ecos-verbe-trazos ${t.libres > 0 ? "hay" : ""}"><span class="n">${t.libres}</span><span class="t"><b>Trazos</b> para aprender</span><small>Se gastan una vez por compra</small></div>
+      <div class="ecos-verbe-trazos ${t.libres > 0 ? "hay" : ""}"><span class="n">${t.libres}</span><span class="t"><b>Trazos</b> para aprender</span><small>Se gastan una vez por compra</small>${Number(a.system?.currency?.soul ?? 0) >= 2 ? `<button type="button" data-action="monedasTrazos" class="ev-monedas" data-tooltip="2 Monedas Antiguas = 1 Trazo (hasta 2 Trazos por nivel)"><i class="fa-solid fa-coins" aria-hidden="true"></i> Cambiar Monedas</button>` : ""}</div>
     </header>${barraDM}`;
   }
 
@@ -4419,12 +4421,17 @@ function excluirBlanco(wf,tok) {
   for(const k of ['targets','hitTargets','hitTargetsEC','failedSaves','saves','applicationTargets'])wf[k]?.delete?.(tok);
 }
 
+/** 3.12: solo choca lo que cuesta Verbe. Una técnica de coste 0 es demasiado débil para un choque, en los dos lados. */
+export function cuestaVerbe(actor, meta, grado) {
+  try { return costoUso(actor, meta, Number(grado ?? meta?.g) || 0) > 0; } catch { return true; }
+}
+
 function opcionesChoque(actor) {
   return itemsTecnica(actor).filter(i=>tecnicaChocable(i)).flatMap(item=>{
     const meta=item.getFlag(MOD,F),lista=[];
     for(let grado=meta.g;grado<=gradoUsable(actor,meta);grado++){
       const r=previsualizarUso(actor,meta,grado,{choque:true});
-      if(r.ok)lista.push({item,id:meta.id,grado,costo:r.costo});
+      if(r.ok&&Number(r.costo)>0)lista.push({item,id:meta.id,grado,costo:r.costo});
     }
     return lista;
   });
@@ -4460,6 +4467,7 @@ async function choqueAutomatico(wf) {
   // 4.1c: un conjuro de D&D también se puede interceptar (potencia = nivel del espacio; naturaleza según su daño).
   const conjuro=!!wf&&conjuroChocable(wf.item,wf.activity);
   if(!wf||(!conjuro&&(!despierto(wf.actor)||!tecnicaChocable(wf.item,wf.activity))))return;
+  if(!conjuro){const metaAtaque=wf.item?.getFlag?.(MOD,F);if(metaAtaque?.id&&!cuestaVerbe(wf.actor,metaAtaque,gradoAtaque(wf)))return;}
   if(choquesWorkflow.has(wf))return choquesWorkflow.get(wf);
   const trabajo=(async()=>{
     const vistos=new Set();
@@ -4660,6 +4668,7 @@ Hooks.once("ready", async () => {
   try {
     D = await cargarDatos();
     if (!D) return console.warn(`${MOD} | capa V: no encuentro sus datos`);
+    aplicarNombresMundo(D, nombresDelMundo());
     BASE = { tecnicas: D.tecnicas, dotes: D.dotes };
     aplicarEdicionesMundo();
     if (soyGM()) setTimeout(() => revisarSangres().catch(err => console.warn(`${MOD} | sangre`, err)), 3000);

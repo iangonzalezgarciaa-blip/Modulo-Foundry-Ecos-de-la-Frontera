@@ -1,5 +1,6 @@
-import {dadoNatural,tablaAzar,REGLA_AZAR} from './azar-core.js';
-import {infoTirada,cambio} from './compat.js';
+import {dadoNatural,tablaAzar,tablaAzarGuia,CONTEXTOS_AZAR,REGLA_AZAR} from './azar-core.js';
+import {paginaReglas} from './acciones-comunes.js';
+import {infoTirada,cambio,objetivosMensaje} from './compat.js';
 const MOD='ecos-frontera',locks=new Map();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nivel=a=>Number(a.system?.details?.level)||Math.max(1,Math.ceil(Number(a.system?.details?.cr)||1));
@@ -21,15 +22,18 @@ export async function proponerAzar(m){
  const trabajo=anterior.catch(()=>{}).then(async()=>{
   const combate=game.combat?.started?game.combat:null,turno=combate?`${combate.id}:${combate.round}:${combate.turn}`:null;
   const marca=actor.getFlag(MOD,'azarControl')??{},ahora=Number(game.time.worldTime)||0;
-  if(turno&&marca.turno===turno)return false;
-  // El primer d20 del turno cuenta aunque no sea un extremo: evita castigar los ataques extra.
-  if(turno)await actor.setFlag(MOD,'azarControl',{...marca,turno});
+  // El primer d20 del turno cuenta aunque no sea un extremo. 3.12: cada 20 de ataque cuenta (ya no duplica el daño);
+  // lo demás, solo el primer d20 de la criatura en el turno (un área con varias tiradas cuenta una vez y los ataques extra no castigan).
+  const primero=!(turno&&marca.turno===turno);
+  if(turno&&primero)await actor.setFlag(MOD,'azarControl',{...marca,turno});
   if(![1,20].includes(natural))return false;
+  if(turno&&!primero&&!(natural===20&&contexto==='ataque'))return false;
   if(!turno&&Number.isFinite(marca.escena)&&ahora>=marca.escena&&ahora-marca.escena<600)return false;
   if(!turno)await actor.setFlag(MOD,'azarControl',{...marca,escena:ahora});
   const eleccion=await new Roll('1d8').evaluate(),indice=Math.max(1,Math.min(8,eleccion.total));
   const fila=tablaAzar(contexto,natural,nivel(actor))[indice-1];
-  const datos={actorUuid:actor.uuid,contexto,natural,indice,nivel:nivel(actor),estado:'pendiente',combate:combate?.id??null,turno,creado:ahora,origen:m.id};
+  const datos={actorUuid:actor.uuid,contexto,natural,indice,nivel:nivel(actor),estado:'pendiente',combate:combate?.id??null,turno,creado:ahora,origen:m.id,
+   objetivo:objetivosMensaje(m)[0]?.uuid??null};
   const whisper=arr(m.whisper).map(x=>typeof x==='string'?x:x.id);
   await ChatMessage.create({speaker:m.speaker,whisper,blind:!!m.blind,
    content:`<section class="ecos-azar"><h3>${natural===1?'Contratiempo':'Oportunidad'} · ${esc(actor.name)} · ${natural} natural</h3><p><b>${indice}. ${esc(fila.nombre)}</b> · escala de nivel ${datos.nivel}</p><p>${esc(fila.texto)}</p><p>Propuesta pendiente del DM. Conserva el resultado normal de la tirada. No se acumula con otro efecto de esta tabla.</p><button type="button" data-ecos-azar="aprobar">Aprobar y registrar</button> <button type="button" data-ecos-azar="descartar">Descartar</button></section>`,flags:{[MOD]:{azar:datos}}});
@@ -53,7 +57,14 @@ async function resolverAzarInterno(m,aprobar){
  if(!aprobar)return true;
  try{
   const prev=arr(actor.effects).filter(e=>e.getFlag?.(MOD,'azar'));if(prev.length)await actor.deleteEmbeddedDocuments('ActiveEffect',prev.map(e=>e.id));
-  if(fila.efecto&&combate){
+  // 3.12: estados y PG temporales, para quien tiró o para su blanco.
+  if(fila.efecto&&['estado','pgTemp'].includes(fila.efecto.tipo)){
+   const quien=fila.efecto.quien==='objetivo'?(d.objetivo?await fromUuid(d.objetivo):null):actor;
+   const destino=quien?.actor??quien;
+   if(destino&&fila.efecto.tipo==='estado')await destino.toggleStatusEffect?.(fila.efecto.valor,{active:true});
+   if(destino&&fila.efecto.tipo==='pgTemp'){const hp=destino.system?.attributes?.hp;if(hp)await destino.update({'system.attributes.hp.temp':Math.max(Number(hp.temp)||0,Number(fila.efecto.valor)||0)});}
+  }
+  else if(fila.efecto&&combate){
    const unidades=actor.system.attributes?.movement?.units==='ft'?1/0.3:1;
    const ca=fila.efecto.tipo==='ca',key=ca?'system.attributes.ac.bonus':'system.attributes.movement.walk';
    const valor=ca?fila.efecto.valor:fila.efecto.valor*unidades;
@@ -78,7 +89,7 @@ export async function caducarAzar(combate,terminado=false){
  }
 }
 Hooks.once('init',()=>{
- game.settings.register(MOD,'azarActivo',{name:'Contratiempos y oportunidades del d20',hint:'Propone una tabla nivelada al sacar 1 o 20 natural. Solo cuenta el primer d20 del turno. El DM aprueba cada consecuencia. Las salvaciones y habilidades conservan su resultado normal.',scope:'world',config:true,type:Boolean,default:true});
+ game.settings.register(MOD,'azarActivo',{name:'Contratiempos y oportunidades del d20',hint:'Propone una consecuencia al sacar 1 o 20 natural en ataques, salvaciones y pruebas, para PJ y PNJ. En combate cuenta cada 20 de ataque; lo demás, solo el primer d20 de la criatura en el turno. El DM aprueba cada una. La tirada conserva su resultado normal.',scope:'world',config:true,type:Boolean,default:true});
 });
 Hooks.on('createChatMessage',m=>{proponerAzar(m).catch(err=>console.error(`${MOD} | d20`,err));});
 function decorar(m,html){const d=m.getFlag?.(MOD,'azar');if(!d)return;const el=html instanceof HTMLElement?html:html?.[0];if(!el)return;
@@ -94,3 +105,28 @@ Hooks.once('ready',()=>{const api=(game.modules.get(MOD).api??={});api.azar={tab
 for(const nombre of ['dnd5e.preRollConcentration','dnd5e.preRollConcentrationV2'])Hooks.on(nombre,(_config,_dialog,message)=>{
  if(message){message.data??={};message.data.flags??={};message.data.flags[MOD]??={};message.data.flags[MOD].azarExcluir=true;}
 });
+
+/* 3.12: un 20 natural ya no duplica el daño (pedido del autor). El ataque sigue impactando y la tabla del d20 da el efecto. */
+const sinDoble=()=>{try{return game.settings.get(MOD,'criticoSinDoble')!==false;}catch{return true;}};
+export function quitarCriticoDano(config){
+ if(!config||!sinDoble())return config;
+ config.isCritical=false;config.critical={...(config.critical??{}),allow:false};
+ for(const r of config.rolls??[]){r.options??={};r.options.isCritical=false;}
+ return config;
+}
+Hooks.on('dnd5e.preRollDamageV2',config=>{quitarCriticoDano(config);});
+Hooks.once('init',()=>{try{game.settings.register(MOD,'criticoSinDoble',{name:'Un 20 natural no duplica el daño',hint:'Regla de la casa desde 3.12: el 20 sigue impactando y saca un efecto de la tabla del d20 en vez de tirar el daño dos veces.',scope:'world',config:true,type:Boolean,default:true});}catch{}});
+
+/** «13 · El 20 y el 1», la regla escrita para todos (3.12). */
+export function guiaD20HTML(){
+ const tabla=(c,n)=>`<table><thead><tr><th>d8</th><th>${n===20?'Éxito tremendo':'Fracaso tremendo'}</th><th>Qué pasa</th></tr></thead><tbody>${tablaAzarGuia(c,n).map(f=>`<tr><td>${f.indice}</td><td><strong>${esc(f.nombre)}</strong>${f.auto?' <small>(se aplica solo)</small>':''}</td><td>${esc(f.texto)}</td></tr>`).join('')}</tbody></table>`;
+ return `<section class="ecos-d20"><h1>El 20 y el 1</h1>
+<p><strong>Regla de la casa desde la versión 3.12.</strong> ${esc(REGLA_AZAR)}</p>
+<ul><li><strong>Un 20 en un ataque ya no tira el daño dos veces.</strong> Impacta siempre y saca uno de ocho efectos de golpe tremendo.</li>
+<li><strong>Para todos por igual:</strong> PJ, PNJ y monstruos usan las mismas tablas.</li>
+<li><strong>B</strong> es 1 en los niveles 1 a 4, 2 en los niveles 5 a 12 y 3 desde el nivel 13. <strong>C</strong> es tu bono de competencia (2 a 6).</li>
+<li>El DM puede apagar la regla del daño en Ajustes del módulo («Un 20 natural no duplica el daño»).</li></ul>
+${Object.entries(CONTEXTOS_AZAR).map(([c,n])=>`<h2>${esc(n)}</h2><h3>Con un 20</h3>${tabla(c,20)}<h3>Con un 1</h3>${tabla(c,1)}`).join('\n')}
+</section>`;
+}
+Hooks.once('ready',()=>{if(game.user.isGM&&gm()&&game.settings.get(MOD,'azarActivo'))paginaReglas('guiaD20','13 · El 20 y el 1',guiaD20HTML()).catch(err=>console.error(`${MOD} | regla del d20`,err));});
