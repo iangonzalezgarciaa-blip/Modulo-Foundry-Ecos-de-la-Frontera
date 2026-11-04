@@ -1,6 +1,6 @@
 # Ecos de la frontera (v3.12.0)
 
-**Ecos de la frontera** es un módulo para **Foundry VTT** que añade a tus partidas de **Dungeons & Dragons 5e** las reglas de la casa de la campaña del mismo nombre. Está en español.
+**Ecos de la frontera** es un módulo para **Foundry VTT** que añade a tus partidas de **Dungeons & Dragons 5e** y **Pathfinder 2 ed** las reglas de la casa de la campaña del mismo nombre. Está en español.
 
 No hace falta saber programar para usarlo. Se instala desde Foundry, como cualquier otro módulo, y se actualiza solo.
 
