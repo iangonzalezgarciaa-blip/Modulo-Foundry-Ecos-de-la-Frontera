@@ -53,5 +53,22 @@ test('la guía para todos nombra cada acción y no tiene restos', () => {
   const html = guiaAccionesHTML();
   for (const a of ACCIONES_PLANAS.filter(a => a.id !== 'plan')) assert.ok(html.includes(a.nombre), a.nombre);
   assert.doesNotMatch(html, /undefined|NaN|\[object/);
-  assert.match(html, /8 \+ el modificador/);
+  assert.match(html, /8 \+ el bono de la pericia/);
+  assert.match(html, /regla base del Manual: Presa/);
+});
+
+test('3.14: lo que ya es de D&D se resuelve como en el Manual y lo de Ecos usa la pericia', () => {
+  const por = id => ACCIONES_PLANAS.find(a => a.id === id);
+  assert.equal(por('presa').cd, 'str'); assert.equal(por('presa').base, 'Presa (Golpe sin armas)');
+  assert.match(por('apartar').texto, /Apartas 1,5 m/); assert.doesNotMatch(por('apartar').texto, /3 m/);
+  assert.deepEqual(por('fintar').cdPericia, ['dec']); assert.deepEqual(por('birlar').cdPericia, ['slt']);
+  assert.deepEqual(por('desarmar').cdPericia, ['ath', 'acr']);
+  const rasgos = datosRasgosComunes();
+  const act = (car, nombre) => Object.values(rasgos.find(r => r.flags['ecos-frontera'].accionComun.id === car).system.activities).find(a => a.name === nombre);
+  assert.equal(act('cha', 'Fintar').save.dc.formula, '8 + @skills.dec.total');
+  assert.equal(act('dex', 'Desarmar').save.dc.formula, '8 + max(@skills.ath.total, @skills.acr.total)');
+  assert.equal(act('str', 'Presa').save.dc.calculation, 'str');
+  // Ponerse a cubierto mejora la cobertura del Manual un paso; no la repite.
+  const cub = rasgos.find(r => r.flags['ecos-frontera'].accionComun.id === 'dex').effects.find(e => e.name === 'A cubierto');
+  assert.deepEqual(cub.statuses, ['coverThreeQuarters']);
 });

@@ -196,13 +196,21 @@ const dmIds = () => lista(game.users).filter(u => u.isGM).map(u => u.id);
 const salvacion = (a, k) => { const x = a?.system?.abilities?.[k]; return Number(x?.save?.value ?? (typeof x?.save === "number" ? x.save : null) ?? x?.mod) || 0; };
 
 /* 1 y 2: +2 al ataque contra quien está Desprevenido o rodeado. */
+/** ¿La mesa usa el flanqueo opcional de la Guía del DM (midi-qol)? Entonces manda ese y Rodear no suma (3.14). */
+export function flanqueoDelSistema() {
+  try {
+    if (!game.modules?.get?.("midi-qol")?.active) return false;
+    const r = game.settings.get("midi-qol", "ConfigSettings")?.optionalRules?.checkFlanking;
+    return !!r && r !== "off";
+  } catch { return false; }
+}
 function bonoDesprevenido(config) {
   const act = config?.subject, atacante = act?.actor;
   const blancos = [...(game.user?.targets ?? [])];
   if (!atacante || blancos.length !== 1) return;
   const blanco = blancos[0], tokA = tokenDe(atacante);
   let motivo = regla("desprevenido") && tieneEstado(blanco.actor, DESPREVENIDO) ? "está Desprevenido" : null;
-  if (!motivo && regla("rodear") && tokA && act.attack?.type?.value === "melee" && canvas?.grid) {
+  if (!motivo && regla("rodear") && !flanqueoDelSistema() && tokA && act.attack?.type?.value === "melee" && canvas?.grid) {
     const aliados = lista(canvas.tokens?.placeables).filter(t => t !== tokA && t !== blanco && mismoBando(t, tokA)).map(t => ({ rect: rectDe(t), puede: puedeActuar(t.actor) }));
     if (rodeado({ rect: rectDe(tokA) }, { rect: rectDe(blanco) }, aliados, canvas.grid.size)) motivo = "está rodeado";
   }
@@ -349,11 +357,11 @@ async function usarTerreno(uuidRegion, actor) {
 export function guiaTacticoHTML() {
   const fila = (n, cuando, pasa) => `<tr><td><strong>${n}</strong></td><td>${cuando}</td><td>${pasa}</td></tr>`;
   return `<section class="ecos-tactico"><h1>Combate táctico</h1>
-<p><em>Reglas de la casa desde la versión 3.13, para todos por igual: PJ, PNJ y monstruos. El DM las enciende o apaga una a una en Mesa Ecos → Control. Cada regla tiene condiciones cerradas y un resultado fijo.</em></p>
+<p><em>Reglas de la casa desde la versión 3.13, para todos por igual: PJ, PNJ y monstruos. El DM las enciende o apaga una a una en Mesa Ecos → Control. Cada regla tiene condiciones cerradas y un resultado fijo. Ninguna quita ni cambia una regla del Manual: se suman a lo que ya hay.</em></p>
 <h2>Bandos</h2><p>Cada token pertenece a un bando. Sin más, los amistosos son Aliados, los hostiles Enemigos y los neutrales Neutrales. Cuando hay tres o más bandos (por ejemplo, vosotros contra unos bandidos contra la guardia), el DM los nombra y los asigna. «Aliado» quiere decir del mismo bando.</p>
 <table><thead><tr><th>Regla</th><th>Cuándo, exactamente</th><th>Qué pasa</th></tr></thead><tbody>
 ${fila("Desprevenido", "La criatura tiene el estado Desprevenido. Lo ponen Fintar (hasta el final del turno de quien fintó) y Leer al rival (hasta el final del siguiente turno de quien leyó), si falla la salvación.", "Todo ataque contra ella suma +2. No se acumula: dos fuentes siguen siendo +2.")}
-${fila("Rodear", "Atacas cuerpo a cuerpo a una criatura que está a 1,5 m de ti. Un aliado tuyo, consciente y no incapacitado, también está a 1,5 m de ella, y la línea entre el centro de tu casilla y el de la suya cruza su espacio por lados opuestos o por esquinas opuestas.", "Está Desprevenida contra ese ataque: +2. No se suma al Desprevenido de Fintar.")}
+${fila("Rodear", "Atacas cuerpo a cuerpo a una criatura que está a 1,5 m de ti. Un aliado tuyo, consciente y no incapacitado, también está a 1,5 m de ella, y la línea entre el centro de tu casilla y el de la suya cruza su espacio por lados opuestos o por esquinas opuestas.", "Está Desprevenida contra ese ataque: +2. No se suma al Desprevenido de Fintar. Si la mesa usa el flanqueo opcional de la Guía del DM (ventaja, en midi-qol), manda ese y Rodear no suma.")}
 ${fila("El engaño elige el golpe", "Fallas la salvación de Distraer o de Fintar por 5 o más (tu total es la CD − 5 o menos).", "Si quien te engañó saca un 20 natural en un ataque contra ti antes del final de su siguiente turno, no se sortea el efecto del 20: lo elige él entre los ocho.")}
 ${fila("Plan maestro", "Sacas 20 o más en la prueba de Planear (Investigación) y el combate empieza en la hora siguiente.", "Al empezar el combate eliges a un aliado de tu bando: su iniciativa pasa a ser la más alta + 1 (actúa primero). Se gasta.")}
 ${fila("Moral de los PNJ", "En un combate, un bando de PNJ pierde a su líder (marcado por el DM), o cae (0 PG) la mitad de los que empezaron. Cada motivo cuenta una vez por combate.", "Cada PNJ de ese bando que sigue en pie salva Sabiduría CD 10. Si falla, queda Desmoralizado: en su turno usa Correr para alejarse de sus enemigos por la ruta más segura; si no puede alejarse, se rinde: suelta lo que tiene en las manos y no ataca. Dura hasta el final del combate o hasta que un aliado use una acción para Arengarlo. No afecta a no muertos, constructos, cienos ni a quien es inmune a Asustado.")}

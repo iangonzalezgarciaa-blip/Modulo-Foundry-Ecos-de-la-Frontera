@@ -28,11 +28,14 @@ test('3.12: cada 20 de ataque cuenta en combate, aunque no sea el primer d20 del
  const a=new MockActor(5);combate(a);assert.equal(await proponerAzar(mensaje(a,11)),false);
  assert.equal(await proponerAzar(mensaje(a,1)),false);assert.ok(await proponerAzar(mensaje(a,20)));assert.equal(messages.length,1);
 });
-test('3.12: un 20 natural no duplica el daño salvo que el DM apague la regla',async()=>{
+test('3.14: el 20 natural duplica el daño como en el Manual; la regla vieja de 3.12 solo si el DM la enciende',async()=>{
  const {quitarCriticoDano}=await import('../scripts/azar.js');
+ settings.delete?.('criticoSinDoble');assert.equal(quitarCriticoDano({isCritical:true}).isCritical,true);
+ settings.set('criticoSinDoble',false);assert.equal(quitarCriticoDano({isCritical:true}).isCritical,true);
+ settings.set('criticoSinDoble',true);
  const c=quitarCriticoDano({isCritical:true,rolls:[{options:{isCritical:true}},{}]});
  assert.equal(c.isCritical,false);assert.equal(c.critical.allow,false);assert.ok(c.rolls.every(r=>r.options.isCritical===false));
- settings.set('criticoSinDoble',false);assert.equal(quitarCriticoDano({isCritical:true}).isCritical,true);
+ settings.set('criticoSinDoble',false);
 });
 test('3.12: aprobar un derribo lo pone en el blanco de la tirada y los PG temporales en quien tiró',async()=>{
  const a=new MockActor(20),b=new MockActor(20);game.actors=collection([a,b]);combate(a);
@@ -84,5 +87,5 @@ test('la CA vence al inicio del próximo turno propio y los efectos se retiran a
 test('3.12: la regla escrita del 20 y el 1 trae las ocho tablas sin restos de plantilla',async()=>{
  const {guiaD20HTML}=await import('../scripts/azar.js');const h=guiaD20HTML();
  for(const c of ['ataque','salvacion','habilidad','escena'])for(const n of [1,20])for(const f of tablaAzar(c,n,1))assert.ok(h.includes(f.nombre),f.nombre);
- assert.doesNotMatch(h,/\{bono\}|\{temporal\}|undefined/);assert.match(h,/ya no tira el daño dos veces/);
+ assert.doesNotMatch(h,/\{bono\}|\{temporal\}|undefined/);assert.match(h,/crítico del Manual/);assert.match(h,/tira los dados de daño dos veces/);
 });

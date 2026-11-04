@@ -23,7 +23,7 @@ export async function proponerAzar(m){
  const trabajo=anterior.catch(()=>{}).then(async()=>{
   const combate=game.combat?.started?game.combat:null,turno=combate?`${combate.id}:${combate.round}:${combate.turn}`:null;
   const marca=actor.getFlag(MOD,'azarControl')??{},ahora=Number(game.time.worldTime)||0;
-  // El primer d20 del turno cuenta aunque no sea un extremo. 3.12: cada 20 de ataque cuenta (ya no duplica el daño);
+  // El primer d20 del turno cuenta aunque no sea un extremo. Cada 20 de ataque cuenta (desde 3.12);
   // lo demás, solo el primer d20 de la criatura en el turno (un área con varias tiradas cuenta una vez y los ataques extra no castigan).
   const primero=!(turno&&marca.turno===turno);
   if(turno&&primero)await actor.setFlag(MOD,'azarControl',{...marca,turno});
@@ -115,8 +115,9 @@ for(const nombre of ['dnd5e.preRollConcentration','dnd5e.preRollConcentrationV2'
  if(message){message.data??={};message.data.flags??={};message.data.flags[MOD]??={};message.data.flags[MOD].azarExcluir=true;}
 });
 
-/* 3.12: un 20 natural ya no duplica el daño (pedido del autor). El ataque sigue impactando y la tabla del d20 da el efecto. */
-const sinDoble=()=>{try{return game.settings.get(MOD,'criticoSinDoble')!==false;}catch{return true;}};
+/* 3.12 quitó el daño doble del 20. 3.14 lo devuelve (pedido del autor: respetar D&D base): el 20 es el crítico del Manual
+   y además trae el efecto de la tabla. Queda el ajuste, apagado, para quien quiera la regla vieja. */
+const sinDoble=()=>{try{return game.settings.get(MOD,'criticoSinDoble')===true;}catch{return false;}};
 export function quitarCriticoDano(config){
  if(!config||!sinDoble())return config;
  config.isCritical=false;config.critical={...(config.critical??{}),allow:false};
@@ -124,17 +125,19 @@ export function quitarCriticoDano(config){
  return config;
 }
 Hooks.on('dnd5e.preRollDamageV2',config=>{quitarCriticoDano(config);});
-Hooks.once('init',()=>{try{game.settings.register(MOD,'criticoSinDoble',{name:'Un 20 natural no duplica el daño',hint:'Regla de la casa desde 3.12: el 20 sigue impactando y saca un efecto de la tabla del d20 en vez de tirar el daño dos veces.',scope:'world',config:true,type:Boolean,default:true});}catch{}});
+Hooks.once('init',()=>{try{game.settings.register(MOD,'criticoSinDoble',{name:'Un 20 natural no duplica el daño (regla vieja)',hint:'Apagado, el 20 es el crítico del Manual (dados de daño dobles) y además saca su efecto de la tabla del d20. Encendido, solo saca el efecto (como en 3.12 y 3.13).',scope:'world',config:true,type:Boolean,default:false});
+ game.settings.register(MOD,'criticoRevisado314',{scope:'world',config:false,type:Boolean,default:false});}catch{}});
+Hooks.once('ready',async()=>{if(!game.user.isGM||!gm())return;try{if(!game.settings.get(MOD,'criticoRevisado314')){await game.settings.set(MOD,'criticoSinDoble',false);await game.settings.set(MOD,'criticoRevisado314',true);}}catch(err){console.error(`${MOD} | crítico`,err);}});
 
 /** «13 · El 20 y el 1», la regla escrita para todos (3.12). */
 export function guiaD20HTML(){
  const tabla=(c,n)=>`<table><thead><tr><th>d8</th><th>${n===20?'Éxito tremendo':'Fracaso tremendo'}</th><th>Qué pasa</th></tr></thead><tbody>${tablaAzarGuia(c,n).map(f=>`<tr><td>${f.indice}</td><td><strong>${esc(f.nombre)}</strong>${f.auto?' <small>(se aplica solo)</small>':''}</td><td>${esc(f.texto)}</td></tr>`).join('')}</tbody></table>`;
  return `<section class="ecos-d20"><h1>El 20 y el 1</h1>
-<p><strong>Regla de la casa desde la versión 3.12.</strong> ${esc(REGLA_AZAR)}</p>
-<ul><li><strong>Un 20 en un ataque ya no tira el daño dos veces.</strong> Impacta siempre y saca uno de ocho efectos de golpe tremendo.</li>
+<p><strong>Regla de la casa desde la versión 3.12 (con el crítico del Manual desde la 3.14).</strong> ${esc(REGLA_AZAR)}</p>
+<ul><li><strong>Un 20 en un ataque es el crítico del Manual:</strong> impacta siempre y tira los dados de daño dos veces. Además, saca uno de ocho efectos de golpe tremendo.</li>
 <li><strong>Para todos por igual:</strong> PJ, PNJ y monstruos usan las mismas tablas.</li>
 <li><strong>B</strong> es 1 en los niveles 1 a 4, 2 en los niveles 5 a 12 y 3 desde el nivel 13. <strong>C</strong> es tu bono de competencia (2 a 6).</li>
-<li>El DM puede apagar la regla del daño en Ajustes del módulo («Un 20 natural no duplica el daño»).</li></ul>
+<li><strong>Nada del Manual se pierde:</strong> el 1 en un ataque sigue fallando siempre; en salvaciones y pruebas el 1 y el 20 no cambian el éxito ni el fracaso, como en el Manual. Las tablas solo añaden una consecuencia.</li></ul>
 ${Object.entries(CONTEXTOS_AZAR).map(([c,n])=>`<h2>${esc(n)}</h2><h3>Con un 20</h3>${tabla(c,20)}<h3>Con un 1</h3>${tabla(c,1)}`).join('\n')}
 </section>`;
 }

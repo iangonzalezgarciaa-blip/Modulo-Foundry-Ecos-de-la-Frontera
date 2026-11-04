@@ -2,6 +2,8 @@
 
 *Reglas de la casa para que el combate premie el engaño, el plan, moverse bien y conocer al enemigo. El autor aprobó las diez el 4-nov-2026 con dos condiciones: cada regla con condiciones cerradas y un resultado concreto, y todo bajo un interruptor global que vale para todos los PJ y PNJ, con bandos para cuando hay tres o más grupos.*
 
+*Desde 3.14 manda una tercera condición del autor: **primero D&D**. Nada de esto quita ni cambia una regla del Manual; lo que ya existe en D&D o en PF2e se resuelve como allí, y lo de Ecos se suma (ver «D&D primero», al final).*
+
 Los jugadores tienen la misma regla escrita en el mundo, en **Reglas de la casa · 14 · Combate táctico**. La página se crea sola al cargar el mundo y no se pisa si el DM la edita.
 
 ## Encender y apagar
@@ -44,7 +46,7 @@ Con los mismos tokens seleccionados, tres botones más:
 | # | Regla | Cuándo, exactamente | Qué pasa | Lo hace el módulo |
 |---|---|---|---|---|
 | 1 | **Desprevenido** | La criatura tiene el estado Desprevenido. Lo ponen Fintar (hasta el final del turno de quien fintó) y Leer al rival (hasta el final del siguiente turno de quien leyó), si falla la salvación. | Todo ataque contra ella suma +2. No se acumula: dos fuentes siguen siendo +2. | Suma el +2 en la tirada de ataque, con la etiqueta «Desprevenido». |
-| 2 | **Rodear** | Atacas cuerpo a cuerpo a una criatura a 1,5 m de ti. Un aliado tuyo, consciente y no incapacitado, también está a 1,5 m de ella. La línea entre el centro de tu casilla y el de la suya cruza su espacio por lados opuestos o por esquinas opuestas. | Está Desprevenida contra ese ataque: +2. No se suma al Desprevenido de Fintar. | Lo mide en la escena al atacar con un blanco marcado. |
+| 2 | **Rodear** | Atacas cuerpo a cuerpo a una criatura a 1,5 m de ti. Un aliado tuyo, consciente y no incapacitado, también está a 1,5 m de ella. La línea entre el centro de tu casilla y el de la suya cruza su espacio por lados opuestos o por esquinas opuestas. | Está Desprevenida contra ese ataque: +2. No se suma al Desprevenido de Fintar. Si la mesa usa el flanqueo opcional de la Guía del DM (ventaja, en midi-qol), manda ese y Rodear no suma (3.14). | Lo mide en la escena al atacar con un blanco marcado. |
 | 3 | **El engaño elige el golpe** | Fallas la salvación de Distraer o de Fintar por 5 o más: tu total es la CD − 5 o menos. | Si quien te engañó saca un 20 natural en un ataque contra ti antes del final de su siguiente turno, no se sortea el efecto del 20: lo elige él entre los ocho. | La tarjeta del 20 muestra ocho botones «Elegir» en vez del sorteo. |
 | 4 | **Plan maestro** | Sacas 20 o más en Planear (Investigación), y el combate empieza en la hora siguiente. | Al empezar el combate eliges a un aliado de tu bando. Su iniciativa pasa a ser la más alta + 1, así que actúa primero. El plan se gasta. | Al empezar el combate abre el diálogo a quien planeó y cambia la iniciativa. |
 | 5 | **Moral de los PNJ** | En un combate, un bando de PNJ pierde a su líder (marcado por el DM), o cae a 0 PG la mitad de los que empezaron. Cada motivo cuenta una vez por combate. | Cada PNJ de ese bando que sigue en pie salva Sabiduría CD 10. Si falla, queda **Desmoralizado**: en su turno usa Correr para alejarse de sus enemigos por la ruta más segura. Si no puede alejarse, se rinde: suelta lo que tiene en las manos y no ataca. Dura hasta el final del combate, o hasta que un aliado use una acción para Arengarlo. No afecta a no muertos, constructos, cienos ni a quien es inmune a Asustado. | Tira las salvaciones, pone el estado y le susurra el resultado al DM. El DM mueve a los que huyen. |
@@ -83,6 +85,49 @@ El nombre de la región decide qué es. Por ejemplo, «Terreno vivo: lámpara de
 | humo, polvo, harina, ceniza | Humo o polvo | CON | Cegado hasta el final de su próximo turno |
 | agua, charco, río, cubo | Agua | Ninguna | Empapado |
 | cualquier otra cosa | Lo que diga el DM | — | Lo describe el DM |
+
+## D&D primero (3.14)
+
+El autor: «lo que más me interesa es respetar D&D base; si hay alguna técnica que sea igual que en D&D o Pathfinder 2e, que sean complementarias. Odio matar mecánicas». Así queda:
+
+**El 20.** Vuelve el crítico del Manual: el 20 natural en un ataque tira los dados de daño dos veces, y además saca su efecto de la tabla del d20. El 1 en un ataque sigue fallando siempre. En salvaciones y pruebas, el 1 y el 20 no cambian el éxito ni el fracaso; solo añaden una consecuencia. La regla de 3.12 (sin daño doble) queda como ajuste apagado.
+
+**Las acciones de cualquiera.** Cada fila de «12 · Lo que cualquiera puede intentar» dice si es regla base del Manual o de Ecos.
+
+| Acción | Origen | CD o tirada |
+|---|---|---|
+| Presa, Empujón (derribar y apartar) | Manual (Golpe sin armas) | 8 + FUE + competencia, como en el Manual. Empujón aparta 1,5 m, como en el Manual. |
+| Escapar o forzar | Manual | Atletismo o Acrobacias contra la CD de la presa. |
+| Esquivar, Esconderse, Buscar, Ayudar | Manual | Como en el Manual (Esconderse: Sigilo CD 15; Buscar: Percepción, Perspicacia, Medicina o Supervivencia). |
+| Evaluar al enemigo | Manual (Estudiar) | Ecos añade la CD (10 + VD) y qué te dice. |
+| Parlamentar | Manual (Influir) | CD 15 o su Inteligencia, la mayor. Ecos añade que, si lo logras, duda un turno. |
+| Fintar, Distraer | Ecos | 8 + tu Engaño. |
+| Intimidar, Provocar | Ecos | 8 + tu Intimidación. |
+| Leer al rival | Ecos | 8 + tu Perspicacia. |
+| Birlar | Ecos | 8 + tu Juego de manos. |
+| Zancadilla, Voltereta | Ecos | 8 + tus Acrobacias. |
+| Desarmar | Ecos | 8 + tu Atletismo o tus Acrobacias, el mejor. |
+| Abrirse paso | Ecos | 8 + tu Atletismo. |
+| Lanzar a quien sujetas, Polvo en los ojos | Ecos | 8 + FUE o DES + competencia. |
+| Ponerse a cubierto | Ecos | Sube un paso la cobertura que ya tienes por estar detrás de algo (media → tres cuartos). No la repite: la cobertura del Manual sigue siendo gratis. |
+| Apuntar, Interponerse, Aguantar, Sacudirse, Resistir, Planear, Aprovechar el terreno, Serenarse, Arengar | Ecos | Se suman al Manual. |
+
+Con la pericia, cuentan la competencia, la Pericia doble (bardo, pícaro) y los bonos de clase: un pícaro experto finta mejor que un guerrero con el mismo Carisma.
+
+**Tu clase manda.** Si la clase ya tiene algo parecido, lo de la clase sigue igual y suele ser mejor. Cuesta la misma acción, así que no se suman en el mismo turno:
+
+| De la clase | Se parece a |
+|---|---|
+| Golpe sin armas del monje o del pugilista | Golpe sin armas (se usa el de la clase) |
+| Defensa paciente (monje) | Esquivar |
+| Apuntar con firmeza (pícaro) | Apuntar |
+| Estilo Protección o Intercepción | Interponerse |
+| Maniobras del Maestro de batalla (Amago, Derribo, Desarme, Provocación, Amenaza, Arenga) | Fintar, Zancadilla, Desarmar, Provocar, Intimidar, Arengar |
+| Inspiración bárdica | Planear |
+
+**Rodear y el flanqueo.** Si la mesa usa el flanqueo opcional de la Guía del DM (en midi-qol), manda ese y Rodear no suma.
+
+**En PF2e.** Se usan las acciones del sistema (Grapple, Trip, Shove, Disarm, Feint, Demoralize, Create a Diversion, Hide, Sneak, Seek, Aid, Take Cover, Tumble Through, Recall Knowledge, Steal, Escape, Force Open) y su crítico con daño doble y grados de éxito. Ecos solo añade las que PF2e no tiene. Desprevenido es su *off-guard* y Rodear su *flanking*.
 
 ## Ordenar los diarios
 

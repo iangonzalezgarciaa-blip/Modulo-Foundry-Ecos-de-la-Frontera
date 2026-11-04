@@ -9,7 +9,7 @@ export function escalaAzar(nivel){
  const n=Math.max(1,Math.min(20,Math.trunc(Number(nivel)||1))),competencia=2+Math.floor((n-1)/4);
  return {nivel:n,bono:Math.min(3,Math.ceil(competencia/2)),temporal:competencia,metros:1.5};
 }
-// 3.12 (pedido del autor): el 20 natural ya no duplica el daño; a cambio, el 20 y el 1 traen consecuencias que se notan,
+// 3.12 (pedido del autor): el 20 y el 1 traen consecuencias que se notan (desde 3.14, el 20 vuelve a duplicar el daño como en el Manual),
 // lógicas para un éxito o un fracaso tremendos. Cada fila es una alternativa, nunca una acumulación con las otras siete.
 // [nombre, texto, tipo de efecto automático, valor, sobre quién]. Tipos: ca (±{bono}), paso (±1,5 m por punto),
 // estado (un estado de dnd5e), pgTemp (PG temporales = competencia). «objetivo»: se aplica al blanco de la tirada.
@@ -103,7 +103,7 @@ export function tablaAzar(contexto,natural,nivel=1){
  return tabla.map(([nombre,texto,tipo,v,quien],i)=>({indice:i+1,nombre,texto:texto.replaceAll('{bono}',e.bono).replaceAll('{temporal}',e.temporal),contexto,natural,nivel:e.nivel,
   ...(tipo?{efecto:{tipo,valor:valor(tipo,v),...(quien?{quien}:{})}}:{})}));
 }
-export const REGLA_AZAR='Desde 3.12, un 20 natural en un ataque ya no duplica el daño: sigue impactando siempre y, a cambio, saca un efecto al azar de la tabla de golpes tremendos. Un 1 natural saca uno de pifia. Lo mismo en salvaciones y pruebas, para todos por igual, PJ y PNJ: el 1 o el 20 conserva el éxito o fracaso normal y añade su consecuencia. En combate cuenta cada 20 de ataque; lo demás (los 1 y las salvaciones o pruebas) solo si es el primer d20 de esa criatura en el turno, para no castigar los ataques extra y para que un área cuente una vez. Fuera de combate, una propuesta por criatura cada diez minutos de juego. Se excluyen muerte, iniciativa, Concentración y las tiradas de Control de un choque. El DM aprueba cada propuesta: los cambios de CA, velocidad, estados y PG temporales se aplican solos (al que tiró o a su blanco); lo demás lo narra la mesa. Los efectos no se acumulan entre sí y los de un turno vencen al terminar el siguiente turno propio.';
+export const REGLA_AZAR='Un 20 natural en un ataque es el crítico del Manual: impacta siempre y tira los dados de daño dos veces. Además, saca un efecto al azar de la tabla de golpes tremendos. Un 1 natural saca uno de pifia. Lo mismo en salvaciones y pruebas, para todos por igual, PJ y PNJ: el 1 o el 20 conserva el éxito o fracaso normal y añade su consecuencia. En combate cuenta cada 20 de ataque; lo demás (los 1 y las salvaciones o pruebas) solo si es el primer d20 de esa criatura en el turno, para no castigar los ataques extra y para que un área cuente una vez. Fuera de combate, una propuesta por criatura cada diez minutos de juego. Se excluyen muerte, iniciativa, Concentración y las tiradas de Control de un choque. El DM aprueba cada propuesta: los cambios de CA, velocidad, estados y PG temporales se aplican solos (al que tiró o a su blanco); lo demás lo narra la mesa. Los efectos no se acumulan entre sí y los de un turno vencen al terminar el siguiente turno propio.';
 
 /** Para la página de reglas: la tabla sin nivel, con B (1 a 3 según el nivel) y C (tu competencia). */
 export function tablaAzarGuia(contexto,natural){

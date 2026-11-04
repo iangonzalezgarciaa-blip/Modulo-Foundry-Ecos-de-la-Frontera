@@ -169,7 +169,7 @@ No existe en PF2e. Lo que hoy cuelga de sus hooks pasa al chat de PF2e: ataque, 
 | E | Herido solo baja con una noche en un Santuario | Sí, **salvo que intervenga Verbe médico (rama Pulso, «Médico del Verbe») o magia de alto nivel**, que también lo bajan. |
 | F | Monedas de más de 3 | **Se guardan como objeto** «Moneda Antigua». Además, todo lo raro o fuerte del mundo debe poder cambiarse por Monedas: Trazos en el panel del Verbe y el mercader extraño (ver abajo). Esto se hace ya en dnd5e (3.12). |
 | G | Los mercaderes cobran en Puntos de Héroe | **Solo el mercader extraño**, el que tiene un rastro de Verbe. El resto cobra en dinero. |
-| H | Los dados quedan iguales hasta la prueba | Sí. Además, en los dos sistemas el 20 natural ya no duplica el daño: el 20 y el 1 dan efectos al azar en ataques, pruebas y salvaciones, para todos por igual (3.12). |
+| H | Los dados quedan iguales hasta la prueba | Sí. Además, el 20 y el 1 dan efectos al azar en ataques, pruebas y salvaciones, para todos por igual (3.12). Desde 3.14 el crítico de cada sistema queda intacto (pedido del autor: no matar mecánicas): en dnd5e el 20 duplica los dados de daño, y en PF2e los efectos se enganchan al éxito crítico y al fallo crítico sin quitar el daño doble ni los grados de éxito. |
 
 **El mercader extraño.** Solo él acepta Monedas Antiguas. Puede sentir el Verbe y anda recuperando reliquias para llevárselas y sacarles provecho; eso cambiará el mundo más adelante. Los jugadores no lo saben: él siempre dice que sabe qué hacer con ellas. Su tienda tiene un surtido al azar de unos 15 objetos raros o fuertes que el DM vuelve a sortear con un botón en cada visita.
 

@@ -1,5 +1,19 @@
 # Historial de cambios
 
+## 3.14.0 — 2026-11-04
+
+- D&D primero (pedido del autor: «respetar D&D base… que sean complementarias; odio matar mecánicas»). Nada de Ecos quita ni cambia una regla del Manual; lo que ya existe en D&D o en PF2e se resuelve como allí y lo de Ecos se suma. Detalle en docs/COMBATE_TACTICO.md, «D&D primero».
+- El 20: vuelve el crítico del Manual. Un 20 natural en un ataque tira los dados de daño dos veces y además saca su efecto de la tabla del d20. El mundo se cambia solo una vez al actualizar; la regla de 3.12 queda como ajuste apagado.
+- Acciones de cualquiera: cada una dice si es regla base del Manual o de Ecos.
+  - Las del Manual se resuelven igual que en el Manual: Presa, Empujón, Escapar, Esquivar, Esconderse, Buscar, Ayudar, Estudiar (Evaluar al enemigo) e Influir (Parlamentar). Empujón vuelve a apartar 1,5 m; Buscar usa las pericias del Manual; Parlamentar usa la CD de Influir (15 o la Inteligencia del blanco, la mayor).
+  - Las de Ecos usan tu pericia: CD 8 + el bono de la pericia, con competencia, Pericia doble y bonos de clase. Fintar y Distraer con Engaño, Intimidar y Provocar con Intimidación, Leer al rival con Perspicacia, Birlar con Juego de manos, Zancadilla y Voltereta con Acrobacias, Desarmar con Atletismo o Acrobacias y Abrirse paso con Atletismo.
+  - Ponerse a cubierto ya no repite la cobertura del Manual, que sigue siendo gratis: la sube un paso, de media a tres cuartos.
+  - Tu clase manda: si tiene algo parecido (Defensa paciente, Apuntar con firmeza, Protección, las maniobras del Maestro de batalla), lo de la clase sigue igual.
+  - Las hojas reciben los rasgos nuevos solas al cargar el mundo.
+- Combate táctico: si la mesa usa el flanqueo opcional de la Guía del DM (midi-qol), manda ese y Rodear no suma.
+- PF2e: se usan las acciones y el crítico del sistema; Ecos solo añade lo que PF2e no tiene.
+- Diagnóstico: un caso real nuevo (40 en total).
+
 ## 3.13.0 — 2026-11-04
 
 - Combate táctico: diez reglas de la casa para todos los PJ y PNJ, con condiciones cerradas y un resultado fijo. Se encienden y apagan todas a la vez o una a una en Mesa Ecos → Control. Regla escrita para todos en «Reglas de la casa · 14 · Combate táctico» y detalle en docs/COMBATE_TACTICO.md.
