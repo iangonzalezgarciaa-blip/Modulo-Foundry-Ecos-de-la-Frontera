@@ -1,13 +1,14 @@
 import {dadoNatural,tablaAzar,REGLA_AZAR} from './azar-core.js';
+import {infoTirada,cambio} from './compat.js';
 const MOD='ecos-frontera',locks=new Map();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nivel=a=>Number(a.system?.details?.level)||Math.max(1,Math.ceil(Number(a.system?.details?.cr)||1));
 const gm=()=>game.users.activeGM?game.users.activeGM.isSelf:game.user.isGM;
 const arr=x=>Array.from(x?.contents??x??[]);
 export function contextoMensaje(m,combate){
- const r=m.flags?.dnd5e?.roll??m.getFlag?.('dnd5e','roll');if(!r)return null;
- if(m.getFlag?.(MOD,'azarExcluir')||r.skillId==='cvb'||r.skill==='cvb'||r.type==='concentration'||r.type==='death'||r.type==='initiative')return null;
- return ({attack:combate?'ataque':'escena',save:combate?'salvacion':'escena',savingThrow:combate?'salvacion':'escena',skill:combate?'habilidad':'escena',ability:combate?'habilidad':'escena',tool:combate?'habilidad':'escena'})[r.type]??null;
+ const r=infoTirada(m);if(!r)return null;
+ if(m.getFlag?.(MOD,'azarExcluir')||r.skill==='cvb'||r.tipo==='concentration'||r.tipo==='death'||r.tipo==='initiative')return null;
+ return ({attack:combate?'ataque':'escena',save:combate?'salvacion':'escena',savingThrow:combate?'salvacion':'escena',skill:combate?'habilidad':'escena',ability:combate?'habilidad':'escena',tool:combate?'habilidad':'escena'})[r.tipo]??null;
 }
 /** Solo el GM principal observa mensajes ya creados; no hay sockets que acepten consecuencias del cliente. */
 export async function proponerAzar(m){
@@ -58,9 +59,9 @@ async function resolverAzarInterno(m,aprobar){
    const valor=ca?fila.efecto.valor:fila.efecto.valor*unidades;
    // La reducción no puede dejar la velocidad por debajo de 1,5 m.
    const actual=Number(actor.system.attributes?.movement?.walk)||0;
-   const cambio=!ca&&valor<0?Math.max(valor,Math.min(0,1.5*unidades-actual)):valor;
+   const delta=!ca&&valor<0?Math.max(valor,Math.min(0,1.5*unidades-actual)):valor;
    await actor.createEmbeddedDocuments('ActiveEffect',[{name:`${fila.nombre} · d20`,img:'icons/svg/d20.svg',disabled:false,transfer:false,
-    changes:[{key,mode:2,value:String(cambio)}],duration:{rounds:2,combat:combate.id,startRound:combate.round,startTurn:combate.turn},description:`<p>${esc(fila.texto)}</p>`,
+    changes:[cambio(key,'add',delta)],duration:{rounds:2,combat:combate.id,startRound:combate.round,startTurn:combate.turn},description:`<p>${esc(fila.texto)}</p>`,
     flags:{[MOD]:{azar:{combate:combate.id,turno:d.turno,actor:actor.uuid,tipo:fila.efecto.tipo,haLlegado:false}}}}]);
   }
   await m.setFlag(MOD,'azar',{...d,estado:'aprobado'});return true;
@@ -84,7 +85,7 @@ function decorar(m,html){const d=m.getFlag?.(MOD,'azar');if(!d)return;const el=h
  for(const b of el.querySelectorAll('[data-ecos-azar]')){b.hidden=!game.user.isGM||!gm()||d.estado!=='pendiente';if(b.dataset.ecosEnlazado)continue;b.dataset.ecosEnlazado='si';b.addEventListener('click',async()=>{b.disabled=true;try{await resolverAzar(m,b.dataset.ecosAzar==='aprobar');}catch(err){ui.notifications.error('No se pudo aplicar el resultado; revisa la consola.');console.error(err);}finally{b.disabled=false;}});}
  if(d.estado!=='pendiente'&&!el.querySelector('.ecos-azar-estado')){const p=document.createElement('p');p.className='ecos-azar-estado';p.textContent=`Estado: ${d.estado}. Los ajustes de tiradas y consecuencias narrativas se resuelven en mesa.`;el.append(p);}
 }
-Hooks.on('renderChatMessageHTML',decorar);Hooks.on('renderChatMessage',decorar);
+Hooks.on('renderChatMessageHTML',decorar);
 Hooks.on('updateCombat',(c,delta)=>{if('turn'in delta||'round'in delta)caducarAzar(c,!c.started).catch(console.error);});
 Hooks.on('deleteCombat',c=>caducarAzar(c,true).catch(console.error));
 Hooks.once('ready',()=>{const api=(game.modules.get(MOD).api??={});api.azar={tabla:tablaAzar,regla:REGLA_AZAR};

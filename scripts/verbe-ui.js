@@ -37,9 +37,13 @@ export function estadoUsoHTML({ ok, motivo, despues, costo }) {
 
 export function tarjetaHTML(t) {
   const id = escapar(t.id);
-  return `<article class="ev-tecnica ${t.riesgo ? "riesgo" : ""}">
-    <div class="ev-tec-top"><span class="ev-etiqueta">Grado ${t.grado}</span><span class="ev-etiqueta suave">${escapar(t.rama)}</span>${t.naturaleza ? `<span class="ev-etiqueta suave">${escapar(t.naturaleza)}</span>` : ""}</div>
-    <h3>${escapar(t.nombre)}</h3>${t.referencia ? `<small class="ev-referencia">${escapar(t.referencia)}</small>` : ""}<p class="ev-texto-tecnica">${escapar(avanceTexto(t.texto))}</p><details class="ev-efecto-completo"><summary>Leer el efecto completo y sus límites</summary>${efectoHTML(t.texto)}</details>${t.resolucion?`<p class="ev-nota"><b>Quién tira:</b> ${escapar(t.resolucion)}</p>`:""}
+  const fav = t.fav === true || t.fav === false
+    ? `<button type="button" class="ev-fav ${t.fav ? "activa" : ""}" data-action="favorita" data-id="${id}" aria-pressed="${t.fav ? "true" : "false"}" data-tooltip="${t.fav ? "Quitar de favoritas" : "Fijar arriba como favorita"}" aria-label="${t.fav ? "Quitar de favoritas" : "Marcar como favorita"}">${t.fav ? "★" : "☆"}</button>` : "";
+  const chips = (t.chips ?? []).length ? `<ul class="ev-cifras-chips" aria-label="Números con tu ficha">${t.chips.map(c => `<li>${escapar(c)}</li>`).join("")}</ul>` : "";
+  const pasos = (t.pasos ?? []).length ? `<details class="ev-paso-a-paso"><summary><i class="fa-solid fa-list-ol" aria-hidden="true"></i> Así se resuelve, paso a paso</summary><ol>${t.pasos.map(p => `<li>${escapar(p)}</li>`).join("")}</ol>${(t.estadosInfo ?? []).length ? `<dl class="ev-estados-info">${t.estadosInfo.map(e => `<div><dt>${escapar(e.nombre)}</dt><dd>${escapar(e.texto)}</dd></div>`).join("")}</dl>` : ""}</details>` : "";
+  return `<article class="ev-tecnica ${t.riesgo ? "riesgo" : ""} ${t.fav ? "favorita" : ""}" data-tipo-uso="${escapar(t.tipoUso ?? "")}">
+    <div class="ev-tec-top"><span class="ev-etiqueta">Grado ${t.grado}</span><span class="ev-etiqueta suave">${escapar(t.rama)}</span>${t.naturaleza ? `<span class="ev-etiqueta suave">${escapar(t.naturaleza)}</span>` : ""}${t.tipoNombre ? `<span class="ev-etiqueta tipo">${escapar(t.tipoNombre)}</span>` : ""}${fav}</div>
+    <h3>${escapar(t.nombre)}</h3>${t.referencia ? `<small class="ev-referencia">${escapar(t.referencia)}</small>` : ""}<p class="ev-texto-tecnica">${escapar(avanceTexto(t.texto))}</p>${chips}${pasos}<details class="ev-efecto-completo"><summary>Leer el efecto completo y sus límites</summary>${efectoHTML(t.texto)}</details>${t.resolucion?`<p class="ev-nota"><b>Quién tira:</b> ${escapar(t.resolucion)}</p>`:""}
     <div class="ev-tec-datos"><span><i class="fa-regular fa-clock" aria-hidden="true"></i> ${escapar(t.tiempo)}</span><span><i class="fa-solid fa-crosshairs" aria-hidden="true"></i> ${escapar(t.alcance)}</span>${t.area ? `<span>${escapar(t.area)}</span>` : ""}</div>
     <div class="ev-costes"><span><b>${t.costo}</b> Verbe <small>por uso base</small></span>${t.trazos != null ? `<span><b>${t.trazos}</b> Trazos <small>para aprender</small></span>` : ""}</div>
     ${t.estado ?? ""}${t.nota ? `<p class="ev-nota">${escapar(t.nota)}</p>` : ""}

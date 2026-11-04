@@ -57,7 +57,7 @@ function decorar(m,html){const r=flag(m);if(!r)return;const el=html instanceof H
   }else if(await foundry.applications.api.DialogV2.confirm({window:{title:'Corregir solo el gasto'},content:'<p>Se intenta restaurar únicamente el Verbe de este uso. No deshace daño, efectos, posiciones, acciones o reacciones. Se bloqueará si hubo otro uso o cambió la reserva.</p>',rejectClose:false})){const x=await corregirGasto(m);if(!x.ok)ui.notifications.warn(x.motivo);}
  }catch(err){console.error(`${MOD} | recibo`,err);ui.notifications.error('No se pudo completar la corrección. Revisa la ficha y la tarjeta.');}finally{b.disabled=false;}});}
 }
-Hooks.on('renderChatMessageHTML',decorar);Hooks.on('renderChatMessage',decorar);
+Hooks.on('renderChatMessageHTML',decorar);
 Hooks.on('dnd5e.postUseActivity',(a,u,r)=>{confirmarRecibo(a,u,r).catch(console.error);});
 Hooks.on('midi-qol.RollComplete',wf=>{registrarPaso(wf,'tiradas','Flujo de tiradas completado',`${wf.hitTargets?.size??0} objetivo(s) impactado(s), ${wf.failedSaves?.size??0} salvación(es) fallida(s) según Midi-QOL. Revisa daño y efectos en las fichas; este recibo no los vuelve a aplicar.`).catch(console.error);});
 Hooks.once('ready',()=>{(game.modules.get(MOD).api??={}).resolucion={registrarPaso,marcarMesa,corregirGasto,devolverDesdeRecibo};});

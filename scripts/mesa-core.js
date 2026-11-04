@@ -50,10 +50,17 @@ export function perfilNpc({vd=1,rol='guardian',nombre='Habitante de Nimerios',en
   entorno:String(entorno).slice(0,300),motivacion:String(motivacion).slice(0,600),vinculo:String(vinculo).slice(0,600),
   aviso:'Perfil orientativo de campaña, no una certificación de valor de desafío. El daño por ronda supone que todos los ataques de la rutina impactan. Resistencias, control, áreas, magia, técnicas del Verbe y acciones importadas requieren revisión del DM.'};
 }
+/** dnd5e 6 guarda la velocidad en movement.speeds y la CA fija en ac.override (antes ac.calc = "flat" y ac.flat). */
+export const fichaDnd6=actor=>{const at=actor?.system?.attributes??{};return !!at.movement?.speeds||at.ac?.calcs!==undefined;};
+/** Campos que cambia el taller de NPC (y que se guardan para deshacer), según la versión de dnd5e. */
+export const camposNpc=actor=>['name','system.details.cr','system.attributes.hp.max','system.attributes.hp.value',
+ ...(fichaDnd6(actor)?['system.attributes.ac.override','system.attributes.ac.flat','system.attributes.movement.speeds.walk']:['system.attributes.ac.calc','system.attributes.ac.flat','system.attributes.movement.walk'])];
 export function cambiosNpc(actor,p,{curar=false}={}){
  const hp=actor.system?.attributes?.hp??{},ratio=hp.max>0?Math.max(0,Math.min(1,(Number(hp.value)||0)/hp.max)):1;
+ const vel=p.velocidad*(actor.system?.attributes?.movement?.units==='ft'?1/0.3:1);
  return {name:p.nombre,'system.details.cr':p.vd,'system.attributes.hp.max':p.pg,'system.attributes.hp.value':curar?p.pg:Math.round(p.pg*ratio),
-  'system.attributes.ac.calc':'flat','system.attributes.ac.flat':p.ca,'system.attributes.movement.walk':p.velocidad*(actor.system?.attributes?.movement?.units==='ft'?1/0.3:1)};
+  ...(fichaDnd6(actor)?{'system.attributes.ac.override':p.ca,'system.attributes.ac.flat':p.ca,'system.attributes.movement.speeds.walk':vel}
+   :{'system.attributes.ac.calc':'flat','system.attributes.ac.flat':p.ca,'system.attributes.movement.walk':vel})};
 }
 export function pasosPersonaje(actor,{aprobada=!!actor?.getFlag?.('ecos-frontera','creacionRevisada')}={}){
  const items=Array.from(actor?.items??[]),t=type=>items.some(i=>i.type===type);

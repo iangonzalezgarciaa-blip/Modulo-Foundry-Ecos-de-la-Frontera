@@ -106,3 +106,9 @@ test('los seis paneles generan HTML con instrucciones y solo el DM ve sus herram
  const p=new MesaEcos({actor:a});for(const pestana of ['turno','crear','buscar','azar','dm','npc']){p.pestana=pestana;const html=await p._renderHTML();assert.ok(html.includes('em-contenido'));assert.doesNotMatch(html,/\bundefined\b|\bNaN\b/);}
  game.user=game.users.get('player');p.pestana='dm';let html=await p._renderHTML();assert.doesNotMatch(html,/Cuaderno privado|Taller de NPC|Control de la sesión/);p.pestana='turno';html=await p._renderHTML();assert.match(html,/Mi lista del turno/);
 });
+
+test('3.10: con dnd5e 6 el taller de NPC escribe ac.override y movement.speeds.walk', () => {
+ const a=new MockActor();a.type='npc';Object.assign(a.system.attributes.hp,{value:20,max:40});a.system.attributes.movement.units='ft';a.system.attributes.movement.speeds={walk:30};
+ const p=perfilNpc({vd:3,rol:'hostigador'}),c=cambiosNpc(a,p);
+ assert.equal(c['system.attributes.ac.override'],p.ca);assert.equal(c['system.attributes.movement.speeds.walk'],40);assert.equal(c['system.attributes.ac.calc'],undefined);assert.equal(c['system.attributes.movement.walk'],undefined);
+});

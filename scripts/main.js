@@ -30,6 +30,7 @@ import { motivoPausaMoneda } from "./mesa-control.js";
 import { crearCola } from "./verbe-core.js";
 import { recuperacionDGLarga, presupuestoCorto, ajustarRecuperacionDG } from "./rest-core.js";
 import { tipoCuracionVerbe, tratarHeridaConPulso } from "./verbe-medicina.js";
+import { infoTirada, opcionesModo, modoDeMensaje, modoActual, modoNormal, modosNuevos, objetivosMensaje, cambio, quitar } from "./compat.js";
 
 const MOD = "ecos-frontera";
 const RUTA = `modules/${MOD}`;
@@ -306,9 +307,7 @@ async function modificarSecuela(actor, delta) {
     name: `Secuela (${textoSecuela(v)})`,
     img: `${RUTA}/icons/secuela.svg`,
     description: DESC.secuela,
-    changes: activos.map(([k, n]) => ({
-      key: `system.abilities.${k}.value`, mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: String(-n)
-    })),
+    changes: activos.map(([k, n]) => cambio(`system.abilities.${k}.value`, "add", -n)),
     flags: { [MOD]: { tipo: "secuela", puntos: v } }
   };
   if (ef) await ef.update(datos);
@@ -2101,19 +2100,19 @@ async function soulPorUno(message) {
   if (f[MOD]?.sinSoul || f[MOD]?.soulDe) return;
   const roll = (message.rolls ?? []).find(esUnoNatural);
   if (!roll || roll.options?.[MOD]?.soulVisto) return;
-  const tipo = f.dnd5e?.roll?.type ?? (f.core?.initiativeRoll ? "initiative" : "");
+  const tipo = infoTirada(message)?.tipo ?? "";
   if (tipo === "death") return;
   const actor = ChatMessage.getSpeakerActor(message.speaker) ?? game.actors.get(message.speaker?.actor);
   if (!esPJ(actor) || (soulCoins(actor) < 1) || !decideSoul(actor)) return;
   const que = TIPO_TIRADA[tipo] ?? "tirada";
   if (!(await ofrecerSoulCoin(actor, `<b>${actor.name}</b> saca un <b>1 natural</b> (${que}).`))) return;
   const nueva = await roll.reroll();
-  const modo = message.blind ? "blindroll" : ((message.whisper?.length) ? "gmroll" : "publicroll");
+  const modo = modoDeMensaje(message);
   await nueva.toMessage({
     speaker: message.speaker,
     flavor: `${message.flavor ? `${message.flavor} · ` : ""}<b>Repetida con una Moneda Antigua</b> (antes: 1 natural). Vale esta.`,
     flags: { [MOD]: { soulDe: message.id } }
-  }, { rollMode: modo });
+  }, opcionesModo(modo));
   if (tipo === "initiative") {
     const c = game.combat?.combatants.find(x => x.actorId === actor.id);
     if (c?.isOwner) await c.update({ initiative: nueva.total });
@@ -4776,7 +4775,7 @@ Hooks.on("preCreateActiveEffect", (effect, data) => {
     const nivel = nivelPJ(actor);
     effect.updateSource({
       name: nombreMalherido(0),
-      changes: [{ key: "system.attributes.hp.tempmax", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: String(-nivel) }],
+      changes: [cambio("system.attributes.hp.tempmax", "add", -nivel)],
       flags: { [MOD]: { init: true, descansos: 0, nivelPJ: nivel, tratado: false } }
     });
   }
@@ -5244,7 +5243,7 @@ Hooks.on("dnd5e.postUseActivity", (activity, config, resultados) => {
     let objetivos = Array.from(game.user.targets ?? []).map(t => t.actor).filter(Boolean);
     // Si no había tokens marcados, los objetivos que quedaron en la tarjeta del conjuro.
     if (!objetivos.length) {
-      const enTarjeta = resultados?.message?.getFlag?.("dnd5e", "targets") ?? [];
+      const enTarjeta = objetivosMensaje(resultados?.message);
       objetivos = enTarjeta.map(t => { try { return fromUuidSync(t.uuid); } catch { return null; } }).map(d => d?.actor ?? d).filter(d => d instanceof Actor);
     }
     if (!objetivos.length && ["manos", "keoghtom"].includes(tipo) && activity.actor) objetivos = [activity.actor];
@@ -5499,9 +5498,9 @@ Hooks.on("dnd5e.preRollV2", (config, dialog, message) => {
     if (!tipos.includes("d20Test") && !tipos.includes("concentration")) return;
     const actor = (config.subject instanceof Actor) ? config.subject : config.subject?.actor;
     if (!actor || actor.hasPlayerOwner || esPJ(actor)) return;
-    if (!message || (message.rollMode && (message.rollMode !== CONST.DICE_ROLL_MODES.PUBLIC))) return;
-    if (game.settings.get("core", "rollMode") !== CONST.DICE_ROLL_MODES.PUBLIC) return;
-    message.rollMode = CONST.DICE_ROLL_MODES.PRIVATE;
+    if (!message || (message.rollMode && (modoNormal(message.rollMode) !== "public"))) return;
+    if (modoActual() !== "public") return;
+    message.rollMode = modosNuevos() ? "gm" : "gmroll";
   } catch (err) {
     console.error(`${MOD} | tirada oculta`, err);
   }
@@ -6148,7 +6147,7 @@ async function sacarDeTabla(clave, { formula } = {}) {
   const tabla = tablaPorClave(clave);
   if (!tabla) return ui.notifications.warn(`Ecos de la frontera: falta la tabla «${clave}». Vuelve a aplicar el contenido.`);
   const roll = formula ? new Roll(formula) : undefined;
-  return tabla.draw({ roll, rollMode: CONST.DICE_ROLL_MODES.PRIVATE });
+  return tabla.draw({ roll, ...opcionesModo("gm") });
 }
 
 const estacionClave = () => ({ primavera: "primavera", verano: "verano", otono: "otono", invierno: "invierno" })[ahoraMundo().estacion] ?? "primavera";
@@ -7119,10 +7118,10 @@ async function escribirClima(escena, lote) {
   const nuevos = {};
   for (const d of lote) nuevos[`core_${d.type}`] = { type: d.type, options: suavizarClima(d.type, d.options), ecosClima: true };
   const u = {};
-  for (const [k, e] of Object.entries(antes)) if (esDelClima(e) && !(k in nuevos)) u[`flags.fxmaster.effects.-=${k}`] = null;
+  for (const [k, e] of Object.entries(antes)) if (esDelClima(e) && !(k in nuevos)) { const [r, v] = quitar(`flags.fxmaster.effects.${k}`); u[r] = v; }
   for (const [k, e] of Object.entries(nuevos)) if (JSON.stringify(antes[k]) !== JSON.stringify(e)) u[`flags.fxmaster.effects.${k}`] = e;
   // Bajo techo, tampoco los relámpagos (los filtros «swr-…» de las tormentas).
-  if (bajoTecho) for (const k of Object.keys(escena.getFlag("fxmaster", "filters") ?? {})) if (k.startsWith("swr-")) u[`flags.fxmaster.filters.-=${k}`] = null;
+  if (bajoTecho) for (const k of Object.keys(escena.getFlag("fxmaster", "filters") ?? {})) if (k.startsWith("swr-")) { const [r, v] = quitar(`flags.fxmaster.filters.${k}`); u[r] = v; }
   if (!foundry.utils.isEmpty(u)) await escena.update(u);
   return Object.keys(u).length;
 }
@@ -8741,9 +8740,9 @@ async function migrarHojas272() {
     const de = descAntes(a);
     const u = {};
     if (pj && (a.getFlag(MOD, "pj") !== true)) u[`flags.${MOD}.pj`] = true;
-    if (!pj && (a.getFlag(MOD, "pj") === false)) u[`flags.${MOD}.-=pj`] = null;
+    if (!pj && (a.getFlag(MOD, "pj") === false)) { const [r, v] = quitar(`flags.${MOD}.pj`); u[r] = v; }
     if (de && (a.getFlag(MOD, "descansos") !== true)) u[`flags.${MOD}.descansos`] = true;
-    if (!de && (a.getFlag(MOD, "descansos") === false)) u[`flags.${MOD}.-=descansos`] = null;
+    if (!de && (a.getFlag(MOD, "descansos") === false)) { const [r, v] = quitar(`flags.${MOD}.descansos`); u[r] = v; }
     if (Object.keys(u).length) await a.update(u);
     if (pj || de) quedan.push(`${escH(a.name)} (${[pj ? "PJ" : "", de ? "descansos" : ""].filter(Boolean).join(", ")})`);
   }
@@ -10006,7 +10005,7 @@ async function migrar() {
             const n = { type: e.type, options: suavizarClima(e.type, e.options), ecosClima: true };
             if (JSON.stringify(n) !== JSON.stringify(e)) u[`flags.fxmaster.effects.${k}`] = n;
           } else {
-            u[`flags.fxmaster.effects.-=${k}`] = null;
+            { const [r, v] = quitar(`flags.fxmaster.effects.${k}`); u[r] = v; }
             quitados++;
           }
         }

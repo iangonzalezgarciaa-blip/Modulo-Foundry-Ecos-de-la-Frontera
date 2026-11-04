@@ -55,7 +55,7 @@ async function aplicar() {
   if (!reproductor) {
     reproductor = await new Promise(res => {
       const p = new YT.Player("ecos-musica-yt", { width: 200, height: 200, videoId: actual.id, playerVars: { start: Math.floor(seg), autoplay: 1, playsinline: 1 },
-        events: { onReady: e => { e.target.setVolume(volumen); res(p); }, onStateChange: e => { if (e.data === 0 && game.user.isGM && (!game.users.activeGM || game.users.activeGM.isSelf)) siguiente().catch(() => null); } } });
+        events: { onReady: e => { e.target.setVolume(volumen); res(p); }, onStateChange: e => { if (e.data === 0 && game.user.isGM && (!game.users.activeGM || game.users.activeGM.isSelf)) alTerminar().catch(() => null); } } });
     });
     ultimo = actual.id;
   } else if (ultimo !== actual.id) { reproductor.loadVideoById({ videoId: actual.id, startSeconds: seg }); ultimo = actual.id; }
@@ -75,14 +75,18 @@ export async function encolar(texto) {
 export async function pausar() { const e = estadoMusica(); if (e.actual) await guardar({ ...e, actual: { ...e.actual, pausadoEn: segundoActual(e.actual) } }); }
 export async function seguir() { const e = estadoMusica(); if (e.actual && Number.isFinite(e.actual.pausadoEn)) await guardar({ ...e, actual: { id: e.actual.id, desde: Date.now() - e.actual.pausadoEn * 1000, pausadoEn: null } }); }
 export async function detener() { const e = estadoMusica(); await guardar({ ...e, actual: null }); }
-export async function siguiente() { const e = estadoMusica(), [prox, ...resto] = e.cola ?? []; await guardar({ cola: resto, actual: prox ? { id: prox.id, desde: Date.now(), pausadoEn: null } : null }); }
+/** Al terminar un video: si «Repetir» está activo vuelve a empezar (para todos a la vez); si no, pasa al siguiente de la cola. */
+export async function alTerminar() { const e = estadoMusica(); if (e.repetir && e.actual?.id) return guardar({ ...e, actual: { id: e.actual.id, desde: Date.now(), pausadoEn: null } }); return siguiente(); }
+/** Repetir la canción actual: se activa o desactiva y vale hasta que se cambie. */
+export async function alternarRepetir() { const e = estadoMusica(); await guardar({ ...e, repetir: !e.repetir }); }
+export async function siguiente() { const e = estadoMusica(), [prox, ...resto] = e.cola ?? []; await guardar({ ...e, cola: resto, actual: prox ? { id: prox.id, desde: Date.now(), pausadoEn: null } : null }); }
 export function musicaHTML() {
   if (!game.user.isGM) return "";
   const e = estadoMusica(), esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[c]);
   return `<section><h3>Música de YouTube</h3><p>Pega un enlace: suena para todos a la vez, cada uno con su volumen (Ajustes del módulo). Se usa el reproductor oficial de YouTube, visible abajo a la izquierda.</p>
     <div class="em-fila"><label>Enlace<input name="musicaUrl" placeholder="https://www.youtube.com/watch?v=…"></label><button type="button" data-em="musica" data-id="reproducir">Reproducir</button><button type="button" data-em="musica" data-id="encolar">Añadir a la cola</button></div>
-    <div class="em-fila"><button type="button" data-em="musica" data-id="pausar">Pausa</button><button type="button" data-em="musica" data-id="seguir">Seguir</button><button type="button" data-em="musica" data-id="siguiente">Siguiente</button><button type="button" data-em="musica" data-id="detener">Detener</button></div>
-    <p class="ecos-nota">${e.actual ? `Suena: ${esc(e.actual.id)}${Number.isFinite(e.actual.pausadoEn) ? " (en pausa)" : ""}.` : "No suena nada."} En cola: ${(e.cola ?? []).length}.</p></section>`;
+    <div class="em-fila"><button type="button" data-em="musica" data-id="pausar">Pausa</button><button type="button" data-em="musica" data-id="seguir">Seguir</button><button type="button" data-em="musica" data-id="siguiente">Siguiente</button><button type="button" data-em="musica" data-id="repetir" aria-pressed="${e.repetir ? "true" : "false"}" title="Vuelve a empezar la canción al terminar, para todos">${e.repetir ? "🔁 Repetir: sí" : "🔁 Repetir: no"}</button><button type="button" data-em="musica" data-id="detener">Detener</button></div>
+    <p class="ecos-nota">${e.actual ? `Suena: ${esc(e.actual.id)}${Number.isFinite(e.actual.pausadoEn) ? " (en pausa)" : ""}${e.repetir ? " · se repite" : ""}.` : "No suena nada."} En cola: ${(e.cola ?? []).length}.</p></section>`;
 }
 Hooks.once("init", () => {
   game.settings.register(MOD, AJ, { scope: "world", config: false, type: Object, default: { cola: [], actual: null } });

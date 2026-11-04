@@ -650,3 +650,27 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-recibo { border:1px solid #a59b82; border-left:4px solid #8a7441; border-radius:5px; padding:10px 12px; margin-top:12px; font-size:13px; line-height:1.5; }
 .ecos-recibo h3 { font-size:15px; margin:0 0 8px; }.ecos-recibo ol {padding-left:20px}.ecos-recibo li {margin:7px 0}.ecos-recibo button {margin:5px 5px 0 0;white-space:normal;min-height:30px}
 .ecos-mesa .em-tabs {max-height:148px;overflow:auto;flex-shrink:0}.ecos-mesa .em-etiqueta {overflow-wrap:anywhere}
+
+/* 3.10 · Mis técnicas: filtros por tipo, favoritas y «Así se resuelve» con los números de la ficha */
+.ecos-verbe-panel .ev-chips-tipo { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 2px; }
+.ecos-verbe-panel .ev-chips-tipo button { flex: 0 0 auto; width: auto; line-height: 1.2; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--ev-linea); background: var(--ev-papel); color: var(--ev-tinta); font-size: 12px; cursor: pointer; }
+.ecos-verbe-panel .ev-chips-tipo button span { display: inline-block; min-width: 1.4em; margin-left: 4px; padding: 0 5px; border-radius: 999px; background: var(--ev-fondo); color: var(--ev-suave); font-size: 11px; text-align: center; }
+.ecos-verbe-panel .ev-chips-tipo button.activa { background: var(--ev-acento); border-color: var(--ev-acento); color: var(--ev-acento-texto); }
+.ecos-verbe-panel .ev-chips-tipo button.activa span { background: transparent; color: inherit; }
+.ecos-verbe-panel .ev-chips-tipo button:focus-visible, .ecos-verbe-panel .ev-fav:focus-visible { outline: 2px solid var(--ev-oro); outline-offset: 2px; }
+.ecos-verbe-panel .ev-etiqueta.tipo { background: var(--ev-oro-fondo); color: var(--ev-oro); }
+.ecos-verbe-panel .ev-tec-top { align-items: center; }
+.ecos-verbe-panel .ev-fav { margin-left: auto; flex: 0 0 auto; width: 30px; height: 30px; padding: 0; border: 1px solid transparent; border-radius: 50%; background: none; color: var(--ev-suave); font-size: 18px; line-height: 28px; cursor: pointer; }
+.ecos-verbe-panel .ev-fav:hover { border-color: var(--ev-linea); }
+.ecos-verbe-panel .ev-fav.activa { color: var(--ev-oro); }
+.ecos-verbe-panel .ev-tecnica.favorita { border-color: var(--ev-oro); box-shadow: inset 3px 0 0 var(--ev-oro); }
+.ecos-verbe-panel .ev-cifras-chips { display: flex; flex-wrap: wrap; gap: 5px; list-style: none; margin: 8px 0 4px; padding: 0; }
+.ecos-verbe-panel .ev-cifras-chips li { padding: 3px 8px; border-radius: 6px; background: var(--ev-agua); color: var(--ev-acento); font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ecos-verbe-panel .ev-paso-a-paso { margin: 6px 0 8px; border: 1px solid var(--ev-linea); border-radius: 8px; background: var(--ev-fondo); }
+.ecos-verbe-panel .ev-paso-a-paso > summary { cursor: pointer; padding: 7px 10px; font-size: 12px; font-weight: 700; color: var(--ev-acento); list-style: revert; }
+.ecos-verbe-panel .ev-paso-a-paso ol { margin: 0 0 6px; padding: 0 12px 0 30px; font-size: 12.5px; }
+.ecos-verbe-panel .ev-paso-a-paso li { margin: 3px 0; }
+.ecos-verbe-panel .ev-estados-info { margin: 4px 10px 10px; font-size: 12px; }
+.ecos-verbe-panel .ev-estados-info dt { font-weight: 700; color: var(--ev-acento); }
+.ecos-verbe-panel .ev-estados-info dd { margin: 0 0 4px; color: var(--ev-suave); }
+@media (max-width: 720px) { .ecos-verbe-panel .ev-tarjetas { grid-template-columns: minmax(0, 1fr); } }

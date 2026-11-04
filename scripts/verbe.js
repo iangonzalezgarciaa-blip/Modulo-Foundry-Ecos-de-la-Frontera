@@ -19,6 +19,8 @@ import { donDivino, asegurarNotaPanteon } from "./verbe-divinity.js";
 import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
 import { plantillaEnEscena } from "./verbe-plantillas.js";
+import { objetivosMensaje, filtrarObjetivosMensaje, consumoMensaje, duracionFinita, quitar } from "./compat.js";
+import { cifrasActividad, pasosUso, chipsCifras, tipoUso, actividadDe, TIPOS_USO } from "./verbe-cifras.js";
 import { problemasTecnica } from "./verbe-validate.js";
 import { tramoReserva, tramoFuerza, tramoVida, queVe } from "./verbe-lectura.js";
 import { cargaDe, bonoCarga, cdInterrupcion, textoCarga } from "./verbe-canalizar.js";
@@ -79,11 +81,13 @@ export const ESTADOS = {
   ardiendo: { name: "Ardiendo", img: "systems/dnd5e/icons/svg/statuses/burning.svg", dura: 0,
     texto: "1d6 de fuego al inicio de cada turno. Lo apagan una acción, el agua o la tierra." },
   desequilibrado: { name: "Desequilibrado", img: "systems/dnd5e/icons/svg/statuses/falling.svg", dura: 6,
-    changes: [{ key: "flags.midi-qol.disadvantage.attack.all", mode: 5, value: "1" }],
+    changes: [{ key: "flags.midi-qol.disadvantage.attack.all", mode: 5, value: "1" },
+      ...["str", "dex", "con", "int", "wis", "cha"].map(a => ({ key: `system.abilities.${a}.attack.roll.mode`, mode: 2, value: "-1" }))],
     texto: "Desventaja en su próximo ataque; si lo empujan, va el doble de lejos." },
   embarrado: { name: "Embarrado", img: "systems/dnd5e/icons/svg/statuses/encumbered.svg", dura: 60,
     changes: [{ key: "system.attributes.movement.walk", mode: 1, value: "0.5" },
-      { key: "flags.midi-qol.disadvantage.ability.save.dex", mode: 5, value: "1" }],
+      { key: "flags.midi-qol.disadvantage.ability.save.dex", mode: 5, value: "1" },
+      { key: "system.abilities.dex.save.roll.mode", mode: 2, value: "-1" }],
     texto: "Velocidad a la mitad y desventaja en las salvaciones de DES." },
   cargado: { name: "Cargado", img: "systems/dnd5e/icons/svg/statuses/marked.svg", dura: 6,
     texto: "No usa reacciones; si lleva metal, el próximo ataque con arma de metal contra él tiene ventaja." },
@@ -2075,7 +2079,7 @@ export async function infundir(actor, tecId, nat) {
   const tec = tecnicaPorId(tecId, actor);
   if (!editarActor(actor) || !tec || !conoce(actor, tecId) || !INFUNDIBLES.has(tec.sec)) return false;
   if (nat && !natsDe(actor).has(nat) && !combosDe(actor).has(nat)) return rechazar("No tiene esa naturaleza.", "warn");
-  await actor.update(nat ? { [`flags.${MOD}.${F}.infusiones.${tecId}`]: nat } : { [`flags.${MOD}.${F}.infusiones.-=${tecId}`]: null });
+  await actor.update(nat ? { [`flags.${MOD}.${F}.infusiones.${tecId}`]: nat } : Object.fromEntries([quitar(`flags.${MOD}.${F}.infusiones.${tecId}`)]));
   await refrescar(actor);
 }
 
@@ -2498,7 +2502,7 @@ export class EditorCatalogoVerbe extends foundry.applications.api.ApplicationV2 
     const select=(k,n,pares)=>`<label>${n}<select data-editor name="${k}">${opciones(pares,String(f[k]))}</select></label>`;
     const check=(k,n)=>`<label class="ecos-check"><input data-editor name="${k}" type="checkbox" ${f[k]?"checked":""}>${n}</label>`;
     const lista=extraMundo().map(t=>`<li><b>${escH(t.n)}</b> · grado ${t.g}${t.retirada?" · retirada":""} <button type="button" data-action="editar" data-id="${t.id}">Editar</button> <button type="button" data-action="duplicar" data-id="${t.id}">Duplicar</button> <button type="button" data-action="retirar" data-id="${t.id}">${t.retirada?"Republicar":"Retirar"}</button> <button type="button" data-action="borrar" data-id="${t.id}"><i class="fa-solid fa-trash"></i> Borrar</button></li>`).join("");
-    const propias=(game.actors??[]).flatMap(a=>(estado(a)?.propias??[]).map(t=>`<li><b>${escH(t.n)}</b> · ${escH(a.name)} · grado ${t.g}${t.modo?` · ${escH(t.modo)}`:t.firmada?" · firmada":""} <button type="button" data-action="duplicar" data-id="${t.id}">Copiar al catálogo para editar</button> <button type="button" data-action="borrarPropia" data-actor="${a.id}" data-id="${t.id}"><i class="fa-solid fa-trash"></i> Borrar</button></li>`)).join("");
+    const propias=Array.from(game.actors??[]).flatMap(a=>(estado(a)?.propias??[]).map(t=>`<li><b>${escH(t.n)}</b> · ${escH(a.name)} · grado ${t.g}${t.modo?` · ${escH(t.modo)}`:t.firmada?" · firmada":""} <button type="button" data-action="duplicar" data-id="${t.id}">Copiar al catálogo para editar</button> <button type="button" data-action="borrarPropia" data-actor="${a.id}" data-id="${t.id}"><i class="fa-solid fa-trash"></i> Borrar</button></li>`)).join("");
     const ed=edicionesMundo(),nEd=Object.keys(ed.tecnicas??{}).length+Object.keys(ed.dotes??{}).length;
     const campoBase=([k,n,tipo,min,max],valor,original)=>{
       const v=escH(valor??""),cambia=String(valor??"")!==String(original??""),orig=cambia?`<small class="ecos-nota">Original: ${escH(String(original??"—")).slice(0,160)}</small>`:"";
@@ -2701,7 +2705,7 @@ async function inicioDeTurno(combat) {
   if (efectoCanal(actor)) await subirCarga(actor);
   if (despierto(actor)) await guardar(actor, { reaccionUsada: false, accionReplicaUsada:false,turnoTecnicas:{combate:game.combat?.id??"combate",acciones:0,mayores:0} });
   for (const ef of actor.effects.filter(x => { const fl = x.getFlag(MOD, F);
-    return fl && !fl.herencia && !fl.dotesAE && (Number(x.duration?.seconds) > 0 || Number(x.duration?.rounds) > 0); })) {
+    return fl && !fl.herencia && !fl.dotesAE && duracionFinita(x); })) {
     const r = ef.duration?.remaining;
     if (Number.isFinite(r) && r <= 0) await ef.delete();
   }
@@ -2810,7 +2814,7 @@ export async function olvidar(actor) {
   if (its.length) await actor.deleteEmbeddedDocuments("Item", its);
   const efs = actor.effects.filter(x => x.getFlag(MOD, F)).map(x => x.id);
   if (efs.length) await actor.deleteEmbeddedDocuments("ActiveEffect", efs, { ecosSinCierre: true });
-  await actor.update({ [`flags.${MOD}.-=${F}`]: null, "system.skills.cvb.bonuses.check": "", "system.skills.cvb.value": 0 });
+  await actor.update({ ...Object.fromEntries([quitar(`flags.${MOD}.${F}`)]), "system.skills.cvb.bonuses.check": "", "system.skills.cvb.value": 0 });
   paneles.get(actor.id)?.close();
   await asegurarGuia();
   aviso(`${actor.name} ya no tiene el Verbe.`);
@@ -2821,10 +2825,10 @@ export async function olvidar(actor) {
 /* ------------------------------------------------------------------ */
 
 /** Borra una clave del estado (guardar mezcla y no borra). */
-const borrarClave = (actor, ruta) => actor.update({ [`flags.${MOD}.${F}.${ruta.replace(/\.([^.]+)$/, ".-=$1")}`]: null });
+const borrarClave = (actor, ruta) => actor.update(Object.fromEntries([quitar(`flags.${MOD}.${F}.${ruta}`)]));
 /** Reemplaza el estado entero. */
 async function reemplazar(actor, e) {
-  await actor.update({ [`flags.${MOD}.-=${F}`]: null }, { render: false });
+  await actor.update(Object.fromEntries([quitar(`flags.${MOD}.${F}`)]), { render: false });
   await actor.update({ [`flags.${MOD}.${F}`]: e });
 }
 const quitarItems = (actor, prueba) => {
@@ -3301,7 +3305,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     this.comoJugador = false;
     this.filtro = { rama: "", grado: "", nat: "", texto: "", solo: true, agrupar: "rama" };
     this.filtroDote = { texto: "", solo: true };
-    this.filtroUso = { texto: "", solo: false };
+    this.filtroUso = { texto: "", solo: false, tipo: "todas" };
     this.abiertos = null; // grupos desplegados (null: los que tienen algo para aprender)
   }
 
@@ -3311,6 +3315,13 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     position: { width: 940, height: 790 },
     actions: {
       pestana(ev, t) { this.pestana = t.dataset.p; this.abiertos = null; this.render(); },
+      tipoUso(ev, t) { this.filtroUso.tipo = t.dataset.t || "todas"; this.render(); },
+      favorita(ev, t) {
+        ev?.preventDefault?.();
+        const id = t.dataset.id, favs = new Set(estado(this.actor)?.favoritas ?? []);
+        if (favs.has(id)) favs.delete(id); else favs.add(id);
+        Promise.resolve(guardar(this.actor, { favoritas: [...favs] })).catch(err => console.error(`${MOD} | favoritas`, err)).finally(() => this.render());
+      },
       usar(ev, t) {
         ev?.preventDefault?.();
         if (this._usoEnCurso) return;
@@ -3572,15 +3583,19 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     </header>${barraDM}`;
   }
 
-  #tarjeta(t, { aprender: compra = false, item = null } = {}) {
+  #tarjeta(t, { aprender: compra = false, item = null, fav = null, tipo = null } = {}) {
     const a = this.actor, e = estado(a);
     const meta = item?.getFlag(MOD, F) ?? { ...t.item.flags[MOD][F], infusion: estado(a)?.infusiones?.[t.id] ?? null };
     const uso = previsualizarUso(a, meta);
+    let cif = null; try { cif = cifrasActividad(item ?? t.item, { estados: ESTADOS }); } catch (err) { console.warn(`${MOD} | cifras de ${t.id}`, err); }
+    const tipoK = tipo ?? tipoUso(actividadDe(item ?? t.item), { defensa: !!D.defensas?.[t.id], cargada: !!cargaDe(meta) });
     const r = compra ? requisitos(a, t) : null;
     const defensa = !compra && !!D.defensas?.[t.id];
     const carga = !compra && cargaDe(meta), canal = carga ? efectoCanal(a) : null, flc = canal?.getFlag(MOD, F)?.canalizar;
     const mia = flc?.id === t.id, otraCanal = !!canal && !mia;
     return tarjetaHTML({ id: t.id, nombre: item?.name ?? t.n, texto: textoDe(t), resolucion:resolucionTexto(t), grado: t.g, rama: nombreRama(t.rama),
+      fav: compra ? null : !!fav, tipoUso: tipoK, tipoNombre: TIPOS_USO.find(([k]) => k === tipoK)?.[1] ?? null,
+      chips: chipsCifras(cif), pasos: pasosUso(cif, compra ? { costo: uso.costo } : uso), estadosInfo: (cif?.estados ?? []).filter(x => x.texto),
       naturaleza: meta.infusion || t.nat ? nombreNat(meta.infusion || t.nat) : null,
       tiempo: TIEMPO_L[t.t] ?? t.t ?? "Ver ficha", alcance: t.alc ? alcanceL(t.alc, t.area) : "Ver ficha", area: t.area,
       referencia:t.divina&&!dm()?null:t.origen?.nombre,
@@ -3592,7 +3607,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       riesgo: !compra && uso.ok && uso.despues < 0,
       estado: compra ? `<p class="ev-disponibilidad">${r.ok ? `Te quedarán ${trazos(a).libres - t.trazos} Trazos después de aprenderla.` : escH(r.motivo)}</p>` : estadoUsoHTML(uso),
       nota: compra ? (r.pideDM ? "Requiere aprobación del DM antes de aprenderla." : "Aprender no gasta Verbe. Lo gastarás al usarla.")
-        : defensa ? "Con midi-qol, se ofrece al recibir un ataque. Sin esa integración, resuélvela con el DM. El coste final depende del ataque."
+        : defensa ? (game.modules?.get?.("midi-qol")?.active ? "Se ofrece sola al recibir un ataque. El coste final depende del ataque." : "Se ofrece sola cuando te atacan con una técnica del Verbe. Contra un arma o un conjuro, avísale al DM y pulsa «Cómo usar esta defensa». El coste final depende del ataque.")
           : (uso.extra ? `Incluye ${uso.extra} Verbe extra por el objetivo marcado.` : t.g > 0 && gradoUsable(a, meta) > t.g ? "Puedes elevar el grado en la ventana de uso; el coste aumentará." : "Marca el objetivo si afecta a otra criatura.") });
   }
 
@@ -3638,8 +3653,16 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
   #jugar() {
     const a = this.actor, f = this.filtroUso;
     const conocidas = itemsTecnica(a).map(item => ({ item, t: tecnicaPorId(item.getFlag(MOD, F).id, a) })).filter(x => x.t);
+    const favs = new Set(estado(a)?.favoritas ?? []);
+    for (const x of conocidas) x.tipo = tipoUso(actividadDe(x.item), { defensa: !!D.defensas?.[x.t.id], cargada: !!cargaDe(x.item.getFlag(MOD, F)) });
+    const cuenta = k => k === "todas" ? conocidas.length : k === "fav" ? conocidas.filter(x => favs.has(x.t.id)).length : conocidas.filter(x => x.tipo === k).length;
+    const tipoSel = f.tipo ?? "todas";
+    const chipsTipo = `<div class="ev-chips-tipo" role="group" aria-label="Ver por tipo">${TIPOS_USO.filter(([k]) => k === "todas" || cuenta(k) > 0 || k === tipoSel).map(([k, n]) =>
+      `<button type="button" data-action="tipoUso" data-t="${k}" aria-pressed="${tipoSel === k ? "true" : "false"}" class="${tipoSel === k ? "activa" : ""}">${n} <span>${cuenta(k)}</span></button>`).join("")}</div>`;
     const lista = conocidas.filter(({ item, t }) => !f.texto || `${item.name} ${(t.alias ?? []).join(" ")} ${textoDe(t)}`.toLowerCase().includes(f.texto.toLowerCase()))
-      .filter(({ item }) => !f.solo || previsualizarUso(a, item.getFlag(MOD, F)).ok);
+      .filter(({ item }) => !f.solo || previsualizarUso(a, item.getFlag(MOD, F)).ok)
+      .filter(x => tipoSel === "todas" ? true : tipoSel === "fav" ? favs.has(x.t.id) : x.tipo === tipoSel)
+      .sort((x, y) => Number(favs.has(y.t.id)) - Number(favs.has(x.t.id)));
     const cupos=cuotasPoder(nivelDe(a),dotesActivas(a)),gastados=estado(a).cuotasPoder??{};
     return `${cupos.mayores?`<details class="ev-limites-poder"><summary>Usos altos que te quedan hasta el próximo Descanso Largo</summary><ul><li>Grados 6–8: <b>${Math.max(0,cupos.mayores-(gastados.mayores||0))} de ${cupos.mayores}</b> usos compartidos.</li><li>Grados 9–11: <b>${Math.max(0,cupos.culminaciones-(gastados.culminaciones||0))} de ${cupos.culminaciones}</b> usos compartidos.</li>${cupos.trascendentes?`<li>Dentro de los anteriores, grado 11: <b>${Math.max(0,cupos.trascendentes-(gastados.trascendentes||0))} de ${cupos.trascendentes}</b>.</li>`:""}</ul><p>También cuenta el grado elegido al elevar una técnica. Cada técnica alta conserva su propio uso por Largo. Cambiar de técnica no devuelve usos compartidos.</p></details>`:""}${efectoV(a,"replicas")?`<div class="ev-instruccion"><span><b>Reserva repartida en réplicas: ${Number(estado(a).reservaReplicas)||0} Verbe</b>Una acción ofensiva conjunta por turno. «Usar desde réplica» gasta ese saldo y solo admite grado 0–${capacidadReplicas(a)}. Al disipar, se pierde el saldo restante.</span><button type="button" data-action="cerrarReplicas">Disipar réplicas</button></div>`:""}${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana de uso. Comprueba el grado y el gasto antes de confirmar.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
       <div class="ev-instruccion"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span><b>Si afecta a otro, marca su token antes de usarla.</b> El alcance y las condiciones de cada técnica siguen contando.</span></div>
@@ -3648,7 +3671,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       ${efectoCanal(a) ? `<p class="ev-aviso"><b>Canalizando ${escH(itemsDe(a, efectoCanal(a).getFlag(MOD, F).canalizar.id)[0]?.name ?? "")}</b> · carga ${efectoCanal(a).getFlag(MOD, F).canalizar.carga}/${efectoCanal(a).getFlag(MOD, F).canalizar.max}. Velocidad 0, sin reacciones ni choques. <button type="button" data-action="interrumpirCanal">Dejar de canalizar</button></p>` : ""}
       ${queVe(itemsTecnica(a).map(i => i.getFlag(MOD, F)?.id)).size ? `<p><button type="button" data-action="leerObjetivos" data-tooltip="Marca tokens y lee su Verbe por tramos (lleno, a medias, poco; más débil o más fuerte), nunca cifras"><i class="fa-solid fa-eye"></i> Leer el Verbe de los marcados</button></p>` : ""}
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar en mis técnicas</span><input type="search" data-filtro-uso="texto" placeholder="Nombre o efecto…" value="${escH(f.texto)}"></label><label><input type="checkbox" data-filtro-uso="solo" ${f.solo ? "checked" : ""}> Ocultar las bloqueadas por recursos o estado</label></div>
-      ${lista.length ? `<div class="ev-tarjetas">${lista.map(({ t, item }) => this.#tarjeta(t, { item })).join("")}</div>` : `<div class="ev-vacio"><h3>${conocidas.length ? "Ninguna coincide con ese filtro" : "Tu primera técnica te espera"}</h3><p>${conocidas.length ? "Quita el filtro para ver los bloqueos y sus motivos." : "Aprende una técnica con Trazos. Después aparecerá aquí lista para usarla."}</p><button type="button" data-action="pestana" data-p="tienda">Ir a Aprender</button></div>`}`;
+      ${chipsTipo}
+      ${lista.length ? `<div class="ev-tarjetas">${lista.map(({ t, item, tipo }) => this.#tarjeta(t, { item, fav: favs.has(t.id), tipo })).join("")}</div>` : `<div class="ev-vacio"><h3>${conocidas.length ? "Ninguna coincide con ese filtro" : "Tu primera técnica te espera"}</h3><p>${conocidas.length ? "Quita el filtro para ver los bloqueos y sus motivos." : "Aprende una técnica con Trazos. Después aparecerá aquí lista para usarla."}</p><button type="button" data-action="pestana" data-p="tienda">Ir a Aprender</button></div>`}`;
   }
 
   #guia() {
@@ -4428,14 +4452,14 @@ async function choqueNativo(activity,usage,results){
   await choqueAutomatico(wf);
   await registrarPaso(wf,'continuacion','Lanzamiento después del enfrentamiento',`${wf.targets.size} objetivo(s) restante(s). La tarjeta y la ficha resuelven las tiradas y el daño; revisa las consecuencias de mesa.`);
   if(results?.message && wf.ecosExcluidos?.size){
-    const refs=results.message.flags?.dnd5e?.targets;
     const protegidos=new Set([...wf.ecosExcluidos].flatMap(t=>[t.document?.uuid,t.uuid,t.actor?.uuid]));
-    if(Array.isArray(refs))await results.message.update({'flags.dnd5e.targets':refs.filter(r=>!protegidos.has(r.uuid)&&!protegidos.has(r.actorUuid))});
+    const cambioObjetivos=filtrarObjetivosMensaje(results.message,o=>!protegidos.has(o.uuid)&&!protegidos.has(o.token));
+    if(cambioObjetivos)await results.message.update(cambioObjetivos);
     await aLaMesa(wf.actor,'Objetivos tras el enfrentamiento',`<p>Protegidos: ${[...wf.ecosExcluidos].map(t=>escH(t.name??t.actor.name)).join(', ')}. ${wf.targets.size?'La técnica continúa solo contra los demás objetivos.':'El lanzamiento ha sido interceptado; no continúa.'}</p>`);
   }
   try{
     if(wf.targets.size && usage.subsequentActions!==false){
-      const consumed=activity.createConsumedFlag?.(activity.actor,results?.message?.flags?.dnd5e?.use?.consumed);
+      const consumed=activity.createConsumedFlag?.(activity.actor,consumoMensaje(results?.message));
       if(consumed)activity.item.updateSource?.({'flags.dnd5e.consumed':consumed});
       await activity._triggerSubsequentActions?.(usage,results);
     }
@@ -4574,10 +4598,13 @@ Hooks.once("init", () => {
     vpu: "necromancy", vhi: "enchantment", vqu: "abjuration", vra: "divination", vsa: "transmutation" };
   for (const [k, n] of Object.entries(ramas)) CONFIG.DND5E.spellSchools[k] = { label: n, icon: `systems/dnd5e/icons/svg/schools/${iconos[k]}.svg`, fullKey: `verbe${n}`, reference: "" };
   CONFIG.DND5E.skills.cvb = { label: "Control del Verbe", ability: "wis", fullKey: "controlVerbe", reference: "", icon: "systems/dnd5e/icons/svg/abilities/wisdom.svg" };
+  // dnd5e 6 rehace CONFIG.statusEffects en i18nInit a partir de CONFIG.DND5E.statusEffects: los estados se registran ahí
+  // (también vale para dnd5e 5.2). Sin dnd5e, se añaden a la lista del núcleo como antes.
   for (const [id, c] of Object.entries(ESTADOS)) {
-    if (CONFIG.statusEffects.some(s => s.id === id)) continue;
-    CONFIG.statusEffects.push({ id, _id: `ecosv${id}`.padEnd(16, "0").slice(0, 16), name: c.name, img: c.img, changes: c.changes ?? [],
-      description: `<p>${c.texto}</p>`, flags: { [MOD]: { [F]: { estado: id } } } });
+    const datos = { name: c.name, img: c.img, changes: c.changes ?? [], description: `<p>${c.texto}</p>`, flags: { [MOD]: { [F]: { estado: id } } } };
+    if (CONFIG.DND5E?.statusEffects && !CONFIG.DND5E.statusEffects[id]) { CONFIG.DND5E.statusEffects[id] = datos; continue; }
+    if (!Array.isArray(CONFIG.statusEffects) || CONFIG.statusEffects.some(s => s.id === id)) continue;
+    CONFIG.statusEffects.push({ id, _id: `ecosv${id}`.padEnd(16, "0").slice(0, 16), ...datos });
   }
   parcheEspacios();
 });

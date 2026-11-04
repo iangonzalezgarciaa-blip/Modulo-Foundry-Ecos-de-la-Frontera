@@ -1,4 +1,4 @@
-import {buscarEntradas,textoPlano,claveTurno,perfilNpc,cambiosNpc,pasosPersonaje,ROLES_NPC,variacionNpc} from './mesa-core.js';
+import {buscarEntradas,textoPlano,claveTurno,perfilNpc,cambiosNpc,camposNpc,pasosPersonaje,ROLES_NPC,variacionNpc} from './mesa-core.js';
 import {tablaAzar,CONTEXTOS_AZAR,REGLA_AZAR} from './azar-core.js';
 import {escTexto as esc} from './verbe-reading.js';
 import {consultarReliquias} from './relics.js';
@@ -76,7 +76,7 @@ export async function guardarNpc(base,p,{copiar=true,curar=false}={}){
   // Copia los objetos reales de Plutonium sin reimportarlos ni reescribir sus vínculos de avance.
   actor=await Actor.create(datos);if(!actor)return null;
  }
- const campos=['name','system.details.cr','system.attributes.hp.max','system.attributes.hp.value','system.attributes.ac.calc','system.attributes.ac.flat','system.attributes.movement.walk'];
+ const campos=camposNpc(actor);
  const anterior=Object.fromEntries(campos.map(k=>[k,foundry.utils.getProperty(actor,k)??null]));
  const rutina=lista(actor.items).find(i=>i.getFlag?.(MOD,'rutinaNpc')),datos=rutinaNpc(p);
  const previo=actor.getFlag(MOD,'npcPerfil');
@@ -220,7 +220,7 @@ export class MesaEcos extends foundry.applications.api.ApplicationV2{
    // Se guarda exactamente la vista previa, nunca campos que se hayan cambiado sin revisar.
    const guardado=await guardarNpc(game.actors.get(p.base)??null,p.perfil,p);if(guardado&&p.perfil.variacion?.reserva&&A()?.despierto?.(guardado))await A().variarReservaNpc?.(guardado,p.perfil.variacion.reserva);if(guardado){this.actor=guardado;this.plan=null;this.borradorNpc=null;this.informe='NPC guardado. Revisa sus poderes importados y prueba la rutina antes de usarlo en un encuentro.';}return;
   }
-  if(op==='musica'){if(!game.user.isGM)return;const f={reproducir:()=>Musica.reproducir(v('musicaUrl')),encolar:()=>Musica.encolar(v('musicaUrl')),pausar:Musica.pausar,seguir:Musica.seguir,siguiente:Musica.siguiente,detener:Musica.detener}[id];if(f)await f();return;}
+  if(op==='musica'){if(!game.user.isGM)return;const f={reproducir:()=>Musica.reproducir(v('musicaUrl')),encolar:()=>Musica.encolar(v('musicaUrl')),pausar:Musica.pausar,seguir:Musica.seguir,siguiente:Musica.siguiente,repetir:Musica.alternarRepetir,detener:Musica.detener}[id];if(f)await f();return;}
   if(op==='ocultarEnemigos'){if(!game.user.isGM)return;const {ocultarDatosEnemigos}=await import('./mesa-oponentes.js');const h=await ocultarDatosEnemigos();this.informe=h?`Ocultado: ${h.prototipos} prototipo(s) y ${h.tokens} token(s) con barras solo para su dueño, ${h.fichas} ficha(s) en «Limitado»${h.ataque?', la CA del objetivo ya no se muestra en los ataques':''}.`:'Solo el DM.';return;}
   if(op==='devolverVerbe'){if(!game.user.isGM)return;const api=A(),a=game.actors.get(v('devolverActor'));const r=await api?.devolverVerbe?.(a,Number(v('devolverCantidad')),v('devolverMotivo'));this.informe=r?.ok?`${a.name}: +${r.cantidad} Verbe (${r.antes} → ${r.despues}). Anotado.`:(r?.motivo??'El Verbe está apagado en este mundo.');return;}
   if(op==='editarTecnicas'){if(!game.user.isGM)return;const ed=game.modules.get(MOD)?.api?.verbe?.editorCatalogo;if(!ed){this.informe='El Verbe está apagado en este mundo: enciéndelo en Ajustes para editar técnicas.';return;}ed();return;}
@@ -267,7 +267,7 @@ let instanciaMesa=null;
 export function abrirMesa(actor=null,pestana='turno'){
  if(!instanciaMesa?.rendered)instanciaMesa=new MesaEcos({actor:actor??seleccionado(),pestana});
  else {if(actor)instanciaMesa.actor=actor;instanciaMesa.pestana=pestana;}
- instanciaMesa.render({force:true});instanciaMesa.bringToFront?.();return instanciaMesa;
+ const app=instanciaMesa;if(app.rendered)app.bringToFront?.();Promise.resolve(app.render({force:true})).then(()=>{if(app.rendered&&app.element)app.bringToFront?.();}).catch(err=>console.error('ecos-frontera | mesa',err));return app;
 }
 function botonMesa(app,html){const el=html instanceof HTMLElement?html:html?.[0];if(!el||el.querySelector('[data-ecos-mesa]'))return;
  const a=app.document??app.actor;if(a&&!dueno(a))return;const sitio=el.closest?.('.application')?.querySelector('.window-header')??el.querySelector('.window-header')??el.querySelector('.directory-header')??el.querySelector('header');if(!sitio)return;

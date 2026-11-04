@@ -65,3 +65,19 @@ test('5.1: enlaces de YouTube y el segundo actual con pausa', async () => {
   assert.equal(segundoActual({ desde: 1000, pausadoEn: null }, 11000), 10);
   assert.equal(segundoActual({ desde: 1000, pausadoEn: 42 }, 99000), 42);
 });
+
+test('3.10: repetir canción vuelve a empezar la misma para todos; sin repetir pasa a la cola', async () => {
+  const M = await import('../scripts/mesa-musica.js');
+  const antes = globalThis.game;
+  let valor = { cola: [{ id: 'bbbbbbbbbbb' }], actual: { id: 'aaaaaaaaaaa', desde: 1, pausadoEn: null } };
+  globalThis.game = { user: { isGM: true }, settings: { get: () => valor, set: async (_m, _k, v) => { valor = v; } } };
+  try {
+    await M.alternarRepetir();
+    assert.equal(valor.repetir, true);
+    await M.alTerminar();
+    assert.equal(valor.actual.id, 'aaaaaaaaaaa'); assert.ok(valor.actual.desde > 1); assert.equal(valor.cola.length, 1);
+    await M.alternarRepetir();
+    await M.alTerminar();
+    assert.equal(valor.actual.id, 'bbbbbbbbbbb'); assert.equal(valor.cola.length, 0); assert.equal(valor.repetir, false);
+  } finally { globalThis.game = antes; }
+});
