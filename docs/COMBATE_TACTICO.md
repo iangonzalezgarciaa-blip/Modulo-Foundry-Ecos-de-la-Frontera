@@ -145,7 +145,7 @@ Un mundo de Foundry funciona con un solo sistema, así que el mundo PF2e será u
 | Paso | Estado |
 |---|---|
 | Dioses: cada dios del panteón como deidad de PF2e (edictos, anatemas, atributo, fuente divina, santificación, habilidad, arma, dominios) | Borrador escrito en el mundo del autor, en **Mundo 1 · 27 · Los dioses en PF2e (borrador)**, solo DM. No va en el repositorio porque mezcla secretos de campaña. Espera la revisión del autor. |
-| Diarios: Mundo 0 a 10, la Biblioteca, las Reglas de la casa y las Tramas en un compendio de un módulo local, solo en el PC del autor | Siguiente paso. Nunca en el repositorio público. |
+| Diarios: todos los del mundo, con carpetas, enlaces y permisos, en el compendio de un módulo local, solo en el PC del autor | Hecho el módulo `Data/modules/ecos-lore-nimerios` (no está en el repositorio). En Fantasy and Agony, «Exportar lore» en la barra de Diarios; en el mundo PF2e, «Importar lore». |
 | Pueblos como ascendencias y herencias de PF2e | Pendiente. |
 | Reglas de la casa con cifras de PF2e | Con el adaptador (5.2d). |
-| Conjuros de PF2e al compendio `world.ecos-conjuros-pf2e` | Con la tarea 4.2d. |
+| Conjuros de PF2e al compendio `world.ecos-conjuros-pf2e` | Hecho en 3.15 (4.2d). |
