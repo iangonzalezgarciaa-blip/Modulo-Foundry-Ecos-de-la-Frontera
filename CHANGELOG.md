@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.19.0 — 2026-11-04
+
+- Preparación para PF2e (tarea 5.2c, primer paso): nueva capa del sistema en `scripts/sistema/` que separa lo que es de dnd5e. Ya pasan por ella el mercader extraño y el combate táctico. En la mesa no cambia nada. La parte de PF2e trae las lecturas de la ficha con las decisiones del autor (Monedas = Puntos de Héroe, Agotamiento = Fatigado + Drenado, cuatro grados de éxito); el resto llega con 5.2d.
+
 ## 3.18.0 — 2026-11-04
 
 - Biblioteca de conjuros de PF2e (tarea 4.2e): el diario de «Listas de conjuros de PF2e (Ecos)» trae una página por nivel con los conjuros por escuela y nombre, su enlace, su tipo, las clases que lo tienen y su rareza. El mundo la crea solo al cargar.

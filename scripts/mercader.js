@@ -6,6 +6,7 @@
  *    la tarjeta. También compra lo raro que le traigan: las reliquias, a precio entero; lo demás, a mitad.
  * Las cuentas son puras. Las compras las hace el DM principal por socket, para que nadie gaste lo que no tiene.
  */
+import { sistema } from "./sistema/index.js";
 const MOD = "ecos-frontera";
 export const PRECIO = { uncommon: 1, rare: 2, veryRare: 4, legendary: 7 };
 export const NOMBRE_RAREZA = { uncommon: "poco común", rare: "rara", veryRare: "muy rara", legendary: "legendaria" };
@@ -53,8 +54,8 @@ export function tarjetaMercaderHTML(surtido) {
 
 /* ---------- Foundry ---------- */
 const soyDM = () => !!game.user?.isGM && (game.users?.activeGM ? game.users.activeGM.isSelf : true);
-const monedas = actor => Number(actor?.system?.currency?.soul ?? 0);
-const nivelDe = actor => Number(actor?.system?.details?.level) || Math.max(1, Math.ceil(Number(actor?.system?.details?.cr) || 1));
+const monedas = actor => sistema.moneda(actor);
+const nivelDe = actor => sistema.nivel(actor);
 const esReliquia = item => !!(item?.flags?.[MOD]?.reliquia ?? item?.getFlag?.(MOD, "reliquia"));
 const rarezaDe = item => item?.system?.rarity ?? null;
 const personaje = () => game.user?.character ?? canvas?.tokens?.controlled?.[0]?.actor ?? null;
@@ -92,7 +93,7 @@ async function comprar(msg, i, actor, usuario) {
   if (monedas(actor) < x.precio) return aviso(usuario, `${actor.name} tiene ${monedas(actor)} Monedas Antiguas y cuesta ${x.precio}.`);
   const doc = await fromUuid(x.uuid);
   if (!doc) return aviso(usuario, "El mercader no encuentra ese objeto (¿se borró del compendio?).");
-  await actor.update({ "system.currency.soul": monedas(actor) - x.precio });
+  await actor.update(sistema.datosMoneda(monedas(actor) - x.precio));
   await actor.createEmbeddedDocuments("Item", [{ ...doc.toObject(), _id: undefined }]);
   Object.assign(x, { vendido: true, comprador: actor.name });
   await msg.update({ content: tarjetaMercaderHTML(surtido), [`flags.${MOD}.mercader`]: surtido });
@@ -103,7 +104,7 @@ async function vender(actor, itemId, usuario) {
   const item = actor.items.get(itemId), pago = pagoPorVenta(rarezaDe(item), esReliquia(item));
   if (!item || pago == null) return aviso(usuario, "El mercader no quiere eso.");
   await actor.deleteEmbeddedDocuments("Item", [item.id]);
-  await actor.update({ "system.currency.soul": monedas(actor) + pago });
+  await actor.update(sistema.datosMoneda(monedas(actor) + pago));
   await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<p><b>${esc(actor.name)}</b> le vende <b>${esc(item.name)}</b> al mercader extraño por ${pago} Moneda${pago === 1 ? "" : "s"} Antigua${pago === 1 ? "" : "s"}. «Yo sé qué hacer con esto.»</p>` });
 }
 

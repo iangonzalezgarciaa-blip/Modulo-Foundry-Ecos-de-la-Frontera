@@ -20,6 +20,7 @@
  * 10. Evaluar automático: al Evaluar a un blanco marcado, el jugador recibe lo que ganó.
  */
 import { objetivosMensaje } from "./compat.js";
+import { sistema } from "./sistema/index.js";
 const MOD = "ecos-frontera";
 const lista = x => Array.from(x?.contents ?? x ?? []);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -189,11 +190,11 @@ export const regla = k => { const a = ajuste(); return !!a.activo && a.reglas[k]
 const soyDM = () => !!game.user?.isGM && (game.users?.activeGM ? game.users.activeGM.isSelf : true);
 const tokenDe = actor => actor?.token?.object ?? actor?.getActiveTokens?.()?.[0] ?? null;
 const rectDe = t => ({ x: t.document?.x ?? t.x, y: t.document?.y ?? t.y, w: t.w ?? (t.document.width * canvas.grid.size), h: t.h ?? (t.document.height * canvas.grid.size) });
-const caido = actor => (Number(actor?.system?.attributes?.hp?.value) || 0) <= 0;
+const caido = actor => sistema.caido(actor);
 const puedeActuar = actor => !caido(actor) && !["incapacitated", "unconscious", "paralyzed", "petrified", "stunned"].some(s => actor?.statuses?.has?.(s));
 const tieneEstado = (actor, id) => !!actor?.statuses?.has?.(id);
 const dmIds = () => lista(game.users).filter(u => u.isGM).map(u => u.id);
-const salvacion = (a, k) => { const x = a?.system?.abilities?.[k]; return Number(x?.save?.value ?? (typeof x?.save === "number" ? x.save : null) ?? x?.mod) || 0; };
+const salvacion = (a, k) => sistema.bonoSalvacion(a, k);
 
 /* 1 y 2: +2 al ataque contra quien está Desprevenido o rodeado. */
 /** ¿La mesa usa el flanqueo opcional de la Guía del DM (midi-qol)? Entonces manda ese y Rodear no suma (3.14). */
@@ -340,7 +341,7 @@ async function revelarTerreno(m) {
 async function usarTerreno(uuidRegion, actor) {
   const region = await fromUuid(uuidRegion), e = elementoTerreno(region?.name);
   if (!region || !e) return;
-  const cd = 8 + (Number(actor.system?.abilities?.int?.mod) || 0) + (Number(actor.system?.attributes?.prof) || 0);
+  const cd = sistema.cdCaracteristica(actor, "int");
   const dentro = lista(region.tokens).map(t => t.actor).filter(Boolean);
   const filas = [];
   for (const a of dentro) {
@@ -426,7 +427,7 @@ if (globalThis.Hooks) {
   });
   Hooks.on("dnd5e.preApplyDamage", (actor, cantidad, updates, opciones) => {
     if (!regla("secuaces") || !(tokenDe(actor)?.document?.getFlag?.(MOD, "secuaz") ?? actor.getFlag?.(MOD, "secuaz"))) return;
-    const d = danoSecuaz(cantidad, actor.system?.attributes?.hp?.value, Number(opciones?.multiplier ?? 1));
+    const d = danoSecuaz(cantidad, sistema.pg(actor).valor, Number(opciones?.multiplier ?? 1));
     if (d === 0) return false;
     if (d != null) { updates["system.attributes.hp.value"] = 0; updates["system.attributes.hp.temp"] = 0; }
   });

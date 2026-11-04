@@ -150,6 +150,14 @@ No existe en PF2e. Lo que hoy cuelga de sus hooks pasa al chat de PF2e: ataque, 
 - Las 296 pruebas de hoy siguen pasando después de cada archivo que se mueva en 5.2c.
 - La prueba en Foundry de 5.2e se hace en un mundo PF2e de prueba («Esperanza Oculta» o uno nuevo) con un personaje despertado.
 
+## Avance de 5.2c
+
+| Fecha | Versión | Qué |
+|---|---|---|
+| 4-nov-2026 | 3.19 | La capa existe: `scripts/sistema/index.js`, `dnd5e.js` y un `pf2e.js` con las lecturas puras (PG, nivel, CA, velocidad, resistencias, salvaciones, CD de característica, Monedas = Puntos de Héroe, Agotamiento = Fatigado + Drenado, los cuatro grados de éxito). Lo que falta en PF2e avisa con un error que nombra la tarea. Primeros archivos que pasan por la capa: `mercader.js` y `combate-tactico.js`. Pruebas en `tests/sistema.test.mjs`. |
+
+Siguiente: `verbe.js` (reserva, PG, Agotamiento por sobreesfuerzo), luego `main.js` por bloques (heridas y descansos primero).
+
 ## Orden de trabajo y estimación
 
 | Paso | Qué | Sesiones cortas |
