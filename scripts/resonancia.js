@@ -1,12 +1,13 @@
 /**
- * Resonancia del Verbe (3.15, aprobada por el autor). Dote gratis al despertar el Verbe: +1 al ataque y +1 a la CD de
- * un conjuro normal (de D&D o de PF2e) que sea afín a quien lo lanza. No vale para técnicas del Verbe ni pergaminos, y
- * no se suma dos veces: como mucho +1.
+ * Resonancia del Verbe (3.15, aprobada por el autor; curación en 3.16). Dote gratis al despertar el Verbe. Un conjuro
+ * normal (de D&D o de PF2e) afín a quien lo lanza se potencia: +1 al ataque y +1 a la CD; si cura, +1 PG por dado.
+ * No vale para técnicas del Verbe ni pergaminos, y no se suma dos veces. El daño queda como en el Manual.
  *
- * Afín por naturaleza: la del conjuro según el mapa de 4.1b (primer tipo de daño; si no hay, la escuela) es una de las
- * tuyas. Afín por rama: la rama de su escuela (o Pulso si cura) es una en la que tienes rango 1 o más.
+ * Afín por naturaleza: la del conjuro es una de tus naturalezas descubiertas. La da su primer tipo de daño (mapa de
+ * 4.1b); si cura, Agua; si no, su rasgo de elemento de PF2e; si no, su escuela. Afín por rama: tienes rango 1 o más en
+ * la rama de su escuela, o en Pulso si cura.
  */
-import { naturalezaConjuro } from "./verbe-clash.js";
+import { DANO_A_NATURALEZA, ESCUELA_A_NATURALEZA } from "./verbe-clash.js";
 
 const MOD = "ecos-frontera";
 export const RAMA_DE_ESCUELA = { evo: "forma", ill: "velo", enc: "velo", abj: "sello", div: "rastro", con: "umbral", nec: "pulso", trs: "cuerpo" };
@@ -27,10 +28,25 @@ export function ramasConjuro(item) {
   if (curaConjuro(item)) r.add("pulso");
   return r;
 }
-/** ¿Es afín? `nats` y `ramas` son las del personaje (ramas con rango 1 o más). */
+/** Rasgos de elemento de PF2e (los trae el conversor) a naturalezas del Verbe. */
+export const RASGO_A_NATURALEZA = { fire: "fuego", water: "agua", cold: "agua", air: "viento", sonic: "viento", earth: "tierra", metal: "tierra", wood: "tierra", electricity: "rayo" };
+/** La naturaleza de un conjuro para la Resonancia: daño, curación (Agua), rasgo de elemento de PF2e o escuela. */
+export function naturalezaResonancia(item) {
+  for (const a of lista(item?.system?.activities)) for (const p of a?.damage?.parts ?? []) for (const t of Array.from(p?.types ?? [])) if (DANO_A_NATURALEZA[t]) return DANO_A_NATURALEZA[t];
+  if (curaConjuro(item)) return "agua";
+  for (const r of item?.flags?.[MOD]?.pf2e?.rasgos ?? []) if (RASGO_A_NATURALEZA[r]) return RASGO_A_NATURALEZA[r];
+  return ESCUELA_A_NATURALEZA[item?.system?.school] ?? null;
+}
+/** Cuántos dados hay en las partes de una tirada («2d8», «@mod», «1d4 + 2» → 3). */
+export function dadosEn(partes) {
+  let n = 0;
+  for (const p of partes ?? []) for (const m of String(p).matchAll(/(\d*)d\d+/g)) n += Number(m[1] || 1);
+  return n;
+}
+/** ¿Es afín? `nats` (naturalezas descubiertas) y `ramas` (con rango 1 o más) son las del personaje. */
 export function esAfin(item, { nats = new Set(), ramas = new Set() } = {}) {
   if (!esConjuroNormal(item)) return false;
-  const n = naturalezaConjuro(item);
+  const n = naturalezaResonancia(item);
   if (n && nats.has(n)) return true;
   for (const r of ramasConjuro(item)) if (ramas.has(r)) return true;
   return false;
@@ -38,8 +54,8 @@ export function esAfin(item, { nats = new Set(), ramas = new Set() } = {}) {
 /** El objeto de la dote para la hoja. */
 export function datosDote() {
   return { name: NOMBRE_DOTE, type: "feat", img: "icons/svg/aura.svg",
-    system: { description: { value: `<p>Dote gratis al despertar el Verbe. Cuando lanzas un conjuro normal (de D&amp;D o de PF2e, no una técnica del Verbe ni un pergamino) que es <strong>afín</strong> a ti, su tirada de ataque recibe +1 y su CD sube 1. Como mucho +1, aunque sea afín por las dos vías.</p>
-<p><strong>Afín por naturaleza:</strong> la naturaleza del conjuro es una de las tuyas. La da su primer tipo de daño (fuego → Fuego; frío → Agua; relámpago → Rayo; trueno, perforante o cortante → Viento; ácido o contundente → Tierra) o, si no hace daño de esos tipos, su escuela (Evocación → Fuego; Conjuración y Abjuración → Tierra; Transmutación → Agua).</p>
+    system: { description: { value: `<p>Dote gratis al despertar el Verbe. Cuando lanzas un conjuro normal (de D&amp;D o de PF2e, no una técnica del Verbe ni un pergamino) que es <strong>afín</strong> a ti, se potencia: su tirada de ataque recibe +1 y su CD sube 1, y si cura, cura 1 PG más por cada dado. El daño queda como en el Manual. No se suma dos veces, aunque sea afín por las dos vías.</p>
+<p><strong>Afín por naturaleza:</strong> la naturaleza del conjuro es una de tus naturalezas descubiertas. La da su primer tipo de daño (fuego → Fuego; frío → Agua; relámpago → Rayo; trueno, perforante o cortante → Viento; ácido o contundente → Tierra). Si cura, es Agua. Si no hace daño de esos tipos, su elemento de PF2e (fuego, agua, frío, aire, tierra, metal, madera, electricidad) o su escuela (Evocación → Fuego; Conjuración y Abjuración → Tierra; Transmutación → Agua).</p>
 <p><strong>Afín por rama:</strong> tienes rango 1 o más en la rama de su escuela: Evocación → Forma; Ilusión y Encantamiento → Velo; Abjuración → Sello; Adivinación → Rastro; Conjuración → Umbral; Nigromancia y los conjuros que curan → Pulso; Transmutación → Cuerpo.</p>`, chat: "" },
       type: { value: "feat", subtype: "" }, identifier: "ecos-resonancia-verbe", source: { custom: "Ecos · Verbe" } },
     flags: { [MOD]: { resonancia: true } } };
@@ -98,6 +114,16 @@ if (globalThis.Hooks) {
     const act = config?.subject;
     if (!act?.item || !bonoResonancia(act.item)) return;
     for (const r of config.rolls ?? []) { r.parts ??= []; if (!r.parts.includes("@ecosResonancia")) { r.parts.push("@ecosResonancia"); r.data ??= {}; r.data.ecosResonancia = 1; } }
+  });
+  // Curación afín: +1 PG por dado (también a niveles superiores, porque cuenta los dados de la tirada).
+  Hooks.on("dnd5e.preRollDamageV2", config => {
+    const act = config?.subject;
+    if (act?.type !== "heal" || !act.item || !bonoResonancia(act.item)) return;
+    for (const r of config.rolls ?? []) {
+      const n = dadosEn(r.parts);
+      if (!n || (r.parts ?? []).includes("@ecosResonanciaCura")) continue;
+      r.parts.push("@ecosResonanciaCura"); r.data ??= {}; r.data.ecosResonanciaCura = n;
+    }
   });
   Hooks.on("updateActor", (actor, cambios) => {
     if (foundry.utils.hasProperty(cambios, `flags.${MOD}.verbe.despierto`) && cambios.flags[MOD].verbe.despierto) asegurarDote(actor).catch(err => console.error(`${MOD} | resonancia`, err));

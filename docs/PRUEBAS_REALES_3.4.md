@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.15.0
+# Preparar la primera prueba real · 3.16.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -254,7 +254,7 @@ Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el pan
 
 ### 41. 3.15 · Conjuros de PF2e, la lupa y Resonancia
 
-Recarga el mundo como DM y espera un minuto: aparece el compendio «Conjuros de PF2e (Ecos)» con carpetas por nivel, y «Listas de conjuros de PF2e (Ecos)» con el glosario. En la hoja de un mago, en el libro de conjuros, pulsa la lupa de Nivel 1: el buscador muestra conjuros de D&D y de PF2e de la lista de mago. Elige uno: si te quedan gratis, entra sin coste; si no, pide copiarlo por 50 po y 2 horas por nivel. Despierta el Verbe de una hoja: recibe la dote «Resonancia del Verbe». Con naturaleza Fuego, la CD de un conjuro de fuego sube 1 en la hoja y su ataque suma +1.
+Recarga el mundo como DM y espera un minuto: aparece el compendio «Conjuros de PF2e (Ecos)» con carpetas por nivel, y «Listas de conjuros de PF2e (Ecos)» con el glosario. En la hoja de un mago, en el libro de conjuros, pulsa la lupa de Nivel 1: el buscador muestra conjuros de D&D y de PF2e de la lista de mago. Elige uno: si te quedan gratis, entra sin coste; si no, pide copiarlo por 50 po y 2 horas por nivel. Despierta el Verbe de una hoja: recibe la dote «Resonancia del Verbe». Con naturaleza Fuego, la CD de un conjuro de fuego sube 1 en la hoja y su ataque suma +1. Con naturaleza Agua, Curar heridas cura 1 PG más por dado.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 

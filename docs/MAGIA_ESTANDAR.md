@@ -46,11 +46,19 @@ Si alguien con el Verbe despierto recibe un conjuro ofensivo (ataque o salvació
 
 El mapa vive en `scripts/verbe-clash.js` (`DANO_A_NATURALEZA`, `ESCUELA_A_NATURALEZA`). Pendiente de aprobación del autor.
 
-## Resonancia del Verbe (3.15, aprobada por el autor)
+## Resonancia del Verbe (3.15, aprobada por el autor; curación en 3.16)
 
-Dote gratis al despertar el Verbe (los que ya despertaron la reciben al cargar el mundo). Cuando lanzas un conjuro normal de D&D o de PF2e que es **afín** a ti, su tirada de ataque recibe +1 y su CD sube 1. No vale para técnicas del Verbe ni para pergaminos, y no se suma dos veces: como mucho +1.
+Idea del autor: si alguien tiene descubierta la naturaleza Fuego, los conjuros normales de daño de fuego se potencian, y lo mismo con las curaciones y los demás conjuros.
 
-- **Afín por naturaleza:** la naturaleza del conjuro, según el mapa de 4.1b, es una de las tuyas (la de nacimiento, la descubierta, las de tu herencia y las extra).
+Dote gratis al despertar el Verbe (los que ya despertaron la reciben al cargar el mundo). Cuando lanzas un conjuro normal de D&D o de PF2e que es **afín** a ti, se potencia:
+
+- su tirada de ataque recibe +1 y su CD sube 1;
+- si cura, cura 1 PG más por cada dado (también a niveles superiores);
+- el daño queda como en el Manual.
+
+No vale para técnicas del Verbe ni para pergaminos, y no se suma dos veces.
+
+- **Afín por naturaleza:** la naturaleza del conjuro es una de tus naturalezas descubiertas (la de nacimiento, la oculta si ya la descubriste, las de tu herencia y las extra). La naturaleza del conjuro sale, en este orden, de su primer tipo de daño (mapa de 4.1b); si cura, Agua; si es de PF2e, de su rasgo de elemento (fuego → Fuego; agua y frío → Agua; aire y sónico → Viento; tierra, metal y madera → Tierra; electricidad → Rayo); y si no, de su escuela (mapa de 4.1b).
 - **Afín por rama:** tienes rango 1 o más en la rama de su escuela.
 
 | Escuela | Rama |

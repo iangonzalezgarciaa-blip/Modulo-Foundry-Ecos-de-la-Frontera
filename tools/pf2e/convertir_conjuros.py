@@ -13,7 +13,7 @@ Reglas: docs/CONVERSION_PF2E.md (4.2c). Uso: python convertir_conjuros.py [carpe
 """
 import json, math, re, sys, hashlib
 
-VERSION = 1
+VERSION = 2  # 2: los rasgos de PF2e van en la bandera (los usa la Resonancia del Verbe)
 
 # ---------- Tablas de 4.2c ----------
 def nivel_de(h):
@@ -365,7 +365,7 @@ def convertir(h, img=None):
             'activities': acts, 'identifier': f"ecos-pf2e-{slug(h['nombre'])}", 'method': 'spell', 'prepared': 0
         },
         'flags': {'ecos-frontera': {'pf2e': {'id': h['id'], 'nombre': h['nombre'], 'rango': h.get('rango'), 'truco': bool(h.get('truco')),
-                                             'rareza': h.get('rareza') or 'common', 'tradiciones': h.get('tradiciones') or [], 'licencia': h.get('licencia'), 'v': VERSION}}}
+                                             'rareza': h.get('rareza') or 'common', 'tradiciones': h.get('tradiciones') or [], 'rasgos': h.get('rasgos') or [], 'licencia': h.get('licencia'), 'v': VERSION}}}
     }
 
 def iconos(carpeta):

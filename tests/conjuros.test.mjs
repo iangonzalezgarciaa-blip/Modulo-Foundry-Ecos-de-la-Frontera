@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { costeCopia, gratisMago, contarGratisMago, nivelMaximoDe, datosParaHoja, paginasListas, glosarioHTML, PACK_CONJUROS } from '../scripts/conjuros.js';
-import { esAfin, ramasConjuro, esConjuroNormal, datosDote, RAMA_DE_ESCUELA } from '../scripts/resonancia.js';
+import { esAfin, ramasConjuro, esConjuroNormal, datosDote, RAMA_DE_ESCUELA, naturalezaResonancia, dadosEn } from '../scripts/resonancia.js';
 
 test('copiar al libro: 50 po y 2 horas por nivel, como en el Manual; la rareza de PF2e multiplica el oro', () => {
   assert.deepEqual(costeCopia(3), { po: 150, horas: 6 });
@@ -67,4 +67,19 @@ test('Resonancia del Verbe: +1 solo a conjuros normales afines por naturaleza o 
   assert.equal(esAfin({ type: 'consumable', system: { school: 'evo' } }, { ramas: new Set(['forma']) }), false);
   assert.equal(Object.keys(RAMA_DE_ESCUELA).length, 8);
   assert.equal(datosDote().flags['ecos-frontera'].resonancia, true);
+});
+
+test('3.16: una curación es de Agua; los conjuros de PF2e sin daño toman su elemento; la curación afín suma 1 por dado', () => {
+  const cura = { type: 'spell', system: { school: 'abj', activities: { a: { type: 'heal' } } } };
+  assert.equal(naturalezaResonancia(cura), 'agua');
+  assert.equal(esAfin(cura, { nats: new Set(['agua']) }), true);
+  assert.equal(esAfin(cura, { nats: new Set(['tierra']) }), false);
+  const niebla = { type: 'spell', system: { school: 'con', activities: { a: { type: 'utility' } } }, flags: { 'ecos-frontera': { pf2e: { rasgos: ['water', 'concentrate'] } } } };
+  assert.equal(naturalezaResonancia(niebla), 'agua');
+  const bola = { type: 'spell', system: { school: 'evo', activities: { a: { type: 'save', damage: { parts: [{ types: ['fire'] }] } } } } };
+  assert.equal(naturalezaResonancia(bola), 'fuego');
+  assert.equal(naturalezaResonancia({ type: 'spell', system: { school: 'trs', activities: {} } }), 'agua');
+  assert.equal(dadosEn(['2d8', '@mod']), 2);
+  assert.equal(dadosEn(['4d8 + 3', 'd6']), 5);
+  assert.equal(dadosEn(['@mod']), 0);
 });

@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.16.0 — 2026-11-04
+
+- Resonancia del Verbe, como la pidió el autor: con una naturaleza descubierta, los conjuros normales de ese elemento se potencian. Además del +1 al ataque y a la CD, una curación afín cura 1 PG más por dado. Las curaciones son de Agua (o de la rama Pulso), y los conjuros de PF2e sin daño toman la naturaleza de su elemento (fuego, agua, frío, aire, tierra, metal, madera, electricidad) antes que la de su escuela. El daño sigue como en el Manual.
+- Conjuros de PF2e: el conversor guarda sus rasgos; el mundo los vuelve a importar solo al cargar.
+
 ## 3.15.0 — 2026-11-04
 
 - Conjuros de PF2e en el mundo (tarea 4.2d): los 1.386 conjuros únicos de PF2e, convertidos a dnd5e con las reglas de 4.2c, entran solos (si está el archivo convertido en tu carpeta de datos) al compendio «Conjuros de PF2e (Ecos)» al cargar el mundo, en carpetas por nivel. Cada uno trae su actividad (ataque, salvación, daño, curación o utilidad), su escalado a niveles superiores, el texto en castellano sin enlaces de PF2e, su fuente y su licencia. El conversor (tools/pf2e/convertir_conjuros.py) corre en tu PC y el texto de Paizo no entra al repositorio. Listas de clase y el glosario «Cómo leer los conjuros de PF2e» en «Listas de conjuros de PF2e (Ecos)». Detalle en docs/CONVERSION_PF2E.md.
