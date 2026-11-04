@@ -1,6 +1,6 @@
 # Conversión de hechizos de PF2e a dnd5e (3.8, tareas 4.2a–e)
 
-Estado (4-nov-2026): 4.2a, 4.2b, 4.2c y 4.2d hechas. Falta la biblioteca (4.2e).
+Estado (4-nov-2026): 4.2a a 4.2e hechas.
 
 ## 4.2a · Exportar (hecha)
 
@@ -76,6 +76,10 @@ En vez de 140 lotes a mano, un conversor aplica las reglas de 4.2c a los 1.386 d
 - Listas de clase por tradición: arcana → mago y hechicero; ocultista → bardo y brujo; divina → clérigo y paladín; primigenia → druida y explorador.
 
 **Resultado:** 102 trucos y 405, 377, 272, 144, 53 y 33 conjuros de nivel 1 a 6.
+
+## 4.2e · Biblioteca (hecha, 3.18)
+
+En el compendio «Listas de conjuros de PF2e (Ecos)», el diario trae una página **Biblioteca** por nivel (Trucos a Nivel 6). Cada una lista los conjuros por escuela y nombre, con enlace al conjuro, su tipo (ataque, salvación, daño, curación o utilidad), las clases que lo tienen en su lista y su rareza, y arriba cuántos hay de cada escuela. La escribe el importador; al actualizar el módulo, el mundo la crea solo al cargar.
 
 ## 4.2c · Reglas
 

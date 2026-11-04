@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { costeCopia, gratisMago, contarGratisMago, nivelMaximoDe, datosParaHoja, paginasListas, glosarioHTML, PACK_CONJUROS } from '../scripts/conjuros.js';
+import { costeCopia, gratisMago, contarGratisMago, nivelMaximoDe, datosParaHoja, paginasListas, glosarioHTML, PACK_CONJUROS, indiceHTML, tipoConjuro } from '../scripts/conjuros.js';
 import { esAfin, ramasConjuro, esConjuroNormal, datosDote, RAMA_DE_ESCUELA, naturalezaResonancia, dadosEn } from '../scripts/resonancia.js';
 
 test('copiar al libro: 50 po y 2 horas por nivel, como en el Manual; la rareza de PF2e multiplica el oro', () => {
@@ -82,4 +82,15 @@ test('3.16: una curación es de Agua; los conjuros de PF2e sin daño toman su el
   assert.equal(dadosEn(['2d8', '@mod']), 2);
   assert.equal(dadosEn(['4d8 + 3', 'd6']), 5);
   assert.equal(dadosEn(['@mod']), 0);
+});
+
+test('4.2e: la biblioteca lista cada nivel por escuela, con enlace, tipo, clases y rareza', () => {
+  const c = (id, name, level, school, tipo, trad, rareza = 'common') => ({ _id: id, name, system: { level, school, activities: { a: { type: tipo } } }, flags: { 'ecos-frontera': { pf2e: { tradiciones: trad, rareza } } } });
+  const lista = [c('a1', 'Zeta', 1, 'evo', 'save', ['arcane']), c('b2', 'Alfa', 1, 'evo', 'attack', ['primal'], 'rare'), c('c3', 'Beta', 1, 'abj', 'heal', ['divine']), c('d4', 'Otro', 2, 'ill', 'utility', ['occult'])];
+  const h = indiceHTML(lista, 1);
+  assert.match(h, /Nivel 1 · 3 conjuros/);
+  assert.ok(h.indexOf('Beta') < h.indexOf('Alfa') && h.indexOf('Alfa') < h.indexOf('Zeta'), 'por escuela y nombre');
+  assert.match(h, /@UUID\[Compendium\.world\.ecos-conjuros-pf2e\.Item\.b2\]\{Alfa\}/);
+  assert.match(h, /Druida, Explorador/); assert.match(h, /raro/); assert.doesNotMatch(h, /Otro/);
+  assert.equal(tipoConjuro(lista[2]), 'Curación'); assert.equal(tipoConjuro(lista[1]), 'Ataque');
 });

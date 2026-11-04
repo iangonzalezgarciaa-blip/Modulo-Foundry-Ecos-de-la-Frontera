@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.18.0 — 2026-11-04
+
+- Biblioteca de conjuros de PF2e (tarea 4.2e): el diario de «Listas de conjuros de PF2e (Ecos)» trae una página por nivel con los conjuros por escuela y nombre, su enlace, su tipo, las clases que lo tienen y su rareza. El mundo la crea solo al cargar.
+- Mundo del autor (por el puente, no en el repositorio): la página «Reglas de la casa · 3 · Monedas Antiguas» queda al día con el mercader extraño y el cambio por Trazos; borrador «Mundo 4 · 7 · Los pueblos en PF2e».
+
 ## 3.17.0 — 2026-11-04
 
 - Corrección: el botón «Cambiar Monedas» del panel del Verbe (3.12) cobraba 2 Monedas Antiguas por Trazo y llevaba su propia cuenta, distinta de la regla de la guía del Verbe. Ahora sigue la guía: 1 Moneda = 1 Trazo, como mucho 2 en cada nivel, con la misma cuenta que el panel.

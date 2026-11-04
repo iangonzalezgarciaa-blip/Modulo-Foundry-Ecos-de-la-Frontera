@@ -62,6 +62,32 @@ export function paginasListas(listas, pack = PACK_CONJUROS) {
   }));
 }
 
+/* ---------- 4.2e · La biblioteca: índice por nivel, escuela y tipo ---------- */
+export const VERSION_IMPORTADOR = 2; // 2: biblioteca (4.2e)
+const ESCUELA = { abj: "Abjuración", con: "Conjuración", div: "Adivinación", enc: "Encantamiento", evo: "Evocación", ill: "Ilusión", nec: "Nigromancia", trs: "Transmutación" };
+const TIPO = { attack: "Ataque", save: "Salvación", damage: "Daño", heal: "Curación", utility: "Utilidad" };
+const RAREZA = { common: "común", uncommon: "poco común", rare: "raro", unique: "único" };
+const CLASES_DE = { arcane: ["wizard", "sorcerer"], occult: ["bard", "warlock"], divine: ["cleric", "paladin"], primal: ["druid", "ranger"] };
+/** Tipo de un conjuro convertido: el de su primera actividad (y «Curación» si alguna cura). */
+export function tipoConjuro(c) {
+  const acts = Object.values(c?.system?.activities ?? {});
+  if (acts.some(a => a?.type === "heal") && !acts.some(a => ["attack", "save", "damage"].includes(a?.type))) return TIPO.heal;
+  return TIPO[acts[0]?.type] ?? TIPO.utility;
+}
+/** Una página de la biblioteca: los conjuros de un nivel, por escuela y nombre, con enlace, tipo, clases y rareza. */
+export function indiceHTML(conjuros, nivel, pack = PACK_CONJUROS) {
+  const de = conjuros.filter(c => Number(c.system?.level) === nivel)
+    .sort((a, b) => (ESCUELA[a.system.school] ?? "").localeCompare(ESCUELA[b.system.school] ?? "", "es") || a.name.localeCompare(b.name, "es"));
+  const filas = de.map(c => {
+    const f = c.flags?.[MOD]?.pf2e ?? {};
+    const clases = [...new Set((f.tradiciones ?? []).flatMap(t => CLASES_DE[t] ?? []))].map(k => NOMBRE_CLASE[k]).join(", ") || "—";
+    return `<tr><td>@UUID[Compendium.${pack}.Item.${c._id}]{${esc(c.name)}}</td><td>${ESCUELA[c.system.school] ?? "—"}</td><td>${tipoConjuro(c)}</td><td>${esc(clases)}</td><td>${RAREZA[f.rareza] ?? "común"}</td></tr>`;
+  }).join("");
+  const cuenta = Object.entries(de.reduce((o, c) => { const e = ESCUELA[c.system.school] ?? "—"; o[e] = (o[e] ?? 0) + 1; return o; }, {})).map(([e, n]) => `${e} ${n}`).join(" · ");
+  return `<section class="ecos-pf2e-indice"><h1>${NIVEL[nivel]} · ${de.length} conjuros</h1><p><em>${esc(cuenta)}</em></p>
+<table><thead><tr><th>Conjuro</th><th>Escuela</th><th>Tipo</th><th>Clases</th><th>Rareza</th></tr></thead><tbody>${filas}</tbody></table></section>`;
+}
+
 /** «Cómo leer los conjuros de PF2e»: la equivalencia de Ecos (texto propio, sin texto de Paizo). */
 export function glosarioHTML() {
   const fila = (a, b) => `<tr><td><strong>${a}</strong></td><td>${b}</td></tr>`;
@@ -118,7 +144,7 @@ export async function importarConjuros({ forzar = false, avisar = true } = {}) {
     datos = await r.json();
   } catch { return { ok: false, motivo: `No se pudo leer ${RUTA}.` }; }
   const previo = ajuste();
-  if (!forzar && previo.huella === datos.huella && game.packs.get(PACK_CONJUROS)) return { ok: true, ya: true, total: previo.total };
+  if (!forzar && previo.huella === datos.huella && previo.version === VERSION_IMPORTADOR && game.packs.get(PACK_CONJUROS)) return { ok: true, ya: true, total: previo.total };
   const CC = foundry.documents.collections.CompendiumCollection;
   if (avisar) ui.notifications.info(`Ecos: llevando ${datos.total} conjuros de PF2e al compendio. Tarda un minuto.`);
   const pack = game.packs.get(PACK_CONJUROS) ?? await CC.createCompendium({ type: "Item", label: "Conjuros de PF2e (Ecos)", name: "ecos-conjuros-pf2e" });
@@ -142,11 +168,13 @@ export async function importarConjuros({ forzar = false, avisar = true } = {}) {
   if (packL.locked) await packL.configure({ locked: false });
   const viejos = lista(await packL.getIndex()).map(e => e._id);
   if (viejos.length) await JournalEntry.implementation.deleteDocuments(viejos, { pack: packL.collection });
+  const niveles = [...new Set(datos.conjuros.map(c => Number(c.system.level)))].sort((a, b) => a - b);
   const [diario] = await JournalEntry.implementation.createDocuments([{ name: "Conjuros de PF2e (Ecos)",
     pages: [{ name: "Cómo leer los conjuros de PF2e", type: "text", sort: 0, text: { format: 1, content: glosarioHTML() } },
-      ...paginasListas(datos.listas, pack.collection).map((p, i) => ({ ...p, sort: (i + 1) * 100 }))] }], { pack: packL.collection });
+      ...niveles.map((n, i) => ({ name: `Biblioteca · ${NIVEL[n]}`, type: "text", sort: 1000 + i * 10, text: { format: 1, content: indiceHTML(datos.conjuros, n, pack.collection) } })),
+      ...paginasListas(datos.listas, pack.collection).map((p, i) => ({ ...p, sort: 5000 + (i + 1) * 100 }))] }], { pack: packL.collection });
   const listas = lista(diario.pages).filter(p => p.type === "spells").map(p => p.uuid);
-  await game.settings.set(MOD, "conjurosPF2e", { huella: datos.huella, total: datos.total, listas, fecha: new Date().toISOString() });
+  await game.settings.set(MOD, "conjurosPF2e", { huella: datos.huella, version: VERSION_IMPORTADOR, total: datos.total, listas, fecha: new Date().toISOString() });
   registrarListas(listas);
   if (avisar) ui.notifications.info(`Ecos: ${datos.total} conjuros de PF2e en «Conjuros de PF2e (Ecos)», con sus listas de clase.`);
   return { ok: true, total: datos.total };

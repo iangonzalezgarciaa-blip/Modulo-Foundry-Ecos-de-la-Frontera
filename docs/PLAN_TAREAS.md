@@ -214,7 +214,7 @@
 
 - [x] **4.2d · Hechizos PF2e: conversión por lotes** (hecha el 4-nov-2026 en 3.15: los 1.386 de una vez con tools/pf2e/convertir_conjuros.py; compendio world.ecos-conjuros-pf2e y listas de clase en world.ecos-listas-pf2e; registro en docs/CONVERSION_PF2E_LOTES.md) (S por lote · Dep.: 4.2b, 4.2c). Crear lotes de ~10 ítems de conjuro dnd5e (con actividades) en un compendio de mundo nuevo (propuesta: world.ecos-conjuros-pf2e). Registrar cada lote en docs/CONVERSION_PF2E_LOTES.md. Repetir hasta agotar los «únicos».
 
-- [ ] **4.2e · Hechizos PF2e: biblioteca** (S · Dep.: 4.2d). Diario índice por escuela, nivel y tipo.
+- [x] **4.2e · Hechizos PF2e: biblioteca** (hecha el 4-nov-2026 en 3.18: una página por nivel en world.ecos-listas-pf2e, por escuela y tipo, con enlaces) (S · Dep.: 4.2d). Diario índice por escuela, nivel y tipo.
 
 - [x] **4.3 · Formas no elementales** (hecha: 20 técnicas, tools/nimerios/forma-pura.mjs) (M · Dep.: 0.3, 2.1a). Crear 20 a 30 técnicas de Forma sin elemento (proyectiles, armas de Verbe, escudos, impulsos), grados 0 a 5, para quien no tenga naturaleza elemental.
 
@@ -311,3 +311,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 4-nov-2026 | 4.2d y pedidos del autor | Claude | 1.386 conjuros de PF2e al compendio del mundo con listas de clase; lupa de conjuros en las hojas (mago según el Manual); dote Resonancia del Verbe. Release v3.15.0 | 3.15.0 |
 | 4-nov-2026 | Pedido del autor | Claude | Resonancia del Verbe: curación afín +1 PG por dado (Agua o Pulso); elementos de PF2e para los conjuros sin daño. Release v3.16.0 | 3.16.0 |
 | 4-nov-2026 | Corrección | Claude | Monedas por Trazos con la regla de la guía (1 por 1, 2 por nivel). Release v3.17.0 | 3.17.0 |
+| 4-nov-2026 | 4.2e | Claude | Biblioteca de conjuros de PF2e por nivel, escuela y tipo. Página «Monedas Antiguas» del mundo al día; borrador de pueblos en PF2e (Mundo 4 · 7). Release v3.18.0 | 3.18.0 |
