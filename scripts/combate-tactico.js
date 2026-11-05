@@ -419,19 +419,19 @@ if (globalThis.Hooks) {
       if (Array.isArray(CONFIG.statusEffects) && !CONFIG.statusEffects.some(s => s.id === id)) CONFIG.statusEffects.push({ id, _id: id.padEnd(16, "0").slice(0, 16), ...d });
     }
   });
-  Hooks.on("dnd5e.preRollAttackV2", config => { if (ajuste().activo) bonoDesprevenido(config); });
+  sistema.gancho("antesDeAtacar", config => { if (ajuste().activo) bonoDesprevenido(config); });
   Hooks.on("createChatMessage", m => { alCrearMensaje(m).catch(err => console.error(`${MOD} | combate táctico`, err)); revelarTerreno(m).catch(err => console.error(`${MOD} | terreno vivo`, err)); });
   Hooks.on("combatStart", c => { alEmpezarCombate(c).catch(err => console.error(`${MOD} | plan maestro`, err)); });
   Hooks.on("updateActor", (actor, cambios) => {
     if (actor.type === "npc" && foundry.utils.hasProperty(cambios, sistema.RUTAS.pg) && caido(actor)) revisarMoral(actor).catch(err => console.error(`${MOD} | moral`, err));
   });
-  Hooks.on("dnd5e.preApplyDamage", (actor, cantidad, updates, opciones) => {
+  sistema.gancho("antesDeAplicarDano", (actor, cantidad, updates, opciones) => {
     if (!regla("secuaces") || !(tokenDe(actor)?.document?.getFlag?.(MOD, "secuaz") ?? actor.getFlag?.(MOD, "secuaz"))) return;
     const d = danoSecuaz(cantidad, sistema.pg(actor).valor, Number(opciones?.multiplier ?? 1));
     if (d === 0) return false;
     if (d != null) { updates["system.attributes.hp.value"] = 0; updates["system.attributes.hp.temp"] = 0; }
   });
-  Hooks.on("dnd5e.applyDamage", (actor, cantidad, opciones) => { alAplicarDano(actor, cantidad, opciones).catch(err => console.error(`${MOD} | técnica combinada`, err)); });
+  sistema.gancho("alAplicarDano", (actor, cantidad, opciones) => { alAplicarDano(actor, cantidad, opciones).catch(err => console.error(`${MOD} | técnica combinada`, err)); });
   Hooks.on("renderChatMessageHTML", (m, html) => {
     if (!m.getFlag?.(MOD, "terreno")) return;
     for (const b of html.querySelectorAll("[data-ecos-terreno]")) b.addEventListener("click", async ev => {

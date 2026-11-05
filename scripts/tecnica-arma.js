@@ -8,6 +8,7 @@
  *  - Una técnica que pide un turno de preparación se prepara primero y se usa en el turno siguiente.
  * Las reglas son puras; la parte de Foundry engancha `dnd5e.preUseActivity`, `preRollAttackV2` y `preRollDamageV2`.
  */
+import { sistema } from "./sistema/index.js";
 const MOD = "ecos-frontera";
 const lista = x => Array.from(x?.contents ?? x ?? []);
 const metaDe = item => item?.flags?.[MOD]?.verbe ?? item?.getFlag?.(MOD, "verbe") ?? null;
@@ -159,7 +160,7 @@ if (globalThis.Hooks) {
         scope: "world", config: true, type: Boolean, default: true });
     } catch { /* ya */ }
   });
-  Hooks.on("dnd5e.preUseActivity", (activity, usage, dialog, message) => {
+  sistema.gancho("antesDeUsar", (activity, usage, dialog, message) => {
     if (!ajuste() || usage?.ecosRevisado || !metaDe(activity?.item)?.id || !activity.actor?.isOwner) return;
     const item = activity.actor.items.get(activity.item.id);
     const r = revisionUso(item, activity.actor.items, { preparada: !!efectoPreparado(activity.actor, item) });
@@ -171,6 +172,6 @@ if (globalThis.Hooks) {
     const act = config?.subject, arma = act?.item ? armaEnlazada(act.actor?.items?.get(act.item.id) ?? act.item) : null;
     return arma && pideArma(act.item) ? { arma, abilities: act.actor?.system?.abilities ?? {} } : null;
   };
-  Hooks.on("dnd5e.preRollAttackV2", config => { const x = conArma(config); if (x && ajuste()) aplicarArma(config, x.arma, x.abilities, { ataque: true }); });
-  Hooks.on("dnd5e.preRollDamageV2", config => { const x = conArma(config); if (x && ajuste()) aplicarArma(config, x.arma, x.abilities, { ataque: false }); });
+  sistema.gancho("antesDeAtacar", config => { const x = conArma(config); if (x && ajuste()) aplicarArma(config, x.arma, x.abilities, { ataque: true }); });
+  sistema.gancho("antesDelDano", config => { const x = conArma(config); if (x && ajuste()) aplicarArma(config, x.arma, x.abilities, { ataque: false }); });
 }

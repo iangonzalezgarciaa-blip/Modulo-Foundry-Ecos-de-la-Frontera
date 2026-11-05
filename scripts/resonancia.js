@@ -8,6 +8,7 @@
  * la rama de su escuela, o en Pulso si cura.
  */
 import { DANO_A_NATURALEZA, ESCUELA_A_NATURALEZA } from "./verbe-clash.js";
+import { sistema } from "./sistema/index.js";
 
 const MOD = "ecos-frontera";
 export const RAMA_DE_ESCUELA = { evo: "forma", ill: "velo", enc: "velo", abj: "sello", div: "rastro", con: "umbral", nec: "pulso", trs: "cuerpo" };
@@ -110,13 +111,13 @@ if (globalThis.Hooks) {
       a.reset?.();
     }
   });
-  Hooks.on("dnd5e.preRollAttackV2", config => {
+  sistema.gancho("antesDeAtacar", config => {
     const act = config?.subject;
     if (!act?.item || !bonoResonancia(act.item)) return;
     for (const r of config.rolls ?? []) { r.parts ??= []; if (!r.parts.includes("@ecosResonancia")) { r.parts.push("@ecosResonancia"); r.data ??= {}; r.data.ecosResonancia = 1; } }
   });
   // Curación afín: +1 PG por dado (también a niveles superiores, porque cuenta los dados de la tirada).
-  Hooks.on("dnd5e.preRollDamageV2", config => {
+  sistema.gancho("antesDelDano", config => {
     const act = config?.subject;
     if (act?.type !== "heal" || !act.item || !bonoResonancia(act.item)) return;
     for (const r of config.rolls ?? []) {

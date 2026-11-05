@@ -4696,11 +4696,11 @@ Hooks.once("ready", async () => {
 });
 
 Hooks.on("renderActorSheetV2", (app, html) => { if (activo()) decorarHoja(app, html); });
-Hooks.on("dnd5e.activityConsumption", (activity, usageConfig, messageConfig, updates) => {
+sistema.gancho("consumoDeUso", (activity, usageConfig, messageConfig, updates) => {
   if (!activo()) return;
   return alConsumir(activity, usageConfig, messageConfig, updates);
 });
-Hooks.on("dnd5e.postUseActivity", (activity, usageConfig, results) => {
+sistema.gancho("alUsar", (activity, usageConfig, results) => {
   if (!activo()) return;
   const final=despuesDeUsar(activity, usageConfig);
   if (!game.modules.get("midi-qol")?.active && tecnicaChocable(activity.item,activity) && despierto(activity.actor)
@@ -4710,10 +4710,10 @@ Hooks.on("dnd5e.postUseActivity", (activity, usageConfig, results) => {
   }
   final.catch(err=>console.error(`${MOD} | capa V`,err));
 });
-Hooks.on("dnd5e.preRollDamageV2", config => { if (activo()) antesDelDano(config); });
+sistema.gancho("antesDelDano", config => { if (activo()) antesDelDano(config); });
 // El catálogo mide las áreas en metros: si la escena está en pies, la plantilla se convierte (1,5 m = 5 pies) para poder colocarla.
 // Vale para cualquier actividad (también conjuros en pies sobre una escena en metros). Una línea sin ancho ocupa una casilla.
-Hooks.on("dnd5e.preCreateActivityTemplate", (activity, data) => {
+sistema.gancho("antesDePlantilla", (activity, data) => {
   try {
     plantillaEnEscena(data, activity?.target?.template?.units, canvas?.scene?.grid?.units);
     if (data?.t === "ray" && !(Number(data.width) > 0)) data.width = canvas?.dimensions?.distance ?? data.width;
@@ -4724,8 +4724,8 @@ Hooks.on("midi-qol.preCheckHits", async wf => { if (activo()) await enfrentamien
 Hooks.on("midi-qol.preCheckSaves", async wf => { if (activo()) await enfrentamientoAutomatico(wf).catch(err => console.error(`${MOD} | capa V: defensas`, err)); });
 Hooks.on("midi-qol.preDamageRoll", async wf => { if(activo())await enfrentamientoAutomatico(wf); });
 Hooks.on("midi-qol.RollComplete", wf => { if (activo()) limpiarDefensas(wf).catch(() => null); });
-Hooks.on("dnd5e.restCompleted", (actor, result, config) => { if (activo()) alDescansar(actor, result, config); });
-Hooks.on("dnd5e.preRollHitDieV2", config => {
+sistema.gancho("alTerminarDescanso", (actor, result, config) => { if (activo()) alDescansar(actor, result, config); });
+sistema.gancho("antesDadoDeGolpe", config => {
   try {
     const actor = config?.subject;
     if (!activo() || !despierto(actor) || !efectosDotes(actor).some(ef => ef.alientoCura)) return;
@@ -4735,7 +4735,7 @@ Hooks.on("dnd5e.preRollHitDieV2", config => {
     console.warn(`${MOD} | capa V: aliento`, err);
   }
 });
-Hooks.on("dnd5e.rollHitDieV2", (rolls, datos) => {
+sistema.gancho("alTirarDadoDeGolpe", (rolls, datos) => {
   try {
     const actor = datos?.subject;
     if (!activo() || !despierto(actor) || !actor.isOwner) return;
@@ -4804,9 +4804,9 @@ Hooks.on("updateItem", (item, cambios) => {
   }).catch(err => console.error(`${MOD} | capa V`, err));
 });
 
-Hooks.on("dnd5e.preRollAttackV2", config => { if (activo()) configurarAtaque(config); });
-Hooks.on("dnd5e.preRollSavingThrowV2", config => { if (activo()) configurarSalvacion(config); });
-Hooks.on("dnd5e.postRollAttack", (rolls, datos) => {
+sistema.gancho("antesDeAtacar", config => { if (activo()) configurarAtaque(config); });
+sistema.gancho("antesDeSalvacion", config => { if (activo()) configurarSalvacion(config); });
+sistema.gancho("alAtacar", (rolls, datos) => {
   if (!activo()) return;
   despuesAtaque(rolls, datos, (actor, atacante, ids) => alDM({ accion: "capaVMetal", actorId: actor.id,
     atacanteId: atacante.id, efectoIds: ids })).catch(err => console.error(`${MOD} | estados`, err));

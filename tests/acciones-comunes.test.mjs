@@ -53,7 +53,7 @@ test('la guía para todos nombra cada acción y no tiene restos', () => {
   const html = guiaAccionesHTML();
   for (const a of ACCIONES_PLANAS.filter(a => a.id !== 'plan')) assert.ok(html.includes(a.nombre), a.nombre);
   assert.doesNotMatch(html, /undefined|NaN|\[object/);
-  assert.match(html, /8 \+ el bono de la pericia/);
+  assert.match(html, /8 \+ tu total en la habilidad de la acción/);
   assert.match(html, /regla base del Manual: Presa/);
 });
 

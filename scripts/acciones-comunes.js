@@ -12,7 +12,7 @@
 import { cambio } from "./compat.js";
 
 const MOD = "ecos-frontera";
-export const VERSION_ACCIONES = 3;
+export const VERSION_ACCIONES = 4;
 const DESPREVENIDO = "ecosDesprevenido";
 const S = "systems/dnd5e/icons/svg/";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -136,7 +136,7 @@ export const ACCIONES_PLANAS = ACCIONES.flatMap(g => g.acciones.map(a => ({ ...a
 /** Lo que se lee de una acción en una línea: «Acción · el objetivo salva FUE o DES contra tu CD de FUE». */
 export function resumenAccion(a, grupo = a.grupo) {
   const partes = [ACT[a.act] ?? a.act];
-  if (a.tipo === "save") partes.push(`salva ${a.salv.map(x => CORTO[x]).join(" o ")} contra ${a.cdPericia ? `8 + tu ${a.cdPericia.map(p => PERICIAS[p] ?? p).join(" o tus ")}${a.cdPericia.length > 1 ? " (el mejor)" : ""}` : `8 + competencia + tu ${CORTO[a.cd]}`}`);
+  if (a.tipo === "save") partes.push(`el objetivo salva ${a.salv.map(x => CORTO[x]).join(" o ")} contra ${a.cdPericia ? `8 + tu ${a.cdPericia.map(p => PERICIAS[p] ?? p).join(" o tus ")}${a.cdPericia.length > 1 ? " (el mejor)" : ""}` : `8 + competencia + tu ${CORTO[a.cd]}`}`);
   if (a.tipo === "check") partes.push(`prueba de ${a.pericias?.length ? a.pericias.map(p => PERICIAS[p] ?? p).join(", ") : NOMBRE_CAR[a.car ?? grupo]}${a.cdFija ? ` CD ${a.cdFija}` : ""}`);
   partes.push(a.base ? `regla base del Manual: ${a.base}` : "de Ecos, se suma al Manual");
   return partes.join(" · ");
@@ -249,7 +249,7 @@ export function guiaAccionesHTML() {
 <p><em>Desde la versión 3.12, todas las hojas traen «Golpe sin armas» y seis rasgos: «Acciones de Fuerza», «de Destreza», «de Constitución», «de Inteligencia», «de Sabiduría» y «de Carisma». Úsalos como cualquier otro rasgo: el sistema pide la tirada o la salvación y pone el estado si falla.</em></p>
 <h2>Cómo funcionan</h2>
 <ul><li><strong>Primero, D&amp;D:</strong> Presa, Empujón, Escapar, Esquivar, Esconderse, Buscar, Ayudar, Estudiar (Evaluar) e Influir (Parlamentar) ya están en el Manual del jugador y se resuelven exactamente igual: Ecos solo les pone un botón en la hoja. Las demás son de Ecos y se suman a lo del Manual sin quitar ni cambiar nada. Cada fila dice cuál es cuál.</li>
-<li><strong>La CD es tuya:</strong> en las del Manual, la del Manual (Presa y Empujón: 8 + Fuerza + competencia). En las de Ecos, 8 + el bono de la pericia que se usa (Fintar: Engaño; Intimidar: Intimidación; Birlar: Juego de manos…): la competencia y la Pericia doble cuentan. Quien tiene 20 de Fuerza derriba a más gente que quien tiene 10, y un pícaro experto finta mejor que un guerrero. En este mundo hay súper criaturas: las estadísticas pesan.</li>
+<li><strong>La CD es tuya:</strong> cuando <em>tú</em> haces la acción, el objetivo tira una salvación contra <em>tu</em> CD. En las del Manual, la del Manual (Presa y Empujón: 8 + Fuerza + competencia). En las de Ecos, 8 + tu total en la habilidad de la acción (Fintar: Engaño; Intimidar: Intimidación; Birlar: Juego de manos…), con la competencia y la Pericia doble ya sumadas. Ejemplo: con Engaño +5, tu Finta es CD 13; el objetivo tira Sabiduría y, si falla, queda Desprevenido. Quien tiene 20 de Fuerza derriba a más gente que quien tiene 10, y un pícaro experto finta mejor que un guerrero. En este mundo hay súper criaturas: las estadísticas pesan.</li>
 <li><strong>En lugar de un ataque:</strong> Presa, los dos Empujones, Zancadilla y Desarmar ocupan uno de tus ataques. Si tienes Ataque Extra, puedes golpear y derribar en la misma acción.</li>
 <li><strong>Tu clase manda:</strong> si tu clase te da un golpe sin armas mejor (monje, pugilista), se usa el de tu clase. Si tu clase ya tiene algo parecido (Apuntar con firmeza del pícaro, las maniobras del Maestro de batalla, el estilo Protección, Defensa paciente del monje), lo de tu clase sigue igual y suele ser mejor. Cuestan la misma acción, así que no se suman en el mismo turno.</li>
 <li><strong>La ventaja la pides tú:</strong> cuando algo te dé ventaja (Distraer, Ayudar, el plan), elígela en la ventana Normal / Ventaja / Desventaja antes de tirar.</li>

@@ -85,3 +85,34 @@ export const tirarSalvacion = falta("tirarSalvacion");
 export const tirarCaracteristica = falta("tirarCaracteristica");
 export const aplicarEstado = falta("aplicarEstado");
 export const tieneEstado = (actor, estado) => Array.from(actor?.items ?? []).some(i => i?.type === "condition" && i?.system?.slug === estado);
+
+/* ---------- Ganchos ---------- */
+/* Los mismos nombres que en dnd5e. En PF2e todavía no tienen equivalente (tarea 5.2d): se saltan con un aviso en la
+   consola, sin romper la carga del módulo. Cuando se hagan, cada uno traduce sus argumentos a los de dnd5e. */
+export const GANCHOS = {
+  antesDeUsar: null,
+  consumoDeUso: null,
+  alUsar: null,
+  antesDePlantilla: null,
+  antesDeTirar: null,
+  antesDeAtacar: null,
+  alAtacar: null,
+  antesDelDano: null,
+  antesDeSalvacion: null,
+  antesDeAplicarDano: null,
+  alAplicarDano: null,
+  alSalvarMuerte: null,
+  antesDescansoCorto: null,
+  antesDescansoLargo: null,
+  antesDeTerminarDescanso: null,
+  alTerminarDescanso: null,
+  antesDadoDeGolpe: null,
+  alTirarDadoDeGolpe: null,
+};
+const avisados = new Set();
+export function gancho(nombre, fn) {
+  if (!(nombre in GANCHOS)) throw new Error(`Ecos · gancho desconocido: «${nombre}».`);
+  if (GANCHOS[nombre]) return globalThis.Hooks?.on(GANCHOS[nombre], fn);
+  if (!avisados.has(nombre)) { avisados.add(nombre); globalThis.console?.warn?.(`Ecos · PF2e: el gancho «${nombre}» todavía no está hecho (tarea 5.2d).`); }
+  return undefined;
+}

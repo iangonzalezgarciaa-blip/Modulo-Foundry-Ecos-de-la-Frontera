@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.23.0 — 2026-11-05
+
+- Textos más claros, a pedido de la mesa: la **Secuela** dice que son puntos de Fuerza, Destreza o Constitución (no PG), que vuelven de a 1 por cada día de tratamiento con éxito en un Santuario sin combate ni trabajo pesado, y que no es lo mismo que Malherido. Los **3 fallos** de muerte dicen qué se pierde. La guía «Lo que cualquiera puede intentar» y los rasgos de acciones de las hojas explican que, cuando tú haces la acción, **el objetivo** tira contra **tu** CD, con un ejemplo. Los rasgos de las hojas se actualizan solos.
+- Preparación para PF2e (tarea 5.2c, quinto paso): los 33 ganchos de dnd5e del módulo se registran con nombres de Ecos a través de la capa del sistema (`sistema.gancho`). En dnd5e son los mismos ganchos, con los mismos argumentos; en PF2e todavía no existen y se saltan con un aviso en la consola, sin romper la carga del módulo.
+
 ## 3.22.0 — 2026-11-05
 
 - Preparación para PF2e (tarea 5.2c, cuarto paso): la Mesa Ecos (resumen del personaje, tabla de Control de la sesión y tiradas pedidas), el azar (PG temporales y velocidad), las reliquias y el daño del combate táctico leen y escriben la ficha a través de la capa del sistema. Con esto, las lecturas y escrituras simples de la ficha ya pasan todas por la capa. En la mesa no cambia nada; el movimiento del resumen de la Mesa se lee igual en dnd5e 5 y 6. La capa suma los PG temporales y la Percepción pasiva.

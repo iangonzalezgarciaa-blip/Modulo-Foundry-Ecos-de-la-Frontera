@@ -98,3 +98,31 @@ export const tirarCaracteristica = (actor, clave, op = {}, dialogo = { configure
 /* ---------- Estados ---------- */
 export const aplicarEstado = (actor, estado, activo = true) => actor.toggleStatusEffect?.(estado, { active: activo });
 export const tieneEstado = (actor, estado) => !!actor?.statuses?.has?.(estado);
+
+/* ---------- Ganchos (5.2c) ---------- */
+/** Los ganchos del sistema con nombre de Ecos. En dnd5e son los mismos de siempre, con los mismos argumentos. */
+export const GANCHOS = {
+  antesDeUsar: "dnd5e.preUseActivity", // Antes de usar una actividad (conjuro, técnica, rasgo).
+  consumoDeUso: "dnd5e.activityConsumption", // Al calcular lo que gasta un uso.
+  alUsar: "dnd5e.postUseActivity", // Después de usar una actividad.
+  antesDePlantilla: "dnd5e.preCreateActivityTemplate", // Antes de poner la plantilla de área de un uso.
+  antesDeTirar: "dnd5e.preRollV2", // Antes de cualquier tirada del sistema.
+  antesDeAtacar: "dnd5e.preRollAttackV2", // Antes de una tirada de ataque.
+  alAtacar: "dnd5e.postRollAttack", // Después de una tirada de ataque.
+  antesDelDano: "dnd5e.preRollDamageV2", // Antes de una tirada de daño o de curación.
+  antesDeSalvacion: "dnd5e.preRollSavingThrowV2", // Antes de una salvación.
+  antesDeAplicarDano: "dnd5e.preApplyDamage", // Antes de aplicar daño a una ficha.
+  alAplicarDano: "dnd5e.applyDamage", // Después de aplicar daño a una ficha.
+  alSalvarMuerte: "dnd5e.rollDeathSave", // Después de una salvación de muerte.
+  antesDescansoCorto: "dnd5e.preShortRest", // Antes de un descanso corto.
+  antesDescansoLargo: "dnd5e.preLongRest", // Antes de un descanso largo.
+  antesDeTerminarDescanso: "dnd5e.preRestCompleted", // Antes de aplicar lo que da un descanso.
+  alTerminarDescanso: "dnd5e.restCompleted", // Al terminar un descanso.
+  antesDadoDeGolpe: "dnd5e.preRollHitDieV2", // Antes de tirar un Dado de Golpe.
+  alTirarDadoDeGolpe: "dnd5e.rollHitDieV2", // Después de tirar un Dado de Golpe.
+};
+/** Registra `fn` en el gancho de Ecos `nombre`. Un nombre que no está en la tabla es un error de programación. */
+export function gancho(nombre, fn) {
+  if (!(nombre in GANCHOS)) throw new Error(`Ecos · gancho desconocido: «${nombre}».`);
+  return globalThis.Hooks?.on(GANCHOS[nombre], fn);
+}

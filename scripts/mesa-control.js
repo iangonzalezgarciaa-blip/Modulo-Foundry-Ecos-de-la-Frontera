@@ -6,6 +6,7 @@
  *       «¿Aplicar Derribado? Qué provoca…». Si ataca un PNJ, el jugador que defiende recibe el aviso.
  * Cada cosa tiene su ajuste de mundo para apagarla.
  */
+import { sistema } from "./sistema/index.js";
 const MOD = "ecos-frontera";
 const AJ = { ventaja: "preguntarVentaja", estados: "preguntarEstados", moneda: "pausaMoneda" };
 const ajuste = k => { try { return game.settings.get(MOD, k); } catch { return null; } };
@@ -198,7 +199,7 @@ Hooks.once("init", () => {
 });
 Hooks.once("ready", () => {
   // Después de midi-qol: así esta pregunta gana a su tirada rápida.
-  Hooks.on("dnd5e.preRollAttackV2", (config, dialog) => { if (ajuste(AJ.ventaja)) forzarPreguntaAtaque(config, dialog); });
+  sistema.gancho("antesDeAtacar", (config, dialog) => { if (ajuste(AJ.ventaja)) forzarPreguntaAtaque(config, dialog); });
   Hooks.on("renderAttackRollConfigurationDialog", (app, html) => {
     const p = app.options?.ecosPregunta;
     const el = html instanceof HTMLElement ? html : html?.[0];

@@ -80,3 +80,21 @@ test('5.2c · salvaciones y CD de característica en los dos sistemas', () => {
   assert.equal(P.bonoSalvacion(p, 'con'), 9); assert.equal(P.bonoSalvacion(p, 'int'), 4);
   assert.equal(P.cdCaracteristica(p, 'int'), 21); assert.equal(P.caido(p), false);
 });
+
+test('5.2c · los ganchos de dnd5e pasan por nombres de Ecos; en PF2e se saltan con un aviso, sin romper la carga', () => {
+  assert.deepEqual(Object.keys(D.GANCHOS).sort(), Object.keys(P.GANCHOS).sort());
+  for (const [nombre, h] of Object.entries(D.GANCHOS)) assert.match(h, /^dnd5e\.[A-Za-z0-9]+$/, nombre);
+  assert.equal(new Set(Object.values(D.GANCHOS)).size, Object.keys(D.GANCHOS).length, 'un gancho de dnd5e por nombre');
+  const antes = globalThis.Hooks, avisos = [], aviso = console.warn;
+  const registrados = [];
+  try {
+    globalThis.Hooks = { on: (h, fn) => { registrados.push(h); return registrados.length; } };
+    console.warn = m => avisos.push(m);
+    const fn = () => {};
+    assert.equal(D.gancho('alTerminarDescanso', fn), 1); assert.deepEqual(registrados, ['dnd5e.restCompleted']);
+    assert.throws(() => D.gancho('noExiste', fn), /desconocido/); assert.throws(() => P.gancho('noExiste', fn), /desconocido/);
+    assert.equal(P.gancho('alUsar', fn), undefined); P.gancho('alUsar', fn);
+    assert.equal(registrados.length, 1, 'PF2e no registra nada todavía');
+    assert.equal(avisos.filter(a => /alUsar/.test(a) && /5\.2d/.test(a)).length, 1, 'un solo aviso por gancho');
+  } finally { globalThis.Hooks = antes; console.warn = aviso; }
+});

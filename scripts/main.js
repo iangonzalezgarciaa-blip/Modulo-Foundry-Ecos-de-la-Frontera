@@ -53,13 +53,13 @@ const RESISTENTES_INICIALES = ["kij3VDH2ofqyR95p", "ktHmACdpqjhNnwTS"];
 const ID_REGLAS = "G0rD0J3JkpOkXM00"; // Reglas de la casa (Libro VI)
 
 const DESC = {
-  acechado: "<p>Estás a 0 PG pero consciente. Estás Derribado: puedes hablar y arrastrarte, pero no puedes tomar acciones, acciones adicionales ni reacciones.</p><p>Al inicio de cada turno tiras una salvación de muerte (la tira el módulo). Con 3 éxitos o un 20 natural te levantas con 1 PG. Con 3 fallos no mueres: sufres una Secuela y las salvaciones vuelven a 0. Recibir daño cuenta como un fallo.</p>",
+  acechado: "<p>Estás a 0 PG pero consciente. Estás Derribado: puedes hablar y arrastrarte, pero no puedes tomar acciones, acciones adicionales ni reacciones.</p><p>Al inicio de cada turno tiras una salvación de muerte (la tira el módulo). Con 3 éxitos o un 20 natural te levantas con 1 PG. Con 3 fallos no mueres: te queda una Secuela (pierdes 1 punto de Fuerza, Destreza o Constitución, según 1d6), las salvaciones vuelven a 0 y sigues en el suelo. Recibir daño cuenta como un fallo.</p>",
   malherido: "<p>Tus PG máximos bajan en tu nivel y ninguna curación te sube del 50 % de tus PG máximos. Una vez tratado (un día de tratamiento exitoso de un sanador en un Santuario, o magia como Restauración menor), el tope sube al 75 %.</p><p>Se quita con 3 Descansos Largos en un Santuario (no hace falta que sean seguidos). No cuentan los días con combate, viaje forzado o trabajo con Agotamiento 3 o más. Fuera de un Santuario no recuperas PG descansando ni con Dados de Golpe.</p>",
   heridant: "<p>No puedes quitarte Agotamiento con Descansos Largos.</p><p>Cada nivel se cura con 3 días de tratamiento en un Santuario: el sanador hace una prueba de Medicina (CD 10 + nivel) después de cada Descanso Largo. Si falla, el día no cuenta; con un 1 natural la herida se infecta y suma un nivel. También la curan <em>Restauración Menor</em>, <em>Sanar</em> o la Imposición de Manos (5 puntos por nivel).</p><p><em>En el token: clic izquierdo +1 nivel, clic derecho −1.</em></p>",
-  secuela: "<p>Daño permanente en el cuerpo. Cada día de tratamiento exitoso devuelve 1 punto. Si la Fuerza, la Destreza o la Constitución llegan a 0, el personaje muere.</p>"
+  secuela: "<p>Puntos de Fuerza, Destreza o Constitución que perdiste (por 3 fallos de muerte). Es la puntuación de la característica, no tus PG. No vuelven solos: cada día de tratamiento con éxito en un Santuario, sin combate ni trabajo pesado, devuelve 1 punto, primero el de la característica que más bajó. Si la Fuerza, la Destreza o la Constitución llegan a 0, el personaje muere.</p><p><em>No es lo mismo que Malherido: Malherido limita cuánto te curas; la Secuela te quita puntos de característica.</em></p>"
 };
 
-const EXPLICA_ACECHADO = "Está Derribado: solo puede hablar y arrastrarse. Al inicio de su turno tira salvación de muerte (la tira el módulo). <b>3 fallos</b> = Secuela, no muerte. Recibir daño = 1 fallo.";
+const EXPLICA_ACECHADO = "Está Derribado: solo puede hablar y arrastrarse. Al inicio de su turno tira salvación de muerte (la tira el módulo). <b>3 fallos</b> = Secuela (−1 FUE, DES o CON), no muerte. Recibir daño = 1 fallo.";
 
 /* ------------------------------------------------------------------ */
 /*  Utilidades                                                        */
@@ -198,7 +198,7 @@ function itemsGuia(actor, claves = []) {
     } else if ((k === "agotamiento") && (exh > 0)) {
       items.push(`<b>Agotamiento ${exh}:</b> baja 1 con cada Descanso Largo en un Santuario${nh ? ", pero solo después de curar la Herida No Tratada" : ""}.`);
     } else if ((k === "secuela") && totalSecuela(actor)) {
-      items.push(`<b>Secuela (${textoSecuela(valoresSecuela(actor))}):</b> cada día de tratamiento exitoso devuelve 1 punto.`);
+      items.push(`<b>Secuela (${textoSecuela(valoresSecuela(actor))}):</b> puntos de característica perdidos, no PG. Cada día de tratamiento con éxito en un Santuario, sin combate ni trabajo pesado, devuelve 1.`);
     } else if ((k === "intemperie") && heridoGrave(actor)) {
       items.push("<b>A la intemperie</b> no se recuperan PG descansando ni con Dados de Golpe. Que alguien le trate la herida cada día (botón <b>Curar</b>, con Medicina o un kit de sanador) para que no empeore, y vuelvan a un Santuario cuanto antes.");
     }
@@ -4815,7 +4815,7 @@ Hooks.on("preUpdateCombatant", (combatant, changes) => {
 });
 
 /* Daño: golpe brutal, daño masivo y fallos por daño a 0 PG. */
-Hooks.on("dnd5e.preApplyDamage", (actor, amount, updates) => {
+sistema.gancho("antesDeAplicarDano", (actor, amount, updates) => {
   if (!esPJ(actor) || !(amount > 0)) return;
   const hp = actor.system.attributes.hp;
   const alHP = amount - Math.min(hp.temp ?? 0, amount);
@@ -4843,7 +4843,7 @@ Hooks.on("dnd5e.preApplyDamage", (actor, amount, updates) => {
 });
 
 /* Salvaciones de muerte: 3 éxitos levantan con 1 PG; 3 fallos dejan Secuela en vez de matar. */
-Hooks.on("dnd5e.rollDeathSave", (rolls, details) => {
+sistema.gancho("alSalvarMuerte", (rolls, details) => {
   const actor = details.subject;
   if (!esPJ(actor)) return;
   const death = actor.system.attributes.death;
@@ -4926,13 +4926,13 @@ for (const h of ["createActiveEffect", "updateActiveEffect", "deleteActiveEffect
 }
 
 /* Descansos */
-Hooks.on("dnd5e.preLongRest", (actor, config) => {
+sistema.gancho("antesDescansoLargo", (actor, config) => {
   if (!esPJ(actor) || config.ecos?.listo) return;
   dialogoDescansoLargo(actor, config).catch(err => console.error(`${MOD} |`, err));
   return false;
 });
 
-Hooks.on("dnd5e.restCompleted", (actor, result, config) => {
+sistema.gancho("alTerminarDescanso", (actor, result, config) => {
   if (!esPJ(actor)) return;
   // Descanso Largo en Santuario: convalecencia, tratamiento y nuevo día de trabajo (lo procesa el DM).
   if ((config?.type === "long") && config.ecos?.listo && config.ecos.santuario) {
@@ -4946,7 +4946,7 @@ Hooks.on("dnd5e.restCompleted", (actor, result, config) => {
   }
 });
 
-Hooks.on("dnd5e.preShortRest", (actor, config) => {
+sistema.gancho("antesDescansoCorto", (actor, config) => {
   if (!esPJ(actor) || enSantuario() || !heridoGrave(actor)) return;
   config.dialog = false;
   if (!config.ecos?.intemperie) {
@@ -4954,7 +4954,7 @@ Hooks.on("dnd5e.preShortRest", (actor, config) => {
   }
 });
 
-Hooks.on("dnd5e.preRollHitDieV2", config => {
+sistema.gancho("antesDadoDeGolpe", config => {
   const actor = config.subject;
   if (!esPJ(actor) || enSantuario() || !heridoGrave(actor)) return;
   ui.notifications.warn(`${actor.name} está herido grave y fuera de un Santuario: no puede curarse con Dados de Golpe.`);
@@ -5253,7 +5253,7 @@ Hooks.on("updateWorldTime", worldTime => {
 });
 
 /* Magia que cura heridas, detectada al usarse (en el cliente de quien la lanza) */
-Hooks.on("dnd5e.postUseActivity", (activity, config, resultados) => {
+sistema.gancho("alUsar", (activity, config, resultados) => {
   try {
     const item = activity?.item;
     const tipo = item ? tipoMagiaCurativa(item) : null;
@@ -5508,7 +5508,7 @@ async function nombresPublicos() {
  * salen como tirada privada. Los jugadores ven el dado rodar (dado fantasma de Dice So Nice), no el número.
  * Los ataques y el daño los maneja midi-qol (ven el d20 y el total de daño, sin bonificadores).
  */
-Hooks.on("dnd5e.preRollV2", (config, dialog, message) => {
+sistema.gancho("antesDeTirar", (config, dialog, message) => {
   try {
     if (!game.user.isGM || !game.settings.get(MOD, "tiradasOcultasPNJ")) return;
     const tipos = config?.hookNames ?? [];
@@ -7272,7 +7272,7 @@ function notaReglaDG(actor, tipo) {
 }
 
 /* El tope y «solo durante un descanso». */
-Hooks.on("dnd5e.preRollHitDieV2", config => {
+sistema.gancho("antesDadoDeGolpe", config => {
   const actor = config?.subject;
   if (!reglaDescanso(actor) || (config.modifyHitDice === false)) return;
   const v = GASTO_LARGO.get(actor.uuid);
@@ -7288,7 +7288,7 @@ Hooks.on("dnd5e.preRollHitDieV2", config => {
 });
 
 /* Cuenta cada Dado de Golpe gastado (va en la misma actualización que el dado). */
-Hooks.on("dnd5e.rollHitDieV2", (rolls, datos) => {
+sistema.gancho("alTirarDadoDeGolpe", (rolls, datos) => {
   const actor = datos?.subject;
   const updates = datos?.updates;
   if (!updates || !reglaDescanso(actor)) return;
@@ -7300,7 +7300,7 @@ Hooks.on("dnd5e.rollHitDieV2", (rolls, datos) => {
 });
 
 /* Descanso Corto con la regla: en vez de la ventana del sistema, la de la casa (recuperar y después gastar). */
-Hooks.on("dnd5e.preShortRest", (actor, config) => {
+sistema.gancho("antesDescansoCorto", (actor, config) => {
   if (!reglaDescanso(actor)) return;
   EN_DESCANSO_CORTO.set(actor.uuid, Date.now() + (45 * 60 * 1000));
   if (config?.ecos?.listo) return;
@@ -7314,7 +7314,7 @@ Hooks.on("dnd5e.preShortRest", (actor, config) => {
 });
 
 /* Descanso Largo con la regla de una hoja que no es PJ (los PJ tienen la suya, con Santuario y heridas). */
-Hooks.on("dnd5e.preLongRest", (actor, config) => {
+sistema.gancho("antesDescansoLargo", (actor, config) => {
   if (!reglaDescanso(actor) || esPJ(actor) || config?.ecos?.listo) return;
   dialogoDescansoDG(actor, "long", config).catch(err => console.error(`${MOD} | descanso largo`, err));
   return false;
@@ -7372,7 +7372,7 @@ async function dialogoDescansoDG(actor, tipo, config = {}) {
 }
 
 /* El resultado del descanso: sin PG por descansar, y los Dados de Golpe de la casa. */
-Hooks.on("dnd5e.preRestCompleted", (actor, result, config) => {
+sistema.gancho("antesDeTerminarDescanso", (actor, result, config) => {
   try {
     if (!reglaDescanso(actor) || !result) return;
     const largo = config?.type === "long";
@@ -7382,7 +7382,7 @@ Hooks.on("dnd5e.preRestCompleted", (actor, result, config) => {
   }
 });
 
-Hooks.on("dnd5e.restCompleted", (actor, result, config) => {
+sistema.gancho("alTerminarDescanso", (actor, result, config) => {
   try {
     EN_DESCANSO_CORTO.delete(actor?.uuid);
     if (!reglaDescanso(actor) || !["long", "short"].includes(config?.type) || !cfgDesc().gastarLargo || !actor.isOwner) return;
