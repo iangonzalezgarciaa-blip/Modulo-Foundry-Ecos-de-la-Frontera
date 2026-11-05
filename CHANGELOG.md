@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.21.0 — 2026-11-05
+
+- Preparación para PF2e (tarea 5.2c, tercer paso): el resto de `main.js` lee y escribe la ficha a través de la capa del sistema. Entran Estabilizar y despertar, el Eco, la página «Estado de los PJ», los Oficios, las Monedas Antiguas en las tiradas, el Eco del Vorrh, los Golpes que cuentan, la noche sin dormir y el tope de Malherido al curar. En la mesa no cambia nada. La capa suma la prueba de característica.
+
 ## 3.20.0 — 2026-11-04
 
 - Corrección: el botón «Cambiar Monedas» del panel del Verbe pedía 2 Monedas Antiguas y decía «2 Monedas = 1 Trazo», un resto de antes de la 3.17. Ahora sigue la regla vigente: aparece con 1 Moneda y dice «1 Moneda Antigua = 1 Trazo (hasta 2 Trazos por nivel)».

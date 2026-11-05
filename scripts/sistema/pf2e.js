@@ -79,5 +79,6 @@ export function gradoDeExito(total, cd, natural = null) {
 export const leerTirada = falta("leerTirada");
 export const tirarHabilidad = falta("tirarHabilidad");
 export const tirarSalvacion = falta("tirarSalvacion");
+export const tirarCaracteristica = falta("tirarCaracteristica");
 export const aplicarEstado = falta("aplicarEstado");
 export const tieneEstado = (actor, estado) => Array.from(actor?.items ?? []).some(i => i?.type === "condition" && i?.system?.slug === estado);

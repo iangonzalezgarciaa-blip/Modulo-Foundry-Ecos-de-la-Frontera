@@ -89,6 +89,7 @@ export function gradoDeExito(total, cd, natural = null) {
 export const leerTirada = m => infoTirada(m);
 export const tirarHabilidad = (actor, clave, op = {}, dialogo = { configure: false }, mensaje = {}) => actor.rollSkill?.({ skill: clave, ...op }, dialogo, mensaje);
 export const tirarSalvacion = (actor, clave, op = {}, dialogo = { configure: false }, mensaje = {}) => actor.rollSavingThrow?.({ ability: clave, ...op }, dialogo, mensaje);
+export const tirarCaracteristica = (actor, clave, op = {}, dialogo = { configure: false }, mensaje = {}) => actor.rollAbilityCheck?.({ ability: clave, ...op }, dialogo, mensaje);
 
 /* ---------- Estados ---------- */
 export const aplicarEstado = (actor, estado, activo = true) => actor.toggleStatusEffect?.(estado, { active: activo });

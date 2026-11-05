@@ -101,8 +101,8 @@ function esPJ(actor) {
 }
 /** El nivel con el que cuentan las reglas: el de su clase o, en un PNJ, su VD (mínimo 1). */
 const nivelPJ = actor => ((actor?.type === "npc")
-  ? Math.max(1, Math.round(Number(actor.system.details?.cr) || 1))
-  : Math.max(1, Number(actor?.system?.details?.level) || 1));
+  ? Math.max(1, Math.round(sistema.vd(actor) || 1))
+  : Math.max(1, sistema.nivel(actor)));
 /**
  * 3.12: «la sangre que responde» es la Sangre Antigua de Maethra (pedido del autor). Si la hoja ya tiene linaje del Verbe,
  * manda el linaje: Maethra con la sangre activa. Si todavía no tiene linaje, vale la marca antigua de las hojas que la tenían.
@@ -137,7 +137,7 @@ const malTratado = actor => !!efectoMalherido(actor)?.getFlag(MOD, "tratado");
 const malSinTratar = actor => !!efectoMalherido(actor) && !malTratado(actor);
 const PCT_MAL = { sin: 50, tratado: 75 };
 const pctMalherido = actor => (malTratado(actor) ? PCT_MAL.tratado : PCT_MAL.sin);
-const topeMalherido = actor => Math.floor(actor.system.attributes.hp.effectiveMax * pctMalherido(actor) / 100);
+const topeMalherido = actor => Math.floor(sistema.pg(actor).maxEfectivo * pctMalherido(actor) / 100);
 const statusId = id => CONFIG.statusEffects.find(s => s.id === id)?._id;
 const combatantesDe = actor => game.combats.contents.flatMap(c => c.combatants.filter(x => x.actor === actor || x.actorId === actor.id));
 /** Monedas Antiguas del actor: una moneda más de la hoja (system.currency.soul, por compatibilidad con la v1). */
@@ -174,19 +174,19 @@ function tarjeta(titulo, lineas = [], { clase = "", extra = "" } = {}) {
 /** Qué hacer para quitarse cada estado, con los números actuales del actor (lista de textos). */
 function itemsGuia(actor, claves = []) {
   const items = [];
-  const exh = actor.system.attributes.exhaustion ?? 0;
+  const exh = sistema.agotamiento(actor);
   const nh = nivelHNT(actor);
   const mal = efectoMalherido(actor);
   for (const k of new Set(claves)) {
     if ((k === "acechado") && actor.statuses.has("acechado")) {
-      if (actor.statuses.has("stable")) {
+      if (sistema.tieneEstado(actor, "stable")) {
         const d = actor.getFlag(MOD, "despertar");
         const h = d ? Math.max(0, Math.ceil((d.en - game.time.worldTime) / 3600)) : null;
         items.push(`<b>Estable:</b> ya no tira salvaciones. Despierta con 1 PG${h !== null ? ` en ${h === 1 ? "1 hora" : `${h} horas`} de juego` : " en 1d4 horas"}, o antes si alguien lo cura.`);
       } else {
         items.push("<b>Acechado:</b> se levanta con 1 PG si alguien lo cura, con 3 éxitos o con un 20. Un aliado puede estabilizarlo con el botón <b>Estabilizar</b> (Medicina CD 10 o kit de sanador). Una salvación fallida se puede repetir con Esfuerzo Excesivo o una Moneda Antigua.");
       }
-    } else if ((k === "derribado") && actor.statuses.has("prone")) {
+    } else if ((k === "derribado") && sistema.tieneEstado(actor, "prone")) {
       items.push("<b>Derribado:</b> en su turno gasta la mitad de su movimiento para levantarse.");
     } else if ((k === "malherido") && mal) {
       const d = mal.getFlag(MOD, "descansos") ?? 0;
@@ -1294,17 +1294,17 @@ async function intentarEstabilizar(pacienteId) {
   const { DialogV2 } = foundry.applications.api;
   const paciente = game.actors.get(pacienteId);
   if (!paciente) return;
-  if ((paciente.system.attributes.hp.value > 0) || paciente.statuses.has("stable") || paciente.getFlag(MOD, "muerto")) {
+  if ((sistema.pg(paciente).valor > 0) || sistema.tieneEstado(paciente, "stable") || paciente.getFlag(MOD, "muerto")) {
     return ui.notifications.info(`${paciente.name} ya no necesita que lo estabilicen.`);
   }
   const elegido = canvas.tokens?.controlled.map(t => t.actor).find(a => a && (a.id !== pacienteId) && a.isOwner);
   const propio = (game.user.character && (game.user.character.id !== pacienteId)) ? game.user.character : null;
   const ayudante = elegido ?? propio;
   if (!ayudante) return ui.notifications.warn("Selecciona el token de quien ayuda (no el del herido) y vuelve a apretar Estabilizar.");
-  if ((ayudante.system.attributes?.hp?.value ?? 1) <= 0) return ui.notifications.warn(`${ayudante.name} está a 0 PG: no puede ayudar.`);
+  if ((sistema.pg(ayudante).hay && sistema.pg(ayudante).valor <= 0)) return ui.notifications.warn(`${ayudante.name} está a 0 PG: no puede ayudar.`);
 
   const kit = kitDeSanador(ayudante);
-  const med = ayudante.system.skills?.med?.total ?? 0;
+  const med = sistema.totalHabilidad(ayudante, "med");
   const botones = [{ action: "medicina", label: `Medicina CD 10 (${signo(med)})`, icon: "fa-solid fa-stethoscope", default: true }];
   if (kit) botones.push({ action: "kit", label: `${kit.name} (quedan ${usosRestantes(kit)})`, icon: "fa-solid fa-kit-medical" });
   botones.push({ action: "cancelar", label: "Cancelar", icon: "fa-solid fa-xmark" });
@@ -1315,7 +1315,7 @@ async function intentarEstabilizar(pacienteId) {
     buttons: botones
   });
   if (r === "medicina") {
-    const roll = await tiradaConSoul(ayudante, m => ayudante.rollSkill({ skill: "med", target: 10 }, { configure: false }, m), "Medicina");
+    const roll = await tiradaConSoul(ayudante, m => sistema.tirarHabilidad(ayudante, "med", { target: 10 }, { configure: false }, m), "Medicina");
     if (!roll) return;
     if (roll.total >= 10) return alDM({ accion: "estabilizar", actorId: pacienteId, quien: ayudante.name, como: `Medicina ${roll.total}` });
     return publicar(paciente, "🩹 Estabilizar", [`<b>${ayudante.name}</b> intenta estabilizar a <b>${paciente.name}</b>: Medicina ${roll.total} contra CD 10, <b>no lo logra</b>. Puede volver a intentarlo.`]);
@@ -1328,7 +1328,7 @@ async function intentarEstabilizar(pacienteId) {
 
 /** Marca Estable (lo hace el DM). El despertar se programa al crearse el estado. */
 async function estabilizar(actor, d = {}) {
-  if (actor.getFlag(MOD, "muerto") || (actor.system.attributes.hp.value > 0) || actor.statuses.has("stable")) return;
+  if (actor.getFlag(MOD, "muerto") || (sistema.pg(actor).valor > 0) || sistema.tieneEstado(actor, "stable")) return;
   ESTABILIZADO_POR.set(actor.id, { quien: d.quien ?? "Alguien", como: d.como ?? "" });
   await actor.toggleStatusEffect("stable", { active: true });
 }
@@ -1362,8 +1362,8 @@ async function marcarUsado(messageId, texto) {
 async function despertar(actor, messageId) {
   await marcarUsado(messageId, "Ya despertó.");
   if (actor.getFlag(MOD, "despertar")) await actor.unsetFlag(MOD, "despertar");
-  if (actor.getFlag(MOD, "muerto") || (actor.system.attributes.hp.value > 0)) return;
-  await actor.update({ "system.attributes.hp.value": 1 }, { ecosDespierta: true });
+  if (actor.getFlag(MOD, "muerto") || (sistema.pg(actor).valor > 0)) return;
+  await actor.update(sistema.datosPg(1), { ecosDespierta: true });
 }
 
 /* ------------------------------------------------------------------ */
@@ -1482,13 +1482,13 @@ async function dispararEco(actor, messageId) {
   efecto(actor, "eco");
   await actor.setFlag(MOD, "ecos", (actor.getFlag(MOD, "ecos") ?? 0) + 1);
   await sumarReloj(1);
-  if (actor.system.attributes.hp.value <= 0) {
+  if (sistema.pg(actor).valor <= 0) {
     // Vuelve con 1 PG: el precio de volver (que ya incluye +1 Agotamiento) es el costo del Eco.
-    return actor.update({ "system.attributes.hp.value": 1 }, { ecosEco: true });
+    return actor.update(sistema.datosPg(1), { ecosEco: true });
   }
-  const exh = actor.system.attributes.exhaustion ?? 0;
-  const nuevo = Math.min(exh + 1, CONFIG.DND5E.conditionTypes.exhaustion.levels);
-  await actor.update({ "system.attributes.exhaustion": nuevo });
+  const exh = sistema.agotamiento(actor);
+  const nuevo = Math.min(exh + 1, sistema.agotamientoMax());
+  await actor.update(sistema.datosAgotamiento(nuevo));
   await publicar(actor, "⏳ El Eco", [textoEco(actor), `Le cuesta <b>+1 Agotamiento</b> (${exh} → ${nuevo}).`], { extra: guia(actor, ["agotamiento"]) });
 }
 
@@ -1558,23 +1558,23 @@ async function paginaEstado() {
 
 function celdaEstado(a) {
   if (a.getFlag(MOD, "muerto") || a.statuses.has("dead")) return "☠ Muerto";
-  if (a.system.attributes.hp.value <= 0) {
-    if (!a.statuses.has("stable")) return "Acechado por la Muerte";
+  if (sistema.pg(a).valor <= 0) {
+    if (!sistema.tieneEstado(a, "stable")) return "Acechado por la Muerte";
     const d = a.getFlag(MOD, "despertar");
     const h = d ? Math.max(0, Math.ceil((d.en - game.time.worldTime) / 3600)) : null;
     return `Estable${h !== null ? ` (despierta en ${h} h)` : ""}`;
   }
-  return a.statuses.has("prone") ? "Derribado" : "En pie";
+  return sistema.tieneEstado(a, "prone") ? "Derribado" : "En pie";
 }
 
 function htmlEstado() {
   const pjs = game.actors.filter(esPJ).sort((a, b) => a.name.localeCompare(b.name));
   const filas = pjs.map(a => {
-    const hp = a.system.attributes.hp;
+    const hp = sistema.pg(a);
     const mal = efectoMalherido(a);
     const nh = nivelHNT(a);
-    return `<tr><td><b>${a.name}</b></td><td>${hp.value}/${hp.effectiveMax}</td><td>${celdaEstado(a)}</td>`
-      + `<td>${a.system.attributes.exhaustion || "—"}</td>`
+    return `<tr><td><b>${a.name}</b></td><td>${hp.valor}/${hp.maxEfectivo}</td><td>${celdaEstado(a)}</td>`
+      + `<td>${sistema.agotamiento(a) || "—"}</td>`
       + `<td>${mal ? `${mal.getFlag(MOD, "descansos") ?? 0}/${DESCANSOS_MALHERIDO}` : "—"}</td>`
       + `<td>${nh ? `${nh} (día ${diaHNT(a)}/${DIAS_TRATAMIENTO})` : "—"}</td>`
       + `<td>${textoSecuela(valoresSecuela(a)) || "—"}</td></tr>`;
@@ -1980,7 +1980,7 @@ function calculoOficio(actor, datos, key, ritmo = "normal") {
   const otros = Number(datos.otros[key] ?? 0);
   const vida = (datos.vida?.dia === datos.dia) ? Number(datos.vida.bono ?? 0) : 0;
   const R = RITMOS[ritmo] ?? RITMOS.normal;
-  const exh = actor.system.attributes.exhaustion ?? 0;
+  const exh = sistema.agotamiento(actor);
   const partes = { pericia: rango.bono, otros, herramienta: estado.pen, calidad: calidad?.bono ?? 0, vida, ritmo: R.prueba };
   const bono = prueba.bono + Object.values(partes).reduce((t, v) => t + v, 0);
   const valor = (of.valor ?? 1) * (rp.mult ?? 1);
@@ -2001,9 +2001,9 @@ async function tirarOficio(actor, prueba, cd, extras, { ventaja = false, flavor 
   // sinSoul: la jornada tiene su propio aviso de Moneda Antigua (no se ofrece dos veces).
   const message = { data: { flavor, flags: { [MOD]: { sinSoul: true } } } };
   let rolls;
-  if (prueba.tipo === "skill") rolls = await actor.rollSkill({ ...config, skill: prueba.k }, dialog, message);
+  if (prueba.tipo === "skill") rolls = await sistema.tirarHabilidad(actor, prueba.k, config, dialog, message);
   else if ((prueba.tipo === "tool") && prueba.tiene) rolls = await actor.rollToolCheck({ ...config, tool: prueba.k }, dialog, message);
-  else rolls = await actor.rollAbilityCheck({ ...config, ability: prueba.habil ?? prueba.k }, dialog, message);
+  else rolls = await sistema.tirarCaracteristica(actor, prueba.habil ?? prueba.k, config, dialog, message);
   const roll = rolls?.[0];
   if (!roll) return null;
   const nat = roll.d20?.total ?? roll.dice?.[0]?.total ?? 0;
@@ -2026,7 +2026,7 @@ async function ofrecerSoulCoin(actor, texto) {
     rejectClose: false
   });
   if (!ok || (soulCoins(actor) < 1)) return false;
-  await actor.update({ "system.currency.soul": soulCoins(actor) - 1 });
+  await actor.update(sistema.datosMoneda(soulCoins(actor) - 1));
   await visionSoul(actor);
   return true;
 }
@@ -2269,7 +2269,7 @@ function engancharMidi() {
 
 /** Salvación de Constitución que, si falla, se puede repetir gastando Monedas Antiguas. */
 async function salvacionConSoul(actor, cd, motivo) {
-  const tirar = async () => (await actor.rollSavingThrow({ ability: "con", target: cd }, { configure: false }, { data: { flags: { [MOD]: { sinSoul: true } } } }))?.[0];
+  const tirar = async () => (await sistema.tirarSalvacion(actor, "con", { target: cd }, { configure: false }, { data: { flags: { [MOD]: { sinSoul: true } } } }))?.[0];
   let sv = await tirar();
   const notas = [];
   while (sv && (sv.total < cd) && (soulCoins(actor) > 0)) {
@@ -2285,7 +2285,7 @@ async function salvacionConSoul(actor, cd, motivo) {
 
 /** Una Moneda Antigua más en la bolsa (es una moneda de la hoja, no un objeto). */
 async function anadirMonedaAntigua(actor, n = 1) {
-  return actor.update({ "system.currency.soul": monedas(actor) + n });
+  return actor.update(sistema.datosMoneda(monedas(actor) + n));
 }
 const sumarCobres = (actor, c) => (c > 0 ? actor.update({ "system.currency.cp": (actor.system.currency?.cp ?? 0) + c }) : null);
 /** Todo el dinero que lleva encima: la bolsa de la hoja y lo guardado en sus bolsos. */
@@ -2357,8 +2357,8 @@ async function abrirJornada(actorDirecto = null) {
 }
 
 function puedeTrabajar(actor, datos = oficioDe(actor)) {
-  if (actor.system.attributes.hp.value <= 0) return `${actor.name} está a 0 PG: no puede trabajar.`;
-  if ((actor.system.attributes.exhaustion ?? 0) >= 5) return `${actor.name} tiene Agotamiento 5: apenas se tiene en pie.`;
+  if (sistema.pg(actor).valor <= 0) return `${actor.name} está a 0 PG: no puede trabajar.`;
+  if ((sistema.agotamiento(actor)) >= 5) return `${actor.name} tiene Agotamiento 5: apenas se tiene en pie.`;
   if ((MAX_HORAS_DIA - datos.hoy.horas) < 1) return `${actor.name} ya trabajó ${MAX_HORAS_DIA} horas hoy. Tiene que dormir (Descanso Largo) antes de volver a trabajar.`;
   return null;
 }
@@ -2441,7 +2441,7 @@ async function dialogoJornada(actor, preferido = null) {
   partes.push(`<label class="ecos-check ecos-ayudante" ${info[oficioSel].ayudante ? "" : "style=\"display:none\""}><input type="checkbox" name="ayudante" ${datos.ultimo?.ayudante ? "checked" : ""}> Llevo un ayudante (ventaja; le pago 4 c)</label>`);
   if (datos.ventaja) partes.push("<p class=\"ecos-nota\">⭐ Tiene un encargo especial: esta jornada tira con ventaja.</p>");
   if (monedas(actor) > 0) partes.push(`<p class="ecos-nota">Tienes <b>${plural(monedas(actor), "Moneda Antigua", "Monedas Antiguas")}</b>: si una tirada sale mal (la prueba, una complicación o la salvación de sobreesfuerzo) te preguntará si quieres gastar una para repetirla.</p>`);
-  if ((actor.system.attributes.exhaustion ?? 0) >= 3) partes.push(`<p class="ecos-nota">Con Agotamiento ${actor.system.attributes.exhaustion}, trabajar hoy es trabajo pesado: el día no cuenta para Malherido ni para el tratamiento.</p>`);
+  if ((sistema.agotamiento(actor)) >= 3) partes.push(`<p class="ecos-nota">Con Agotamiento ${sistema.agotamiento(actor)}, trabajar hoy es trabajo pesado: el día no cuenta para Malherido ni para el tratamiento.</p>`);
   partes.push(`<details><summary class="ecos-nota">Ajustes</summary><div class="form-group"><label>Otros bonos a la prueba</label><input type="number" name="otros" value="${info[oficioSel].otros}" step="1"></div><p class="ecos-nota">Un bono fijo de este oficio (un rasgo del trasfondo, unos brazos de más). Queda guardado.</p></details>`);
 
   const botones = [{ action: "trabajar", label: enc ? "Trabajar" : "Tomar el encargo y trabajar", icon: "fa-solid fa-hammer", default: true, callback: (ev, b) => leerFormulario(b) }];
@@ -2565,9 +2565,9 @@ async function salvacionFatiga(actor, cd, motivo) {
   const { sv, nota } = await salvacionConSoul(actor, cd, motivo);
   if (!sv) return null;
   if (sv.total >= cd) return `${motivo}: salvación de CON ${sv.total} contra CD ${cd}${nota}, <b>aguanta</b>.`;
-  const exh = actor.system.attributes.exhaustion ?? 0;
-  const nuevo = Math.min(exh + 1, CONFIG.DND5E.conditionTypes.exhaustion.levels);
-  await actor.update({ "system.attributes.exhaustion": nuevo });
+  const exh = sistema.agotamiento(actor);
+  const nuevo = Math.min(exh + 1, sistema.agotamientoMax());
+  await actor.update(sistema.datosAgotamiento(nuevo));
   return `${motivo}: salvación de CON ${sv.total} contra CD ${cd}${nota}, <b>falla. +1 Agotamiento</b> (${exh} → ${nuevo}).`;
 }
 
@@ -2596,11 +2596,11 @@ async function aplicarComplicacion(actor, of, nivel, key, datos, dados, dado) {
     // Un accidente de trabajo duele, pero nunca deja a 0 PG ni cuenta como golpe brutal.
     const dr = await new Roll(ENCARGOS[nivel].dano).evaluate();
     dados.push(dr);
-    const hp = actor.system.attributes.hp;
-    const temp = Math.min(hp.temp ?? 0, dr.total);
-    const real = Math.min(dr.total - temp, Math.max(0, hp.value - 1));
-    await actor.update({ "system.attributes.hp.temp": (hp.temp ?? 0) - temp, "system.attributes.hp.value": hp.value - real }, { ecosInterno: true });
-    L.push(`Recibe <b>${dr.total}</b> de daño (${ENCARGOS[nivel].dano}): queda con ${hp.value - real} PG.${(temp + real) < dr.total ? " Un accidente de trabajo no deja a nadie a 0." : ""}`);
+    const hp = sistema.pg(actor);
+    const temp = Math.min(hp.temp, dr.total);
+    const real = Math.min(dr.total - temp, Math.max(0, hp.valor - 1));
+    await actor.update(sistema.datosPg(hp.valor - real, { temp: hp.temp - temp }), { ecosInterno: true });
+    L.push(`Recibe <b>${dr.total}</b> de daño (${ENCARGOS[nivel].dano}): queda con ${hp.valor - real} PG.${(temp + real) < dr.total ? " Un accidente de trabajo no deja a nadie a 0." : ""}`);
     efecto.horas = -1;
   } else if ((c.tipo === "fatiga") || (c.tipo === "contagio")) {
     if (c.tipo === "fatiga") {
@@ -2717,7 +2717,7 @@ async function hacerJornada(actor, f) {
   if (!datos.encargo && !vetado && (presAntes < E.prestigio)) return ui.notifications.warn(`Con Prestigio ${presAntes}, ${patron.nombre} no le da encargos ${E.nivel}.`);
   const ritmo = RITMOS[f.ritmo] ? f.ritmo : "normal";
   const horasPedidas = Math.clamp(Math.round(Number(f.horas) || 8), 1, MAX_HORAS_DIA - datos.hoy.horas);
-  const exhInicio = actor.system.attributes.exhaustion ?? 0;
+  const exhInicio = sistema.agotamiento(actor);
   const xpAntes = datos.pericia[key] ?? 0;
   const rango = rangoPericia(xpAntes);
   const esp = datos.especialidad[key];
@@ -4800,7 +4800,7 @@ Hooks.on("preCreateActiveEffect", (effect, data) => {
   if (st.has("heridant") && !data.flags?.[MOD]?.init) {
     effect.updateSource({ name: nombreHNT(1, 0), img: iconoHNT(1), flags: { [MOD]: { init: true, nivel: 1, dia: 0 } } });
   }
-  if (!esPJ(actor) || (actor.system.attributes.hp.value > 0) || actor.getFlag(MOD, "muerto")) return;
+  if (!esPJ(actor) || (sistema.pg(actor).valor > 0) || actor.getFlag(MOD, "muerto")) return;
   if ((effect.id === statusId("unconscious")) && !st.has("sleeping")) return false;
   if (effect.id === statusId("dead")) {
     if (game.user.isGM) ui.notifications.info(`Ecos de la frontera: ${actor.name} está Acechado, no muerto. Un PJ solo muere con Agotamiento 6 o con FUE, DES o CON en 0.`);
@@ -4811,7 +4811,7 @@ Hooks.on("preCreateActiveEffect", (effect, data) => {
 Hooks.on("preUpdateCombatant", (combatant, changes) => {
   const actor = combatant.actor;
   if ((changes.defeated === true) && esPJ(actor) && !actor.getFlag(MOD, "muerto")
-    && (actor.system.attributes.hp.value <= 0)) delete changes.defeated;
+    && (sistema.pg(actor).valor <= 0)) delete changes.defeated;
 });
 
 /* Daño: golpe brutal, daño masivo y fallos por daño a 0 PG. */
@@ -4879,21 +4879,21 @@ Hooks.on("preUpdateActor", (actor, changes, options) => {
   if (!esPJ(actor)) return;
   const p = tomarPendiente(actor);
   if (p) options.ecos = p;
-  const nuevo = foundry.utils.getProperty(changes, "system.attributes.hp.value");
+  const nuevo = foundry.utils.getProperty(changes, sistema.RUTAS.pg);
   if (nuevo === undefined) return;
-  const hp = actor.system.attributes.hp;
+  const hp = sistema.pg(actor);
 
   // Daño escrito a mano en la hoja (opcional)
-  if (!p?.golpe && !options.isRest && !options.ecosInterno && (hp.value > 0) && (nuevo < hp.value)
+  if (!p?.golpe && !options.isRest && !options.ecosInterno && (hp.valor > 0) && (nuevo < hp.valor)
     && game.settings.get(MOD, "danoManual")) {
-    const alHP = hp.value - Math.max(0, nuevo);
-    options.ecos = { ...(options.ecos ?? {}), golpe: { amount: alHP, alHP, hpAntes: hp.value, brutal: (alHP * 2) >= hp.effectiveMax, manual: true } };
+    const alHP = hp.valor - Math.max(0, nuevo);
+    options.ecos = { ...(options.ecos ?? {}), golpe: { amount: alHP, alHP, hpAntes: hp.valor, brutal: (alHP * 2) >= hp.maxEfectivo, manual: true } };
   }
 
   if (!actor.statuses.has("malherido")) return;
   const tope = topeMalherido(actor);
-  if ((nuevo > hp.value) && (nuevo > tope)) {
-    foundry.utils.setProperty(changes, "system.attributes.hp.value", Math.max(hp.value, tope));
+  if ((nuevo > hp.valor) && (nuevo > tope)) {
+    foundry.utils.setProperty(changes, sistema.RUTAS.pg, Math.max(hp.valor, tope));
     if (!options.ecosInterno) options.ecosTope = { pedido: nuevo, tope };
   }
 });
@@ -4915,7 +4915,7 @@ for (const h of ["createActiveEffect", "updateActiveEffect", "deleteActiveEffect
       return;
     }
     if (effect.statuses.has("stable")) {
-      if ((h === "createActiveEffect") && (actor.system.attributes.hp.value <= 0) && !actor.getFlag(MOD, "muerto")) {
+      if ((h === "createActiveEffect") && (sistema.pg(actor).valor <= 0) && !actor.getFlag(MOD, "muerto")) {
         programarDespertar(actor).catch(err => console.error(`${MOD} |`, err));
       } else if ((h === "deleteActiveEffect") && actor.getFlag(MOD, "despertar")) {
         actor.unsetFlag(MOD, "despertar");
@@ -4973,7 +4973,7 @@ Hooks.on("combatTurnChange", (combat, prior, current) => {
   if (!avanza) return;
   const c =(current?.combatantId ? combat.combatants.get(current.combatantId) : null) ?? combat.combatant;
   const actor = c?.actor;
-  if (!esPJ(actor) || (actor.system.attributes.hp.value > 0)) return;
+  if (!esPJ(actor) || (sistema.pg(actor).valor > 0)) return;
   if (actor.getFlag(MOD, "muerto") || actor.statuses.has("dead") || actor.statuses.has("stable")) return;
   actor.rollDeathSave({}, { configure: false }).catch(err => console.error(`${MOD} |`, err));
 });
@@ -5247,7 +5247,7 @@ Hooks.on("updateWorldTime", worldTime => {
     const d = a.getFlag(MOD, "despertar");
     if (!d) continue;
     actualizarEstado();
-    if ((a.system.attributes.hp.value > 0) || !a.statuses.has("stable")) a.unsetFlag(MOD, "despertar");
+    if ((sistema.pg(a).valor > 0) || !sistema.tieneEstado(a, "stable")) a.unsetFlag(MOD, "despertar");
     else if (worldTime >= d.en) despertar(a).catch(err => console.error(`${MOD} |`, err));
   }
 });
@@ -5267,7 +5267,7 @@ Hooks.on("dnd5e.postUseActivity", (activity, config, resultados) => {
     if (!objetivos.length && ["manos", "keoghtom"].includes(tipo) && activity.actor) objetivos = [activity.actor];
     for (const a of objetivos) {
       if (!esPJ(a)) continue;
-      const sirve = (tipo === "piedad") ? (a.system.attributes.hp.value <= 0) : ((nivelHNT(a) > 0) || malSinTratar(a));
+      const sirve = (tipo === "piedad") ? (sistema.pg(a).valor <= 0) : ((nivelHNT(a) > 0) || malSinTratar(a));
       if (sirve) alDM({ accion: "magiaCura", actorId: a.id, tipo, de: activity.actor?.name ?? "Alguien", objeto: item.name });
     }
   } catch (err) {
@@ -6546,7 +6546,7 @@ async function vorrhCae(actor) {
     return;
   }
   await actor.toggleStatusEffect("ecosRecomponiendo", { active: true }).catch(() => null);
-  const mitad = Math.ceil((actor.system.attributes.hp.max ?? 1) / 2);
+  const mitad = Math.ceil(((sistema.pg(actor).max || 1)) / 2);
   await susurrarDM(`Eco del Vorrh · ${actor.name}`, [
     `<b>${actor.name}</b> cae, pero no muere: el Vorrh recuerda su forma. Se levanta al inicio de su próximo turno con ${mitad} PG (vuelta ${usadas + 1} de ${max}).`,
     `<b>Solo muere</b> ${v.condicion}, o si lo hiere cristal mudo.`,
@@ -6569,14 +6569,14 @@ async function vorrhLevanta(actor) {
   await quitarMuerte(actor);
   const doc = docEstadoVorrh(actor);
   await doc.setFlag(MOD, "vueltasVorrh", vueltasVorrh(actor) + 1);
-  await actor.update({ "system.attributes.hp.value": Math.ceil((actor.system.attributes.hp.max ?? 1) / 2) }, { ecosVorrh: true });
+  await actor.update(sistema.datosPg(Math.ceil(((sistema.pg(actor).max || 1)) / 2)), { ecosVorrh: true });
   await publicar(null, "🌑 Se vuelve a levantar", [`<b>${actor.name}</b> se levanta otra vez. Algo en el suelo late.`]);
 }
 
 async function vorrhMuere(actor, motivo) {
   await actor.toggleStatusEffect("ecosRecomponiendo", { active: false }).catch(() => null);
   await docEstadoVorrh(actor).setFlag(MOD, "vorrhMuerto", true);
-  if ((actor.system.attributes.hp.value ?? 0) > 0) await actor.update({ "system.attributes.hp.value": 0 }, { ecosVorrh: true });
+  if ((sistema.pg(actor).valor ?? 0) > 0) await actor.update(sistema.datosPg(0), { ecosVorrh: true });
   await marcarMuerte(actor);
   await publicar(null, "🌑 Ya no se levanta", [`<b>${actor.name}</b> no se vuelve a levantar.${motivo ? ` ${motivo}` : ""}`]);
 }
@@ -6593,7 +6593,7 @@ async function accionVorrh(accion, messageId) {
   if (accion === "vorrhAnular") {
     await marcarUsado(messageId, "Lo anuló el cristal mudo.");
     await actor.toggleStatusEffect("ecosAnulado", { active: true }).catch(() => null);
-    if ((actor.system.attributes.hp.value ?? 0) <= 0) return vorrhMuere(actor, "El cristal mudo le cortó el eco.");
+    if ((sistema.pg(actor).valor ?? 0) <= 0) return vorrhMuere(actor, "El cristal mudo le cortó el eco.");
     return null;
   }
   if (accion === "vorrhLevanta") {
@@ -6605,7 +6605,7 @@ async function accionVorrh(accion, messageId) {
 
 Hooks.on("updateActor", (actor, changes, options) => {
   if (!soyGM() || options?.ecosVorrh || esPJ(actor) || !actor.getFlag(MOD, "vorrh")) return;
-  const hp = foundry.utils.getProperty(changes, "system.attributes.hp.value");
+  const hp = foundry.utils.getProperty(changes, sistema.RUTAS.pg);
   if ((hp === undefined) || (hp > 0)) return;
   vorrhCae(actor).catch(err => console.error(`${MOD} | Eco del Vorrh`, err));
 });
@@ -6702,12 +6702,12 @@ async function avisoEtapa(actor, hp) {
 
 Hooks.on("updateActor", (actor, changes) => {
   if (!soyGM() || esPJ(actor)) return;
-  const hp = foundry.utils.getProperty(changes, "system.attributes.hp.value");
+  const hp = foundry.utils.getProperty(changes, sistema.RUTAS.pg);
   if (hp === undefined) return;
   const g = actor.getFlag(MOD, "golpes");
   const jefe = actor.getFlag(MOD, "jefe");
   if (!g && !jefe) return;
-  const max = Number(actor.system.attributes.hp.max ?? 0) || 1;
+  const max = Number((sistema.pg(actor).max || 0)) || 1;
   (async () => {
     if (jefe) return avisoEtapa(actor, hp);
     const doc = estadoGolpes(actor);
@@ -6728,13 +6728,13 @@ Hooks.on("updateCombat", (combat, changes) => {
     for (const c of combat.combatants) {
       const actor = c.actor;
       const jefe = actor?.getFlag?.(MOD, "jefe");
-      if (!jefe || c.defeated || ((actor.system.attributes.hp.value ?? 0) <= 0)) continue;
+      if (!jefe || c.defeated || ((sistema.pg(actor).valor ?? 0) <= 0)) continue;
       const k = `${combat.id}:${ronda}:${actor.uuid}`;
       if (DOMINIO_VISTO.has(k)) continue;
       DOMINIO_VISTO.add(k);
       const r = jefe.ronda ?? [];
       const lineas = [];
-      if (ronda === 1) lineas.push(...textoEtapa(jefe, etapaJefe(jefe, actor.system.attributes.hp.value ?? 0)));
+      if (ronda === 1) lineas.push(...textoEtapa(jefe, etapaJefe(jefe, sistema.pg(actor).valor ?? 0)));
       if (r.length) lineas.push(`<b>Dominio del campo · ronda ${ronda}</b> (iniciativa 20): ${r[Math.min(ronda, r.length) - 1]}`);
       if (lineas.length) await susurrarDM(`${actor.name} · ronda ${ronda}`, lineas);
     }
@@ -6769,7 +6769,7 @@ async function preguntarXP(combat) {
     const vorrh = a.getFlag(MOD, "vorrh");
     const doc = a.isToken ? a.token : a;
     const muertoVorrh = !!doc?.getFlag(MOD, "vorrhMuerto");
-    const cayo = !!c.defeated || ((a.system.attributes?.hp?.value ?? 1) <= 0) || !!a.statuses?.has("dead");
+    const cayo = !!c.defeated || ((sistema.pg(a).hay && sistema.pg(a).valor <= 0)) || !!a.statuses?.has("dead");
     const derrotado = cayo && (!vorrh || muertoVorrh);
     const estado = derrotado ? "derrotado" : (vorrh && cayo ? "cayó, pero el Vorrh lo levanta: cuenta como huido" : "huyó, se rindió o quedó en pie");
     enemigos.push({ nombre: tok?.name ?? a.name, xp: xpDeActor(a), derrotado, estado, tokenUuid: tok?.uuid ?? null });
@@ -7231,7 +7231,7 @@ function reglaDescanso(actor) {
 
 const nivelDG = actor => ((actor?.type === "npc")
   ? Math.max(1, Number(actor.system.attributes?.hd?.max) || 1)
-  : Math.max(1, Number(actor?.system?.details?.level) || 1));
+  : Math.max(1, sistema.nivel(actor)));
 const dgUsados = actor => Number(actor?.getFlag?.(MOD, "dgUso")) || 0;
 const dgDisponibles = actor => Math.max(0, Number(actor?.system?.attributes?.hd?.value) || 0);
 
@@ -8532,7 +8532,7 @@ async function diaSiguiente({ confirmar = true } = {}) {
     const p = pendientes.find(x => x.actor === a);
     await a.setFlag(MOD, "vigilia", { dias: p ? p.dias : 0, durmio: false });
     if (!p) continue;
-    const exh = a.system.attributes.exhaustion ?? 0;
+    const exh = sistema.agotamiento(a);
     await publicar(a, "🌙 Una noche sin dormir", [
       `<b>${escH(a.name)}</b> pasó ${p.dias === 1 ? "la noche" : `${p.dias} noches seguidas`} sin un Descanso Largo. El cuerpo pasa factura.`,
       `Salvación de <b>Constitución CD ${p.cd}</b>: si falla, <b>+1 Agotamiento</b> (ahora ${exh}). La CD sube 5 por cada noche seguida y vuelve a 10 al dormir.`
@@ -8553,7 +8553,7 @@ async function tirarVigilia(message, b, actorId) {
   if (!actor?.isOwner || !v) return;
   b.disabled = true;
   try {
-    const rolls = await actor.rollSavingThrow({ ability: "con", target: v.cd });
+    const rolls = await sistema.tirarSalvacion(actor, "con", { target: v.cd }, {}, {});
     const r = Array.isArray(rolls) ? rolls[0] : rolls;
     if (!r) return;
     await alDM({ accion: "vigilia", actorId, messageId: message.id, total: r.total, userId: game.user.id });
@@ -8571,9 +8571,9 @@ async function resolverVigilia(actor, d) {
   let texto;
   if (Number(d.total) >= v.cd) texto = `✔ ${actor.name} aguanta (${d.total} contra CD ${v.cd}).`;
   else {
-    const exh = actor.system.attributes.exhaustion ?? 0;
-    const nuevo = Math.min(exh + 1, CONFIG.DND5E.conditionTypes.exhaustion.levels);
-    await actor.update({ "system.attributes.exhaustion": nuevo });
+    const exh = sistema.agotamiento(actor);
+    const nuevo = Math.min(exh + 1, sistema.agotamientoMax());
+    await actor.update(sistema.datosAgotamiento(nuevo));
     texto = `✘ ${actor.name} no aguanta (${d.total} contra CD ${v.cd}): Agotamiento ${exh} → <b>${nuevo}</b>.`;
   }
   await msg.update({ [`flags.${MOD}.usado`]: texto });

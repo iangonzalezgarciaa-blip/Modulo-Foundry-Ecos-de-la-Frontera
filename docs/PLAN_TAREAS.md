@@ -258,7 +258,7 @@
 
 - [x] **5.2b · Compatibilidad PF2e: diseño del adaptador** (M · Dep.: 5.2a). Interfaz común para tiradas, recursos, descansos, actividades, estados y plantillas. **Pausa:** el autor aprueba el diseño antes de seguir. *Diseño escrito el 4-nov-2026 (docs/PF2E_ADAPTADOR.md); el autor aprobó las propuestas A a H ese mismo día, con matices en E, F y G.*
 
-- [ ] **5.2c · Compatibilidad PF2e: refactor del lado dnd5e** (empezada el 4-nov-2026 en 3.19: capa scripts/sistema/ y mercader.js y combate-tactico.js ya pasan por ella; en 3.20, verbe.js y las heridas y los descansos de main.js; avance en docs/PF2E_ADAPTADOR.md) (M, repetir por archivo · Dep.: 5.2b). Mover lo específico de dnd5e detrás del adaptador sin cambiar el comportamiento; las pruebas deben seguir en verde.
+- [ ] **5.2c · Compatibilidad PF2e: refactor del lado dnd5e** (empezada el 4-nov-2026 en 3.19: capa scripts/sistema/ y mercader.js y combate-tactico.js ya pasan por ella; en 3.20, verbe.js y las heridas y los descansos de main.js; en 3.21, el resto de main.js; avance en docs/PF2E_ADAPTADOR.md) (M, repetir por archivo · Dep.: 5.2b). Mover lo específico de dnd5e detrás del adaptador sin cambiar el comportamiento; las pruebas deben seguir en verde.
 
 - [ ] **5.2d · Compatibilidad PF2e: adaptador PF2e** (M, repetir por área · Dep.: 5.2c). Reserva de Verbe como recurso propio, técnicas como acciones o hechizos de PF2e, estados y tiradas.
 
@@ -314,3 +314,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 4-nov-2026 | 4.2e | Claude | Biblioteca de conjuros de PF2e por nivel, escuela y tipo. Página «Monedas Antiguas» del mundo al día; borrador de pueblos en PF2e (Mundo 4 · 7). Release v3.18.0 | 3.18.0 |
 | 4-nov-2026 | 5.2c (inicio) | Claude | Capa del sistema (dnd5e y lecturas de PF2e) con pruebas; mercader y combate táctico pasan por ella sin cambiar nada en la mesa. Release v3.19.0 | 3.19.0 |
 | 4-nov-2026 | 5.2c (segundo paso) | Claude | verbe.js y las heridas y los descansos de main.js pasan por la capa; corregido el botón «Cambiar Monedas» del panel del Verbe (1 Moneda = 1 Trazo). Release v3.20.0 | 3.20.0 |
+| 5-nov-2026 | 5.2c (tercer paso) | Claude | El resto de main.js pasa por la capa (Estabilizar, Eco, Estado de los PJ, Oficios, Monedas en las tiradas, Vorrh, Golpes que cuentan, vigilia, tope de Malherido). Release v3.21.0 | 3.21.0 |
