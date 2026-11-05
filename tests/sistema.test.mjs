@@ -9,7 +9,9 @@ const pj5 = { system: { attributes: { hp: { value: 12, max: 30, temp: 3 }, ac: {
 const pnj5 = { system: { attributes: { hp: { value: 7, max: 7 }, movement: { walk: 30, units: 'ft' } }, details: { cr: 0.5 } } };
 
 test('5.2c · dnd5e: la capa lee la ficha igual que antes', () => {
-  assert.deepEqual(D.pg(pj5), { valor: 12, max: 30, temp: 3 });
+  assert.deepEqual(D.pg(pj5), { valor: 12, max: 30, maxEfectivo: 30, temp: 3, hay: true });
+  assert.equal(D.pg({ system: { attributes: { hp: { value: 5, max: 20, effectiveMax: 15 } } } }).maxEfectivo, 15);
+  assert.equal(D.pg({ system: { attributes: {} } }).hay, false);
   assert.equal(D.nivel(pj5), 4); assert.equal(D.nivel(pnj5), 1); assert.equal(D.nivel({ system: { details: { cr: 3 } } }), 3);
   assert.equal(D.ca(pj5), 15);
   assert.deepEqual(D.velocidad(pj5), { pie: 9, pies: false }); assert.deepEqual(D.velocidad(pnj5), { pie: 30, pies: true });
@@ -38,6 +40,29 @@ test('la capa elige el sistema del mundo y, sin Foundry, usa dnd5e', () => {
   const antes = globalThis.game; try { globalThis.game = { ...(antes ?? {}), system: { id: 'pf2e' } }; assert.equal(sistema.id, 'pf2e'); }
   finally { globalThis.game = antes; }
   assert.equal(sistema.moneda(pj5), 5);
+});
+
+test('5.2c · verbe.js: PG, Control, competencia, nivel y rutas pasan por la capa igual que antes', () => {
+  assert.deepEqual(D.datosPg(-3), { 'system.attributes.hp.value': 0 });
+  assert.deepEqual(D.datosPg(8, { max: 8, temp: 0 }), { 'system.attributes.hp.value': 8, 'system.attributes.hp.max': 8, 'system.attributes.hp.temp': 0 });
+  assert.deepEqual(D.datosCaFija(14), { 'system.attributes.ac.calc': 'flat', 'system.attributes.ac.flat': 14 });
+  assert.deepEqual(D.datosControl({ rango: 3 }), { 'system.skills.cvb.value': 2 });
+  assert.deepEqual(D.datosControl({ rango: 0, bono: 0 }), { 'system.skills.cvb.value': 0, 'system.skills.cvb.bonuses.check': '' });
+  assert.deepEqual(D.datosControl({ bono: 3 }), { 'system.skills.cvb.bonuses.check': '+ 3' });
+  assert.equal(D.control({ system: { skills: { cvb: { value: 1 } } } }), 1); assert.equal(D.control({}), 0);
+  assert.equal(D.competencia({ system: { attributes: { prof: 3 } } }), 3); assert.equal(D.competencia({}), 0);
+  assert.equal(D.vd(pnj5), 0.5); assert.equal(D.vd({}), 0);
+  assert.equal(D.mod({ system: { abilities: { wis: { mod: 2 } } } }, 'wis'), 2);
+  assert.equal(D.caracteristicaConjuros({ system: { attributes: { spellcasting: 'int' } } }), 'int'); assert.equal(D.caracteristicaConjuros({}), null);
+  assert.deepEqual(D.RUTAS, { pg: 'system.attributes.hp.value', nivel: 'system.details.level', moneda: 'system.currency.soul', caracteristicas: 'system.abilities', agotamiento: 'system.attributes.exhaustion' });
+  assert.equal(D.agotamientoMax(), 6); assert.equal(D.totalHabilidad({ system: { skills: { med: { total: 5, mod: 2 } } } }, 'med'), 5); assert.equal(D.totalHabilidad({}, 'med'), 0);
+  assert.equal(P.RUTAS.agotamiento, null); assert.equal(P.agotamientoMax(), 6); assert.deepEqual(Object.keys(D.RUTAS).sort(), Object.keys(P.RUTAS).sort());
+  // PF2e: lo mismo con sus rutas; el Control del Verbe (Saber del Verbe) llega con 5.2d.
+  assert.equal(P.RUTAS.moneda, 'system.resources.heroPoints.value'); assert.equal(P.competencia({}), 0);
+  assert.equal(P.caracteristicaConjuros({ items: [{ type: 'spellcastingEntry', system: { ability: { value: 'cha' } } }] }), 'cha');
+  assert.throws(() => P.control({}), /5\.2d/); assert.throws(() => P.curar({}, 3), /5\.2d/);
+  // Las dos capas exponen las mismas funciones, para que ningún archivo dependa de una sola.
+  assert.deepEqual(Object.keys(D).sort(), Object.keys(P).sort());
 });
 
 test('5.2c · salvaciones y CD de característica en los dos sistemas', () => {

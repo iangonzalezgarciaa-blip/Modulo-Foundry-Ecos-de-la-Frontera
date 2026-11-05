@@ -39,6 +39,7 @@ import { crearCola } from "./verbe-core.js";
 import { recuperacionDGLarga, presupuestoCorto, ajustarRecuperacionDG } from "./rest-core.js";
 import { tipoCuracionVerbe, tratarHeridaConPulso } from "./verbe-medicina.js";
 import { infoTirada, opcionesModo, modoDeMensaje, modoActual, modoNormal, modosNuevos, objetivosMensaje, cambio, quitar, puenteRitmoViaje } from "./compat.js";
+import { sistema } from "./sistema/index.js";
 
 const MOD = "ecos-frontera";
 const RUTA = `modules/${MOD}`;
@@ -140,7 +141,7 @@ const topeMalherido = actor => Math.floor(actor.system.attributes.hp.effectiveMa
 const statusId = id => CONFIG.statusEffects.find(s => s.id === id)?._id;
 const combatantesDe = actor => game.combats.contents.flatMap(c => c.combatants.filter(x => x.actor === actor || x.actorId === actor.id));
 /** Monedas Antiguas del actor: una moneda más de la hoja (system.currency.soul, por compatibilidad con la v1). */
-const monedas = actor => Number(actor?.system?.currency?.soul ?? 0);
+const monedas = actor => sistema.moneda(actor);
 const plural = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
 
 /* Datos que viajan del cliente que aplica el daño o tira la salvación a la actualización del actor. */
@@ -385,10 +386,10 @@ async function revisarCaracteristicas(actor) {
 async function procesarActualizacion(actor, changes, options) {
   const ecos = options.ecos ?? {};
   const prev = options.dnd5e?.hp;
-  const hp = actor.system.attributes.hp;
-  const hpCambio = !!prev && foundry.utils.hasProperty(changes, "system.attributes.hp.value");
-  const cae = hpCambio && (prev.value > 0) && (hp.value <= 0);
-  const vuelve = hpCambio && (prev.value <= 0) && (hp.value > 0);
+  const hp = sistema.pg(actor);
+  const hpCambio = !!prev && foundry.utils.hasProperty(changes, sistema.RUTAS.pg);
+  const cae = hpCambio && (prev.value > 0) && (hp.valor <= 0);
+  const vuelve = hpCambio && (prev.value <= 0) && (hp.valor > 0);
   const golpe = ecos.golpe;
   const salv = ecos.salvacion;
   const L = [];
@@ -397,7 +398,7 @@ async function procesarActualizacion(actor, changes, options) {
   let datosTarjeta = null;
 
   // Daño masivo
-  if (golpe?.masivo && (hp.value <= 0)) {
+  if (golpe?.masivo && (hp.valor <= 0)) {
     if (esResistente(actor)) {
       titulo = "💥 Un golpe que debía matar";
       await laSangreSostiene(actor, golpe, L);
@@ -421,14 +422,14 @@ async function procesarActualizacion(actor, changes, options) {
       ], { extra: cajaBotones([boton("eco", "Disparar Eco", "fa-hourglass-half", { soloDM: true })]), flags: { [MOD]: { ref: { actorId: actor.id } } } });
     }
   }
-  if ((cae || golpe?.masivo) && (hp.value <= 0)) {
+  if ((cae || golpe?.masivo) && (hp.valor <= 0)) {
     await ponerAcechado(actor);
     G.push("acechado");
     if (golpe?.masivo) G.push("secuela");
   }
 
   // Golpe brutal sin caer
-  if (golpe?.brutal && !cae && (hp.value > 0)) {
+  if (golpe?.brutal && !cae && (hp.valor > 0)) {
     titulo ??= "🩸 Golpe brutal";
     const yaEstaba = !!efectoMalherido(actor);
     await aplicarMalherido(actor);
@@ -444,7 +445,7 @@ async function procesarActualizacion(actor, changes, options) {
     L.push(golpe.tresFallos
       ? "Recibe daño estando a 0 PG: <b>tercer fallo</b>."
       : `Recibe daño estando a 0 PG: <b>+1 fallo</b> (${golpe.fallos}/3).`);
-    if (actor.statuses.has("stable")) {
+    if (sistema.tieneEstado(actor, "stable")) {
       await quitarStatus(actor, "stable");
       L.push("Deja de estar Estable: vuelve a tirar salvaciones de muerte.");
     }
@@ -497,17 +498,17 @@ async function procesarActualizacion(actor, changes, options) {
     G.push("malherido");
   }
 
-  const exh = foundry.utils.getProperty(changes, "system.attributes.exhaustion");
-  const porAgotamiento = Number.isFinite(exh) && (exh >= CONFIG.DND5E.conditionTypes.exhaustion.levels);
+  const exh = sistema.RUTAS.agotamiento ? foundry.utils.getProperty(changes, sistema.RUTAS.agotamiento) : undefined;
+  const porAgotamiento = Number.isFinite(exh) && (exh >= sistema.agotamientoMax());
   const porCaracteristica = ["str", "dex", "con"].some(k => (actor.system.abilities?.[k]?.value ?? 1) <= 0);
 
   if (L.length) {
     const opciones = {};
     const sigueVivo = !actor.getFlag(MOD, "muerto") && !porAgotamiento && !porCaracteristica;
-    const aCero = actor.system.attributes.hp.value <= 0;
+    const aCero = sistema.pg(actor).valor <= 0;
     const lista = [];
     if (datosTarjeta && sigueVivo && aCero) lista.push(...botonesRepetir(actor, datosTarjeta.usados));
-    if (sigueVivo && aCero && !actor.statuses.has("stable")) lista.push(boton("estabilizar", "Estabilizar", "fa-kit-medical"));
+    if (sigueVivo && aCero && !sistema.tieneEstado(actor, "stable")) lista.push(boton("estabilizar", "Estabilizar", "fa-kit-medical"));
     opciones.flags = { [MOD]: { ref: { actorId: actor.id }, ...(datosTarjeta ? { tarjeta: datosTarjeta } : {}) } };
     opciones.extra = (sigueVivo ? guia(actor, G) : "") + cajaBotones(lista);
     await publicar(actor, titulo, L, opciones);
@@ -529,7 +530,7 @@ async function laSangreSostiene(actor, golpe, L) {
   L.push(EXPLICA_ACECHADO);
 
   const notas = [
-    `${actor.name} sobrevivió a daño masivo (${sobra} de sobra contra ${actor.system.attributes.hp.effectiveMax} PG máximos). La Sangre lo sostuvo. Es la vez número ${veces}.`,
+    `${actor.name} sobrevivió a daño masivo (${sobra} de sobra contra ${sistema.pg(actor).maxEfectivo} PG máximos). La Sangre lo sostuvo. Es la vez número ${veces}.`,
     `Reloj de la Barrera +1 → <b>${reloj}/10</b>. Esta noche los instrumentos de Miria se disparan y ${actor.name} sueña con geometría y escaleras que bajan.`,
     "Los testigos lo vieron: alguien va a decir \"deberías estar muerto\"."
   ];
@@ -547,19 +548,19 @@ async function precioDeVolver(actor, L) {
   await quitarStatus(actor, "stable");
   if (actor.getFlag(MOD, "despertar")) await actor.unsetFlag(MOD, "despertar");
   efecto(actor, "levantarse");
-  const exh = actor.system.attributes.exhaustion ?? 0;
-  const nuevoExh = Math.min(exh + 1, CONFIG.DND5E.conditionTypes.exhaustion.levels);
+  const exh = sistema.agotamiento(actor);
+  const nuevoExh = Math.min(exh + 1, sistema.agotamientoMax());
   await aplicarMalherido(actor);
   const n = Math.min(nivelHNT(actor) + 1, MAX_HNT);
   await setHNT(actor, n, diaHNT(actor));
 
-  const hp = actor.system.attributes.hp;
+  const hp = sistema.pg(actor);
   const tope = topeMalherido(actor);
-  if (hp.value > tope) await actor.update({ "system.attributes.hp.value": tope }, { ecosInterno: true });
+  if (hp.valor > tope) await actor.update(sistema.datosPg(tope), { ecosInterno: true });
 
-  L.push(`<b>${actor.name}</b> vuelve en sí con ${actor.system.attributes.hp.value} PG${actor.statuses.has("prone") ? " (sigue Derribado)" : ""}.`);
+  L.push(`<b>${actor.name}</b> vuelve en sí con ${sistema.pg(actor).valor} PG${sistema.tieneEstado(actor, "prone") ? " (sigue Derribado)" : ""}.`);
   L.push(`El precio de volver: <b>+1 Agotamiento</b> (${exh} → ${nuevoExh}), <b>Herida No Tratada ${n}</b> y <b>Malherido</b> (0/${DESCANSOS_MALHERIDO}).`);
-  await actor.update({ "system.attributes.exhaustion": nuevoExh });
+  await actor.update(sistema.datosAgotamiento(nuevoExh));
 }
 
 /* ------------------------------------------------------------------ */
@@ -568,7 +569,7 @@ async function precioDeVolver(actor, L) {
 
 function botonesRepetir(actor, usados = []) {
   const b = [];
-  const exh = actor.system.attributes.exhaustion ?? 0;
+  const exh = sistema.agotamiento(actor);
   if (!usados.includes("esfuerzo") && (exh < 5)) b.push(boton("repetir", "Esfuerzo Excesivo (+1 Agot.)", "fa-fire", { tipo: "esfuerzo" }));
   // Una Moneda Antigua repite la salvación (con un 1 natural también sale el aviso Sí / No).
   if (!usados.includes("moneda") && !usados.includes("soul") && (monedas(actor) > 0)) b.push(boton("repetir", `Moneda Antigua (tienes ${monedas(actor)})`, "fa-coins", { tipo: "moneda" }));
@@ -589,20 +590,20 @@ async function repetirSalvacion(messageId, tipo, userId) {
     whisper: [...new Set([userId, ...idsGM()].filter(Boolean))]
   });
   const d = actor.system.attributes.death;
-  if (actor.getFlag(MOD, "muerto") || (actor.system.attributes.hp.value > 0)) return avisar(`${actor.name} ya no está a 0 PG.`);
+  if (actor.getFlag(MOD, "muerto") || (sistema.pg(actor).valor > 0)) return avisar(`${actor.name} ya no está a 0 PG.`);
   if (((d.success ?? 0) !== t.despues.s) || ((d.failure ?? 0) !== t.despues.f)) {
     return avisar("Ya hubo otra salvación después de esa: solo se puede repetir la última.");
   }
 
   if (tipo === "esfuerzo") {
-    const exh = actor.system.attributes.exhaustion ?? 0;
+    const exh = sistema.agotamiento(actor);
     if (exh >= 5) return avisar("Con Agotamiento 5 no se puede usar el Esfuerzo Excesivo.");
-    await actor.update({ "system.attributes.exhaustion": exh + 1 });
+    await actor.update(sistema.datosAgotamiento(exh + 1));
   } else {
     // "soul" es el nombre viejo (v1.9) de la misma moneda.
     tipo = "moneda";
     if (monedas(actor) < 1) return avisar(`${actor.name} no tiene Monedas Antiguas.`);
-    await actor.update({ "system.currency.soul": monedas(actor) - 1 });
+    await actor.update(sistema.datosMoneda(monedas(actor) - 1));
     await visionSoul(actor);
   }
 
@@ -637,8 +638,8 @@ function leerFormulario(boton) {
 
 async function dialogoDescansoLargo(actor, config) {
   const { DialogV2 } = foundry.applications.api;
-  const hp = actor.system.attributes.hp;
-  const exh = actor.system.attributes.exhaustion ?? 0;
+  const hp = sistema.pg(actor);
+  const exh = sistema.agotamiento(actor);
   const mal = efectoMalherido(actor);
   const nh = nivelHNT(actor);
   const sec = totalSecuela(actor);
@@ -662,8 +663,8 @@ async function dialogoDescansoLargo(actor, config) {
       : 'No tienes Dados de Golpe gastados.<input type="hidden" name="dg" value="0">');
     if (reglaDG) {
       const t = topeDG(actor);
-      fila("Puntos de Golpe", `<b>No vuelven solos.</b> ${cfgDesc().gastarLargo ? "Al terminar se abre una ventana para gastar" : "Puedes gastar"} ${Number.isFinite(t) ? `hasta <b>${t}</b>` : "los"} Dados de Golpe y curarte con ellos${mal ? ` (Malherido: no subes de ${topeMalherido(actor)})` : ""}. Ahora: ${hp.value} / ${hp.effectiveMax}.`);
-    } else fila("Puntos de Golpe", mal ? `Hasta <b>${topeMalherido(actor)}</b> (Malherido${malTratado(actor) ? " tratado: tope del 75 %" : ": tope del 50 %; tratado, 75 %"})` : `Todos (${hp.effectiveMax})`);
+      fila("Puntos de Golpe", `<b>No vuelven solos.</b> ${cfgDesc().gastarLargo ? "Al terminar se abre una ventana para gastar" : "Puedes gastar"} ${Number.isFinite(t) ? `hasta <b>${t}</b>` : "los"} Dados de Golpe y curarte con ellos${mal ? ` (Malherido: no subes de ${topeMalherido(actor)})` : ""}. Ahora: ${hp.valor} / ${hp.maxEfectivo}.`);
+    } else fila("Puntos de Golpe", mal ? `Hasta <b>${topeMalherido(actor)}</b> (Malherido${malTratado(actor) ? " tratado: tope del 75 %" : ": tope del 50 %; tratado, 75 %"})` : `Todos (${hp.maxEfectivo})`);
     fila("Conjuros y rasgos", "Se recuperan");
     fila("Agotamiento", nh ? `No baja: tienes Herida No Tratada ${nh}` : (exh ? `${exh} → ${exh - 1}` : "—"));
     if (mal) {
@@ -746,16 +747,16 @@ async function dialogoDescansoLargo(actor, config) {
 }
 
 async function salvacionIntemperie(actor, dc) {
-  const roll = await tiradaConSoul(actor, m => actor.rollSavingThrow({ ability: "con", target: dc }, { configure: false }, m), "salvación de Constitución a la intemperie");
+  const roll = await tiradaConSoul(actor, m => sistema.tirarSalvacion(actor, "con", { target: dc }, { configure: false }, m), "salvación de Constitución a la intemperie");
   if (!roll) return;
-  const exh = actor.system.attributes.exhaustion ?? 0;
+  const exh = sistema.agotamiento(actor);
   if (roll.total >= dc) {
     return publicar(actor, "🌲 Noche a la intemperie", [
       `Salvación de Constitución ${roll.total} contra CD ${dc}: <b>aguanta</b>. Las heridas no mejoran, pero tampoco empeoran.`
     ], { extra: guia(actor, ["intemperie", "malherido", "heridant", "agotamiento", "secuela"]) });
   }
-  const nuevo = Math.min(exh + 1, CONFIG.DND5E.conditionTypes.exhaustion.levels);
-  await actor.update({ "system.attributes.exhaustion": nuevo });
+  const nuevo = Math.min(exh + 1, sistema.agotamientoMax());
+  await actor.update(sistema.datosAgotamiento(nuevo));
   return publicar(actor, "🌲 Noche a la intemperie", [
     `Salvación de Constitución ${roll.total} contra CD ${dc}: <b>falla</b>. Las heridas empeoran: <b>+1 Agotamiento</b> (${exh} → ${nuevo}).`
   ], { extra: guia(actor, ["intemperie", "malherido", "heridant", "agotamiento", "secuela"]) });
@@ -773,8 +774,8 @@ async function despuesDescanso(actor, { cuenta }) {
         if (reglaDescanso(actor)) {
           L.push(`<b>Malherido ${n}/${DESCANSOS_MALHERIDO}</b>: termina la convalecencia. Ya puede curarse por encima del tope (con Dados de Golpe o con magia).`);
         } else {
-          await actor.update({ "system.attributes.hp.value": actor.system.attributes.hp.effectiveMax }, { ecosInterno: true });
-          L.push(`<b>Malherido ${n}/${DESCANSOS_MALHERIDO}</b>: termina la convalecencia. Recupera sus PG máximos y queda con ${actor.system.attributes.hp.value} PG.`);
+          await actor.update(sistema.datosPg(sistema.pg(actor).maxEfectivo), { ecosInterno: true });
+          L.push(`<b>Malherido ${n}/${DESCANSOS_MALHERIDO}</b>: termina la convalecencia. Recupera sus PG máximos y queda con ${sistema.pg(actor).valor} PG.`);
         }
       } else {
         await mal.update({ name: nombreMalherido(n, malTratado(actor)), [`flags.${MOD}.descansos`]: n });
@@ -789,7 +790,7 @@ async function despuesDescanso(actor, { cuenta }) {
   L.push(...await nocheHeridas(actor, { santuario: true }));
 
   const nh = nivelHNT(actor);
-  if (nh && (actor.system.attributes.exhaustion ?? 0) > 0) L.push(`El Agotamiento no baja: tiene <b>Herida No Tratada ${nh}</b>.`);
+  if (nh && (sistema.agotamiento(actor)) > 0) L.push(`El Agotamiento no baja: tiene <b>Herida No Tratada ${nh}</b>.`);
 
   const herido = L.length > 0;
   // Nuevo día de trabajo: vencen los plazos, llegan los pedidos y cuenta la noche pagada en la posada.
@@ -1046,7 +1047,7 @@ async function tratarMalherido(actor, { curar = false } = {}) {
   await mal.update({ name: nombreMalherido(d, true), [`flags.${MOD}.tratado`]: true });
   if (curar) {
     const tope = topeMalherido(actor);
-    if (actor.system.attributes.hp.value < tope) await actor.update({ "system.attributes.hp.value": tope }, { ecosInterno: true });
+    if (sistema.pg(actor).valor < tope) await actor.update(sistema.datosPg(tope), { ecosInterno: true });
   }
   return true;
 }
@@ -1112,7 +1113,7 @@ async function aplicarTratamiento(actor, d) {
       L.push(`Recupera 1 punto de Secuela: ${ABREV[k]} vuelve a ${actor.system.abilities[k].value}.`);
     }
     if (await tratarMalherido(actor, { curar: !!d.santuario })) {
-      L.push(`<b>Malherido tratado:</b> vendado y cosido, ya no sangra. Sigue Malherido, pero la curación lo sube hasta el 75 %${d.santuario ? `: queda con <b>${actor.system.attributes.hp.value} PG</b>` : ""}.`);
+      L.push(`<b>Malherido tratado:</b> vendado y cosido, ya no sangra. Sigue Malherido, pero la curación lo sube hasta el 75 %${d.santuario ? `: queda con <b>${sistema.pg(actor).valor} PG</b>` : ""}.`);
     }
     if (nivelHNT(actor) || efectoMalherido(actor)) L.push("Esta noche la herida no empeora.");
   } else if (d.fumble && nh) {
@@ -1136,12 +1137,12 @@ async function nocheHeridas(actor, { santuario, sinRegistro = "saltar" } = {}) {
   if (cura?.exito) return [`<b>Cuidados:</b> ${escH(cura.por || "alguien")} le trató la herida hoy. No empeora.`];
   if (!cura && (sinRegistro === "saltar")) return [];
   const dc = 10 + nh + (mal ? 1 : 0) - (santuario ? 2 : 0);
-  const roll = await tiradaConSoul(actor, m => actor.rollSavingThrow({ ability: "con", target: dc }, { configure: false }, m), "salvación de Constitución (herida sin tratar)");
+  const roll = await tiradaConSoul(actor, m => sistema.tirarSalvacion(actor, "con", { target: dc }, { configure: false }, m), "salvación de Constitución (herida sin tratar)");
   if (!roll) return [];
   if (roll.total >= dc) return [`<b>Herida sin tratar:</b> salvación de Constitución ${roll.total} contra CD ${dc}: <b>aguanta</b>. No mejora, pero tampoco empeora.`];
-  const exh = actor.system.attributes.exhaustion ?? 0;
-  const nuevo = Math.min(exh + 1, CONFIG.DND5E.conditionTypes.exhaustion.levels);
-  await actor.update({ "system.attributes.exhaustion": nuevo });
+  const exh = sistema.agotamiento(actor);
+  const nuevo = Math.min(exh + 1, sistema.agotamientoMax());
+  await actor.update(sistema.datosAgotamiento(nuevo));
   return [`<b>Herida sin tratar:</b> salvación de Constitución ${roll.total} contra CD ${dc}: <b>falla</b>. La herida se agrava: <b>+1 Agotamiento</b> (${exh} → ${nuevo}).`];
 }
 
@@ -1149,7 +1150,7 @@ async function nocheHeridas(actor, { santuario, sinRegistro = "saltar" } = {}) {
 async function dialogoTratamiento(actor) {
   const { DialogV2 } = foundry.applications.api;
   const dc = cdTratamiento(actor);
-  const medicina = a => a.system.skills.med.total ?? a.system.skills.med.mod ?? 0;
+  const medicina = a => sistema.totalHabilidad(a, "med");
   const candidatos = game.actors.filter(a => (a.id !== actor.id) && a.system?.skills?.med
     && (esNessa(a) || competenteMedicina(a) || (esPJ(a) && kitDeSanador(a))))
     .sort((a, b) => (Number(esNessa(b)) - Number(esNessa(a))) || (medicina(b) - medicina(a)));
@@ -1179,7 +1180,7 @@ async function dialogoTratamiento(actor) {
   if (!sanador) return;
   const kit = (!competenteMedicina(sanador) && !esNessa(sanador)) ? kitDeSanador(sanador) : null;
   if (!competenteMedicina(sanador) && !esNessa(sanador) && !kit) return ui.notifications.warn(`${sanador.name} no tiene competencia en Medicina ni kit de sanador.`);
-  const roll = await tiradaConSoul(sanador, m => sanador.rollSkill({ skill: "med", target: dc }, { configure: false }, m), "Medicina");
+  const roll = await tiradaConSoul(sanador, m => sistema.tirarHabilidad(sanador, "med", { target: dc }, { configure: false }, m), "Medicina");
   if (!roll) return;
   if (kit) await gastarUso(kit);
   return aplicarTratamiento(actor, { sanador: sanador.name, total: roll.total, cd: dc, fumble: !!roll.isFumble, kit: !!kit, santuario: enSantuario(), cobrar: !!r.cobrar && esNessa(sanador) });
@@ -1191,7 +1192,7 @@ async function dialogoCurar(sanador) {
   const comp = competenteMedicina(sanador) || esNessa(sanador);
   const kit = kitDeSanador(sanador);
   if (!comp && !kit) return ui.notifications.warn(`${sanador.name} no tiene competencia en Medicina ni un kit de sanador: no puede tratar heridas.`);
-  if ((sanador.system.attributes?.hp?.value ?? 1) <= 0) return ui.notifications.warn(`${sanador.name} está a 0 PG.`);
+  if (sistema.pg(sanador).hay && sistema.pg(sanador).valor <= 0) return ui.notifications.warn(`${sanador.name} está a 0 PG.`);
   const heridos = game.actors.filter(a => esPJ(a) && necesitaCuidados(a));
   if (!heridos.length) return ui.notifications.info("Ecos de la frontera: nadie tiene heridas que tratar.");
   const primero = heridos.find(a => !curaDeHoy(a)?.intento)?.id;
@@ -1204,7 +1205,7 @@ async function dialogoCurar(sanador) {
   const libres = heridos.filter(a => !curaDeHoy(a)?.intento);
   if (!libres.length) return ui.notifications.info("Ecos de la frontera: hoy ya se trató a todos los heridos. Vuelve a intentarlo después del próximo descanso.");
   const estados = heridos.map(a => `<p><b>${a.name}:</b> ${textoEstadoHerida(a).join(" · ")}</p>`).join("");
-  const med = sanador.system.skills?.med?.total ?? 0;
+  const med = sistema.totalHabilidad(sanador, "med");
   const apoyo = apoyoVerbeMedico(sanador);
   const content = `<div class="ecos-dialogo">
     <p><b>${sanador.name}</b> trata heridas (Medicina ${signo(med)}${comp ? "" : ", sin competencia"}${apoyo.texto ? `; Verbe médico: ${apoyo.texto}` : ""}). ${enSantuario() ? "🏠 En el Santuario." : "🌲 Fuera del Santuario: el tratamiento cuenta igual."}</p>
@@ -1231,7 +1232,7 @@ async function dialogoCurar(sanador) {
   const dc = cdTratamiento(paciente);
   const extra = apoyo.bono ? { rolls: [{ parts: [String(apoyo.bono)] }] } : {};
   const ventaja = apoyo.ventaja && !solo ? { advantage: true } : (solo && !apoyo.ventaja ? { disadvantage: true } : {});
-  const roll = await tiradaConSoul(sanador, m => sanador.rollSkill({ skill: "med", target: dc, ...ventaja, ...extra }, { configure: false }, m), "Medicina");
+  const roll = await tiradaConSoul(sanador, m => sistema.tirarHabilidad(sanador, "med", { target: dc, ...ventaja, ...extra }, { configure: false }, m), "Medicina");
   if (!roll) return;
   if (usarKit) await gastarUso(kit);
   return alDM({ accion: "tratamiento", actorId: paciente.id, sanador: sanador.name, total: roll.total, cd: dc, fumble: !!roll.isFumble,
@@ -7322,7 +7323,7 @@ Hooks.on("dnd5e.preLongRest", (actor, config) => {
 /** La ventana de antes de descansar: cuántos Dados de Golpe recupera y cuántos podrá gastar después. */
 async function dialogoDescansoDG(actor, tipo, config = {}) {
   const largo = tipo === "long";
-  const hp = actor.system.attributes.hp;
+  const hp = sistema.pg(actor);
   const hd = actor.system.attributes.hd;
   const total = Number(hd?.max) || 0;
   const disp = dgDisponibles(actor);
@@ -7345,7 +7346,7 @@ async function dialogoDescansoDG(actor, tipo, config = {}) {
   const content = `<div class="ecos-dialogo">
     <p><b>Descansar no devuelve PG:</b> se recuperan gastando Dados de Golpe (y con magia, pociones o técnicas que curan).</p><p class="ecos-nota">${largo ? "El Descanso Largo devuelve Dados de Golpe; después puedes gastarlos para curarte." : (limite ? "Todos los cortos juntos reponen como máximo la mitad de los DG de un largo, redondeada hacia abajo; se renueva al completar un largo." : "El Descanso Corto no devuelve Dados de Golpe: sirve para gastar los que te quedan.")}</p>
     <table class="ecos-tabla">
-      <tr><th>Puntos de Golpe</th><td><b>${hp.value}</b> / ${hp.effectiveMax}</td></tr>
+      <tr><th>Puntos de Golpe</th><td><b>${hp.valor}</b> / ${hp.maxEfectivo}</td></tr>
       <tr><th>Dados de Golpe</th><td>${disp} de ${total} disponibles</td></tr>
       <tr><th>Recuperas</th><td>${filaRec}</td></tr>
       <tr><th>Después</th><td>${despues}</td></tr>
@@ -7389,7 +7390,7 @@ Hooks.on("dnd5e.restCompleted", (actor, result, config) => {
     if (esPJ(actor) && heridoGrave(actor) && !enSantuario()) return;
     // Lo descansado solo lo ve quien descansó (el hook es local): ahí se abre la ventana para gastar los dados.
     const recuperados = Number(result?.ecosDG?.recuperados) || 0;
-    const lleno = (actor.system.attributes.hp.value ?? 0) >= (actor.system.attributes.hp.effectiveMax ?? 0);
+    const lleno = (sistema.pg(actor).valor ?? 0) >= (sistema.pg(actor).maxEfectivo ?? 0);
     if (lleno || !dgDisponibles(actor)) {
       if (recuperados) ui.notifications.info(`${actor.name} recuperó ${plural(recuperados, "Dado de Golpe", "Dados de Golpe")}${lleno ? " (tiene todos sus PG)" : ""}.`);
       return;
@@ -7452,7 +7453,7 @@ class GastarDG extends foundry.applications.api.ApplicationV2 {
   static async #tirar(event, target) {
     if (this._tirando) return;
     this._tirando = true;
-    const hp0 = this.actor.system.attributes.hp.value;
+    const hp0 = sistema.pg(this.actor).valor;
     try {
       if (dgQuedan(this.actor) > 0) await this.actor.rollHitDie({ denomination: target.dataset.dado });
     } finally {
@@ -7467,22 +7468,22 @@ class GastarDG extends foundry.applications.api.ApplicationV2 {
   static async #todos() {
     if (this._tirando) return;
     this._tirando = true;
-    const a = this.actor, hp0 = a.system.attributes.hp.value;
+    const a = this.actor, hp0 = sistema.pg(a).valor;
     let n = 0;
     try {
-      while ((dgQuedan(a) > 0) && dgDisponibles(a) && (a.system.attributes.hp.value < techoPG(a)) && (n < 40)) {
+      while ((dgQuedan(a) > 0) && dgDisponibles(a) && (sistema.pg(a).valor < techoPG(a)) && (n < 40)) {
         const d = dadosDG(a)[0]?.[0];
         if (!d) break;
-        const antes = a.system.attributes.hp.value;
+        const antes = sistema.pg(a).valor;
         const r = await a.rollHitDie({ denomination: d }, { configure: false });
         n += 1;
-        if (!r || (a.system.attributes.hp.value <= antes)) break;
+        if (!r || (sistema.pg(a).valor <= antes)) break;
       }
     } finally {
       this._tirando = false;
     }
     avisoCurado(a, hp0, n);
-    if ((dgQuedan(a) <= 0) || !dgDisponibles(a) || (a.system.attributes.hp.value >= techoPG(a))) return this.close();
+    if ((dgQuedan(a) <= 0) || !dgDisponibles(a) || (sistema.pg(a).valor >= techoPG(a))) return this.close();
     this.render();
   }
 
@@ -7492,22 +7493,22 @@ class GastarDG extends foundry.applications.api.ApplicationV2 {
 
   async _renderHTML() {
     const a = this.actor;
-    const hp = a.system.attributes.hp;
+    const hp = sistema.pg(a);
     const quedan = dgQuedan(a);
     const dados = dadosDG(a);
-    const con = a.system.abilities?.con?.mod ?? 0;
+    const con = sistema.mod(a, "con");
     const tope = efectoMalherido(a) ? ` <span class="ecos-nota">(Malherido: no sube de ${topeMalherido(a)})</span>` : "";
     const botones = dados.map(([d, n]) => `<button type="button" data-action="tirar" data-dado="${d}" ${quedan <= 0 ? "disabled" : ""}>
       <i class="fa-solid fa-dice"></i> Gastar un ${d} <span class="ecos-nota">(${d} ${signo(con)}; te quedan ${n})</span></button>`).join("");
     return `<div class="ecos-dialogo">
       <p>Terminó el ${this.tipoDescanso === "short" ? "Descanso Corto" : "Descanso Largo"}${this.recuperados ? ` y recuperaste <b>${plural(this.recuperados, "Dado de Golpe", "Dados de Golpe")}</b>` : ""}. Los PG no vuelven solos: <b>gasta Dados de Golpe</b> para curarte.</p>
       <table class="ecos-tabla">
-        <tr><th>Puntos de Golpe</th><td><b>${hp.value}</b> / ${hp.effectiveMax}${tope}</td></tr>
+        <tr><th>Puntos de Golpe</th><td><b>${hp.valor}</b> / ${hp.maxEfectivo}${tope}</td></tr>
         <tr><th>Puedes gastar</th><td>${Number.isFinite(quedan) ? `<b>${quedan}</b> más en este descanso` : "los que quieras"}</td></tr>
       </table>
       <div class="ecos-dg-botones">${botones || "<p>No te quedan Dados de Golpe.</p>"}</div>
       <p class="ecos-nota">Si cierras la ventana, lo que no gastaste se guarda para otro descanso.</p>
-      <div class="ecos-botones">${dados.length && (quedan > 0) && (hp.value < techoPG(a)) ? `<button type="button" data-action="todos" data-tooltip="Tira tus dados uno a uno (el más grande primero) hasta el tope del descanso o hasta llenar tus PG"><i class="fa-solid fa-forward"></i> Gastar hasta el tope</button>` : ""}<button type="button" data-action="listo"><i class="fa-solid fa-check"></i> Listo</button></div>
+      <div class="ecos-botones">${dados.length && (quedan > 0) && (hp.valor < techoPG(a)) ? `<button type="button" data-action="todos" data-tooltip="Tira tus dados uno a uno (el más grande primero) hasta el tope del descanso o hasta llenar tus PG"><i class="fa-solid fa-forward"></i> Gastar hasta el tope</button>` : ""}<button type="button" data-action="listo"><i class="fa-solid fa-check"></i> Listo</button></div>
     </div>`;
   }
 
@@ -7529,13 +7530,13 @@ function dadosDG(a) {
 }
 /** Hasta dónde pueden subir los PG ahora (el máximo, o el tope de Malherido). */
 function techoPG(a) {
-  const max = Number(a.system.attributes.hp.effectiveMax) || 0;
+  const max = Number(sistema.pg(a).maxEfectivo) || 0;
   return efectoMalherido(a) ? Math.min(max, topeMalherido(a)) : max;
 }
 /** Dice cuánto curó lo gastado, y por qué no subió si no subió. */
 function avisoCurado(a, antes, n) {
   if (!n) return;
-  const dif = (a.system.attributes.hp.value ?? 0) - (antes ?? 0);
+  const dif = (sistema.pg(a).valor ?? 0) - (antes ?? 0);
   if (dif > 0) ui.notifications.info(`${a.name} se cura ${dif} PG (${plural(n, "Dado de Golpe", "Dados de Golpe")}).`);
   else if (efectoMalherido(a)) ui.notifications.warn(`${a.name} está Malherido: sus PG no suben de ${topeMalherido(a)} hasta tratar la herida.`);
 }

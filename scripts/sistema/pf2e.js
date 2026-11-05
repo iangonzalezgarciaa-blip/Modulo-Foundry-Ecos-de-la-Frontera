@@ -7,12 +7,32 @@ export const id = "pf2e";
 const num = (v, d = 0) => (Number.isFinite(Number(v)) ? Number(v) : d);
 const falta = nombre => () => { throw new Error(`Ecos · PF2e: «${nombre}» todavía no está hecho (tarea 5.2d).`); };
 
+/* El Agotamiento de PF2e son estados (objetos), no un campo de la ficha: no hay ruta que vigilar. */
+export const RUTAS = { pg: "system.attributes.hp.value", nivel: "system.details.level.value", moneda: "system.resources.heroPoints.value", caracteristicas: "system.abilities", agotamiento: null };
+
 export function pg(actor) {
-  const hp = actor?.system?.attributes?.hp ?? {};
-  return { valor: num(hp.value), max: num(hp.max), temp: num(hp.temp) };
+  const hp = actor?.system?.attributes?.hp;
+  const h = hp ?? {};
+  return { valor: num(h.value), max: num(h.max), maxEfectivo: num(h.max), temp: num(h.temp), hay: hp != null };
 }
+export const datosPg = (n, { max, temp } = {}) => ({ [RUTAS.pg]: Math.max(0, Math.trunc(num(n))),
+  ...(max != null ? { "system.attributes.hp.max": Math.max(0, Math.trunc(num(max))) } : {}),
+  ...(temp != null ? { "system.attributes.hp.temp": Math.max(0, Math.trunc(num(temp))) } : {}) });
+export const curar = falta("curar");
+export const danar = falta("danar");
+/* Control del Verbe: en PF2e será «Saber del Verbe», un Saber que Ecos crea al despertar (5.2d). */
+export const control = falta("control");
+export const datosControl = falta("datosControl");
 export const nivel = actor => num(actor?.system?.details?.level?.value ?? actor?.level, 1) || 1;
+/** En PF2e los PNJ tienen nivel, no VD: se usa el nivel. */
+export const vd = actor => nivel(actor);
+/** PF2e no tiene bonificador por competencia: 0, y Ecos usa su respaldo por nivel, como hoy cuando la ficha no lo trae. */
+export const competencia = () => 0;
+export const mod = (actor, clave) => num(actor?.system?.abilities?.[clave]?.mod);
+/** La característica de la primera entrada de lanzamiento de conjuros, o null. */
+export const caracteristicaConjuros = actor => Array.from(actor?.items ?? []).find(i => i?.type === "spellcastingEntry")?.system?.ability?.value || null;
 export const ca = actor => num(actor?.system?.attributes?.ac?.value);
+export const datosCaFija = n => ({ "system.attributes.ac.value": num(n) });
 export function velocidad(actor) {
   return { pie: num(actor?.system?.attributes?.speed?.value), pies: true };
 }
@@ -43,6 +63,10 @@ export function agotamiento(actor) {
   return fatigado ? fatigado + valor("drained") : 0;
 }
 export const datosAgotamiento = falta("datosAgotamiento");
+/** 6 es la muerte de la casa, igual que en dnd5e (Fatigado + Drenado 4 llega a 5). */
+export const agotamientoMax = () => 6;
+/* Las habilidades de dnd5e y las de PF2e no calzan una a una (Perspicacia, Historia…): el mapa llega con 5.2d. */
+export const totalHabilidad = falta("totalHabilidad");
 
 /** Los cuatro grados de PF2e: ±10 de la CD y el 20 o el 1 natural suben o bajan un grado. */
 export function gradoDeExito(total, cd, natural = null) {

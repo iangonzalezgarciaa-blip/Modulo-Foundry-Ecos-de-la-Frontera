@@ -155,8 +155,17 @@ No existe en PF2e. Lo que hoy cuelga de sus hooks pasa al chat de PF2e: ataque, 
 | Fecha | Versión | Qué |
 |---|---|---|
 | 4-nov-2026 | 3.19 | La capa existe: `scripts/sistema/index.js`, `dnd5e.js` y un `pf2e.js` con las lecturas puras (PG, nivel, CA, velocidad, resistencias, salvaciones, CD de característica, Monedas = Puntos de Héroe, Agotamiento = Fatigado + Drenado, los cuatro grados de éxito). Lo que falta en PF2e avisa con un error que nombra la tarea. Primeros archivos que pasan por la capa: `mercader.js` y `combate-tactico.js`. Pruebas en `tests/sistema.test.mjs`. |
+| 4-nov-2026 | 3.20 | `verbe.js` pasa por la capa en todo lo que lee o escribe de la ficha: PG, Agotamiento, Monedas, nivel y VD, competencia, modificadores, CA, velocidad, la característica de conjuros, el Control del Verbe, las salvaciones y las pruebas, curar y dañar. En `main.js`, los bloques de heridas (Muerte, cambios de PG, repetir la salvación de muerte) y de descansos (descanso largo, intemperie, heridas sin tratar, Medicina, ventana de Dados de Golpe). La capa suma `RUTAS` para los ganchos (en PF2e el Agotamiento no tiene ruta: son estados), `datosPg`, `datosCaFija`, `control` y `datosControl`, `curar`, `danar`, `agotamientoMax` y `totalHabilidad`. Una prueba exige que las dos capas tengan las mismas funciones. |
 
-Siguiente: `verbe.js` (reserva, PG, Agotamiento por sobreesfuerzo), luego `main.js` por bloques (heridas y descansos primero).
+**Lo que sigue en dnd5e a propósito** (se resuelve en 5.2d, porque en PF2e no es una lectura sino otra mecánica):
+- Las claves de los efectos activos (`system.attributes.movement.walk`, `system.traits.dr.value`, `system.bonuses.*`…): en PF2e son reglas de objeto.
+- Los datos de los objetos de técnica (`data.system.activities`, alcance, plantilla, duración): es `datosTecnica`.
+- La habilidad `cvb` en `CONFIG.DND5E.skills` y su lugar en la hoja: en PF2e, «Saber del Verbe».
+- Las salvaciones de muerte (`attributes.death`, `rollDeathSave`), los Dados de Golpe (`attributes.hd`) y las Secuelas sobre puntuaciones de característica: PF2e tiene Moribundo y no tiene Dados de Golpe ni puntuaciones.
+- El estado «muerto» con su icono grande y las monedas de oro en los bolsos.
+- `totalHabilidad` en PF2e: las habilidades no calzan una a una (Perspicacia, Historia, Investigación…). Hace falta decidir el mapa.
+
+Siguiente: el resto de `main.js` por bloques (Estabilizar y despertar, Magia que cura heridas, Estado de los PJ, Monedas Antiguas en las tiradas), luego `relics.js`, `verbe-effects.js`, `verbe-plantillas.js` y `mesa-*.js`.
 
 ## Orden de trabajo y estimación
 

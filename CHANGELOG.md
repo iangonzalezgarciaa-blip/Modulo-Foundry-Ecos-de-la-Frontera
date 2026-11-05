@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.20.0 — 2026-11-04
+
+- Corrección: el botón «Cambiar Monedas» del panel del Verbe pedía 2 Monedas Antiguas y decía «2 Monedas = 1 Trazo», un resto de antes de la 3.17. Ahora sigue la regla vigente: aparece con 1 Moneda y dice «1 Moneda Antigua = 1 Trazo (hasta 2 Trazos por nivel)».
+- Preparación para PF2e (tarea 5.2c, segundo paso): `verbe.js` y los bloques de heridas y descansos de `main.js` leen y escriben la ficha a través de la capa del sistema: PG, Agotamiento, Monedas, nivel, competencia, CA, velocidad, Control del Verbe, salvaciones y pruebas. En la mesa no cambia nada más. La capa suma rutas para los ganchos, datos de PG, de CA fija y de Control, curar y dañar, y el total de una habilidad. En PF2e, lo que aún no está hecho avisa nombrando la tarea 5.2d.
+
 ## 3.19.0 — 2026-11-04
 
 - Preparación para PF2e (tarea 5.2c, primer paso): nueva capa del sistema en `scripts/sistema/` que separa lo que es de dnd5e. Ya pasan por ella el mercader extraño y el combate táctico. En la mesa no cambia nada. La parte de PF2e trae las lecturas de la ficha con las decisiones del autor (Monedas = Puntos de Héroe, Agotamiento = Fatigado + Drenado, cuatro grados de éxito); el resto llega con 5.2d.

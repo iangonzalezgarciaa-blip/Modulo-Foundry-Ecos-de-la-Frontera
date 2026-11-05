@@ -33,6 +33,8 @@ import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
 import { presupuestoCorto } from "./rest-core.js";
+import { sistema } from "./sistema/index.js";
+import { MONEDAS_POR_TRAZO, TRAZOS_POR_NIVEL } from "./mercader.js";
 import { VERSION_REGLAS, recuperarReserva, evaluarGasto, requisitoNatural, crearCola,
   resultadoChoque, desempateChoque, presupuestoTecnica, validarCreacion, LIMITES_CREACION } from "./verbe-core.js";
 import { configurarAtaque, configurarSalvacion, despuesAtaque, normalizarHielo,
@@ -305,7 +307,7 @@ export function canalizar(actor, id) { return serializarActor(actor, async () =>
   if (efectoCanal(actor)) return rechazar("Ya estás canalizando otra técnica: libérala o déjala.", "warn");
   if (noPuedeActuar(actor)) return rechazar("Su estado no le permite canalizar.", "warn");
   const e = estado(actor), costo = costoUso(actor, meta, Number(meta.g) || 0);
-  const permiso = evaluarGasto({ valor: Number(e.valor) || 0, costo, limite: limiteNegativo(actor), grado: Number(meta.g) || 0, agotamiento: Number(actor.system?.attributes?.exhaustion) || 0 });
+  const permiso = evaluarGasto({ valor: Number(e.valor) || 0, costo, limite: limiteNegativo(actor), grado: Number(meta.g) || 0, agotamiento: sistema.agotamiento(actor) });
   if (!permiso.ok) return rechazar(permiso.motivo, "warn");
   const ef = efectoEstado("canalizando", foundry.utils.randomID());
   ef.flags[MOD][F].canalizar = { id, carga: 0, min: c.min, max: c.max };
@@ -349,7 +351,7 @@ export async function interrumpirCanal(actor, motivo = "") {
 async function golpeCanalizando(actor, dano) {
   if (!efectoCanal(actor) || dano <= 0) return;
   const cd = cdInterrupcion(dano);
-  const r = await actor.rollSavingThrow?.({ ability: "con", target: cd }, { configure: false }, { data: { flavor: `Mantener la carga (CD ${cd})` } });
+  const r = await sistema.tirarSalvacion(actor, "con", { target: cd }, { configure: false }, { data: { flavor: `Mantener la carga (CD ${cd})` } });
   const roll = Array.isArray(r) ? r[0] : r;
   if (!roll || roll.total < cd) await interrumpirCanal(actor, `recibe ${dano} de daño y falla la salvación (CD ${cd})`);
 }
@@ -406,10 +408,7 @@ async function crearClones(creador, d) {
   const datos = Array.from({ length: ok.copias }, (_, i) => {
     const x = foundry.utils.deepClone(base);
     x.name = `Clon de ${creador.name}${ok.copias > 1 ? ` ${i + 1}` : ""}`;
-    foundry.utils.setProperty(x, "system.attributes.hp.value", c.pg);
-    foundry.utils.setProperty(x, "system.attributes.hp.max", c.pg);
-    foundry.utils.setProperty(x, "system.attributes.hp.temp", 0);
-    if (c.ca) foundry.utils.setProperty(x, "system.attributes.ac", { calc: "flat", flat: c.ca });
+    for (const [k, v] of Object.entries({ ...sistema.datosPg(c.pg, { max: c.pg, temp: 0 }), ...(c.ca ? sistema.datosCaFija(c.ca) : {}) })) foundry.utils.setProperty(x, k, v);
     const v = foundry.utils.deepClone(x.flags?.[MOD]?.[F] ?? {});
     Object.assign(v, { valor: ok.verbe, compras: [], historial: [`Clon de ${creador.name}`], clon: { de: creador.uuid, deNombre: creador.name, tecnica: d.tecnica, verbe: ok.verbe, nonce, creado: Date.now(), registro: [] } });
     foundry.utils.setProperty(x, `flags.${MOD}.${F}`, v);
@@ -490,12 +489,12 @@ export async function activarFamilia(actor, nota = "") {
 }
 
 export function nivelDe(actor) {
-  if (actor?.type === "character") return Math.clamp(Number(actor.system?.details?.level) || 1, 1, 20);
+  if (actor?.type === "character") return Math.clamp(sistema.nivel(actor), 1, 20);
   const e = estado(actor);
-  return Math.clamp(Number(e?.nivel) || Math.round(Number(actor?.system?.details?.cr) || 1) || 1, 1, 20);
+  return Math.clamp(Number(e?.nivel) || Math.round(sistema.vd(actor) || 1) || 1, 1, 20);
 }
-export const competencia = actor => Number(actor?.system?.attributes?.prof) || Math.floor((nivelDe(actor) + 7) / 4);
-export const modDe = (actor, car) => Number(actor?.system?.abilities?.[car]?.mod) || 0;
+export const competencia = actor => sistema.competencia(actor) || Math.floor((nivelDe(actor) + 7) / 4);
+export const modDe = (actor, car) => sistema.mod(actor, car);
 /** Hasta el grado 9 (nivel 17), (nivel + 1) ÷ 2; el nivel 19 llega al grado 10 y el 20 al 11. Lo dicen los datos (gradoMax). */
 export const GRADO_TOPE = 11;
 const gradoDeNivel = n => Math.min(GRADO_TOPE, Number(D?.gradoMax?.[Math.clamp(n, 1, 20)]) || Math.min(9, Math.floor((n + 1) / 2)));
@@ -952,7 +951,7 @@ export function previsualizarUso(actor, meta, grado = Number(meta?.g) || 0, {rep
   const item = itemsDe(actor, meta.id)[0];
   const turno=choque?{ok:true}:permisoTurno(grado,{combate:game.combat?.started?(game.combat.id??"combate"):null,estado:e.turnoTecnicas,reaccion:item?.system.activation?.type==="reaction",replica});if(!turno.ok)return {...turno,costo};
   const permiso = evaluarGasto({ valor: Number(replica?e.reservaReplicas:e.valor) || 0, costo, limite: replica?0:limiteNegativo(actor), grado,
-    gradoMaximo: gradoUsable(actor, meta), agotamiento: Number(actor.system?.attributes?.exhaustion) || 0,
+    gradoMaximo: gradoUsable(actor, meta), agotamiento: sistema.agotamiento(actor),
     incapacitado: noPuedeActuar(actor), reaccion: item?.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R",
     puedeReaccionar: reaccionDisponible(actor), altoGastado: !!e.usosAltos?.[meta.id] });
   return { ...permiso, costo, extra };
@@ -1097,7 +1096,7 @@ export function datosItem(actor, tec) {
   }
   // Los estados de naturaleza llevan su mecánica, y con afinidad Entrenada duran el doble.
   const doble = afinidadDe(actor, inf || meta.nat) >= 2;
-  if (meta.shinobi && actor.system.attributes?.movement?.units === "ft") for (const ef of data.effects ?? []) for (const c of ef.changes ?? []) if (/^system\.attributes\.movement\./.test(c.key) && Number.isFinite(Number(c.value))) c.value = String(Number(c.value) / 0.3);
+  if (meta.shinobi && sistema.velocidad(actor).pies) for (const ef of data.effects ?? []) for (const c of ef.changes ?? []) if (/^system\.attributes\.movement\./.test(c.key) && Number.isFinite(Number(c.value))) c.value = String(Number(c.value) / 0.3);
   data.effects = (data.effects ?? []).map(ef => {
     if (!ESTADOS[ef.statuses?.[0]]) return ef;
     const normal = efectoEstado(ef.statuses[0], ef._id, doble);
@@ -1223,7 +1222,7 @@ async function aprenderInterno(actor, tec, { gratis = false, nota = null, aproba
 /*  Despertar                                                         */
 /* ------------------------------------------------------------------ */
 
-const caracteristicaSugerida = actor => (CARS[actor.system?.attributes?.spellcasting] ? actor.system.attributes.spellcasting : "wis");
+const caracteristicaSugerida = actor => (CARS[sistema.caracteristicaConjuros(actor)] ? sistema.caracteristicaConjuros(actor) : "wis");
 const opciones = (pares, sel) => pares.map(([k, v]) => `<option value="${escH(k)}" ${String(k) === String(sel) ? "selected" : ""}>${escH(v)}</option>`).join("");
 /** Nombre de un linaje: el jugador ve el camuflado; el DM, los dos. */
 const nombreLinaje = l => (!l ? "" : dm() ? `${l.alias ?? l.nombre} · ${l.real ?? l.nombre}` : (l.alias ?? l.nombre));
@@ -1361,7 +1360,7 @@ export async function asegurarAEDotes(actor) {
     { key: "system.attributes.movement.walk", mode: 2, value: "3" });
   for (const c of changes) if (/system\.attributes\.movement\./.test(c.key) && Number(c.mode) !== 1 && Number.isFinite(Number(c.value))) {
     // Los datos del módulo expresan distancias en metros; las hojas pueden usar pies.
-    if (actor.system?.attributes?.movement?.units === "ft") c.value = String(Number(c.value) / 0.3);
+    if (sistema.velocidad(actor).pies) c.value = String(Number(c.value) / 0.3);
   }
   const ef = actor.effects.find(x => x.getFlag(MOD, F)?.dotesAE);
   if (!changes.length) { if (ef) await ef.delete(); return; }
@@ -1383,7 +1382,7 @@ async function rasgoDote(actor, dote) {
     else act.roll={formula:'',name:'',prompt:false,visible:false};
     Object.assign(data.system,{uses:{max:'1',spent:Number(actual?.system.uses?.spent)||0,recovery:[{period:'lr',type:'recoverAll'}]},activities:{[aid]:act}});
     if(p.ae?.length)data.effects=[{_id:eid,name:dote.nombre,transfer:false,disabled:false,duration:{seconds:p.duracion,rounds:p.duracion/6},changes:p.ae.map(([key,mode,value])=>({key,mode,value:String(value)})),flags:{[MOD]:{[F]:{shinobi:true,aplicarUsuario:true,grupoModo:`dote:${dote.id}`}}}}];
-    if(actor.system.attributes?.movement?.units==='ft')for(const ef of data.effects)for(const c of ef.changes)if(/^system\.attributes\.movement\./.test(c.key))c.value=String(Number(c.value)/.3);
+    if(sistema.velocidad(actor).pies)for(const ef of data.effects)for(const c of ef.changes)if(/^system\.attributes\.movement\./.test(c.key))c.value=String(Number(c.value)/.3);
   }
   const sig=firma(JSON.stringify([data.name,data.system.description,data.effects,dote.poder]));data.flags[MOD][F].firma=sig;
   if(actual){if(actual.getFlag(MOD,F)?.firma!==sig){data._id=actual.id;await actor.updateEmbeddedDocuments('Item',[data],{diff:false});}}
@@ -1412,7 +1411,7 @@ function consumirDote(activity,usage,message,updates){
   if((p.soloVacio&&e.valor>0)||(p.combate&&!game.combat?.started)||(p.mitad&&e.valor>=maxVerbe(actor)/2))return rechazar('Todavía no se cumple el disparador de esa dote.','warn');
   if(costo>0&&costo>Number(e.valor))return rechazar('La dote necesita energía positiva para pagar su coste.','warn');
   if(usage.consume===false)return rechazar('Las dotes activables requieren registrar su consumo.','warn');
-  if(p.curacion&&actor.system.attributes.hp.value<=0)return false;
+  if(p.curacion&&sistema.pg(actor).valor<=0)return false;
   if(p.breve&&presupuestoBreveVerbe(actor,e.recCortos,1).cantidad===0)return rechazar('Agotó el presupuesto de recuperación breve hasta el próximo largo.','warn');
   const nonce=foundry.utils.randomID();consumosPendientes.set(claveActor(actor),{config:usage,nonce,hasta:Date.now()+30000});
   updates.actor??={};updates.actor[`flags.${MOD}.${F}.valor`]=(Number(e.valor)||0)-costo;
@@ -1457,7 +1456,7 @@ export function lecturaDe(lector, otro) {
   if (usa && ve.has("fuerza")) lin.push(`su Verbe es ${tramoFuerza(gradoMax(lector), gradoCriatura(otro))}`);
   if (usa && ve.has("reserva")) lin.push(`su reserva está ${tramoReserva(estado(otro)?.valor, maxVerbe(otro))}`);
   if (usa && ve.has("naturaleza")) { const n = [...natsDe(otro)].map(x => NATS[x] ?? x); if (n.length) lin.push(`responde a ${n.join(" y ")}`); }
-  if (ve.has("vida")) { const hp = otro.system?.attributes?.hp; if (hp) lin.push(`su cuerpo está ${tramoVida(hp.value, hp.effectiveMax ?? hp.max)}`); }
+  if (ve.has("vida")) { const hp = sistema.pg(otro); if (hp.hay) lin.push(`su cuerpo está ${tramoVida(hp.valor, hp.maxEfectivo)}`); }
   return lin;
 }
 export async function leerObjetivos(lector) {
@@ -1471,7 +1470,7 @@ export async function leerObjetivos(lector) {
 export function gradoCriatura(a) {
   if (!a) return 0;
   if (despierto(a)) return gradoMax(a);
-  const n = (a.type === "character") ? Number(a.system?.details?.level) || 1 : Number(a.system?.details?.cr) || 0;
+  const n = (a.type === "character") ? sistema.nivel(a) : sistema.vd(a);
   return Math.ceil(n / 2);
 }
 
@@ -1525,12 +1524,12 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
     const reaccion = item.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R";
     const turno=consumosChoque.has(usageConfig)?{ok:true}:permisoTurno(grado,{combate:game.combat?.started?(game.combat.id??"combate"):null,estado:e.turnoTecnicas,reaccion,replica});if(!turno.ok){avisoUso(turno.motivo);return false;}
     const permiso = evaluarGasto({ valor, costo, limite: replica ? 0 : limiteNegativo(actor), grado, gradoMaximo: replica ? Math.min(capacidadReplicas(actor),gradoUsable(actor,meta)) : gradoUsable(actor, meta),
-      agotamiento: Number(actor.system?.attributes?.exhaustion) || 0, incapacitado: noPuedeActuar(actor),
+      agotamiento: sistema.agotamiento(actor), incapacitado: noPuedeActuar(actor),
       reaccion, puedeReaccionar: reaccionDisponible(actor), altoGastado: !!e.usosAltos?.[meta.id] });
     if (!permiso.ok) { avisoUso(permiso.motivo); return false; }
     let nuevo = permiso.despues;
     const pg = meta.costoPG?Math.max(1,Number(meta.costoPG)-sumaEf(actor,ef=>ef.costoPGMenos)):0;
-    if (pg && Number(actor.system.attributes.hp.value) <= pg) { avisoUso(`Necesita más de ${pg} PG para pagar este esfuerzo sin caer.`); return false; }
+    if (pg && sistema.pg(actor).valor <= pg) { avisoUso(`Necesita más de ${pg} PG para pagar este esfuerzo sin caer.`); return false; }
     const reparto = meta.dividirVerbe && !clonDe(meta) ? dividirReserva(valor,costo,Math.min(competencia(actor),Number(meta.copias)||1)) : null;
     if (reparto && reparto.porCuerpo < 1) { avisoUso("No queda energía positiva suficiente para repartir entre todos los cuerpos."); return false; }
     if (reparto) nuevo = reparto.original;
@@ -1546,7 +1545,7 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
     if (meta.familiaUso) updates.actor[`flags.${MOD}.${F}.usosFamilia.${meta.familiaUso}`] = true;
     if (meta.desgasteOjo && (Number(e.miradas?.[meta.desgasteOjo]) || 0) < 5) updates.actor[`flags.${MOD}.${F}.desgasteOcular.${meta.desgasteOjo}`] = (Number(e.desgasteOcular?.[meta.desgasteOjo]) || 0) + 1;
     if (meta.sacrificarOjo) updates.actor[`flags.${MOD}.${F}.ojosSacrificados.${meta.sacrificarOjo}`] = (Number(e.ojosSacrificados?.[meta.sacrificarOjo]) || 0) + 1;
-    if (pg) updates.actor["system.attributes.hp.value"] = Number(actor.system.attributes.hp.value) - pg;
+    if (pg) Object.assign(updates.actor, sistema.datosPg(sistema.pg(actor).valor - pg));
     updates.actor[`flags.${MOD}.${F}.ultimoUso`] = nonce;
     if (grado >= 6) updates.actor[`flags.${MOD}.${F}.usosAltos.${meta.id}`] = true;
     if (reaccion && game.combat?.started) updates.actor[`flags.${MOD}.${F}.reaccionUsada`] = true;
@@ -1586,11 +1585,11 @@ async function despuesDeUsar(activity, usageConfig) {
 async function sobreesfuerzo(actor, grado, despues) {
   {
     const dc = 10 + grado + sumaEf(actor, ef => ef.sobreCD);
-    const rolls = await actor.rollSavingThrow({ ability: "con", target: dc, advantage: tieneDote(actor, "aguante-verbe") }, { configure: false });
+    const rolls = await sistema.tirarSalvacion(actor, "con", { target: dc, advantage: tieneDote(actor, "aguante-verbe") }, { configure: false });
     const roll = Array.isArray(rolls) ? rolls[0] : rolls;
     if (roll && roll.total < dc) {
-      const ag = Math.min(6, (Number(actor.system.attributes.exhaustion) || 0) + 1);
-      await actor.update({ "system.attributes.exhaustion": ag });
+      const ag = Math.min(6, sistema.agotamiento(actor) + 1);
+      await actor.update(sistema.datosAgotamiento(ag));
       aLaMesa(actor, "Sobreesfuerzo", `<p>${escH(actor.name)} gasta lo que no tiene (${despues}) y no lo aguanta: <b>+1 Agotamiento</b> (${ag}).</p>`);
     }
     if (herenciaDe(actor)?.barrera) alDM({ accion: "capaVBarrera", actorId: actor.id });
@@ -1885,12 +1884,12 @@ async function comprarDoteInterno(actor, id, { aprobado = false } = {}) {
 export async function ajustarControl(actor) {
   const b = (tieneDote(actor, "control-fino") ? 1 : 0) + (tieneDote(actor, "control-legendario") ? 4 : tieneDote(actor, "maestria-control") ? 2 : 0)
     + sumaEf(actor, ef => ef.control);
-  await actor.update({ "system.skills.cvb.bonuses.check": b ? `+ ${b}` : "" });
+  await actor.update(sistema.datosControl({ bono: b }));
 }
 
 export function comprarControl(actor, ...args) { return serializarActor(actor, () => comprarControlInterno(actor, ...args)); }
 async function comprarControlInterno(actor) {
-  const v = Number(actor.system?.skills?.cvb?.value) || 0;
+  const v = sistema.control(actor);
   if (v >= 2) return rechazar("Ya tiene pericia en Control.");
   const costo = v === 0 ? 2 : 3;
   if (v === 1 && nivelDe(actor) < 5) return rechazar("La pericia en Control pide nivel 5.", "warn");
@@ -1899,7 +1898,7 @@ async function comprarControlInterno(actor) {
   const e = estado(actor);
   const texto = `Control: ${v === 0 ? "competencia" : "pericia"} (${costo} Trazos)`;
   await guardar(actor, { gastados: (Number(e.gastados) || 0) + costo, historial: hist(e, texto), compras: compra(e, "control", { v: v + 1 }, costo, texto) },
-    { "system.skills.cvb.value": v + 1 });
+    sistema.datosControl({ rango: v + 1 }));
 }
 
 export function subirAfinidad(actor, ...args) { return serializarActor(actor, () => subirAfinidadInterno(actor, ...args)); }
@@ -2017,7 +2016,7 @@ export function pruebaEntreno(actor) { return serializarActor(actor, async () =>
   const e = estado(actor), en = e?.entrenoNat;
   if (!en) return false;
   if (diasRestantes(en, game.time?.worldTime ?? 0) > 0) return rechazar(`Faltan ${diasRestantes(en, game.time?.worldTime ?? 0)} días de entrenamiento.`, "warn");
-  const r = await actor.rollSkill?.({ skill: "cvb", target: en.cd }, {}, { data: { flavor: `Control del Verbe · entrenamiento (CD ${en.cd})` } });
+  const r = await sistema.tirarHabilidad(actor, "cvb", { target: en.cd }, {}, { data: { flavor: `Control del Verbe · entrenamiento (CD ${en.cd})` } });
   const roll = Array.isArray(r) ? r[0] : r;
   if (!roll) return false;
   return resolverEntreno(actor, roll.total);
@@ -2108,22 +2107,22 @@ export function reorientarCultivo(actor,tecId,mejora){
 /** Monedas Antiguas: recuperar Verbe o volverlas Trazos (como mucho 2 por nivel). */
 export function gastarMoneda(actor, ...args) { return serializarActor(actor, () => gastarMonedaInterno(actor, ...args)); }
 async function gastarMonedaInterno(actor, uso) {
-  const n = Number(actor.system?.currency?.soul) || 0;
+  const n = sistema.moneda(actor);
   if (n < 1) return rechazar("No tiene Monedas Antiguas.", "warn");
   const e = estado(actor);
   if (uso === "trazo") {
     const nivel = nivelDe(actor);
     const ya = Number(e.monedas?.[nivel]) || 0;
-    if (ya >= 2) return rechazar("En este nivel ya volvió Trazos 2 Monedas.", "warn");
+    if (ya >= TRAZOS_POR_NIVEL) return rechazar(`En este nivel ya volvió Trazos ${TRAZOS_POR_NIVEL} Monedas.`, "warn");
     await guardar(actor, { trazosExtra: (Number(e.trazosExtra) || 0) + 1, monedas: { [nivel]: ya + 1 }, historial: hist(e, "Una Moneda Antigua se vuelve 1 Trazo"),
-      compras: compra(e, "moneda", { nivel }, 0, "Una Moneda Antigua se vuelve 1 Trazo") }, { "system.currency.soul": n - 1 });
+      compras: compra(e, "moneda", { nivel }, 0, "Una Moneda Antigua se vuelve 1 Trazo") }, sistema.datosMoneda(n - 1));
     return aLaMesa(actor, "Moneda Antigua", `<p>${escH(actor.name)} vuelve Trazo una Moneda Antigua.</p>`, { soloDueno: true });
   }
   const max = maxVerbe(actor);
   const mult = efectosDotes(actor).reduce((t, ef) => Math.max(t, Number(ef.moneda) || 0), 2);
   const cambios = cambiosRecuperacion(actor, mult * competencia(actor));
   const { valor } = cambios;
-  await guardar(actor, { ...cambios, historial: hist(e, `Una Moneda Antigua aporta ${mult * competencia(actor)} de recuperación de Verbe`) }, { "system.currency.soul": n - 1 });
+  await guardar(actor, { ...cambios, historial: hist(e, `Una Moneda Antigua aporta ${mult * competencia(actor)} de recuperación de Verbe`) }, sistema.datosMoneda(n - 1));
   aLaMesa(actor, "Moneda Antigua", `<p>${escH(actor.name)} gasta una Moneda Antigua: Verbe <b>${valor} / ${max}</b>.</p>`, { soloDueno: true });
 }
 
@@ -2614,19 +2613,19 @@ async function abrirCerrojoInterno(actor, n) {
   const costo = costoGrado(c.grado);
   const v = Number(e.valor) || 0;
   const permiso = evaluarGasto({ valor: v, costo, limite: limiteNegativo(actor), grado: c.grado,
-    gradoMaximo: gradoMax(actor), agotamiento: Number(actor.system?.attributes?.exhaustion) || 0,
+    gradoMaximo: gradoMax(actor), agotamiento: sistema.agotamiento(actor),
     incapacitado: noPuedeActuar(actor) });
   if (!permiso.ok) return rechazar(permiso.motivo, "warn");
   const libre = n === 1 && esCerrojero(actor);
   const sinPrueba = libre || (n === 1 && efectosDotes(actor).some(ef => ef.cerrojoLibre));
   if (!sinPrueba) {
     const dc = 10 + (2 * n);
-    const rolls = await actor.rollSkill({ skill: "cvb", target: dc }, { configure: false });
+    const rolls = await sistema.tirarHabilidad(actor, "cvb", { target: dc }, { configure: false });
     const roll = Array.isArray(rolls) ? rolls[0] : rolls;
     if (!roll || roll.total < dc) return aLaMesa(actor, "Los Cerrojos no ceden", `<p>${escH(actor.name)} no logra abrir el cerrojo ${n} (Control ${roll?.total ?? "?"} contra CD ${dc}).</p>`);
   }
   const viejo = efectoV(actor, "cerrojo");
-  const paso = (actor.system?.attributes?.movement?.units === "ft") ? "10" : "3";
+  const paso = sistema.velocidad(actor).pies ? "10" : "3";
   const changes = [];
   for (let i = 1; i <= n; i++) for (const [key, mode, value] of CERROJO_FX[i] ?? []) changes.push({ key, mode, value: value === "@paso" ? paso : value });
   const da = D.cerrojos.filter(x => x.n <= n).map(x => `<li><b>${x.n} · ${escH(x.nombre)}:</b> ${escH(x.da)}</li>`).join("");
@@ -2664,19 +2663,19 @@ async function alQuitarEfecto(ef, opciones) {
   if (fl?.cerrojo) {
     const c = D.cerrojos.find(x => x.n === fl.cerrojo);
     if (fl.cerrojo === 8) {
-      await actor.update({"system.attributes.hp.value":0});
+      await actor.update(sistema.datosPg(0));
       await susurrarDM("La Octava Puerta", `<p>${escH(actor.name)} agotó la Puerta de la Muerte. El precio es la vida del cuerpo original: registra la muerte o una intervención excepcional ganada en la historia. Una cura ordinaria, un clon o un descanso no la evitan.</p>`);
       return;
     }
     if (fl.cerrojo === 7 && D.cerrojos.length === 7) {
       const cd7 = rangoDon(actor, "cuerpo") >= 5 ? 10 : (rangoDon(actor, "cuerpo") >= 4 ? 15 : 20);
-      const rolls = await actor.rollSavingThrow({ ability: "con", target: cd7 }, { configure: false });
+      const rolls = await sistema.tirarSalvacion(actor, "con", { target: cd7 }, { configure: false });
       const roll = Array.isArray(rolls) ? rolls[0] : rolls;
       if (roll && roll.total >= cd7) {
-        await actor.update({ "system.attributes.hp.value": 0, "system.attributes.exhaustion": Math.max(4, Number(actor.system.attributes.exhaustion) || 0) });
+        await actor.update({ ...sistema.datosPg(0), ...sistema.datosAgotamiento(Math.max(4, sistema.agotamiento(actor))) });
         aLaMesa(actor, "Se cierra el séptimo", `<p>${escH(actor.name)} sobrevive: cae a 0 PG con 4 de Agotamiento.</p>`);
       } else {
-        await actor.update({ "system.attributes.hp.value": 0 });
+        await actor.update(sistema.datosPg(0));
         await susurrarDM("El séptimo cerrojo", `<p>${escH(actor.name)} falla la salvación (${roll?.total ?? "?"} contra ${cd7}): según la regla, muere. Lo dejé a 0 PG; la muerte la marcas tú.</p>`);
       }
       return;
@@ -2684,16 +2683,16 @@ async function alQuitarEfecto(ef, opciones) {
     const repetido = (Number(estado(actor)?.cerrojosHoy?.veces) || 0) >= 2;
     const ag = (Number(String(c?.cierre ?? "").match(/(\d+) Agotamiento/)?.[1]) || 0) + (repetido ? 1 : 0);
     if (ag) {
-      const v = Math.min(6, (Number(actor.system.attributes.exhaustion) || 0) + ag);
-      await actor.update({ "system.attributes.exhaustion": v });
+      const v = Math.min(6, sistema.agotamiento(actor) + ag);
+      await actor.update(sistema.datosAgotamiento(v));
       aLaMesa(actor, "Se cierran los Cerrojos", `<p>${escH(actor.name)}: +${ag} Agotamiento (${v}).</p>`);
     }
   } else if (fl?.despertar) {
     const e = estado(actor);
     if (rangoDon(actor, "sangre") >= 4 && !e?.despertarLibre) await guardar(actor, { despertarLibre: true });
     else {
-      const v = Math.min(6, (Number(actor.system.attributes.exhaustion) || 0) + 1);
-      await actor.update({ "system.attributes.exhaustion": v });
+      const v = Math.min(6, sistema.agotamiento(actor) + 1);
+      await actor.update(sistema.datosAgotamiento(v));
       aLaMesa(actor, "Termina el Despertar", `<p>${escH(actor.name)} vuelve a su forma: +1 Agotamiento (${v}).</p>`);
     }
     if (herenciaDe(actor)?.barrera) await manejar({ accion: "capaVReloj", actorId: actor.id }, { interno: true });
@@ -2714,15 +2713,15 @@ async function inicioDeTurno(combat) {
   const cerr = efectoV(actor, "cerrojo");
   const pg = Number(cerr?.getFlag(MOD, F)?.pg) || 0;
   if (cerr && pg) {
-    await actor.update({ "system.attributes.hp.value": Math.max(0, actor.system.attributes.hp.value - pg) });
+    await actor.update(sistema.datosPg(Math.max(0, sistema.pg(actor).valor - pg)));
     aLaMesa(actor, "Ocho Cerrojos", `<p>${escH(actor.name)} paga ${pg} PG por los Cerrojos abiertos.</p>`);
   }
   if (actor.statuses?.has("ardiendo")) {
     const roll = await new Roll("1d6").evaluate();
-    await actor.applyDamage([{ value: roll.total, type: "fire" }]);
+    await sistema.danar(actor, roll.total, "fire");
     await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `${escH(actor.name)} arde: ${roll.total} de fuego` });
   }
-  for (const ef of actor.effects) { const rg = ef.getFlag(MOD,F)?.regenera; if (ef.disabled || !rg || actor.system.attributes.hp.value <= 0) continue; const roll = await new Roll(rg).evaluate(); await actor.applyDamage([{value:roll.total,type:"healing"}]); }
+  for (const ef of actor.effects) { const rg = ef.getFlag(MOD,F)?.regenera; if (ef.disabled || !rg || sistema.pg(actor).valor <= 0) continue; const roll = await new Roll(rg).evaluate(); await sistema.curar(actor, roll.total); }
   const regen = efectoV(actor, "despertar") ? herenciaDe(actor)?.despertar?.regen : null;
   if (regen && despierto(actor)) {
     const roll = await new Roll(regen).evaluate();
@@ -2790,7 +2789,7 @@ export async function resolverChoque(A, B, {automatico=false} = {}) {
   if (!gana) {
     const tirar = async x => {
       if (x.actor && despierto(x.actor)) {
-        const rolls = await x.actor.rollSkill({ skill: "cvb", advantage: ventajaChoque(x.actor) }, { configure: false }, { create: false });
+        const rolls = await sistema.tirarHabilidad(x.actor, "cvb", { advantage: ventajaChoque(x.actor) }, { configure: false }, { create: false });
         return (Array.isArray(rolls) ? rolls[0] : rolls)?.total ?? 0;
       }
       return (await new Roll("1d20").evaluate()).total;
@@ -2816,7 +2815,7 @@ export async function olvidar(actor) {
   if (its.length) await actor.deleteEmbeddedDocuments("Item", its);
   const efs = actor.effects.filter(x => x.getFlag(MOD, F)).map(x => x.id);
   if (efs.length) await actor.deleteEmbeddedDocuments("ActiveEffect", efs, { ecosSinCierre: true });
-  await actor.update({ ...Object.fromEntries([quitar(`flags.${MOD}.${F}`)]), "system.skills.cvb.bonuses.check": "", "system.skills.cvb.value": 0 });
+  await actor.update({ ...Object.fromEntries([quitar(`flags.${MOD}.${F}`)]), ...sistema.datosControl({ rango: 0, bono: 0 }) });
   paneles.get(actor.id)?.close();
   await asegurarGuia();
   aviso(`${actor.name} ya no tiene el Verbe.`);
@@ -2876,9 +2875,9 @@ export async function deshacer(actor, cid, { forzar = false } = {}) {
     if (d.id === "rama-segunda") cambios.segunda = null;
     if (d.id === "tecnica-reserva") cambios.reserva = null;
   } else if (c.tipo === "control") {
-    const v = Number(actor.system?.skills?.cvb?.value) || 0;
+    const v = sistema.control(actor);
     if (v !== d.v && no("Primero deshaz la pericia en Control.")) return;
-    await actor.update({ "system.skills.cvb.value": Math.max(0, d.v - 1) });
+    await actor.update(sistema.datosControl({ rango: Math.max(0, d.v - 1) }));
   } else if (c.tipo === "afinidad") {
     if ((Number(e.afinidad?.[d.nat]) || 1) !== d.a && no("Primero deshaz la afinidad más alta.")) return;
     cambios.afinidad = { [d.nat]: d.a - 1 };
@@ -2906,7 +2905,7 @@ export async function deshacer(actor, cid, { forzar = false } = {}) {
     if ((Number(e.cerrojos) || 0) !== d.n && no("Primero deshaz el cerrojo más alto.")) return;
     cambios.cerrojos = d.n - 1;
   } else if (c.tipo === "moneda") {
-    await actor.update({ "system.currency.soul": (Number(actor.system?.currency?.soul) || 0) + 1 });
+    await actor.update(sistema.datosMoneda(sistema.moneda(actor) + 1));
     cambios.trazosExtra = (Number(e.trazosExtra) || 0) - 1;
     cambios.monedas = { [d.nivel]: Math.max(0, (Number(e.monedas?.[d.nivel]) || 0) - 1) };
   }
@@ -2940,7 +2939,7 @@ export async function rehacer(actor, { nat = false, principal = false } = {}) {
     gastados: quedan.reduce((t, c) => t + c.trazos, 0), nats: nat ? [] : e.nats,
     historial: hist(e, `El DM rehace desde cero${nat ? ", con naturaleza nueva" : ""}${principal ? ", con rama principal nueva" : ""}`) });
   await reemplazar(actor, e);
-  await actor.update({ "system.skills.cvb.value": 0, "system.skills.cvb.bonuses.check": "" });
+  await actor.update(sistema.datosControl({ rango: 0, bono: 0 }));
   await asegurarAEDotes(actor);
   await refrescar(actor);
   await asegurarRasgos(actor);
@@ -2966,7 +2965,7 @@ export async function ajustar(actor, campo, valor, clave = null) {
     await guardar(actor, { rangos: { [clave]: n }, ordenRamas: (n > 0 || e.principal === clave) ? [...orden, clave] : orden, historial: nota(`${nombreRama(clave)} ${nombreRango(n)}`) });
   } else if (campo === "afinidad") await guardar(actor, { afinidad: { [clave]: Math.clamp(Number(valor) || 1, 1, 3) }, historial: nota(`afinidad ${NATS[clave]} ${valor}`) });
   else if (campo === "control") {
-    await actor.update({ "system.skills.cvb.value": Math.clamp(Number(valor) || 0, 0, 2) });
+    await actor.update(sistema.datosControl({ rango: Number(valor) || 0 }));
     await guardar(actor, { historial: nota(`Control ${["sin competencia", "competente", "pericia"][Number(valor) || 0]}`) });
   } else if (campo === "cerrojos") await guardar(actor, { cerrojos: Math.clamp(Number(valor) || 0, 0, D.cerrojos.length), historial: nota(`sabe ${valor} cerrojos`) });
   else if (campo === "dote") {
@@ -3627,7 +3626,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       <div class="ev-identidad"><span class="ev-kicker">EL VERBE · NIVEL ${nivelDe(a)}</span><strong>${escH(a.name)}</strong><small>${e.principal ? nombreRama(e.principal) : "Tu aventura empieza aquí"}${e.nats?.length ? ` · ${[...natsDe(a)].map(n => escH(nombreNat(n))).join(" + ")}` : ""}</small></div>
       <div class="ecos-verbe-res"><div class="ev-recurso-titulo"><b><i class="fa-solid fa-droplet" aria-hidden="true"></i> Verbe <span>${v} / ${max}</span></b><small>ENERGÍA PARA USAR</small></div><div class="ecos-verbe-barra grande ${v < 0 ? "negativo" : ""}" role="meter" aria-label="${v < 0 ? "Deuda de Verbe" : "Reserva de Verbe"}" aria-valuemin="${v < 0 ? limiteNegativo(a) : 0}" aria-valuemax="${max}" aria-valuenow="${v}" aria-valuetext="${v} de ${max} de Verbe"><div style="width:${pct * 100}%"></div></div>
         <small>${v < 0 ? "Estás en deuda: recuperarla cuesta el doble." : "Se gasta al usar técnicas; vuelve al descansar."}</small></div>
-      <div class="ecos-verbe-trazos ${t.libres > 0 ? "hay" : ""}"><span class="n">${t.libres}</span><span class="t"><b>Trazos</b> para aprender</span><small>Se gastan una vez por compra</small>${Number(a.system?.currency?.soul ?? 0) >= 2 ? `<button type="button" data-action="monedasTrazos" class="ev-monedas" data-tooltip="2 Monedas Antiguas = 1 Trazo (hasta 2 Trazos por nivel)"><i class="fa-solid fa-coins" aria-hidden="true"></i> Cambiar Monedas</button>` : ""}</div>
+      <div class="ecos-verbe-trazos ${t.libres > 0 ? "hay" : ""}"><span class="n">${t.libres}</span><span class="t"><b>Trazos</b> para aprender</span><small>Se gastan una vez por compra</small>${sistema.moneda(a) >= MONEDAS_POR_TRAZO ? `<button type="button" data-action="monedasTrazos" class="ev-monedas" data-tooltip="${MONEDAS_POR_TRAZO} Moneda${MONEDAS_POR_TRAZO > 1 ? "s" : ""} Antigua${MONEDAS_POR_TRAZO > 1 ? "s" : ""} = 1 Trazo (hasta ${TRAZOS_POR_NIVEL} Trazos por nivel)"><i class="fa-solid fa-coins" aria-hidden="true"></i> Cambiar Monedas</button>` : ""}</div>
     </header>${barraDM}`;
   }
 
@@ -3714,7 +3713,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const cupos=cuotasPoder(nivelDe(a),dotesActivas(a)),gastados=estado(a).cuotasPoder??{};
     return `${cupos.mayores?`<details class="ev-limites-poder"><summary>Usos altos que te quedan hasta el próximo Descanso Largo</summary><ul><li>Grados 6–8: <b>${Math.max(0,cupos.mayores-(gastados.mayores||0))} de ${cupos.mayores}</b> usos compartidos.</li><li>Grados 9–11: <b>${Math.max(0,cupos.culminaciones-(gastados.culminaciones||0))} de ${cupos.culminaciones}</b> usos compartidos.</li>${cupos.trascendentes?`<li>Dentro de los anteriores, grado 11: <b>${Math.max(0,cupos.trascendentes-(gastados.trascendentes||0))} de ${cupos.trascendentes}</b>.</li>`:""}</ul><p>También cuenta el grado elegido al elevar una técnica. Cada técnica alta conserva su propio uso por Largo. Cambiar de técnica no devuelve usos compartidos.</p></details>`:""}${efectoV(a,"replicas")?`<div class="ev-instruccion"><span><b>Reserva repartida en réplicas: ${Number(estado(a).reservaReplicas)||0} Verbe</b>Una acción ofensiva conjunta por turno. «Usar desde réplica» gasta ese saldo y solo admite grado 0–${capacidadReplicas(a)}. Al disipar, se pierde el saldo restante.</span><button type="button" data-action="cerrarReplicas">Disipar réplicas</button></div>`:""}${avisosJugadorHTML(a)}<div class="ev-titulo-pagina"><div><span class="ev-kicker">TU REPERTORIO</span><h2>¿Qué quieres hacer?</h2><p>Usa una técnica desde aquí. Se abrirá la ventana de uso. Comprueba el grado y el gasto antes de confirmar.</p></div><span class="ev-contador">${conocidas.length} conocidas</span></div>
       <div class="ev-instruccion"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span><b>Si afecta a otro, marca su token antes de usarla.</b> El alcance y las condiciones de cada técnica siguen contando.</span></div>
-      ${esClon(a) ? `<p class="ev-aviso">Eres <b>un clon de ${escH(estado(a).clon.deNombre)}</b>: ${a.system.attributes.hp.value} PG y ${estado(a).valor} Verbe. Si te destruyen, ese Verbe se pierde. <button type="button" data-action="disiparClon">Disiparme (vuelve mi Verbe)</button></p>` : ""}
+      ${esClon(a) ? `<p class="ev-aviso">Eres <b>un clon de ${escH(estado(a).clon.deNombre)}</b>: ${sistema.pg(a).valor} PG y ${estado(a).valor} Verbe. Si te destruyen, ese Verbe se pierde. <button type="button" data-action="disiparClon">Disiparme (vuelve mi Verbe)</button></p>` : ""}
       ${(() => { const mios = (game.actors ?? []).filter(x => esClon(x) && estado(x).clon.de === a.uuid); return mios.length ? `<p class="ev-aviso">Tienes ${mios.length} clon${mios.length > 1 ? "es" : ""}: ${mios.map(x => `${escH(x.name)} (${estado(x).valor} Verbe) <button type="button" data-action="disiparClon" data-uuid="${x.uuid}">Disipar</button>`).join(" · ")}</p>` : ""; })()}
       ${efectoCanal(a) ? `<p class="ev-aviso"><b>Canalizando ${escH(itemsDe(a, efectoCanal(a).getFlag(MOD, F).canalizar.id)[0]?.name ?? "")}</b> · carga ${efectoCanal(a).getFlag(MOD, F).canalizar.carga}/${efectoCanal(a).getFlag(MOD, F).canalizar.max}. Velocidad 0, sin reacciones ni choques. <button type="button" data-action="interrumpirCanal">Dejar de canalizar</button></p>` : ""}
       ${queVe(itemsTecnica(a).map(i => i.getFlag(MOD, F)?.id)).size ? `<p><button type="button" data-action="leerObjetivos" data-tooltip="Marca tokens y lee su Verbe por tramos (lleno, a medias, poco; más débil o más fuerte), nunca cifras"><i class="fa-solid fa-eye"></i> Leer el Verbe de los marcados</button></p>` : ""}
@@ -3795,12 +3794,12 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const cerr = (Number(e.cerrojos) || 0) ? `<h3>Ocho Cerrojos</h3><p>${D.cerrojos.filter(c => c.n <= e.cerrojos).map(c =>
       `<button type="button" data-action="cerrojo" data-n="${c.n}" data-tooltip="${escH(c.da)} · cuesta ${costoGrado(c.grado)} Verbe y una prueba de Control CD ${10 + (2 * c.n)} · ${c.pg ? `${c.pg} PG por turno` : "sin PG"}">Abrir hasta el ${c.n} · ${escH(c.nombre)}</button>`).join(" ")}
       ${cerrAbierto ? ` <button type="button" data-action="cerrar">Cerrar (${escH(cerrAbierto.name)})</button>` : ""}</p>` : "";
-    const monedas = Number(a.system?.currency?.soul) || 0;
+    const monedas = sistema.moneda(a);
     const recMoneda = cambiosRecuperacion(a, 2 * competencia(a));
     const monedasNivel = Number(e.monedas?.[nivelDe(a)]) || 0;
     const mon = monedas ? `<section class="ev-reponer"><div><span class="ev-kicker">RECURSO OPCIONAL</span><h3>${monedas} ${monedas === 1 ? "Moneda Antigua" : "Monedas Antiguas"}</h3><p>Gastas una moneda por botón. Elige energía para ahora o un Trazo para aprender.</p></div><div><button type="button" data-action="moneda" data-uso="verbe">Gastar 1 moneda → quedar en ${recMoneda.valor} Verbe${recMoneda.recResto ? " + 1 punto guardado" : ""}</button>
       <button type="button" data-action="moneda" data-uso="trazo" ${monedasNivel >= 2 ? "disabled" : ""}>Gastar 1 moneda → +1 Trazo</button><small>${monedasNivel} de 2 conversiones a Trazo usadas en este nivel.</small></div></section>` : "";
-    const ctl = Number(a.system?.skills?.cvb?.value) || 0;
+    const ctl = sistema.control(a);
     return `${this.#sangreDM()}${pasos}${el.join("")}
       <div class="ev-estadisticas"><div><small>Dificultad base (CD)</small><b>${cd}</b><span>Para técnicas con tu característica de Verbe; la actividad aplica sus mejoras.</span></div><div><small>Ataque base con Verbe</small><b>${competencia(a) + modDe(a, e.car) >= 0 ? "+" : ""}${competencia(a) + modDe(a, e.car)}</b><span>La técnica puede usar otra característica.</span></div><div><small>Grado máximo por nivel</small><b>${gradoMax(a)}</b><span>Cada rama también tiene su propio límite.</span></div></div>
       ${mon}${resumenDivino(a)}<details class="ev-ficha-personal"><summary>Mi personaje: afinidades, linaje y otros detalles</summary>
@@ -3871,7 +3870,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       const v = Number(e.afinidad?.[n]) || 1;
       return `<li><b>${NATS[n] ?? n}</b>: ${["", "Despierta", "Entrenada", "Maestra"][v]} ${v < 3 ? `<button type="button" data-action="afinidad" data-nat="${n}" data-tooltip="${v === 1 ? "+1 dado a sus técnicas e infusiones, y sus estados duran el doble" : "+2 dados en vez de +1, y quien falla contra ella no resiste su daño"}">Subir a ${v === 1 ? "Entrenada" : "Maestra"} · ${v === 1 ? 2 : 4} Trazos (nivel ${v === 1 ? 5 : 11}, pide un maestro)</button>` : ""}</li>`;
     }).join("");
-    const ctl = Number(a.system?.skills?.cvb?.value) || 0;
+    const ctl = sistema.control(a);
     const cerr = Number(e.cerrojos) || 0;
     const sigC = D.cerrojos[cerr];
     return `${intro("Cada rama es un tipo de técnica (Forma, Velo, Cuerpo…).", "Tu rango en una rama dice hasta qué grado puedes aprender técnicas de ella. Se sube con Trazos; desde Experto, sus técnicas que dañan o curan tiran dados de más y ganas los dones de la rama.",
@@ -4132,7 +4131,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         <p>Rama principal: <select name="aj-principal">${opciones(ramasLibres(), e.principal ?? "")}</select> <button type="button" data-action="ajustar" data-campo="principal" data-de="aj-principal">Cambiar</button> <small>(no cambia los rangos: ajústalos abajo)</small></p>
         <p>Rango: <select name="aj-rama">${opciones(D.ramas.map(r => [r.id, `${r.nombre} (${nombreRango(rangoDe(a, r.id))})`]), "")}</select> a <select name="aj-rango">${opciones(D.rangos.map((r, i) => [i, r.nombre]), 1)}</select> <button type="button" data-action="ajustar" data-campo="rango" data-de="aj-rango" data-clave="aj-rama">Fijar</button></p>
         <p>Afinidad: <select name="aj-afnat">${opciones([...natsDe(a)].map(n => [n, NATS[n] ?? n]), "")}</select> a <select name="aj-af">${opciones([[1, "Despierta"], [2, "Entrenada"], [3, "Maestra"]], 1)}</select> <button type="button" data-action="ajustar" data-campo="afinidad" data-de="aj-af" data-clave="aj-afnat">Fijar</button>
-          · Control: <select name="aj-control">${opciones([[0, "Sin competencia"], [1, "Competente"], [2, "Pericia"]], Number(a.system?.skills?.cvb?.value) || 0)}</select> <button type="button" data-action="ajustar" data-campo="control" data-de="aj-control">Fijar</button>
+          · Control: <select name="aj-control">${opciones([[0, "Sin competencia"], [1, "Competente"], [2, "Pericia"]], sistema.control(a))}</select> <button type="button" data-action="ajustar" data-campo="control" data-de="aj-control">Fijar</button>
           · Cerrojos que sabe: <input type="number" name="aj-cerrojos" min="0" max="${D.cerrojos.length}" value="${Number(e.cerrojos) || 0}" style="width:4em"> <button type="button" data-action="ajustar" data-campo="cerrojos" data-de="aj-cerrojos">Fijar</button></p>
         <p>Dote: <select name="aj-dote" data-desc="dote">${opciones(D.dotes.map(d => [d.id, `${tieneDote(a, d.id) ? "✓ " : ""}${d.nombre}`]), "")}</select> <button type="button" data-action="ajustar" data-campo="dote" data-de="aj-dote">Dar o quitar (gratis)</button></p>
         <div class="ecos-verbe-desc" data-de="aj-dote"></div>
@@ -4190,7 +4189,7 @@ export function gradoAtaque(wf) {
   if (meta?.id) return (Number(meta.g) || 0) + (Number(wf.item?.flags?.dnd5e?.scaling) || 0);
   if (wf?.item?.type === "spell") return Number(wf.castData?.castLevel ?? wf.itemLevel ?? wf.item.system?.level) || 0;
   const a = wf?.actor;
-  const n = a?.type === "character" ? Number(a.system?.details?.level) || 1 : (despierto(a) ? nivelDe(a) : Number(a?.system?.details?.cr) || 0);
+  const n = a?.type === "character" ? sistema.nivel(a) : (despierto(a) ? nivelDe(a) : sistema.vd(a));
   return Math.ceil(n / 2);
 }
 
@@ -4221,7 +4220,7 @@ export function defensasDisponibles(actor, { grado = 0, area = false, bloqueadas
       costo += extra + (area ? 2 : 0);
     }
     const permiso = evaluarGasto({ valor: Number(e.valor) || 0, costo, limite: limiteNegativo(actor), grado: tec.g,
-      agotamiento: Number(actor.system?.attributes?.exhaustion) || 0, reaccion: true, puedeReaccionar: reaccionDisponible(actor) });
+      agotamiento: sistema.agotamiento(actor), reaccion: true, puedeReaccionar: reaccionDisponible(actor) });
     if (!permiso.ok) { bloqueadas?.push({ id, nombre: itemsDe(actor, id)[0]?.name ?? tec.n, costo, extra, motivo: permiso.motivo }); continue; }
     const aviso = def.aviso ?? (id === "forma-sustitucion" ? `si hay un objeto de tu tamaño o menor a ${Math.max(tieneDote(actor, "sustitucion-lejana") ? 9 : 3, 3 + 1.5 * (e.cultivos?.[id]?.mejoras ?? []).filter(m=>m === "sust-distancia").length)} m` : "");
     lista.push({ id, nombre: itemsDe(actor, id)[0]?.name ?? tec.n, costo, extra, refleja, area, texto: area ? "sales del área a un objeto fuera de ella y no recibes nada" : def.texto, aviso, g: tec.g });
@@ -4234,7 +4233,7 @@ export function defensasDisponibles(actor, { grado = 0, area = false, bloqueadas
     if (!reaccionDefensiva(tec)) continue;
     const costo = costoUso(actor, meta, tec.g);
     const permiso = evaluarGasto({ valor: Number(e.valor) || 0, costo, limite: limiteNegativo(actor), grado: tec.g,
-      agotamiento: Number(actor.system?.attributes?.exhaustion) || 0, reaccion: true, puedeReaccionar: reaccionDisponible(actor) });
+      agotamiento: sistema.agotamiento(actor), reaccion: true, puedeReaccionar: reaccionDisponible(actor) });
     if (!permiso.ok) { bloqueadas?.push({ id, nombre: item.name, costo, extra: 0, motivo: permiso.motivo }); continue; }
     const texto = String(tec.texto ?? "").split(/(?<=\.)\s/)[0].slice(0, 220);
     lista.push({ id, nombre: item.name, costo, extra: 0, refleja: false, area: false, texto, aviso: tec.item.system.activation?.condition ?? "", g: tec.g, generica: true });
@@ -4379,14 +4378,14 @@ async function defenderAtaque(wf) {
     const actor = tok?.actor;
     if (!actor || !despierto(actor) || actor === wf.actor) continue;
     // La reacción (dentro o fuera de combate) la revisa defensasDisponibles.
-    const ca = Number(actor.system?.attributes?.ac?.value) || 10;
+    const ca = sistema.ca(actor) || 10;
     const critico = !!roll.isCritical;
     if (roll.total < ca && !critico) continue; // va a fallar igual
     const bloqueadas = [];
     if (!defensasDisponibles(actor, { grado, bloqueadas }).length) { avisarDefensaBloqueada(actor, wf, grado, bloqueadas); continue; }
     const v = await preguntarDefensa(actor, { quien: wf.token?.name ?? wf.actor?.name ?? "Alguien", con: wf.item?.name ?? "un ataque", total: roll.total, ca, critico, grado });
     if (v && D.defensas[v]?.tipo === "desventaja") await aplicarDesventaja(wf, roll);
-    if (v && (D.defensas[v]?.tipo === "falla" || (!roll.isCritical && roll.total < Number(actor.system?.attributes?.ac?.value)))) excluirBlanco(wf,tok);
+    if (v && (D.defensas[v]?.tipo === "falla" || (!roll.isCritical && roll.total < sistema.ca(actor)))) excluirBlanco(wf,tok);
   }
 }
 
@@ -4772,21 +4771,21 @@ Hooks.on("refreshToken", token => { if (activo()) barraToken(token); });
 Hooks.on("deleteActiveEffect", (ef, opciones) => { if (activo()) alQuitarEfecto(ef, opciones).catch(err => console.error(`${MOD} | capa V`, err)); });
 Hooks.on("preUpdateActor", (actor, cambios, opciones) => {
   if (!activo()) return;
-  const nuevo = foundry.utils.getProperty(cambios, "system.attributes.hp.value");
-  if (nuevo !== undefined && efectoCanal(actor)) opciones.ecosDanoCanal = Math.max(0, (Number(actor.system.attributes.hp.value) || 0) - Number(nuevo));
+  const nuevo = foundry.utils.getProperty(cambios, sistema.RUTAS.pg);
+  if (nuevo !== undefined && efectoCanal(actor)) opciones.ecosDanoCanal = Math.max(0, sistema.pg(actor).valor - Number(nuevo));
 });
 Hooks.on("updateActor", (actor, cambios, opciones) => {
   if (!activo()) return;
-  if (soyGM() && esClon(actor) && Number(foundry.utils.getProperty(cambios, "system.attributes.hp.value")) <= 0) disiparClon(actor, { destruido: true }).catch(err => console.error(`${MOD} | clon`, err));
+  if (soyGM() && esClon(actor) && Number(foundry.utils.getProperty(cambios, sistema.RUTAS.pg)) <= 0) disiparClon(actor, { destruido: true }).catch(err => console.error(`${MOD} | clon`, err));
   if (soyGM() && opciones?.ecosDanoCanal > 0) golpeCanalizando(actor, opciones.ecosDanoCanal).catch(err => console.error(`${MOD} | canalizar`, err));
-  if (soyGM() && modoReserva(estado(actor)) === "dados" && (foundry.utils.hasProperty(cambios, "system.details.level") || foundry.utils.hasProperty(cambios, `flags.${MOD}.${F}.nivel`)))
+  if (soyGM() && modoReserva(estado(actor)) === "dados" && (foundry.utils.hasProperty(cambios, sistema.RUTAS.nivel) || foundry.utils.hasProperty(cambios, `flags.${MOD}.${F}.nivel`)))
     asegurarTiradasVerbe(actor).catch(err => console.error(`${MOD} | reserva por dados`, err));
   if (consumoPendiente(actor)?.nonce === estado(actor)?.ultimoUso) consumosPendientes.delete(claveActor(actor));
   if (soyGM() && Number(foundry.utils.getProperty(cambios, `flags.${MOD}.${F}.valor`)) < 0 && herenciaDe(actor)?.barrera) {
     manejar({ accion: "capaVBarrera", actorId: actor.id }, { interno: true });
   }
-  if (foundry.utils.hasProperty(cambios, `flags.${MOD}.${F}`) || foundry.utils.hasProperty(cambios, "system.abilities")
-    || foundry.utils.hasProperty(cambios, "system.currency")) {
+  if (foundry.utils.hasProperty(cambios, `flags.${MOD}.${F}`) || foundry.utils.hasProperty(cambios, sistema.RUTAS.caracteristicas)
+    || foundry.utils.hasProperty(cambios, sistema.RUTAS.moneda)) {
     refrescarPanel(actor.id);
     for (const t of actor.getActiveTokens()) barraToken(t);
   }
