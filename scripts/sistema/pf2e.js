@@ -18,6 +18,7 @@ export function pg(actor) {
 export const datosPg = (n, { max, temp } = {}) => ({ [RUTAS.pg]: Math.max(0, Math.trunc(num(n))),
   ...(max != null ? { "system.attributes.hp.max": Math.max(0, Math.trunc(num(max))) } : {}),
   ...(temp != null ? { "system.attributes.hp.temp": Math.max(0, Math.trunc(num(temp))) } : {}) });
+export const datosPgTemp = n => ({ "system.attributes.hp.temp": Math.max(0, Math.trunc(num(n))) });
 export const curar = falta("curar");
 export const danar = falta("danar");
 /* Control del Verbe: en PF2e será «Saber del Verbe», un Saber que Ecos crea al despertar (5.2d). */
@@ -32,6 +33,8 @@ export const mod = (actor, clave) => num(actor?.system?.abilities?.[clave]?.mod)
 /** La característica de la primera entrada de lanzamiento de conjuros, o null. */
 export const caracteristicaConjuros = actor => Array.from(actor?.items ?? []).find(i => i?.type === "spellcastingEntry")?.system?.ability?.value || null;
 export const ca = actor => num(actor?.system?.attributes?.ac?.value);
+/** La CD de Percepción de PF2e: 10 + el modificador de Percepción (null si la ficha no lo trae). */
+export const percepcionPasiva = actor => { const p = actor?.system?.perception; const m = p?.mod ?? p?.totalModifier; return m == null ? null : 10 + num(m); };
 export const datosCaFija = n => ({ "system.attributes.ac.value": num(n) });
 export function velocidad(actor) {
   return { pie: num(actor?.system?.attributes?.speed?.value), pies: true };

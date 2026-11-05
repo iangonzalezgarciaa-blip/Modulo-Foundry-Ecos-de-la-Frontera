@@ -315,7 +315,7 @@ async function alAplicarDano(actor, cantidad, opciones) {
   if (!combo) return;
   const [nombre, tipo, estados] = DATOS_COMBO[combo];
   const r = await new Roll(`2d6[${tipo}]`).evaluate();
-  await actor.applyDamage([{ value: r.total, type: tipo }]);
+  await sistema.danar(actor, r.total, tipo);
   for (const s of estados) await actor.toggleStatusEffect?.(s, { active: true });
   await actor.unsetFlag(MOD, "ultimaTecnica");
   ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: autor }), rolls: [r], content: `<section class="ecos-combinada"><h3>Técnica combinada · ${nombre}</h3><p>${esc(autor.name)} remata la técnica de su aliado sobre <b>${esc(actor.name)}</b>: ${r.total} de daño (${esc(CONFIG.DND5E?.damageTypes?.[tipo]?.label ?? tipo)}) y queda ${estados.map(s => esc(CONFIG.statusEffects?.find?.(x => x.id === s)?.name ?? s)).join(" y ")}.</p></section>` });
@@ -348,7 +348,7 @@ async function usarTerreno(uuidRegion, actor) {
     let falla = true;
     if (e.salv) { const r = await new Roll("1d20 + @s", { s: salvacion(a, e.salv) }).evaluate(); falla = r.total < cd; filas.push(`${esc(a.name)}: ${r.total} — ${falla ? "falla" : "supera"}`); }
     if (!falla) continue;
-    if (e.dano) { const d = await new Roll(`${e.dano[0]}d${e.dano[1]}`).evaluate(); await a.applyDamage([{ value: d.total, type: e.dano[2] }]); filas.push(`${esc(a.name)} recibe ${d.total}`); }
+    if (e.dano) { const d = await new Roll(`${e.dano[0]}d${e.dano[1]}`).evaluate(); await sistema.danar(a, d.total, e.dano[2]); filas.push(`${esc(a.name)} recibe ${d.total}`); }
     for (const s of e.estados ?? []) await a.toggleStatusEffect?.(s, { active: true });
   }
   ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<section class="ecos-terreno"><h3>${esc(actor.name)} usa ${esc(e.etiqueta)}</h3><p>${esc(e.texto)} CD ${cd}.</p><ul>${filas.map(f => `<li>${f}</li>`).join("") || "<li>No había nadie dentro.</li>"}</ul></section>` });
@@ -423,7 +423,7 @@ if (globalThis.Hooks) {
   Hooks.on("createChatMessage", m => { alCrearMensaje(m).catch(err => console.error(`${MOD} | combate táctico`, err)); revelarTerreno(m).catch(err => console.error(`${MOD} | terreno vivo`, err)); });
   Hooks.on("combatStart", c => { alEmpezarCombate(c).catch(err => console.error(`${MOD} | plan maestro`, err)); });
   Hooks.on("updateActor", (actor, cambios) => {
-    if (actor.type === "npc" && foundry.utils.hasProperty(cambios, "system.attributes.hp.value") && caido(actor)) revisarMoral(actor).catch(err => console.error(`${MOD} | moral`, err));
+    if (actor.type === "npc" && foundry.utils.hasProperty(cambios, sistema.RUTAS.pg) && caido(actor)) revisarMoral(actor).catch(err => console.error(`${MOD} | moral`, err));
   });
   Hooks.on("dnd5e.preApplyDamage", (actor, cantidad, updates, opciones) => {
     if (!regla("secuaces") || !(tokenDe(actor)?.document?.getFlag?.(MOD, "secuaz") ?? actor.getFlag?.(MOD, "secuaz"))) return;

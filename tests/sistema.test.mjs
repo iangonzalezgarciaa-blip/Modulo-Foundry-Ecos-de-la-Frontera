@@ -65,6 +65,13 @@ test('5.2c · verbe.js: PG, Control, competencia, nivel y rutas pasan por la cap
   assert.deepEqual(Object.keys(D).sort(), Object.keys(P).sort());
 });
 
+test('5.2c · PG temporales y Percepción pasiva (Mesa y azar)', () => {
+  assert.deepEqual(D.datosPgTemp(4.7), { 'system.attributes.hp.temp': 4 }); assert.deepEqual(D.datosPgTemp(-1), { 'system.attributes.hp.temp': 0 });
+  assert.equal(D.percepcionPasiva({ system: { skills: { prc: { passive: 14 } } } }), 14); assert.equal(D.percepcionPasiva({}), null);
+  assert.equal(P.percepcionPasiva({ system: { perception: { mod: 7 } } }), 17); assert.equal(P.percepcionPasiva({}), null);
+  assert.deepEqual(P.datosPgTemp(3), { 'system.attributes.hp.temp': 3 });
+});
+
 test('5.2c · salvaciones y CD de característica en los dos sistemas', () => {
   const a = { system: { abilities: { con: { mod: 2, save: { value: 5 } }, int: { mod: 3 } }, attributes: { prof: 2, hp: { value: 0 } } } };
   assert.equal(D.bonoSalvacion(a, 'con'), 5); assert.equal(D.bonoSalvacion(a, 'int'), 3);

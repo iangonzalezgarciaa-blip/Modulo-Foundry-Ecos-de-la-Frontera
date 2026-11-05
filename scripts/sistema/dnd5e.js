@@ -22,6 +22,8 @@ export function pg(actor) {
 export const datosPg = (n, { max, temp } = {}) => ({ [RUTAS.pg]: Math.max(0, Math.trunc(num(n))),
   ...(max != null ? { "system.attributes.hp.max": Math.max(0, Math.trunc(num(max))) } : {}),
   ...(temp != null ? { "system.attributes.hp.temp": Math.max(0, Math.trunc(num(temp))) } : {}) });
+/** Datos de actualización solo de los PG temporales (no toca los actuales, así no despierta los ganchos de PG). */
+export const datosPgTemp = n => ({ "system.attributes.hp.temp": Math.max(0, Math.trunc(num(n))) });
 /** Curar `n` PG, o hacer `n` de daño de un tipo de dnd5e, con la API de dnd5e. */
 export const curar = (actor, n) => actor.applyDamage([{ value: num(n), type: "healing" }]);
 export const danar = (actor, n, tipo) => actor.applyDamage([{ value: num(n), type: tipo }]);
@@ -45,6 +47,8 @@ export const mod = (actor, clave) => num(actor?.system?.abilities?.[clave]?.mod)
 /** La característica de lanzamiento de conjuros de la ficha, o null. */
 export const caracteristicaConjuros = actor => actor?.system?.attributes?.spellcasting || null;
 export const ca = actor => num(actor?.system?.attributes?.ac?.value);
+/** Percepción pasiva (null si la ficha no la trae). */
+export const percepcionPasiva = actor => { const v = actor?.system?.skills?.prc?.passive; return v == null ? null : num(v); };
 /** Datos de actualización para dejar la CA fija en `n`. */
 export const datosCaFija = n => ({ "system.attributes.ac.calc": "flat", "system.attributes.ac.flat": num(n) });
 /** Velocidad a pie en las unidades de la ficha y si son pies. dnd5e 6 la guarda en movement.speeds, dnd5e 5 en movement. */

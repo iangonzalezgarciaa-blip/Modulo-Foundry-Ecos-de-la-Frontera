@@ -1,5 +1,6 @@
 import {huellaTexto} from "./verbe-reading.js";
 import {actoresPresentes} from './mesa-actores.js';
+import {sistema} from './sistema/index.js';
 /** Catálogo de reliquias, compendio privado y control de usos nativos. */
 const MOD='ecos-frontera',PACK='world.ecos-reliquias',pendientes=new Map();
 let datos=null,carga=null;
@@ -60,7 +61,7 @@ export async function darReliquia(actor,id){
  if(!game.user.isGM||!actor)return false;const D=await cargar(),r=D.reliquias.find(r=>r.id===id);if(!r)return false;
  if(actor.items.some(i=>meta(i)?.id===id)){ui.notifications.warn('Ya tiene una copia; se conserva su gasto y autorización.');return false;}
  const item=foundry.utils.deepClone(r.item);delete item._id;delete item.ownership;item.flags[MOD].reliquia.autorizada=true;
- const car=actor.getFlag(MOD,'verbe')?.car??actor.system.attributes?.spellcasting??'wis';
+ const car=actor.getFlag(MOD,'verbe')?.car??sistema.caracteristicaConjuros(actor)??'wis';
  for(const act of Object.values(item.system.activities))if(act.attack)act.attack.ability=['str','dex','con','int','wis','cha'].includes(car)?car:'wis';
  await actor.createEmbeddedDocuments('Item',[item]);return true;
 }
@@ -99,7 +100,7 @@ export async function despuesReliquia(activity,config){
  if(m.ritual)await item.update({[`flags.${MOD}.reliquia.permisoRitual`]:false});
  const fuentes=(item.effects??[]).filter(e=>(e.getFlag?.(MOD,'reliquiaEfecto')??e.flags?.[MOD]?.reliquiaEfecto));
  for(const fuente of fuentes){const data=fuente.toObject?fuente.toObject():foundry.utils.deepClone(fuente);delete data._id;
-  for(const c of data.changes)if(/^system\.attributes\.movement\./.test(c.key)&&actor.system.attributes.movement.units==='ft')c.value=String(Number(c.value)/.3);
+  for(const c of data.changes)if(/^system\.attributes\.movement\./.test(c.key)&&sistema.velocidad(actor).pies)c.value=String(Number(c.value)/.3);
   const viejos=actor.effects.filter(e=>e.getFlag(MOD,'reliquiaEfecto')?.familia===m.familia);for(const ef of viejos)await ef.delete();
   data.duration={...data.duration,startTime:game.time.worldTime};data.flags[MOD].reliquiaEfecto.hasta=game.time.worldTime+(Number(data.duration.seconds)||60);
   await actor.createEmbeddedDocuments('ActiveEffect',[data]);

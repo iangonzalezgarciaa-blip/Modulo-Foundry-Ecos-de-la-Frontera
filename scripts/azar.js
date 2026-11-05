@@ -2,6 +2,7 @@ import {dadoNatural,tablaAzar,tablaAzarGuia,CONTEXTOS_AZAR,REGLA_AZAR} from './a
 import {paginaReglas} from './acciones-comunes.js';
 import {regla} from './combate-tactico.js';
 import {infoTirada,cambio,objetivosMensaje} from './compat.js';
+import {sistema} from './sistema/index.js';
 const MOD='ecos-frontera',locks=new Map();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nivel=a=>Number(a.system?.details?.level)||Math.max(1,Math.ceil(Number(a.system?.details?.cr)||1));
@@ -71,14 +72,14 @@ async function resolverAzarInterno(m,aprobar,elegida=null){
    const quien=fila.efecto.quien==='objetivo'?(d.objetivo?await fromUuid(d.objetivo):null):actor;
    const destino=quien?.actor??quien;
    if(destino&&fila.efecto.tipo==='estado')await destino.toggleStatusEffect?.(fila.efecto.valor,{active:true});
-   if(destino&&fila.efecto.tipo==='pgTemp'){const hp=destino.system?.attributes?.hp;if(hp)await destino.update({'system.attributes.hp.temp':Math.max(Number(hp.temp)||0,Number(fila.efecto.valor)||0)});}
+   if(destino&&fila.efecto.tipo==='pgTemp'){const hp=sistema.pg(destino);if(hp.hay)await destino.update(sistema.datosPgTemp(Math.max(hp.temp,Number(fila.efecto.valor)||0)));}
   }
   else if(fila.efecto&&combate){
-   const unidades=actor.system.attributes?.movement?.units==='ft'?1/0.3:1;
+   const unidades=sistema.velocidad(actor).pies?1/0.3:1;
    const ca=fila.efecto.tipo==='ca',key=ca?'system.attributes.ac.bonus':'system.attributes.movement.walk';
    const valor=ca?fila.efecto.valor:fila.efecto.valor*unidades;
    // La reducción no puede dejar la velocidad por debajo de 1,5 m.
-   const actual=Number(actor.system.attributes?.movement?.walk)||0;
+   const actual=sistema.velocidad(actor).pie;
    const delta=!ca&&valor<0?Math.max(valor,Math.min(0,1.5*unidades-actual)):valor;
    await actor.createEmbeddedDocuments('ActiveEffect',[{name:`${fila.nombre} · d20`,img:'icons/svg/d20.svg',disabled:false,transfer:false,
     changes:[cambio(key,'add',delta)],duration:{rounds:2,combat:combate.id,startRound:combate.round,startTurn:combate.turn},description:`<p>${esc(fila.texto)}</p>`,

@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.22.0 — 2026-11-05
+
+- Preparación para PF2e (tarea 5.2c, cuarto paso): la Mesa Ecos (resumen del personaje, tabla de Control de la sesión y tiradas pedidas), el azar (PG temporales y velocidad), las reliquias y el daño del combate táctico leen y escriben la ficha a través de la capa del sistema. Con esto, las lecturas y escrituras simples de la ficha ya pasan todas por la capa. En la mesa no cambia nada; el movimiento del resumen de la Mesa se lee igual en dnd5e 5 y 6. La capa suma los PG temporales y la Percepción pasiva.
+
 ## 3.21.0 — 2026-11-05
 
 - Preparación para PF2e (tarea 5.2c, tercer paso): el resto de `main.js` lee y escribe la ficha a través de la capa del sistema. Entran Estabilizar y despertar, el Eco, la página «Estado de los PJ», los Oficios, las Monedas Antiguas en las tiradas, el Eco del Vorrh, los Golpes que cuentan, la noche sin dormir y el tope de Malherido al curar. En la mesa no cambia nada. La capa suma la prueba de característica.
