@@ -40,6 +40,7 @@ import { recuperacionDGLarga, presupuestoCorto, ajustarRecuperacionDG } from "./
 import { tipoCuracionVerbe, tratarHeridaConPulso } from "./verbe-medicina.js";
 import { infoTirada, opcionesModo, modoDeMensaje, modoActual, modoNormal, modosNuevos, objetivosMensaje, cambio, quitar, puenteRitmoViaje } from "./compat.js";
 import { sistema } from "./sistema/index.js";
+import { etiquetasGenericas, esGenerico, planNombres } from "./nombres-tokens.js";
 
 const MOD = "ecos-frontera";
 const RUTA = `modules/${MOD}`;
@@ -5502,6 +5503,55 @@ async function nombresPublicos() {
   }
   return n;
 }
+
+/* 3.24 · Nombres genéricos de token («Non-Player Character», «Player Character»): ver nombres-tokens.js. */
+function etiquetasDeTipo() {
+  const t = CONFIG.Actor?.typeLabels ?? {};
+  return etiquetasGenericas(["character", "npc"].map(k => (t[k] ? game.i18n.localize(t[k]) : null)));
+}
+const nombreDeFicha = a => ((a.hasPlayerOwner || esPJ(a)) ? a.name : nombrePublico(a));
+/** Pasa al nombre público de su ficha los prototipos y tokens que se llaman como la etiqueta del tipo. */
+async function arreglarNombresGenericos() {
+  const et = etiquetasDeTipo();
+  const plan = planNombres(
+    game.actors.map(a => ({ id: a.id, protoName: a.prototypeToken?.name, publico: nombreDeFicha(a) })),
+    game.scenes.map(s => ({ id: s.id, tokens: s.tokens.map(t => ({ id: t.id, actorId: t.actorId, name: t.name })) })),
+    et);
+  if (plan.prototipos.length) await Actor.updateDocuments(plan.prototipos);
+  let tokens = 0;
+  for (const s of plan.escenas) { await game.scenes.get(s.id)?.updateEmbeddedDocuments("Token", s.cambios); tokens += s.cambios.length; }
+  return { prototipos: plan.prototipos.length, tokens };
+}
+Hooks.once("ready", async () => {
+  if (!game.user?.isGM || (game.users?.activeGM && !game.users.activeGM.isSelf)) return;
+  try {
+    const r = await arreglarNombresGenericos();
+    if (r.prototipos || r.tokens) {
+      console.log(`${MOD} | nombres genéricos arreglados`, r);
+      ChatMessage.create({ whisper: [game.user.id], speaker: { alias: "Ecos" }, content: `<p><b>Nombres de token:</b> ${r.tokens} token(s) y ${r.prototipos} ficha(s) se llamaban «Non-Player Character» o «Player Character»; ahora muestran el nombre público de su ficha. Los nombres que pusiste a mano no se tocaron.</p>` });
+    }
+  } catch (err) { console.error(`${MOD} | nombres genéricos`, err); }
+});
+// Que no vuelva a pasar: un token nuevo con el nombre genérico toma el de su ficha…
+Hooks.on("preCreateToken", (doc) => {
+  try {
+    const et = etiquetasDeTipo();
+    if (!esGenerico(doc.name, et) || !doc.actor) return;
+    const proto = doc.actor.prototypeToken?.name;
+    const nombre = proto && !esGenerico(proto, et) ? proto : nombreDeFicha(doc.actor);
+    if (nombre && !esGenerico(nombre, et)) doc.updateSource({ name: nombre });
+  } catch { /* se queda como está */ }
+});
+// …y al renombrar una ficha cuyo token tiene el nombre genérico, el token sigue al nombre nuevo.
+Hooks.on("preUpdateActor", (actor, cambios) => {
+  try {
+    if (!("name" in (cambios ?? {})) || foundry.utils.hasProperty(cambios, "prototypeToken.name")) return;
+    const et = etiquetasDeTipo();
+    if (!esGenerico(actor.prototypeToken?.name, et)) return;
+    const nombre = (actor.hasPlayerOwner || esPJ(actor)) ? cambios.name : nombrePublico(actor, cambios.name);
+    if (nombre && !esGenerico(nombre, et)) foundry.utils.setProperty(cambios, "prototypeToken.name", nombre);
+  } catch { /* sin cambio */ }
+});
 
 /*
  * Tiradas ocultas de los PNJ: las pruebas, salvaciones, iniciativa y concentración que tira el DM con un PNJ

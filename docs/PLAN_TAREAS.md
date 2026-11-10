@@ -317,3 +317,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 5-nov-2026 | 5.2c (tercer paso) | Claude | El resto de main.js pasa por la capa (Estabilizar, Eco, Estado de los PJ, Oficios, Monedas en las tiradas, Vorrh, Golpes que cuentan, vigilia, tope de Malherido). Release v3.21.0 | 3.21.0 |
 | 5-nov-2026 | 5.2c (cuarto paso) | Claude | Mesa, azar, reliquias y combate táctico pasan por la capa; todas las lecturas simples de la ficha quedan detrás de ella. Release v3.22.0 | 3.22.0 |
 | 5-nov-2026 | 5.2c (quinto paso) | Claude | Los 33 ganchos dnd5e.* pasan por sistema.gancho con nombres de Ecos; textos de Secuela, 3 fallos y CD de las acciones más claros. Release v3.23.0 | 3.23.0 |
+| 10-nov-2026 | Corrección | Claude | Nombres genéricos de token tras la migración a dnd5e 6 (93 tokens, 21 fichas): arreglo al cargar y ganchos para que no vuelva. Release v3.24.0 | 3.24.0 |

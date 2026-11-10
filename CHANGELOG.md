@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.24.0 — 2026-11-10
+
+- Corrección: después de la migración a dnd5e 6, 93 tokens en 12 escenas y 21 fichas quedaron con el nombre de token «Non-Player Character» o «Player Character» (entre ellos el de Claudia y muchos de «Valle de Arcegris DM»), aunque las fichas tenían su nombre. Al cargar el mundo, el DM los pasa al nombre público de su ficha (sin VD ni secretos) y recibe un aviso privado con cuántos cambió. Solo se tocan los nombres que son exactamente esa etiqueta: los que el DM puso a mano quedan como están. Para que no vuelva a pasar, un token nuevo con el nombre genérico toma el de su ficha, y si renombras una ficha cuyo token tiene el nombre genérico, el token sigue al nombre nuevo.
+
 ## 3.23.0 — 2026-11-05
 
 - Textos más claros, a pedido de la mesa: la **Secuela** dice que son puntos de Fuerza, Destreza o Constitución (no PG), que vuelven de a 1 por cada día de tratamiento con éxito en un Santuario sin combate ni trabajo pesado, y que no es lo mismo que Malherido. Los **3 fallos** de muerte dicen qué se pierde. La guía «Lo que cualquiera puede intentar» y los rasgos de acciones de las hojas explican que, cuando tú haces la acción, **el objetivo** tira contra **tu** CD, con un ejemplo. Los rasgos de las hojas se actualizan solos.
