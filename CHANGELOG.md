@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.25.0 — 2026-11-10
+
+- Música de YouTube, a pedido del autor: cada uno controla el recuadro del reproductor en su equipo. Se mueve arrastrando su barra; cambia de tamaño arrastrando la esquina de abajo a la derecha, o con los botones − y + (un 25 % por clic); con doble clic en la barra pasa de chico a grande y vuelve; ⟲ lo devuelve abajo a la izquierda en tamaño chico. Recuerda dónde lo dejaste al recargar, no se sale de la ventana y el video nunca queda menor que 200 × 200, el mínimo que pide YouTube (por eso no se puede ocultar del todo: para no oírlo está «Silenciar»).
+
 ## 3.24.0 — 2026-11-10
 
 - Corrección: después de la migración a dnd5e 6, 93 tokens en 12 escenas y 21 fichas quedaron con el nombre de token «Non-Player Character» o «Player Character» (entre ellos el de Claudia y muchos de «Valle de Arcegris DM»), aunque las fichas tenían su nombre. Al cargar el mundo, el DM los pasa al nombre público de su ficha (sin VD ni secretos) y recibe un aviso privado con cuántos cambió. Solo se tocan los nombres que son exactamente esa etiqueta: los que el DM puso a mano quedan como están. Para que no vuelva a pasar, un token nuevo con el nombre genérico toma el de su ficha, y si renombras una ficha cuyo token tiene el nombre genérico, el token sigue al nombre nuevo.

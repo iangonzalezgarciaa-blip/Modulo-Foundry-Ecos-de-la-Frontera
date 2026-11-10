@@ -81,3 +81,19 @@ test('3.10: repetir canción vuelve a empezar la misma para todos; sin repetir p
     assert.equal(valor.actual.id, 'bbbbbbbbbbb'); assert.equal(valor.cola.length, 0); assert.equal(valor.repetir, false);
   } finally { globalThis.game = antes; }
 });
+
+test('3.25: el recuadro de la música se mueve y cambia de tamaño sin salirse de la ventana ni bajar de 200 × 200', async () => {
+  const { ajustarCaja, pasoCaja, alternarCaja, MIN_ANCHO, MIN_ALTO, CAJA_GRANDE } = await import('../scripts/mesa-musica.js');
+  const W = 1280, H = 720;
+  assert.deepEqual(ajustarCaja(null, W, H), { x: 8, y: H - MIN_ALTO - 8, w: MIN_ANCHO, h: MIN_ALTO }, 'sin datos: abajo a la izquierda, chico');
+  assert.deepEqual(ajustarCaja({ x: 5000, y: -40, w: 10, h: 99999 }, W, H), { x: W - MIN_ANCHO, y: 0, w: MIN_ANCHO, h: H }, 'nunca fuera de la ventana ni menor que el mínimo');
+  assert.deepEqual(ajustarCaja({ x: 'a', y: null, w: undefined, h: '' }, W, H), ajustarCaja(null, W, H), 'datos rotos: posición de siempre');
+  const chica = ajustarCaja(null, W, H), mayor = pasoCaja(chica, 1, W, H);
+  assert.ok(mayor.w > chica.w); assert.equal(mayor.y + mayor.h, chica.y + chica.h, 'crece hacia arriba, sin moverse de su borde de abajo');
+  assert.deepEqual(pasoCaja(chica, -1, W, H), chica, 'achicar no baja del mínimo');
+  const grande = alternarCaja(chica, W, H);
+  assert.equal(grande.w, CAJA_GRANDE.w); assert.equal(grande.h, CAJA_GRANDE.h);
+  assert.deepEqual(alternarCaja(grande, W, H), chica, 'el doble clic vuelve a chico');
+  const enchica = ajustarCaja({ x: 10, y: 10, w: 300, h: 300 }, 150, 150);
+  assert.deepEqual(enchica, { x: 0, y: 0, w: MIN_ANCHO, h: MIN_ALTO }, 'en una ventana más chica que el mínimo, se queda en el mínimo arriba a la izquierda');
+});

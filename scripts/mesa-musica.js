@@ -1,10 +1,80 @@
 /**
  * Música de YouTube sincronizada (tareas 5.1b y 5.1c). Usa solo el reproductor oficial incrustado de YouTube
- * (visible, 200 × 200 como mínimo): no descarga ni separa el audio. El DM pone un enlace o una cola; cada jugador
+ * (visible, 200 × 200 como mínimo; desde 3.25 cada uno lo mueve y le cambia el tamaño): no descarga ni separa el audio. El DM pone un enlace o una cola; cada jugador
  * lo oye en su cliente, a la vez, y elige su volumen.
  */
-const MOD = "ecos-frontera", AJ = "musicaYT", VOL = "musicaVolumen";
+const MOD = "ecos-frontera", AJ = "musicaYT", VOL = "musicaVolumen", CAJA = "musicaCaja";
 let reproductor = null, cargandoApi = null, ultimo = null;
+/* El recuadro se mueve y cambia de tamaño (3.25), cada uno en su equipo. El video nunca baja de 200 × 200,
+ * el mínimo que pide el reproductor de YouTube; la barra de arriba suma 28 px. */
+export const BARRA = 28, MIN_ANCHO = 200, MIN_ALTO = 200 + BARRA, CAJA_GRANDE = { w: 480, h: 270 + BARRA };
+const num = (v, d) => (Number.isFinite(Number(v)) && (v !== null) && (v !== "") ? Number(v) : d);
+/** Deja el recuadro dentro de la ventana y nunca menor que el mínimo. Sin datos, va abajo a la izquierda. Puro. */
+export function ajustarCaja(c, vw, vh) {
+  const w = Math.round(Math.min(Math.max(num(c?.w, MIN_ANCHO), MIN_ANCHO), Math.max(MIN_ANCHO, vw)));
+  const h = Math.round(Math.min(Math.max(num(c?.h, MIN_ALTO), MIN_ALTO), Math.max(MIN_ALTO, vh)));
+  const x = Math.round(Math.min(Math.max(num(c?.x, 8), 0), Math.max(0, vw - w)));
+  const y = Math.round(Math.min(Math.max(num(c?.y, vh - h - 8), 0), Math.max(0, vh - h)));
+  return { x, y, w, h };
+}
+/** Achicar (signo −1) o agrandar (+1) un 25 %, en proporción de video y sin moverse de su esquina de abajo. Puro. */
+export function pasoCaja(c, signo, vw, vh) {
+  const k = ajustarCaja(c, vw, vh);
+  const w = k.w * (signo > 0 ? 1.25 : 0.8);
+  const h = Math.max(MIN_ALTO, Math.round(w * 9 / 16) + BARRA);
+  return ajustarCaja({ x: k.x, y: k.y + k.h - h, w, h }, vw, vh);
+}
+/** Doble clic en la barra: de chico a grande y de grande a chico, sin salirse de la ventana. Puro. */
+export function alternarCaja(c, vw, vh) {
+  const k = ajustarCaja(c, vw, vh);
+  const grande = (k.w >= CAJA_GRANDE.w) || (k.h >= CAJA_GRANDE.h);
+  const t = grande ? { w: MIN_ANCHO, h: MIN_ALTO } : CAJA_GRANDE;
+  return ajustarCaja({ x: k.x, y: k.y + k.h - t.h, ...t }, vw, vh);
+}
+const cajaGuardada = () => { try { return game.settings.get(MOD, CAJA) || null; } catch { return null; } };
+let cajaActual = null;
+function pintarCaja(c, k) {
+  cajaActual = k;
+  Object.assign(c.style, { left: `${k.x}px`, top: `${k.y}px`, width: `${k.w}px`, height: `${k.h}px`, bottom: "auto" });
+}
+function guardarCaja(k) { try { game.settings.set(MOD, CAJA, k); } catch { /* sin ajuste registrado (pruebas) */ } }
+/** Mover (desde la barra) o cambiar el tamaño (desde la esquina). Durante el arrastre el video no recibe el ratón,
+ *  para que el puntero no se pierda dentro del reproductor. */
+function arrastrar(ev, c, modo) {
+  if ((ev.button !== 0) || ev.target.closest("button")) return;
+  ev.preventDefault();
+  const ini = cajaActual ?? ajustarCaja(cajaGuardada(), innerWidth, innerHeight), x0 = ev.clientX, y0 = ev.clientY;
+  const video = c.querySelector("iframe");
+  if (video) video.style.pointerEvents = "none";
+  c.style.zIndex = "100";
+  const mover = e => {
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    pintarCaja(c, ajustarCaja(modo === "mover" ? { ...ini, x: ini.x + dx, y: ini.y + dy } : { ...ini, w: ini.w + dx, h: ini.h + dy }, innerWidth, innerHeight));
+  };
+  const soltar = () => {
+    window.removeEventListener("pointermove", mover); window.removeEventListener("pointerup", soltar);
+    if (video) video.style.pointerEvents = "";
+    c.style.zIndex = "70";
+    guardarCaja(cajaActual);
+  };
+  window.addEventListener("pointermove", mover); window.addEventListener("pointerup", soltar);
+}
+function estiloCaja() {
+  if (document.getElementById("ecos-musica-css")) return;
+  const s = document.createElement("style");
+  s.id = "ecos-musica-css";
+  s.textContent = `#ecos-musica{position:fixed;z-index:70;box-sizing:border-box;padding:0;background:#111;border:0;outline:1px solid #444;border-radius:6px;overflow:hidden;box-shadow:0 2px 8px #0008}
+#ecos-musica .em-barra{height:${BARRA}px;display:flex;align-items:center;gap:3px;padding:0 4px 0 6px;color:#ddd;font-size:12px;cursor:move;user-select:none}
+#ecos-musica .em-barra span{flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ecos-musica .em-barra button{flex:0 0 auto;width:auto;min-width:0;height:20px;line-height:18px;padding:0 5px;margin:0;font-size:12px;cursor:pointer}
+#ecos-musica iframe{position:absolute;left:0;top:${BARRA}px;width:100%!important;height:calc(100% - ${BARRA}px)!important;border:0;display:block}
+#ecos-musica .em-esquina{position:absolute;right:0;bottom:0;width:16px;height:16px;cursor:nwse-resize;z-index:2;background:linear-gradient(135deg,transparent 50%,#bbb 50%,#bbb 60%,transparent 60%,transparent 70%,#bbb 70%,#bbb 80%,transparent 80%)}`;
+  document.head.append(s);
+}
+globalThis.addEventListener?.("resize", () => {
+  const c = document.getElementById("ecos-musica");
+  if (c && cajaActual) pintarCaja(c, ajustarCaja(cajaActual, innerWidth, innerHeight));
+});
 const estadoMusica = () => { try { return game.settings.get(MOD, AJ) ?? { cola: [], actual: null }; } catch { return { cola: [], actual: null }; } };
 /** Saca el id de un enlace de YouTube (watch, youtu.be, shorts, embed) o acepta el id suelto. */
 export function idYoutube(texto) {
@@ -32,15 +102,24 @@ function api() {
 function caja() {
   let c = document.getElementById("ecos-musica");
   if (c) return c;
+  estiloCaja();
   c = document.createElement("div");
   c.id = "ecos-musica";
-  c.style.cssText = "position:fixed;left:8px;bottom:8px;width:200px;height:228px;z-index:70;background:#111;border:1px solid #444;border-radius:6px;overflow:hidden";
-  c.innerHTML = `<div style="height:28px;display:flex;align-items:center;justify-content:space-between;padding:0 6px;color:#ddd;font-size:12px"><span>♪ Música de la mesa</span><button type="button" data-cerrar style="width:auto;line-height:18px;padding:0 6px" title="Solo en tu equipo; la música sigue para los demás">Silenciar</button></div><div id="ecos-musica-yt"></div>`;
+  c.innerHTML = `<div class="em-barra" title="Arrastra para mover · doble clic: grande o chico"><span>♪ Música</span><button type="button" data-caja="menos" title="Achicar">−</button><button type="button" data-caja="mas" title="Agrandar">+</button><button type="button" data-caja="esquina" title="Volver abajo a la izquierda, tamaño chico">⟲</button><button type="button" data-cerrar title="Solo en tu equipo; la música sigue para los demás">Silenciar</button></div><div id="ecos-musica-yt"></div><div class="em-esquina" title="Arrastra para cambiar el tamaño"></div>`;
+  pintarCaja(c, ajustarCaja(cajaGuardada(), innerWidth, innerHeight));
+  const barra = c.querySelector(".em-barra");
+  barra.addEventListener("pointerdown", e => arrastrar(e, c, "mover"));
+  barra.addEventListener("dblclick", e => { if (e.target.closest("button")) return; pintarCaja(c, alternarCaja(cajaActual, innerWidth, innerHeight)); guardarCaja(cajaActual); });
+  c.querySelector(".em-esquina").addEventListener("pointerdown", e => arrastrar(e, c, "tamano"));
+  c.querySelectorAll("[data-caja]").forEach(b => b.addEventListener("click", () => {
+    const k = b.dataset.caja === "esquina" ? ajustarCaja(null, innerWidth, innerHeight) : pasoCaja(cajaActual, b.dataset.caja === "mas" ? 1 : -1, innerWidth, innerHeight);
+    pintarCaja(c, k); guardarCaja(k);
+  }));
   const boton = c.querySelector("[data-cerrar]");
   boton.addEventListener("click", () => {
     if (!reproductor) return;
     if (reproductor.isMuted?.()) { reproductor.unMute(); boton.textContent = "Silenciar"; c.style.opacity = "1"; }
-    else { reproductor.mute(); boton.textContent = "Volver a oír"; c.style.opacity = "0.5"; }
+    else { reproductor.mute(); boton.textContent = "Oír"; c.style.opacity = "0.5"; }
   });
   document.body.append(c);
   return c;
@@ -83,13 +162,14 @@ export async function siguiente() { const e = estadoMusica(), [prox, ...resto] =
 export function musicaHTML() {
   if (!game.user.isGM) return "";
   const e = estadoMusica(), esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[c]);
-  return `<section><h3>Música de YouTube</h3><p>Pega un enlace: suena para todos a la vez, cada uno con su volumen (Ajustes del módulo). Se usa el reproductor oficial de YouTube, visible abajo a la izquierda.</p>
+  return `<section><h3>Música de YouTube</h3><p>Pega un enlace: suena para todos a la vez, cada uno con su volumen (Ajustes del módulo). Se usa el reproductor oficial de YouTube, abajo a la izquierda: cada uno puede moverlo desde su barra y cambiarle el tamaño desde la esquina o con − y +.</p>
     <div class="em-fila"><label>Enlace<input name="musicaUrl" placeholder="https://www.youtube.com/watch?v=…"></label><button type="button" data-em="musica" data-id="reproducir">Reproducir</button><button type="button" data-em="musica" data-id="encolar">Añadir a la cola</button></div>
     <div class="em-fila"><button type="button" data-em="musica" data-id="pausar">Pausa</button><button type="button" data-em="musica" data-id="seguir">Seguir</button><button type="button" data-em="musica" data-id="siguiente">Siguiente</button><button type="button" data-em="musica" data-id="repetir" aria-pressed="${e.repetir ? "true" : "false"}" title="Vuelve a empezar la canción al terminar, para todos">${e.repetir ? "🔁 Repetir: sí" : "🔁 Repetir: no"}</button><button type="button" data-em="musica" data-id="detener">Detener</button></div>
     <p class="ecos-nota">${e.actual ? `Suena: ${esc(e.actual.id)}${Number.isFinite(e.actual.pausadoEn) ? " (en pausa)" : ""}${e.repetir ? " · se repite" : ""}.` : "No suena nada."} En cola: ${(e.cola ?? []).length}.</p></section>`;
 }
 Hooks.once("init", () => {
   game.settings.register(MOD, AJ, { scope: "world", config: false, type: Object, default: { cola: [], actual: null } });
+  game.settings.register(MOD, CAJA, { scope: "client", config: false, type: Object, default: null });
   game.settings.register(MOD, VOL, { name: "Volumen de la música de YouTube", hint: "Solo en tu equipo. La música la elige el DM.", scope: "client", config: true, type: Number, range: { min: 0, max: 100, step: 5 }, default: 50, onChange: v => reproductor?.setVolume?.(Number(v)) });
 });
 Hooks.once("ready", () => { if (estadoMusica().actual) aplicar().catch(err => console.warn(`${MOD} | música`, err)); });
