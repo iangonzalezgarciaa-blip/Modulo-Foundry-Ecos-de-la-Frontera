@@ -376,7 +376,8 @@ async function matar(actor, causa) {
   try {
     await actor.setFlag(MOD, "muerto", { causa, fecha: Date.now() });
     await quitarStatus(actor, "acechado");
-    if (!actor.statuses.has("dead")) await actor.toggleStatusEffect("dead", { active: true, overlay: true });
+    // 3.39: dnd5e puede poner «Muerto» a la vez (Agotamiento 6): el id es fijo y el segundo choca en el servidor.
+    if (!actor.statuses.has("dead") && !actor.effects.get?.("dnd5edead0000000")) await actor.toggleStatusEffect("dead", { active: true, overlay: true }).catch(() => null);
     for (const c of combatantesDe(actor)) if (!c.defeated) await c.update({ defeated: true });
     efecto(actor, "muerte");
     await publicar(actor, "☠ Muerte", [`<b>${actor.name}</b> ha muerto: ${causa}.`], { clase: "ecos-muerte" });

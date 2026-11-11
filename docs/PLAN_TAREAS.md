@@ -334,3 +334,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 11-nov-2026 | Mejora | Claude | Almacén de reliquias por etapas en Objetos, aprender y quitar conjuros (también PNJ), conjuros PF2e nivelados a D&D y subir de nivel guiado. Release v3.37.0 | 3.37.0 |
 | 11-nov-2026 | Mejora | Claude | Tutorial del Verbe, Choca/No choca, dotes de elemento ocultas, Control explicado, auditoría de dotes automáticas y fama con proezas. Release v3.38.0 | 3.38.0 |
 | 11-nov-2026 | Mejora | Claude | Clones que entrenan, arreglos de la barra del turno y de la salvación a 0 PG, nivelado de legados y auditoría. Release v3.39.0 | 3.39.0 |
+| 11-nov-2026 | Mejora | Claude | Arreglo del estado «Muerto» duplicado y auditoría con los registros de Foundry. Release v3.40.0 | 3.40.0 |

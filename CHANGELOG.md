@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.40.0 — 2026-11-11
+
+- **Arreglo · «Muerto» dos veces:** cuando un PJ muere por Agotamiento 6, D&D y el módulo ponían el estado «Muerto» a la vez y el servidor rechazaba el segundo (aparecía en el registro de errores de Foundry del 11-nov). Ahora el módulo comprueba antes y no choca.
+- Auditoría con los registros reales de tu Foundry (errores del servidor del 10 y 11 de noviembre): el resto eran avisos del sistema (UPnP, Foundry abierto dos veces) o efectos de defensa duplicados que ya limpia la 3.34.
+
 ## 3.39.0 — 2026-11-11
 
 - **Clones que entrenan** (decisión del autor): lo que entrena un clon le cuenta a su creador al disiparse o deshacerse. La ventana de recuerdos del DM pregunta las horas (sugiere el tiempo que existió): **8 h = 1 día**; las horas sueltas se guardan. **Tope por día de juego: su competencia del Verbe** (lo que pase se pierde). Si estaba entrenando una naturaleza, se le acorta; si no, los días quedan guardados en su panel y se gastan solos en su próxima técnica o cultivo.
