@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 3.41.0 — 2026-11-11
+
+- **Capas del Abismo** (pedido del autor): Menú del DM → Mesa → «Capas del Abismo». Pones en qué capa está la escena (y si quieres se lo anuncia a los jugadores), y dos botones: **Cruzar hacia afuera** cobra cada umbral que dejan, de la capa más honda a la menos (una salvación por umbral y por PJ; Agotamiento, daño y Envenenado se aplican solos; lo que no es número —un recuerdo, un sentido, volverse Soñado o no volver— te llega en un susurro para que lo decidas tú), con las casillas de cada PJ: durmió en la capa (cobra como una más honda), más de un día, cristal mudo (una menos honda; de la 5 hacia adentro solo la mitad del daño; se gasta en tres umbrales), por un Camino (no paga) y portador (desventaja). **Amanecer: la llamada** tira Sabiduría en las capas hondas. La ventana explica la mecánica paso a paso y muestra la tabla completa. Los nombres, las CD y los cobros de cada capa no están en el código (el repositorio es público): los lee de un diario de tu mundo.
+- **Traducir fichas al español** (Menú del DM → Mesa): copia a las fichas el nombre y la descripción en español de sus clases, rasgos, conjuros, acciones y objetos desde los compendios de D&D traducidos (Babele + translate-dnd5e-sdr2-es). Sirve para las fichas que se armaron antes de activar la traducción. Primero muestra qué cambiaría.
+- Prueba de mesa nueva en el Diagnóstico (71).
+
 ## 3.40.0 — 2026-11-11
 
 - **Arreglo · «Muerto» dos veces:** cuando un PJ muere por Agotamiento 6, D&D y el módulo ponían el estado «Muerto» a la vez y el servidor rechazaba el segundo (aparecía en el registro de errores de Foundry del 11-nov). Ahora el módulo comprueba antes y no choca.

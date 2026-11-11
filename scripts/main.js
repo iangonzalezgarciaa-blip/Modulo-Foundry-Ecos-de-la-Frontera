@@ -28,6 +28,8 @@ import "./accion-estandar.js";
 import "./reliquias-almacen.js";
 import "./subir-nivel.js";
 import "./fama.js";
+import "./capas-abismo.js";
+import "./traducir-fichas.js";
 import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
@@ -9147,6 +9149,8 @@ const OPS_PANEL = [
     ["pantalla", "Pantalla del DM", "fa-table-columns", "Abre o cierra la Pantalla del DM (pestaña «Ecos · DM»)."],
     ["plantillas", "Quitar plantillas", "fa-eraser", "Lista las plantillas de área de la escena (en Foundry 14 son regiones) y quita las marcadas o todas. También está la goma en la barra de Tokens."],
     ["choqueVerbe", "Choque de técnicas", "fa-burst", "Resuelve a mano un choque entre dos técnicas (elemento, grado y Control)."],
+    ["capasAbismo", "Capas del Abismo", "fa-stairs", "En qué capa está la escena, cruzar umbrales hacia afuera con su cobro (salvación, Agotamiento, daño y estados automáticos) y la llamada del amanecer. Explica la mecánica paso a paso."],
+    ["traducirFichas", "Traducir fichas al español", "fa-language", "Copia a las fichas el nombre y la descripción en español de sus clases, rasgos, conjuros, acciones y objetos desde los compendios de D&D traducidos (para fichas armadas antes de activar la traducción). Primero muestra un informe."],
     ["proeza", "Proeza (fama)", "fa-bullhorn", "Marca una proeza de los PJ: suma fama y, al cruzar un umbral, las facciones se enteran (te susurra qué hacer)."],
     ["almacenReliquias", "Almacén de reliquias", "fa-gem", "Crea o pone al día en la pestaña Objetos todas las reliquias del Abismo: manual del DM con sus etapas, una copia por etapa y una para entregar que sube de etapa con un botón."],
     ["danoIndirecto", "Daño de caída e indirecto", "fa-person-falling-burst", "Caídas (1d6 cada 10 ft), derrumbes, brasas, lava, ácido, descargas, frío o gas: se aplica directo a los tokens seleccionados o marcados, con su salvación."],
@@ -9493,6 +9497,8 @@ async function ejecutarPanel(op) {
     case "danoIndirecto": await api?.danoIndirecto?.(); break;
     case "almacenReliquias": await api?.almacenReliquias?.(); break;
     case "proeza": await api?.proeza?.(); break;
+    case "capasAbismo": await api?.capasAbismo?.(); break;
+    case "traducirFichas": await api?.abrirTraducir?.(); break;
     case "estado": game.journal.get("G0rD0J3JkpOkXM00")?.pages.find(p => p.getFlag(MOD, "estado"))?.sheet?.render(true); break;
     case "tirada":
       if (!game.MonksTokenBar?.requestRoll) return ui.notifications.warn("Hace falta Monk's TokenBar activo.");
