@@ -6,7 +6,7 @@ export function accesoShinobi(meta, contexto, usar = false) {
   const a = meta.acceso ?? {}, e = contexto.estado ?? {};
   const etiqueta=id=>contexto.etiquetas?.[id]??String(id).replaceAll("-"," ");
   const divino=accesoDivino(meta,{...contexto,fuerza:e.fuerza});if(!divino.ok)return divino;
-  if (a.tradicion && !(e.tradiciones ?? []).includes(a.tradicion)) return { ok:false, familia: esFamilia(a.tradicion), motivo: esFamilia(a.tradicion) ? `Arte de familia (${FAMILIAS[a.tradicion].nombre}): solo la aprende quien nació en esa familia.` : `Pide la tradición ${etiqueta(a.tradicion)}, concedida por el DM.` };
+  if (a.tradicion && !(e.tradiciones ?? []).includes(a.tradicion) && !(contexto.familiasSangre ?? []).includes(a.tradicion)) return { ok:false, familia: esFamilia(a.tradicion), motivo: esFamilia(a.tradicion) ? `Arte de familia (${FAMILIAS[a.tradicion].nombre}): solo la aprende quien nació en esa familia.` : `Pide la tradición ${etiqueta(a.tradicion)}, concedida por el DM.` };
   if (a.herencia && contexto.herencia !== a.herencia) return { ok:false, motivo:`Pide la herencia ${a.herencia}.` };
   if (a.ojo && (Number(e.miradas?.[a.ojo.id]) || 0) < a.ojo.etapa) return { ok:false, motivo:`Pide ${etiqueta(a.ojo.id)}, etapa ${a.ojo.etapa}.` };
   if (a.hito && !(e.hitosShinobi ?? []).includes(a.hito)) return { ok:false, motivo:`Pide el hito de historia «${etiqueta(a.hito)}».` };

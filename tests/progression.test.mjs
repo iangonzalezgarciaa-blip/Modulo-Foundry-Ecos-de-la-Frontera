@@ -14,7 +14,7 @@ const agregar=(a,id)=>{const i=new MockItem(V.datosItem(a,tec(id)),a);a.items.pu
 async function usar(a,id,scaling=0){const item=a.items.find(i=>i.getFlag('ecos-frontera','verbe')?.id===id)??agregar(a,id),activity={actor:a,item},usage={scaling},updates={};if(V.alConsumir(activity,usage,{},updates)===false)return false;await a.update(updates.actor);await V._prueba.despuesDeUsar(activity,usage);return usage.ecosVerbe;}
 async function poder(a,id){const item=a.items.find(i=>i.getFlag('ecos-frontera','verbe')?.dote===id),activity={actor:a,item},usage={},updates={};assert.ok(item,id);if(V.alConsumir(activity,usage,{},updates)===false)return false;await a.update(updates.actor);await V._prueba.despuesDeUsar(activity,usage);return true;}
 test('dotes: 219 base más las de clones, cuatro pasos para cada rama y requisitos sin ciclos ni referencias rotas',()=>{
-  assert.equal(D.dotes.length,219+(D.clones?.dotes??0)+(D.ruptura?.dotes??0));assert.equal(D.dotes.filter(d=>d.evolucion).length,64);assert.deepEqual(validateCatalog(D),[]);
+  assert.equal(D.dotes.length,219+(D.clones?.dotes??0)+(D.ruptura?.dotes??0)+(D.legados?.dotes??0));assert.equal(D.dotes.filter(d=>d.evolucion).length,64);assert.deepEqual(validateCatalog(D),[]);
   const visitar=(id,camino=[])=>{assert.ok(!camino.includes(id),id);for(const p of dote(id).requisitos?.dotes??[])visitar(p,[...camino,id]);};
   for(const d of D.dotes)visitar(d.id);for(const r of D.ramas)for(const id of senda(r.id))assert.ok(dote(id));
 });

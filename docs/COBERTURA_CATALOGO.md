@@ -1,10 +1,10 @@
-# Cobertura declarada del catálogo 3.30.0
+# Cobertura declarada del catálogo 3.31.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **936 técnicas y 237 dotes**.
+El catálogo reúne **936 técnicas y 470 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
@@ -1206,6 +1206,239 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `cadena-de-ruptura` | Cadena de ruptura | 3 | nivel 7 | Texto/mesa |
 | `rompeguardias` | Rompeguardias | 3 | nivel 3 | Texto/mesa |
 | `ver-la-grieta` | Ver la grieta | 2 | rama Mirada | Texto/mesa |
+| `legado-maethra-marca` | Hija del primer sueño | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-maethra-1-1` | Raíz que sostiene | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-maethra-1-2` | Bosque en la sangre | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-maethra-1-3` | Jardín de la Madre | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-maethra-2-1` | Lengua de las bestias | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-maethra-2-2` | Manada prestada | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-maethra-2-3` | Forma de la Madre | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-maethra-3-1` | Dormir sin miedo | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-maethra-3-2` | Paso por el sueño | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-maethra-3-3` | El sueño que te sueña | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-maethra-destino` | Despertar a la Madre | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-ikkra-marca` | Ojo facetado | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-ikkra-1-1` | Ala de vidrio | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ikkra-1-2` | Mil facetas | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ikkra-1-3` | El vidrio no se rompe | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ikkra-2-1` | Colonia que escucha | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ikkra-2-2` | Enjambre de vidrio | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ikkra-2-3` | Reina de la colonia | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ikkra-3-1` | Guardia sin sueño | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ikkra-3-2` | Ver venir | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ikkra-3-3` | El ojo del sueño | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ikkra-destino` | Ala que vuelve | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-thalos-marca` | Pulmón de marea | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-thalos-1-1` | Marea que sube | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-thalos-1-2` | Cuerpo de agua | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-thalos-1-3` | Dos océanos | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-thalos-2-1` | Peso del fondo | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-thalos-2-2` | Presión | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-thalos-2-3` | Lo que el mar guarda | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-thalos-3-1` | Voz de los ahogados | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-thalos-3-2` | Brazo del ahogado | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-thalos-3-3` | Marea de los que vuelven | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-thalos-destino` | Lo que se oculta en el fondo | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-ignis-marca` | Calor ordenado | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-ignis-1-1` | Fuego que ordena | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ignis-1-2` | Sentencia | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ignis-1-3` | El que encabeza | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ignis-2-1` | Mano de fragua | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ignis-2-2` | Detonación | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ignis-2-3` | La forja del mundo | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ignis-3-1` | Fuego del hogar ajeno | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ignis-3-2` | Luz que guía | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ignis-3-3` | Brasa oculta | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ignis-destino` | Heredero de la llama | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-orun-marca` | Saber antes | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-orun-1-1` | Mapa del cielo | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-orun-1-2` | Senda del firmamento | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-orun-1-3` | Seis senderos | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-orun-2-1` | Pastor de caminos | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-orun-2-2` | Ruta cerrada | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-orun-2-3` | Todas las rutas | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-orun-3-1` | Un latido antes | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-orun-3-2` | Tiempo prestado | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-orun-3-3` | Fragmento del cielo anterior | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-orun-destino` | Semilla del regreso | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-nerys-marca` | Frío que canta | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-nerys-1-1` | Escarcha del juramento | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-nerys-1-2` | Hielo que canta | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nerys-1-3` | Glaciar | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nerys-2-1` | Palabra que ata | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-nerys-2-2` | Juramentado | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nerys-2-3` | Lo que se jura se cumple | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nerys-3-1` | Luz del norte | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-nerys-3-2` | Velo de aurora | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nerys-3-3` | Aurora del juramento | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nerys-destino` | Eco de la cosechada | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-ashka-marca` | Última voz | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-ashka-1-1` | Paso del vendaval | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ashka-1-2` | Tormenta en la mano | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ashka-1-3` | Respuesta de la tormenta | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ashka-2-1` | Mensajero | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ashka-2-2` | Voz que manda | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ashka-2-3` | Lo que el viento oye | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ashka-3-1` | Ojos de pájaro | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ashka-3-2` | Bandada | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ashka-3-3` | Alas | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ashka-destino` | La voz que queda | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-varro-marca` | Medida justa | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-varro-1-1` | Manos de aprendiz | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-varro-1-2` | Obra maestra | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-varro-1-3` | Primer aprendiz | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-varro-2-1` | Hueso vivo | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-varro-2-2` | Púas de hueso | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-varro-2-3` | Esqueleto de hierro | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-varro-3-1` | Atracción | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-varro-3-2` | Campo de hierro | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-varro-3-3` | Puente de hierro | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-varro-destino` | El primer puente | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-vhaeros-marca` | Escama del alba | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-vhaeros-1-1` | Piel escamosa | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-vhaeros-1-2` | Coraza del alba | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-vhaeros-1-3` | Dragón del amanecer | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-vhaeros-2-1` | Aire seco | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-vhaeros-2-2` | Momificar | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-vhaeros-2-3` | Desierto | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-vhaeros-3-1` | Alba que protege | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-vhaeros-3-2` | Primera luz | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-vhaeros-3-3` | Hijo del fuego | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-vhaeros-destino` | El alba que vuelve | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-aster-marca` | Memoria exacta | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-aster-1-1` | Ojo que anota | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-aster-1-2` | Copia | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-aster-1-3` | Archivo vivo | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-aster-2-1` | Tinta que corre | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-aster-2-2` | Bestias de tinta | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-aster-2-3` | Libro que despierta | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-aster-3-1` | Testigo | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-aster-3-2` | Ojo carmesí | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-aster-3-3` | Testimonio verdadero | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-aster-destino` | El escriba de la última voz | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-nocta-marca` | Arropar | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-nocta-1-1` | Atadura de sombra | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-nocta-1-2` | Sombra que retiene | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nocta-1-3` | La noche entera | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nocta-2-1` | Canción de cuna | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-nocta-2-2` | Sueño corpóreo | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nocta-2-3` | Mantener dormida | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nocta-3-1` | Manta | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-nocta-3-2` | Refugio de noche | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nocta-3-3` | Sirvienta del Pastor | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-nocta-destino` | La que mantiene el sueño | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-bastio-marca` | Muralla viva | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-bastio-1-1` | Interponerse mejor | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-bastio-1-2` | Muralla | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-bastio-1-3` | Bastión | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-bastio-2-1` | Plegaria del que aguanta | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-bastio-2-2` | Cuerpo de piedra | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-bastio-2-3` | No cae | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-bastio-3-1` | Oído de plegarias | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-bastio-3-2` | Elevado | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-bastio-3-3` | Dios del muro | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-bastio-destino` | El mortal que se volvió dios | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-verde-marca` | Savia en las venas | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-verde-1-1` | Mano verde | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-verde-1-2` | Semilla de batalla | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-verde-1-3` | Bosque en una noche | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-verde-2-1` | Savia que cura | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-verde-2-2` | Corteza | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-verde-2-3` | Árbol | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-verde-3-1` | Fieles del campo | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-verde-3-2` | Fiesta de la cosecha | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-verde-3-3` | Sueño con fieles | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-verde-destino` | El sueño que da fruto | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-cendra-marca` | Brasa del hogar | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-cendra-1-1` | Mesa grande | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-cendra-1-2` | Fuego del hogar | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cendra-1-3` | Casa | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cendra-2-1` | Cuerpo que crece | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-cendra-2-2` | Gigante de la familia | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cendra-2-3` | Montaña de carne | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cendra-3-1` | Humo vivo | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-cendra-3-2` | Humo que ahoga | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cendra-3-3` | Chimenea | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cendra-destino` | La chispa que no se apaga | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-ennia-marca` | Puntada exacta | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-ennia-1-1` | Costura de campaña | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ennia-1-2` | Coser la herida | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ennia-1-3` | La Aguja | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ennia-2-1` | Partera | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ennia-2-2` | Primer aliento | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ennia-2-3` | Madre de muchos | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ennia-3-1` | Ojo de aguja | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ennia-3-2` | Descoser | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ennia-3-3` | Tejido del mundo | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ennia-destino` | La que cose a los dioses | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-moneta-marca` | Peso exacto | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-moneta-1-1` | Trato justo | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-moneta-1-2` | Equilibrar | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-moneta-1-3` | Juicio | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-moneta-2-1` | Cobrador | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-moneta-2-2` | Interés | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-moneta-2-3` | Deuda de sangre | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-moneta-3-1` | Lengua del mercader | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-moneta-3-2` | Precio | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-moneta-3-3` | La Balanza | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-moneta-destino` | El peso del mundo | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-ahnkree-marca` | Retorno | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-ahnkree-1-1` | Sangre de dinastía | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ahnkree-1-2` | Llamar a los míos | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ahnkree-1-3` | El que devuelve | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ahnkree-2-1` | Cambiar la cara | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ahnkree-2-2` | Cambiar el cuerpo | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ahnkree-2-3` | Mil cuerpos | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ahnkree-3-1` | Sueño que no sabe | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-ahnkree-3-2` | Fieles de la Dinastía | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ahnkree-3-3` | Despertar del sueño | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-ahnkree-destino` | El sueño que no sabe | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-gracefeel-marca` | Llama serena | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-gracefeel-1-1` | Ver el alma | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-gracefeel-1-2` | Cambio de mente | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-gracefeel-1-3` | Viajera de almas | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-gracefeel-2-1` | Caminante | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-gracefeel-2-2` | Albergue | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-gracefeel-2-3` | Camino de los muertos | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-gracefeel-3-1` | Última palabra | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-gracefeel-3-2` | Despedida | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-gracefeel-3-3` | Llama que guía | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-gracefeel-destino` | Oculta entre las Luces | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-cazador-marca` | Caza sin rostro | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-cazador-1-1` | Rastro | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-cazador-1-2` | Presa marcada | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cazador-1-3` | Cazador de dioses | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cazador-2-1` | Colmillos | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-cazador-2-2` | Manada | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cazador-2-3` | Rey de la manada | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cazador-3-1` | Máscara | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-cazador-3-2` | Cara robada | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cazador-3-3` | Rostro devuelto | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-cazador-destino` | Devolverle el rostro | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-seyra-marca` | Nudo del rescate | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-seyra-1-1` | Cuerda que salva | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-seyra-1-2` | Nudo que ata | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-seyra-1-3` | Nudo del destino | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-seyra-2-1` | Rescatista | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-seyra-2-2` | Tirar del borde | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-seyra-2-3` | Nadie se queda | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-seyra-3-1` | La misma carne | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-seyra-3-2` | Doble | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-seyra-3-3` | Una sola carne | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-seyra-destino` | Hija de la última voz | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `legado-dhoren-marca` | Dintel guardado | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
+| `legado-dhoren-1-1` | Cerradura | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-dhoren-1-2` | Puerta firme | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-dhoren-1-3` | Umbral | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-dhoren-2-1` | Refugio | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-dhoren-2-2` | Santuario | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-dhoren-2-3` | Puerta de las Luces | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-dhoren-3-1` | Guardián | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
+| `legado-dhoren-3-2` | Relevo | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-dhoren-3-3` | Dios de los guardianes | 4 | nivel 13; sangre Plena o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |
+| `legado-dhoren-destino` | El aprendiz elevado | 6 | nivel 17; sangre Plena; el último escalón de una rama; lo concede el DM | Texto/mesa |
+| `despertador` | Despertador | 6 | nivel 11; lo concede el DM | Texto/mesa |
+| `maestro-del-verbe` | Maestro del Verbe | 6 | nivel 13; Despertador; lo concede el DM | Texto/mesa |
 
 ## Automatización y alcance actual
 

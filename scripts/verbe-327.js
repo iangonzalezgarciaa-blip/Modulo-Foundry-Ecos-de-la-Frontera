@@ -15,14 +15,23 @@
 /* ---------- 1. Familias ---------- */
 /** Las seis familias. `req` reconoce el texto viejo («un maestro de Crecer»). */
 export const FAMILIAS = {
-  sombra: { nombre: "Atadura de sombra", req: /atadura de sombra/i },
-  expansion: { nombre: "Expansión corporal (Crecer)", req: /crecer|expansi[oó]n corporal/i },
-  mente: { nombre: "Cambio de mente", req: /cambio de mente/i },
-  enjambre: { nombre: "Colonia de insectos", req: /enjambre|colonia de insectos/i },
-  colmillo: { nombre: "Manada de colmillos", req: /colmillo/i },
-  tinta: { nombre: "Tinta viva", req: /tinta viva/i }
+  sombra: { dios: "nocta", nombre: "Atadura de sombra", req: /atadura de sombra/i },
+  expansion: { dios: "cendra", nombre: "Expansión corporal (Crecer)", req: /crecer|expansi[oó]n corporal/i },
+  mente: { dios: "gracefeel", nombre: "Cambio de mente", req: /cambio de mente/i },
+  enjambre: { dios: "ikkra", nombre: "Colonia de insectos", req: /enjambre|colonia de insectos/i },
+  colmillo: { dios: "cazador", nombre: "Manada de colmillos", req: /colmillo/i },
+  tinta: { dios: "aster", nombre: "Tinta viva", req: /tinta viva/i }
 };
 export const esFamilia = id => Object.prototype.hasOwnProperty.call(FAMILIAS, id);
+/**
+ * 3.31: las familias son legados de un dios. Quien lleva esa sangre (o una de las que el legado reúne) con cualquier
+ * fuerza distinta de «Sin sangre» tiene la familia. Pura: `linajes` es la lista del catálogo.
+ */
+export function familiaDeSangre(linajes, linajeId, fuerza) {
+  if (!linajeId || !fuerza || fuerza === "ninguna") return null;
+  const l = (linajes ?? []).find(x => x.id === linajeId), dios = l?.dios ?? l?.id ?? linajeId;
+  return Object.entries(FAMILIAS).find(([, f]) => f.dios === dios)?.[0] ?? null;
+}
 /** La familia de una técnica de «Artes de familia» (por su requisito o por su id). Null si no es de familia. */
 export function familiaDeTecnica(t) {
   if (!t) return null;

@@ -325,3 +325,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 11-nov-2026 | Mejora | Claude | Ruptura: defensas de la campaña (Coraza, Fortaleza, Cuerpo sordo), Brecha, Grieta y Quebrado, sinergias de elementos, 24 técnicas y 15 dotes de ruptura, técnicas pesadas, dos acciones de cualquiera, defensa a pedido y recuperación con más Constitución. Release v3.28.0 | 3.28.0 |
 | 11-nov-2026 | Mejora | Claude | Lo que deja un choque: explosión, terreno vivo y contragolpe (Mano rota). Release v3.29.0 | 3.29.0 |
 | 11-nov-2026 | Mejora | Claude | Re-nivelado táctico: 218 técnicas con −30 % de dados y su ruptura por lógica de elementos. Release v3.30.0 | 3.30.0 |
+| 11-nov-2026 | Mejora | Claude | Legados de las 21 sangres con árboles y destinos; familias fundidas en su dios; Despertador y Maestro del Verbe; cada desplegable y cada etapa explicados; la rama antes que las técnicas. Release v3.31.0 | 3.31.0 |

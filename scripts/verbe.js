@@ -38,13 +38,14 @@ import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferen
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
 import { presupuestoCorto } from "./rest-core.js";
 import { sistema } from "./sistema/index.js";
+import { ayudaCampoHTML, ayudaSeccionHTML, explicarOpcion, etapaJugadorHTML, familiaSugerida, RAMAS_PRIMERO } from "./verbe-ayuda.js";
 import { MONEDAS_POR_TRAZO, TRAZOS_POR_NIVEL } from "./mercader.js";
 import { VERSION_REGLAS, recuperarReserva, evaluarGasto, requisitoNatural, crearCola,
   resultadoChoque, desempateChoque, presupuestoTecnica, validarCreacion, LIMITES_CREACION } from "./verbe-core.js";
 import { configurarAtaque, configurarSalvacion, despuesAtaque, normalizarHielo,
   revisarEstados, consumirMetal, metrosEnHoja } from "./verbe-effects.js";
 import { pasoInicial, progresoHTML, estadoUsoHTML, tarjetaHTML, avisosJugadorHTML, ROLES_RAMA } from "./verbe-ui.js";
-import { FAMILIAS, esFamilia, marcarFamilias, familiaDeTecnica, aPiesTexto, textosAPies, piesAMetros, planEstudio, practicar, naturalezaPorDado,
+import { FAMILIAS, esFamilia, familiaDeSangre, marcarFamilias, familiaDeTecnica, aPiesTexto, textosAPies, piesAMetros, planEstudio, practicar, naturalezaPorDado,
   reservaPorCon, recuperacionLargaCon, golpeDeTexto, dadosGolpe, armaSirve, diasParaLlenar, gastoVerbe, economiaVerbe, TIEMPOS_EXPLICADOS } from "./verbe-327.js";
 
 const MOD = "ecos-frontera";
@@ -711,7 +712,7 @@ export const combosDe = actor => new Set(estado(actor)?.combos ?? []);
 
 function contextoShinobi(actor) {
   const activas=(actor?.effects??[]).filter(e=>!e.disabled).map(e=>e.getFlag(MOD,F)).filter(Boolean);
-  return {etiquetas:D?.etiquetas??{},estado:estado(actor)??{},linaje:linajeDe(actor)?.id,nivel:nivelDe(actor),rangoSangre:rangoDon(actor,"sangre"),herencia:herenciaDe(actor)?.req,cerrojoActivo:Math.max(0,...activas.map(e=>Number(e.cerrojo)||0)),
+  return {etiquetas:D?.etiquetas??{},estado:estado(actor)??{},linaje:linajeDe(actor)?.id,familiasSangre:[familiaDeSangre(D?.linajes,estado(actor)?.linaje,estado(actor)?.fuerza)].filter(Boolean),nivel:nivelDe(actor),rangoSangre:rangoDon(actor,"sangre"),herencia:herenciaDe(actor)?.req,cerrojoActivo:Math.max(0,...activas.map(e=>Number(e.cerrojo)||0)),
     ojosAbiertos:activas.map(e=>e.ojo).filter(Boolean),modos:activas.flatMap(e=>[e.modo,...(e.modosConcedidos??[])]).filter(Boolean),
     limiteDesgaste:6+sumaEf(actor,ef=>ef.desgasteExtra),artefactos:(actor?.items??[]).filter(i=>i.system?.equipped).map(i=>i.getFlag(MOD,F)?.artefacto).filter(Boolean)};
 }
@@ -1371,29 +1372,33 @@ export async function abrirFamilia(id) {
   return p.parent.sheet.render(true, { pageId: p.id });
 }
 
+/** El nombre del legado de un dios (alias del linaje), sin nombres reales. */
+const nombreLegado = dios => { const l = D?.linajes?.find(x => x.id === dios); return D?.categoriasDote?.find(c => c.id === l?.legado)?.nombre ?? l?.alias ?? l?.nombre ?? dios; };
 export async function dialogoDespertar(actor) {
   if (!game.user.isGM) return;
   const { DialogV2 } = foundry.applications.api;
   const oculta = Object.keys(NATS)[Math.floor(Math.random() * 5)];
   const portador = actor.getFlag(MOD, "portador") === true;
   const linPortador = linajePortador(actor.getFlag(MOD, "portadorSangre"), D.linajes.find(l => l.portador)?.id ?? "ninguno");
+  const fam0 = portador ? familiaSugerida(FAMILIAS, D.linajes, linPortador) : "ninguna";
+  const caja = (campo, tipo, valor) => `${ayudaCampoHTML(campo, escH)}<div class="ecos-verbe-desc" data-de="${campo}">${describir(tipo, valor, actor, { linaje: portador ? linPortador : "ninguno" })}</div>`;
   const html = `<div class="ecos-verbe-form">
-    <p>Despierta a <b>${escH(actor.name)}</b>. Desde ahí su hoja muestra la barra, la habilidad Control y el panel.</p>
-    <label>Característica <select name="car">${opciones(Object.entries(CARS), caracteristicaSugerida(actor))}</select></label>
-    <label>Etapa del Verbe <select name="etapa">${opciones(ETAPAS.filter(x => x.n > 0).map(x => [x.n, `${x.n} · ${x.nombre}`]), 1)}</select> <small>quién le enseña decide cuánto se abre; luego subes la etapa con «Abrir la siguiente etapa»</small></label>
-    <label>Primera naturaleza <select name="natModo">${opciones(Object.entries(MODOS_NATURALEZA), "dado")}</select></label>
-    <label>Segunda naturaleza <select name="segundaModo">${opciones(Object.entries(MODOS_SEGUNDA), "dado")}</select> <small>si es fija, manda la «naturaleza oculta» de abajo</small></label>
-    <label>Cuál <select name="nat"><option value="">Al azar (secreta) o la que elija el jugador</option>${opciones(Object.entries(NATS), "")}</select> <small>solo la ves tú si es secreta</small></label>
-    <label>Naturaleza oculta <select name="oculta" data-azar data-azar-nombre="Naturaleza oculta">${opciones(Object.entries(NATS), oculta)}</select> <small>sorteada; solo la ves tú</small></label>
-    <label>Linaje <select name="linaje" data-desc="linaje" data-azar="sin-ninguno" data-azar-nombre="Linaje">${opcionesLinaje(portador ? linPortador : "ninguno")}</select> <button type="button" data-ecos-leer-linaje title="Leer su diario antes de dárselo"><i class="fa-solid fa-book-open"></i> Su diario</button></label>
-    <label>Familia de nacimiento <select name="familia" data-azar="sin-ninguno" data-azar-nombre="Familia de nacimiento">${opciones([["ninguna", "Sin familia"], ...Object.entries(FAMILIAS).map(([k, f]) => [k, f.nombre])], "ninguna")}</select> <button type="button" data-ecos-leer-familia title="Leer la familia y sus artes"><i class="fa-solid fa-book-open"></i> Su diario</button> <small>artes de familia: solo por nacimiento</small></label>
-    <label>Fuerza de la sangre <select name="fuerza" data-desc="fuerza" data-azar="sin-ninguno" data-azar-nombre="Fuerza de la sangre">${opciones(Object.entries(FUERZA).map(([k, v]) => [k, v.nombre]), portador ? "plena" : "ninguna")}</select></label>
-    <label><input type="checkbox" name="linajeVisible" ${portador ? "" : "checked"}> El jugador sabe su linaje <small>(si no, no ve la rama Sangre ni su linaje)</small></label>
+    <p>Despierta a <b>${escH(actor.name)}</b>. Desde ahí su hoja muestra la barra, la habilidad Control y el panel. Cada campo tiene su «¿Qué es esto?» y, debajo, lo que significa la opción elegida para el jugador.</p>
+    <label>Característica <select name="car" data-desc="car">${opciones(Object.entries(CARS), caracteristicaSugerida(actor))}</select></label>${caja("car", "car", caracteristicaSugerida(actor))}
+    <label>Etapa del Verbe <select name="etapa" data-desc="etapa">${opciones(ETAPAS.filter(x => x.n > 0).map(x => [x.n, `${x.n} · ${x.nombre}`]), 1)}</select> <small>quién le enseña decide cuánto se abre; luego subes la etapa con «Abrir la siguiente etapa»</small></label>${caja("etapa", "etapa", 1)}
+    <label>Primera naturaleza <select name="natModo" data-desc="natModo">${opciones(Object.entries(MODOS_NATURALEZA), "dado")}</select></label>${caja("natModo", "natModo", "dado")}
+    <label>Segunda naturaleza <select name="segundaModo" data-desc="segundaModo">${opciones(Object.entries(MODOS_SEGUNDA), "dado")}</select> <small>si es fija, manda la «naturaleza oculta» de abajo</small></label>${caja("segundaModo", "segundaModo", "dado")}
+    <label>Cuál <select name="nat" data-desc="nat"><option value="">Al azar (secreta) o la que elija el jugador</option>${opciones(Object.entries(NATS), "")}</select> <small>solo la ves tú si es secreta</small></label>${ayudaCampoHTML("nat", escH)}<div class="ecos-verbe-desc" data-de="nat"></div>
+    <label>Naturaleza oculta <select name="oculta" data-desc="nat" data-azar data-azar-nombre="Naturaleza oculta">${opciones(Object.entries(NATS), oculta)}</select> <small>sorteada; solo la ves tú</small></label>${ayudaCampoHTML("oculta", escH)}<div class="ecos-verbe-desc" data-de="oculta"></div>
+    <label>Linaje <select name="linaje" data-desc="linaje" data-azar="sin-ninguno" data-azar-nombre="Linaje">${opcionesLinaje(portador ? linPortador : "ninguno")}</select> <button type="button" data-ecos-leer-linaje title="Leer su diario antes de dárselo"><i class="fa-solid fa-book-open"></i> Su diario</button></label>${caja("linaje", "linaje", portador ? linPortador : "ninguno")}
+    <label>Familia de nacimiento <select name="familia" data-desc="familia" data-azar="sin-ninguno" data-azar-nombre="Familia de nacimiento">${opciones([["ninguna", "Sin familia"], ...Object.entries(FAMILIAS).map(([k, f]) => [k, `${f.nombre} · ${nombreLegado(f.dios)}`])], fam0)}</select> <button type="button" data-ecos-leer-familia title="Leer la familia y sus artes"><i class="fa-solid fa-book-open"></i> Su diario</button> <small>al elegir el linaje se pone sola la familia de su dios</small></label>${caja("familia", "familia", fam0)}
+    <label>Fuerza de la sangre <select name="fuerza" data-desc="fuerza" data-azar="sin-ninguno" data-azar-nombre="Fuerza de la sangre">${opciones(Object.entries(FUERZA).map(([k, v]) => [k, v.nombre]), portador ? "plena" : "ninguna")}</select></label>${caja("fuerza", "fuerza", portador ? "plena" : "ninguna")}
+    <label><input type="checkbox" name="linajeVisible" ${portador ? "" : "checked"}> El jugador sabe su linaje <small>(si no, no ve la rama Sangre ni su linaje)</small></label>${ayudaCampoHTML("linajeVisible", escH)}
     <details><summary>Consultar linajes y fuerzas antes de asignar</summary><div class="ecos-verbe-consulta" role="region" aria-label="Consulta de linajes y fuerzas" tabindex="0">${Object.entries(FUERZA).map(([k])=>describir("fuerza",k,actor)).join("")}${D.linajes.map(l=>describir("linaje",l.id,actor)).join("")}</div></details>
-    <label>Rama principal <select name="principal" data-azar data-azar-nombre="Rama principal"><option value="">Que la elija el jugador</option>${opciones(ramasLibres(), "")}</select></label>
+    <label>Rama principal <select name="principal" data-desc="principal" data-azar data-azar-nombre="Rama principal"><option value="">Que la elija el jugador</option>${opciones(ramasLibres(), "")}</select></label>${caja("principal", "principal", "")}
     ${actor.type !== "character" ? `<label>Nivel (PNJ) <input type="number" name="nivel" min="1" max="20" value="${nivelDe(actor)}"></label>` : ""}
-    <label>Reserva de Verbe <select name="reservaModo">${opciones([["dados", `Tirar dados por nivel (${DADOS_VERBE.map(t => `${t.desde}–${t.hasta}: ${t.formula}`).join(" · ")})`], ["promedio", "Usar el promedio (la tabla fija)"]], "dados")}</select></label>
-    <label><input type="checkbox" name="lleno" checked> Empieza con la reserva llena</label>
+    <label>Reserva de Verbe <select name="reservaModo" data-desc="reservaModo">${opciones([["dados", `Tirar dados por nivel (${DADOS_VERBE.map(t => `${t.desde}–${t.hasta}: ${t.formula}`).join(" · ")})`], ["promedio", "Usar el promedio (la tabla fija)"]], "dados")}</select></label>${caja("reservaModo", "reservaModo", "dados")}
+    <label><input type="checkbox" name="lleno" checked> Empieza con la reserva llena</label>${ayudaCampoHTML("lleno", escH)}
   </div>`;
   const r = await DialogV2.wait({
     classes: ["ecos-verbe-despertar"],
@@ -1403,6 +1408,12 @@ export async function dialogoDespertar(actor) {
     render: (ev, dialogo) => {
       const el = dialogo?.element ?? ev?.target?.element;
       el?.querySelector?.('select[name="linaje"]')?.addEventListener("change", e => abrirSangre("linaje", e.target.value, actor));
+      // 3.31: cada desplegable explica la opción elegida; al cambiar el linaje se pone la familia de su dios.
+      const explicar = sel => { const c = el.querySelector(`.ecos-verbe-desc[data-de="${sel.name}"]`); if (c) c.innerHTML = describir(sel.dataset.desc, sel.value, actor, { linaje: el.querySelector('select[name="linaje"]')?.value }); };
+      el?.querySelectorAll?.("select[data-desc]").forEach(sel => sel.addEventListener("change", () => {
+        explicar(sel);
+        if (sel.name === "linaje") { const fam = el.querySelector('select[name="familia"]'); if (fam) { fam.value = familiaSugerida(FAMILIAS, D.linajes, sel.value); explicar(fam); } }
+      }));
       el?.querySelector?.("[data-ecos-leer-linaje]")?.addEventListener("click", ev2 => { ev2.preventDefault(); abrirSangre("linaje", el.querySelector('select[name="linaje"]')?.value, actor); });
       el?.querySelector?.("[data-ecos-leer-familia]")?.addEventListener("click", ev2 => { ev2.preventDefault(); abrirFamilia(el.querySelector('select[name="familia"]')?.value); });
       ponerAzar(el);
@@ -3396,7 +3407,9 @@ function defensaDMHTML(a) {
     <p class="ecos-nota">Los jugadores no ven el número: ven que «la coraza se agrieta» cuando le ponen Brecha. Brecha (−2 CA), Grieta (−2 salvaciones) y Quebrado (sin defensa ni resistencias un turno) las ponen técnicas del Verbe y las acciones «Romper la guardia» y «Buscar la grieta».</p>`;
 }
 
-export function describir(tipo, v, actor = null) {
+export function describir(tipo, v, actor = null, extra = {}) {
+  if (["etapa", "car", "natModo", "segundaModo", "reservaModo", "familia", "principal"].includes(tipo))
+    return explicarOpcion(tipo, v, { familias: FAMILIAS, linajes: D?.linajes, ramas: D?.ramas, linaje: extra?.linaje, nombreLegado }, escH);
   if (!v) return "<p class=\"ecos-nota\">Cambia la opción de arriba para ver qué es. No se elige hasta que pulses el botón.</p>";
   if (tipo === "fuerza") {
     const f = FUERZA[v]; if (!f) return "";
@@ -3932,8 +3945,9 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       const e = estado(a);
       if (!e?.despierto) return `<p>${escH(a.name)} no despertó.</p>`;
       const mejora = ["ramas", "dotes", "cultivo", "crear"].includes(this.pestana);
-      const pest = [["resumen", "Inicio", "house"], ["jugar", "Mis técnicas", "bolt"], ["tienda", "Aprender", "book-open"],
-        ["ramas", "Mejorar", "seedling"], ["guia", "Ayuda rápida", "circle-question"], ...(dm() ? [["dm", "DM", "sliders"]] : [])];
+      // 3.31: la rama va antes que las técnicas (pedido del autor): primero se sube la rama, después se aprende.
+      const pest = [["resumen", "Inicio", "house"], ["jugar", "Mis técnicas", "bolt"], ["ramas", "Mejorar: ramas y dotes", "seedling"],
+        ["tienda", "Aprender técnicas", "book-open"], ["guia", "Ayuda rápida", "circle-question"], ...(dm() ? [["dm", "DM", "sliders"]] : [])];
       if (this.pestana === "dm" && !dm()) this.pestana = "resumen";
       const tabs = pest.map(([k, n, icon]) => {
         const activa = this.pestana === k || (k === "ramas" && mejora);
@@ -4297,7 +4311,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       if (f.texto && !`${t.n} ${(t.alias ?? []).join(" ")} ${textoDe(t)}`.toLowerCase().includes(f.texto.toLowerCase())) return false;
       if (!dm()) {
         if (t.soloDM) return false;
-        if (t.familia && !(e.tradiciones ?? []).includes(t.familia)) return false; // 3.27: artes de familia, solo de nacimiento
+        if (t.familia && !(e.tradiciones ?? []).includes(t.familia) && familiaDeSangre(D.linajes, e.linaje, e.fuerza) !== t.familia) return false; // 3.27/3.31: artes de familia: de nacimiento, es decir, de la sangre de su dios
         const esSangre = t.sec === "sangre" || D.linajes.some(l => l.req && l.req === t.req);
         if (esSangre && !t.item.flags[MOD][F].shinobi && (!ve || !herenciaDe(a) || (t.req !== "una herencia" && herenciaDe(a).req !== t.req))) return false;
         if (t.rama === "mirada" && !(e.miradas ?? {})[t.id.split("-")[1]]) return false;
@@ -4324,7 +4338,10 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     }).join("");
     const natsF = [...Object.entries(NATS).filter(([n]) => natsDe(a).has(n) || natsDe(a).size < 2), ...Object.entries(D.combos).filter(([n]) => combosDe(a).has(n)).map(([k, v]) => [k, v.nombre])];
     const ramasF = D.ramas.filter(r => r.id !== "sangre" || ve).map(r => [r.id, r.nombre]);
-    return `${intro("Aquí aprendes técnicas.", "Haz clic en una para ver su ficha completa. El botón «Aprender» paga Trazos y la añade a tu repertorio; no la activa. Después la usas desde «Mis técnicas», pagando el Verbe indicado.",
+    const misRamas = D.ramas.filter(r => (r.id !== "sangre" || ve) && ramaAbierta(a, r.id)).map(r => { const rg = rangoDe(a, r.id); return `<li><b>${escH(r.nombre)}</b>${e.principal === r.id ? " (principal)" : ""}: ${escH(nombreRango(rg))} · aprendes hasta <b>grado ${Math.min(gradoMax(a), rangoGrado(rg))}</b></li>`; }).join("");
+    const ramasPrimero = `<details class="ev-ramas-primero" ${(e.compras ?? []).length < 3 ? "open" : ""}><summary><b>${escH(RAMAS_PRIMERO.titulo)}</b></summary><ol>${RAMAS_PRIMERO.texto.map(x => `<li>${escH(x)}</li>`).join("")}</ol>
+      ${misRamas ? `<p><b>Tus ramas hoy:</b></p><ul class="ecos-verbe-lista">${misRamas}</ul>` : ""}<div class="ev-acciones"><button type="button" data-action="pestana" data-p="ramas"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Subir mis ramas</button><button type="button" data-action="pestana" data-p="dotes"><i class="fa-solid fa-star" aria-hidden="true"></i> Ver dotes que potencian técnicas</button></div></details>`;
+    return `${ramasPrimero}${intro("Aquí aprendes técnicas.", "Haz clic en una para ver su ficha completa. El botón «Aprender» paga Trazos y la añade a tu repertorio; no la activa. Después la usas desde «Mis técnicas», pagando el Verbe indicado.",
       `<ul class="ecos-verbe-lista"><li><b>G</b> es el grado: qué tan fuerte es. Puedes aprender hasta tu grado máximo (${gradoMax(a)}) y, en cada rama, hasta lo que deja tu rango en ella (Mejorar → Especialidades).</li>
         <li><b>Verbe</b> es lo que gasta cada uso; el botón dice cuántos <b>Trazos</b> cuesta aprenderla.</li>
         <li><b>Probar</b>: es de una naturaleza que no tienes. Si tu Verbe responde, la aprendes; si no, no pierdes nada.</li>
@@ -4406,7 +4423,9 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const a = this.actor;
     const f = this.filtroDote ??= { texto: "", solo: false };
     const porCat = new Map();
+    const eSangre = estado(a) ?? {};
     for (const d of D.dotes) {
+      if (d.legado && !dm() && (!d.requisitos?.linajes?.includes(eSangre.linaje) || !eSangre.linajeVisible)) continue; // 3.31: solo el legado de su sangre, y solo si la conoce
       if (f.texto && !`${d.nombre} ${dotTexto(d)}`.toLowerCase().includes(f.texto.toLowerCase())) continue;
       const tiene = tieneDote(a, d.id);
       const r = cumpleReqDote(a, d);
@@ -4508,7 +4527,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     }).join("");
     const todas = [...D.tecnicas,...extraMundo()].filter(x => !x.retirada && !conoce(a, x.id)).map(x => [x.id, `${nombreRama(x.rama)} · grado ${x.g} · ${x.n}`]);
     const cerradas = D.ramas.filter(r => !ramaAbierta(a, r.id)).map(r => [r.id, r.nombre]);
-    const sec = (titulo, html, abierto = false) => `<details class="ecos-verbe-dmsec" ${abierto ? "open" : ""}><summary>${titulo}</summary>${html}</details>`;
+    const sec = (titulo, html, abierto = false) => `<details class="ecos-verbe-dmsec" ${abierto ? "open" : ""}><summary>${titulo}</summary>${ayudaSeccionHTML(titulo, escH)}${html}</details>`;
     return `<p><button type="button" data-action="editorCatalogo"><i class="fa-solid fa-pen-nib"></i> Taller del DM · crear y publicar técnicas universales</button> <button type="button" data-action="panteonDM">Panteón y nota de lore (solo DM)</button> <button type="button" data-action="reliquiasDM">Compendio de reliquias</button></p>${intro("Solo tú ves esta pestaña.", "Para preparar una hoja: elige linaje y fuerza, decide si el jugador conoce ese origen y revisa el resultado con «Ver como el jugador». Ese botón oculta tus controles de administración. Las opciones de más abajo permiten conceder recursos, enseñar técnicas o deshacer compras.")}
       ${sec("Reorientar un cultivo sin volver a cobrar",`<p>Tras cambiar el balance, puedes sustituir la última mejora registrada de una técnica conservando sus Trazos y nivel de cultivo.</p><select name="reorientarTecnica">${opciones(itemsTecnica(a).filter(i=>e.cultivos?.[i.getFlag(MOD,F)?.id]?.mejoras?.length).map(i=>[i.getFlag(MOD,F).id,i.name]),"")}</select><select name="reorientarMejora">${opciones(Object.entries(MEJORAS),"")}</select><button type="button" data-action="reorientarDM">Sustituir última mejora</button>`)}
       ${D.shinobi?sec("Archivo del Verbe: tradiciones, bestias y rituales",`
@@ -4529,9 +4548,9 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         <p><b>Rehacer desde cero</b>: devuelve todo lo comprado. <label><input type="checkbox" name="rehacerNat"> y que vuelva a elegir naturaleza</label> <label><input type="checkbox" name="rehacerPrincipal"> y rama principal</label>
           <button type="button" data-action="rehacer"><i class="fa-solid fa-rotate-left"></i> Rehacer</button></p>`, (e.compras ?? []).length > 0)}
       ${sec("Cambiar a mano (no toca los Trazos)", `
-        <p>Característica: <select name="aj-car">${opciones(Object.entries(CARS), e.car)}</select> <button type="button" data-action="ajustar" data-campo="car" data-de="aj-car">Cambiar</button>
-          · Naturaleza principal: <select name="aj-nat">${opciones(Object.entries(NATS), e.nats?.[0] ?? "")}</select> <button type="button" data-action="ajustar" data-campo="nat" data-de="aj-nat">Cambiar</button></p>
-        <p>Rama principal: <select name="aj-principal">${opciones(ramasLibres(), e.principal ?? "")}</select> <button type="button" data-action="ajustar" data-campo="principal" data-de="aj-principal">Cambiar</button> <small>(no cambia los rangos: ajústalos abajo)</small></p>
+        <p>Característica: <select name="aj-car" data-desc="car">${opciones(Object.entries(CARS), e.car)}</select> <button type="button" data-action="ajustar" data-campo="car" data-de="aj-car">Cambiar</button>
+          · Naturaleza principal: <select name="aj-nat">${opciones(Object.entries(NATS), e.nats?.[0] ?? "")}</select> <button type="button" data-action="ajustar" data-campo="nat" data-de="aj-nat">Cambiar</button></p><div class="ecos-verbe-desc" data-de="aj-car">${describir("car", e.car, a)}</div>
+        <p>Rama principal: <select name="aj-principal" data-desc="principal">${opciones(ramasLibres(), e.principal ?? "")}</select> <button type="button" data-action="ajustar" data-campo="principal" data-de="aj-principal">Cambiar</button> <small>(no cambia los rangos: ajústalos abajo)</small></p><div class="ecos-verbe-desc" data-de="aj-principal">${describir("principal", e.principal ?? "", a)}</div>
         <p>Rango: <select name="aj-rama">${opciones(D.ramas.map(r => [r.id, `${r.nombre} (${nombreRango(rangoDe(a, r.id))})`]), "")}</select> a <select name="aj-rango">${opciones(D.rangos.map((r, i) => [i, r.nombre]), 1)}</select> <button type="button" data-action="ajustar" data-campo="rango" data-de="aj-rango" data-clave="aj-rama">Fijar</button></p>
         <p>Afinidad: <select name="aj-afnat">${opciones([...natsDe(a)].map(n => [n, NATS[n] ?? n]), "")}</select> a <select name="aj-af">${opciones([[1, "Despierta"], [2, "Entrenada"], [3, "Maestra"]], 1)}</select> <button type="button" data-action="ajustar" data-campo="afinidad" data-de="aj-af" data-clave="aj-afnat">Fijar</button>
           · Control: <select name="aj-control">${opciones([[0, "Sin competencia"], [1, "Competente"], [2, "Pericia"]], sistema.control(a))}</select> <button type="button" data-action="ajustar" data-campo="control" data-de="aj-control">Fijar</button>
@@ -4543,17 +4562,17 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         <p>Técnicas que sabe:</p><ul>${sabe || "<li>Ninguna.</li>"}</ul>`)}
       ${sec("Reserva de Verbe: dados o promedio", `<p>Modo: <b>${modoReserva(e) === "dados" ? "dados por nivel" : "promedio (tabla fija)"}</b> · máximo ahora <b>${maxVerbe(a)}</b>.</p>
         <p>Con dados, cada nivel suma ${DADOS_VERBE.map(t => `${t.formula} (niveles ${t.desde}–${t.hasta})`).join(", ")}; el promedio queda cerca de la tabla (167 al nivel 20) pero dos personajes iguales salen distintos. Sin mínimo: si a alguien no le alcanza, compénsalo con dotes o con Trazos por rol. Al pasar a dados, los niveles que ya tenía quedan con la tabla.</p>
-        <p><select name="modoReserva">${opciones([["dados", "Tirar dados"], ["promedio", "Usar el promedio"]], modoReserva(e))}</select> <button type="button" data-action="modoReserva">Guardar modo</button></p>
+        <p><select name="modoReserva" data-desc="reservaModo">${opciones([["dados", "Tirar dados"], ["promedio", "Usar el promedio"]], modoReserva(e))}</select> <button type="button" data-action="modoReserva">Guardar modo</button></p><div class="ecos-verbe-desc" data-de="modoReserva">${describir("reservaModo", modoReserva(e), a)}</div>
         ${modoReserva(e) === "dados" ? `<p class="ecos-nota">Tiradas: ${Object.entries(e.dadosVerbe?.tiradas ?? {}).map(([k, v]) => `nivel ${k}: ${v}`).join(" · ") || "ninguna todavía"}${e.dadosVerbe?.fijoHasta ? ` · hasta el nivel ${e.dadosVerbe.fijoHasta}, la tabla` : ""}.</p>` : ""}`)}
       ${sec("Etapa del Verbe (quién le enseña)", `<p>Está en la etapa <b>${datosEtapa(etapaDe(e)).nombre}</b> (${etapaDe(e)} de ${ETAPA_MAX}). ${escH(datosEtapa(etapaDe(e)).texto)}</p>
         <p>Cuando encuentre por rol a un maestro o a un aprendiz que le enseñe, ábrele la siguiente: más ramas y más grado. El jugador lo ve en su panel y en el chat.</p>
         <p><label>Quién le enseña <input name="maestro" maxlength="120" placeholder="Nombre del maestro o del aprendiz"></label> <button type="button" data-action="etapaMas" ${etapaDe(e) >= ETAPA_MAX ? "disabled" : ""}><i class="fa-solid fa-unlock"></i> Abrir la siguiente etapa</button> <button type="button" data-action="etapaMenos" ${etapaDe(e) <= 1 ? "disabled" : ""}>Volver una etapa</button></p>
-        <table class="ecos-tabla">${ETAPAS.filter(x => x.n > 0).map(x => `<tr${x.n === etapaDe(e) ? ' class="activa"' : ""}><th>${x.n} · ${x.nombre}</th><td>${escH(x.texto)}</td></tr>`).join("")}</table>
+        <table class="ecos-tabla">${ETAPAS.filter(x => x.n > 0).map(x => `<tr${x.n === etapaDe(e) ? ' class="activa"' : ""}><th>${x.n} · ${x.nombre}${x.n === etapaDe(e) ? "<br><small>(la suya)</small>" : ""}</th><td><details${x.n === etapaDe(e) ? " open" : ""}><summary>${escH(x.texto)}</summary>${etapaJugadorHTML(x.n, escH)}</details></td></tr>`).join("")}</table>
         ${(e.maestros ?? []).length ? `<p class="ecos-nota">Registro: ${(e.maestros ?? []).map(m => `${datosEtapa(m.etapa).nombre}${m.quien ? ` (${escH(m.quien)})` : ""}`).join(" · ")}</p>` : ""}`)}
-      ${sec("Naturaleza secreta", `<p>Modo: <select name="natModo">${opciones(Object.entries(MODOS_NATURALEZA), modoNaturaleza(e))}</select> <button type="button" data-action="natModo">Guardar modo</button></p>
+      ${sec("Naturaleza secreta", `<p>Modo: <select name="natModo" data-desc="natModo">${opciones(Object.entries(MODOS_NATURALEZA), modoNaturaleza(e))}</select> <button type="button" data-action="natModo">Guardar modo</button></p><div class="ecos-verbe-desc" data-de="natModo">${describir("natModo", modoNaturaleza(e), a)}</div>
         <p>Primera naturaleza ${natsDe(a).size ? `ya descubierta: <b>${[...natsDe(a)].map(n => NATS[n] ?? n).join(", ")}</b>` : `oculta: <select name="ocultaPrimera">${opciones(Object.entries(NATS), ocultaPrimeraDe(a) ?? "")}</select> <button type="button" data-action="ocultaPrimera">Fijar en secreto</button>`}</p>
         <p>Se descubre entrenando: ${DESCUBRIR.primera.dias} días y Control CD ${DESCUBRIR.primera.cd} (${DESCUBRIR.primera.trazos} Trazos) desde nivel 5 o nivel 3 con Entrenado en Forma, y en etapa Practicante o más. La segunda: ${DESCUBRIR.segunda.dias} días, CD ${DESCUBRIR.segunda.cd}, ${DESCUBRIR.segunda.trazos} Trazos, desde nivel 5.</p>
-        <p>Segunda naturaleza: <select name="segundaModo">${opciones(Object.entries(MODOS_SEGUNDA), modoSegunda(e))}</select> <button type="button" data-action="segundaModo">Guardar</button> <small>Al azar: la tira el jugador al terminar su entrenamiento. Fija: sale la oculta que pusiste.</small></p>
+        <p>Segunda naturaleza: <select name="segundaModo" data-desc="segundaModo">${opciones(Object.entries(MODOS_SEGUNDA), modoSegunda(e))}</select> <button type="button" data-action="segundaModo">Guardar</button> <small>Al azar: la tira el jugador al terminar su entrenamiento. Fija: sale la oculta que pusiste.</small></p><div class="ecos-verbe-desc" data-de="segundaModo">${describir("segundaModo", modoSegunda(e), a)}</div>
         <p><button type="button" data-action="pedirTiradaNat"><i class="fa-solid fa-dice"></i> Que tire ya su ${natsDe(a).size ? "segunda " : ""}naturaleza (sin entrenamiento)</button>${e.tirarNat ? ` <i>Tiene pendiente tirar su ${e.tirarNat === "primera" ? "naturaleza" : "segunda naturaleza"}.</i>` : ""}</p>
         <p><button type="button" data-action="revelarNat">Revelar ya, sin entrenamiento</button>${estado(a)?.entrenoNat ? ` <button type="button" data-action="terminarEntreno">Dar por terminados los días</button>` : ""}</p>`)}
       ${sec("Naturalezas y linaje", `<p>Oculta: <select name="oculta">${opciones(Object.entries(NATS), ocultaDe(a))}</select> <button type="button" data-action="oculta">Cambiar</button> ${e.descubierta ? "(ya la descubrió)" : ""} · probadas sin suerte: ${(e.probadas ?? []).map(n => NATS[n]).join(", ") || "ninguna"}</p>
@@ -4563,9 +4582,9 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
           <label><input type="checkbox" name="linajeVisible" ${e.linajeVisible ? "checked" : ""}> el jugador lo sabe</label> <button type="button" data-action="linaje">Guardar</button> <button type="button" data-action="diarioLinaje" title="Ver la sangre elegida y abrir su diario"><i class="fa-solid fa-book-open"></i> Su diario</button></p>
         <div class="ecos-verbe-desc" data-de="linaje">${describir("linaje", e.linaje, a)}</div><div class="ecos-verbe-desc" data-de="fuerza">${describir("fuerza", e.fuerza, a)}</div>
         <p class="ecos-nota">El linaje lo eliges siempre tú (o lo tiras con 🎲): el jugador nunca lo elige. Si no lo sabe, en su panel dice «Desconocido», igual que para quien no tiene ninguno. Antes de guardar, «Su diario» abre la página que cuenta su dios y lo que hereda su línea nivel a nivel.</p>
-        <p>Familia de nacimiento: <select name="familia" data-azar="sin-ninguno" data-azar-nombre="Familia de nacimiento">${opciones([["ninguna", "Sin familia"], ...Object.entries(FAMILIAS).map(([k, f]) => [k, f.nombre])], (e.tradiciones ?? []).find(esFamilia) ?? "ninguna")}</select>
+        <p>Familia de nacimiento: <select name="familia" data-desc="familia" data-azar="sin-ninguno" data-azar-nombre="Familia de nacimiento">${opciones([["ninguna", "Sin familia"], ...Object.entries(FAMILIAS).map(([k, f]) => [k, `${f.nombre} · ${nombreLegado(f.dios)}`])], (e.tradiciones ?? []).find(esFamilia) ?? "ninguna")}</select>
           <button type="button" data-action="familia">Guardar</button> <button type="button" data-action="diarioFamilia" title="Leer esa familia y sus artes nivel a nivel"><i class="fa-solid fa-book-open"></i> Su diario</button></p>
-        <p class="ecos-nota">Las artes de familia (Crecer, Sombra, Mente, Enjambre, Colmillo, Tinta) solo las aprende quien nace en ella. Nadie las gana subiendo una rama ni con un maestro: la das tú por historia o la tiras al azar.</p>`)}
+        <div class="ecos-verbe-desc" data-de="familia">${describir("familia", (e.tradiciones ?? []).find(esFamilia) ?? "ninguna", a, { linaje: e.linaje })}</div><p class="ecos-nota">Las artes de familia (Crecer, Sombra, Mente, Enjambre, Colmillo, Tinta) solo las aprende quien nace en ella. Desde 3.31 cada familia es parte del legado de un dios: con su sangre (cualquier fuerza) ya la tiene. Aquí la das sin la sangre, por historia.</p>`)}
       ${sec("Ramas, ojos, pactos y escuela", `${cerradas.length ? `<p>Abrir una rama: <select name="abiertas">${opciones(cerradas, "")}</select> <button type="button" data-action="lista" data-campo="abiertas" data-texto="rama">Abrir</button></p>` : ""}
         <p>Despertar un ojo: <select name="mirada">${opciones(D.miradas.map(m => [m.id, `${m.nombre}${m.real && m.real !== m.nombre ? ` (${m.real})` : ""}`]), "")}</select> <select name="etapa">${opciones([[1, "Etapa 1 · 3 Trazos"], [2, "Etapa 2 · 5"], [3, "Etapa 3 · 8"]], 1)}</select>
           <label><input type="checkbox" name="trasplante"> trasplantado</label> <button type="button" data-action="mirada">Despertar o subir</button></p>

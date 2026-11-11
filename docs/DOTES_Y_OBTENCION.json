@@ -1,6 +1,6 @@
 {
   "tecnicas": 936,
-  "dotes": 237,
+  "dotes": 470,
   "nuevas": 64,
   "dotesDetalle": [
     {
@@ -3317,6 +3317,3037 @@
           "mirada": 1
         },
         "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-maethra-marca",
+      "nombre": "Hija del primer sueño",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-maethra-1-1",
+      "nombre": "Raíz que sostiene",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-maethra-1-2",
+      "nombre": "Bosque en la sangre",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-maethra-1-3",
+      "nombre": "Jardín de la Madre",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-maethra-2-1",
+      "nombre": "Lengua de las bestias",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-maethra-2-2",
+      "nombre": "Manada prestada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-maethra-2-3",
+      "nombre": "Forma de la Madre",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-maethra-3-1",
+      "nombre": "Dormir sin miedo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-maethra-3-2",
+      "nombre": "Paso por el sueño",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-maethra-3-3",
+      "nombre": "El sueño que te sueña",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-maethra-destino",
+      "nombre": "Despertar a la Madre",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ikkra-marca",
+      "nombre": "Ojo facetado",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ikkra-1-1",
+      "nombre": "Ala de vidrio",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ikkra-1-2",
+      "nombre": "Mil facetas",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ikkra-1-3",
+      "nombre": "El vidrio no se rompe",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ikkra-2-1",
+      "nombre": "Colonia que escucha",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ikkra-2-2",
+      "nombre": "Enjambre de vidrio",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ikkra-2-3",
+      "nombre": "Reina de la colonia",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ikkra-3-1",
+      "nombre": "Guardia sin sueño",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ikkra-3-2",
+      "nombre": "Ver venir",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ikkra-3-3",
+      "nombre": "El ojo del sueño",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ikkra-destino",
+      "nombre": "Ala que vuelve",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-thalos-marca",
+      "nombre": "Pulmón de marea",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-thalos-1-1",
+      "nombre": "Marea que sube",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-thalos-1-2",
+      "nombre": "Cuerpo de agua",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-thalos-1-3",
+      "nombre": "Dos océanos",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-thalos-2-1",
+      "nombre": "Peso del fondo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-thalos-2-2",
+      "nombre": "Presión",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-thalos-2-3",
+      "nombre": "Lo que el mar guarda",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-thalos-3-1",
+      "nombre": "Voz de los ahogados",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-thalos-3-2",
+      "nombre": "Brazo del ahogado",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-thalos-3-3",
+      "nombre": "Marea de los que vuelven",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-thalos-destino",
+      "nombre": "Lo que se oculta en el fondo",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ignis-marca",
+      "nombre": "Calor ordenado",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ignis-1-1",
+      "nombre": "Fuego que ordena",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ignis-1-2",
+      "nombre": "Sentencia",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ignis-1-3",
+      "nombre": "El que encabeza",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ignis-2-1",
+      "nombre": "Mano de fragua",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ignis-2-2",
+      "nombre": "Detonación",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ignis-2-3",
+      "nombre": "La forja del mundo",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ignis-3-1",
+      "nombre": "Fuego del hogar ajeno",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ignis-3-2",
+      "nombre": "Luz que guía",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ignis-3-3",
+      "nombre": "Brasa oculta",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ignis-destino",
+      "nombre": "Heredero de la llama",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-orun-marca",
+      "nombre": "Saber antes",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-orun-1-1",
+      "nombre": "Mapa del cielo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-orun-1-2",
+      "nombre": "Senda del firmamento",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-orun-1-3",
+      "nombre": "Seis senderos",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-orun-2-1",
+      "nombre": "Pastor de caminos",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-orun-2-2",
+      "nombre": "Ruta cerrada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-orun-2-3",
+      "nombre": "Todas las rutas",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-orun-3-1",
+      "nombre": "Un latido antes",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-orun-3-2",
+      "nombre": "Tiempo prestado",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-orun-3-3",
+      "nombre": "Fragmento del cielo anterior",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-orun-destino",
+      "nombre": "Semilla del regreso",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nerys-marca",
+      "nombre": "Frío que canta",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nerys-1-1",
+      "nombre": "Escarcha del juramento",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nerys-1-2",
+      "nombre": "Hielo que canta",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nerys-1-3",
+      "nombre": "Glaciar",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nerys-2-1",
+      "nombre": "Palabra que ata",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nerys-2-2",
+      "nombre": "Juramentado",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nerys-2-3",
+      "nombre": "Lo que se jura se cumple",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nerys-3-1",
+      "nombre": "Luz del norte",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nerys-3-2",
+      "nombre": "Velo de aurora",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nerys-3-3",
+      "nombre": "Aurora del juramento",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nerys-destino",
+      "nombre": "Eco de la cosechada",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ashka-marca",
+      "nombre": "Última voz",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ashka-1-1",
+      "nombre": "Paso del vendaval",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ashka-1-2",
+      "nombre": "Tormenta en la mano",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ashka-1-3",
+      "nombre": "Respuesta de la tormenta",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ashka-2-1",
+      "nombre": "Mensajero",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ashka-2-2",
+      "nombre": "Voz que manda",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ashka-2-3",
+      "nombre": "Lo que el viento oye",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ashka-3-1",
+      "nombre": "Ojos de pájaro",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ashka-3-2",
+      "nombre": "Bandada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ashka-3-3",
+      "nombre": "Alas",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ashka-destino",
+      "nombre": "La voz que queda",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-varro-marca",
+      "nombre": "Medida justa",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-varro-1-1",
+      "nombre": "Manos de aprendiz",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-varro-1-2",
+      "nombre": "Obra maestra",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-varro-1-3",
+      "nombre": "Primer aprendiz",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-varro-2-1",
+      "nombre": "Hueso vivo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-varro-2-2",
+      "nombre": "Púas de hueso",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-varro-2-3",
+      "nombre": "Esqueleto de hierro",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-varro-3-1",
+      "nombre": "Atracción",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-varro-3-2",
+      "nombre": "Campo de hierro",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-varro-3-3",
+      "nombre": "Puente de hierro",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-varro-destino",
+      "nombre": "El primer puente",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-vhaeros-marca",
+      "nombre": "Escama del alba",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-vhaeros-1-1",
+      "nombre": "Piel escamosa",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-vhaeros-1-2",
+      "nombre": "Coraza del alba",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-vhaeros-1-3",
+      "nombre": "Dragón del amanecer",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-vhaeros-2-1",
+      "nombre": "Aire seco",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-vhaeros-2-2",
+      "nombre": "Momificar",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-vhaeros-2-3",
+      "nombre": "Desierto",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-vhaeros-3-1",
+      "nombre": "Alba que protege",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-vhaeros-3-2",
+      "nombre": "Primera luz",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-vhaeros-3-3",
+      "nombre": "Hijo del fuego",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-vhaeros-destino",
+      "nombre": "El alba que vuelve",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-aster-marca",
+      "nombre": "Memoria exacta",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-aster-1-1",
+      "nombre": "Ojo que anota",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-aster-1-2",
+      "nombre": "Copia",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-aster-1-3",
+      "nombre": "Archivo vivo",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-aster-2-1",
+      "nombre": "Tinta que corre",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-aster-2-2",
+      "nombre": "Bestias de tinta",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-aster-2-3",
+      "nombre": "Libro que despierta",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-aster-3-1",
+      "nombre": "Testigo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-aster-3-2",
+      "nombre": "Ojo carmesí",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-aster-3-3",
+      "nombre": "Testimonio verdadero",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-aster-destino",
+      "nombre": "El escriba de la última voz",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nocta-marca",
+      "nombre": "Arropar",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nocta-1-1",
+      "nombre": "Atadura de sombra",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nocta-1-2",
+      "nombre": "Sombra que retiene",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nocta-1-3",
+      "nombre": "La noche entera",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nocta-2-1",
+      "nombre": "Canción de cuna",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nocta-2-2",
+      "nombre": "Sueño corpóreo",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nocta-2-3",
+      "nombre": "Mantener dormida",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nocta-3-1",
+      "nombre": "Manta",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nocta-3-2",
+      "nombre": "Refugio de noche",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nocta-3-3",
+      "nombre": "Sirvienta del Pastor",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-nocta-destino",
+      "nombre": "La que mantiene el sueño",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-bastio-marca",
+      "nombre": "Muralla viva",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-bastio-1-1",
+      "nombre": "Interponerse mejor",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-bastio-1-2",
+      "nombre": "Muralla",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-bastio-1-3",
+      "nombre": "Bastión",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-bastio-2-1",
+      "nombre": "Plegaria del que aguanta",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-bastio-2-2",
+      "nombre": "Cuerpo de piedra",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-bastio-2-3",
+      "nombre": "No cae",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-bastio-3-1",
+      "nombre": "Oído de plegarias",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-bastio-3-2",
+      "nombre": "Elevado",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-bastio-3-3",
+      "nombre": "Dios del muro",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-bastio-destino",
+      "nombre": "El mortal que se volvió dios",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-verde-marca",
+      "nombre": "Savia en las venas",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-verde-1-1",
+      "nombre": "Mano verde",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-verde-1-2",
+      "nombre": "Semilla de batalla",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-verde-1-3",
+      "nombre": "Bosque en una noche",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-verde-2-1",
+      "nombre": "Savia que cura",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-verde-2-2",
+      "nombre": "Corteza",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-verde-2-3",
+      "nombre": "Árbol",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-verde-3-1",
+      "nombre": "Fieles del campo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-verde-3-2",
+      "nombre": "Fiesta de la cosecha",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-verde-3-3",
+      "nombre": "Sueño con fieles",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-verde-destino",
+      "nombre": "El sueño que da fruto",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cendra-marca",
+      "nombre": "Brasa del hogar",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cendra-1-1",
+      "nombre": "Mesa grande",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cendra-1-2",
+      "nombre": "Fuego del hogar",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cendra-1-3",
+      "nombre": "Casa",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cendra-2-1",
+      "nombre": "Cuerpo que crece",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cendra-2-2",
+      "nombre": "Gigante de la familia",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cendra-2-3",
+      "nombre": "Montaña de carne",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cendra-3-1",
+      "nombre": "Humo vivo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cendra-3-2",
+      "nombre": "Humo que ahoga",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cendra-3-3",
+      "nombre": "Chimenea",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cendra-destino",
+      "nombre": "La chispa que no se apaga",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ennia-marca",
+      "nombre": "Puntada exacta",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ennia-1-1",
+      "nombre": "Costura de campaña",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ennia-1-2",
+      "nombre": "Coser la herida",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ennia-1-3",
+      "nombre": "La Aguja",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ennia-2-1",
+      "nombre": "Partera",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ennia-2-2",
+      "nombre": "Primer aliento",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ennia-2-3",
+      "nombre": "Madre de muchos",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ennia-3-1",
+      "nombre": "Ojo de aguja",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ennia-3-2",
+      "nombre": "Descoser",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ennia-3-3",
+      "nombre": "Tejido del mundo",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ennia-destino",
+      "nombre": "La que cose a los dioses",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-moneta-marca",
+      "nombre": "Peso exacto",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-moneta-1-1",
+      "nombre": "Trato justo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-moneta-1-2",
+      "nombre": "Equilibrar",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-moneta-1-3",
+      "nombre": "Juicio",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-moneta-2-1",
+      "nombre": "Cobrador",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-moneta-2-2",
+      "nombre": "Interés",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-moneta-2-3",
+      "nombre": "Deuda de sangre",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-moneta-3-1",
+      "nombre": "Lengua del mercader",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-moneta-3-2",
+      "nombre": "Precio",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-moneta-3-3",
+      "nombre": "La Balanza",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-moneta-destino",
+      "nombre": "El peso del mundo",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ahnkree-marca",
+      "nombre": "Retorno",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ahnkree-1-1",
+      "nombre": "Sangre de dinastía",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ahnkree-1-2",
+      "nombre": "Llamar a los míos",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ahnkree-1-3",
+      "nombre": "El que devuelve",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ahnkree-2-1",
+      "nombre": "Cambiar la cara",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ahnkree-2-2",
+      "nombre": "Cambiar el cuerpo",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ahnkree-2-3",
+      "nombre": "Mil cuerpos",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ahnkree-3-1",
+      "nombre": "Sueño que no sabe",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ahnkree-3-2",
+      "nombre": "Fieles de la Dinastía",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ahnkree-3-3",
+      "nombre": "Despertar del sueño",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-ahnkree-destino",
+      "nombre": "El sueño que no sabe",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-gracefeel-marca",
+      "nombre": "Llama serena",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-gracefeel-1-1",
+      "nombre": "Ver el alma",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-gracefeel-1-2",
+      "nombre": "Cambio de mente",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-gracefeel-1-3",
+      "nombre": "Viajera de almas",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-gracefeel-2-1",
+      "nombre": "Caminante",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-gracefeel-2-2",
+      "nombre": "Albergue",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-gracefeel-2-3",
+      "nombre": "Camino de los muertos",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-gracefeel-3-1",
+      "nombre": "Última palabra",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-gracefeel-3-2",
+      "nombre": "Despedida",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-gracefeel-3-3",
+      "nombre": "Llama que guía",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-gracefeel-destino",
+      "nombre": "Oculta entre las Luces",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cazador-marca",
+      "nombre": "Caza sin rostro",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cazador-1-1",
+      "nombre": "Rastro",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cazador-1-2",
+      "nombre": "Presa marcada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cazador-1-3",
+      "nombre": "Cazador de dioses",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cazador-2-1",
+      "nombre": "Colmillos",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cazador-2-2",
+      "nombre": "Manada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cazador-2-3",
+      "nombre": "Rey de la manada",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cazador-3-1",
+      "nombre": "Máscara",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cazador-3-2",
+      "nombre": "Cara robada",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cazador-3-3",
+      "nombre": "Rostro devuelto",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-cazador-destino",
+      "nombre": "Devolverle el rostro",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-seyra-marca",
+      "nombre": "Nudo del rescate",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-seyra-1-1",
+      "nombre": "Cuerda que salva",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-seyra-1-2",
+      "nombre": "Nudo que ata",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-seyra-1-3",
+      "nombre": "Nudo del destino",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-seyra-2-1",
+      "nombre": "Rescatista",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-seyra-2-2",
+      "nombre": "Tirar del borde",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-seyra-2-3",
+      "nombre": "Nadie se queda",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-seyra-3-1",
+      "nombre": "La misma carne",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-seyra-3-2",
+      "nombre": "Doble",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-seyra-3-3",
+      "nombre": "Una sola carne",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-seyra-destino",
+      "nombre": "Hija de la última voz",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-dhoren-marca",
+      "nombre": "Dintel guardado",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-dhoren-1-1",
+      "nombre": "Cerradura",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-dhoren-1-2",
+      "nombre": "Puerta firme",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-dhoren-1-3",
+      "nombre": "Umbral",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-dhoren-2-1",
+      "nombre": "Refugio",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-dhoren-2-2",
+      "nombre": "Santuario",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-dhoren-2-3",
+      "nombre": "Puerta de las Luces",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-dhoren-3-1",
+      "nombre": "Guardián",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-dhoren-3-2",
+      "nombre": "Relevo",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-dhoren-3-3",
+      "nombre": "Dios de los guardianes",
+      "trazos": 4,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "legado-dhoren-destino",
+      "nombre": "El aprendiz elevado",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 17,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "despertador",
+      "nombre": "Despertador",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 11,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "maestro-del-verbe",
+      "nombre": "Maestro del Verbe",
+      "trazos": 6,
+      "requisitos": {
+        "nivel": 13,
+        "ramas": {},
+        "dotes": [
+          "despertador"
+        ],
         "tecnicas": [],
         "dm": false
       },

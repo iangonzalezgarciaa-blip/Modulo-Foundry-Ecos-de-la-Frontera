@@ -25,9 +25,9 @@ export function requisitoDoteTexto(d, D) {
   return partes.join("; ") || "nada";
 }
 
-function dotesPorCategoria(D, texto) {
+function dotesPorCategoria(D, texto, incluir = () => true) {
   const cats = lista(D.categoriasDote), grupos = new Map();
-  for (const d of lista(D.dotes)) { const c = d.cat ?? "otras"; if (!grupos.has(c)) grupos.set(c, []); grupos.get(c).push(d); }
+  for (const d of lista(D.dotes).filter(incluir)) { const c = d.cat ?? "otras"; if (!grupos.has(c)) grupos.set(c, []); grupos.get(c).push(d); }
   const orden = c => { const i = cats.findIndex(x => x.id === c); return i < 0 ? 99 : i; };
   return [...grupos.entries()].sort((a, b) => orden(a[0]) - orden(b[0])).map(([c, ds]) => {
     const cat = cats.find(x => x.id === c);
@@ -53,7 +53,8 @@ ${tabla(["Rango", "Hasta el grado", "Desde el nivel", "Cuesta (Trazos)"], lista(
 ${combos.length ? tabla(["Combinación", "Se forma con"], combos.map(c => [`<strong>${esc(c.nombre)}</strong>`, esc(lista(c.de).map(nombreNat).join(" + "))])) : ""}
 <h2>Dotes</h2>
 <p>Mejoras permanentes. Cada una se paga una vez con Trazos y queda como rasgo en tu hoja. Las que dicen «lo concede el DM» o piden un maestro se piden en la mesa.</p>
-${dotesPorCategoria(D, d => d.textoJ ?? d.texto ?? "")}
+${dotesPorCategoria(D, d => d.textoJ ?? d.texto ?? "", d => !d.legado)}
+<p>Cada sangre tiene además su <b>legado</b>: un árbol que abre la fuerza de la sangre. Lo ves en tu panel cuando conoces tu linaje.</p>
 </section>`;
 }
 

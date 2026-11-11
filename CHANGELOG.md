@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 3.31.0 — 2026-11-11
+
+- **Legados de las sangres** (pedido del autor): toda habilidad hereditaria viene de un dios. Los 21 dioses del catálogo tienen un árbol: una **Marca** (desde sangre Rastro), **tres ramas de tres escalones** que abre la fuerza de la sangre (Débil desde nivel 3, Media desde 7, Plena desde 13) y un **Destino** (nivel 17). 231 dotes de legado; las concede el DM y el jugador solo ve las de su sangre si sabe su linaje. Los dioses cosechados traen un destino de regreso.
+- **Las familias de nacimiento quedan fundidas en su dios** (Sombra → el ojo que arropa, Crecer → el hogar, Mente → la despedida, Enjambre → el ojo de vidrio, Colmillo → el rastro, Tinta → el ojo que registra), igual que los sublinajes (humo, cristal, brasa, marea…). Quien lleva esa sangre con cualquier fuerza ya tiene su familia; el desplegable de familia queda para darla por historia, y se pone solo al elegir el linaje.
+- **Enseñar y despertar:** dotes **Despertador** (nivel 11: despertar el Verbe en otra persona con un ritual) y **Maestro del Verbe** (nivel 13: abrir la siguiente etapa a quien entrene contigo). Las concede el DM.
+- **Cada desplegable explicado** para el DM que no conoce el módulo: en «Despertar» y en la pestaña DM, cada campo tiene «¿Qué es esto?» y, debajo, lo que significa la opción elegida para el jugador. Cada **etapa** dice qué puede, qué todavía no puede y cómo se nota en la mesa. Cada sección de la pestaña DM explica para qué sirve.
+- **Primero la rama:** en el panel, «Mejorar: ramas y dotes» va antes que «Aprender técnicas», y Aprender empieza explicando qué es una rama, cómo su rango abre y potencia las técnicas, tus ramas de hoy y el panel de Dotes que potencia técnicas.
+
 ## 3.30.0 — 2026-11-11
 
 - **Re-nivelado táctico de las técnicas** (pedido del autor: D&D es el cañón de golpe; el Verbe ablanda). Las 218 técnicas de grado 1 o más que hacen daño pierden un 30 % de sus dados (con 1 o 2 dados no se tocan) y, a cambio, dejan una ruptura elegida con lógica de elementos: **Brecha** lo que corta, aplasta, quema o congela la coraza (tierra, arena, madera, hierro, magma, viento, fuego, escarcha; daño contundente, cortante, perforante, ácido, fuego o frío; la fuerza física de Cuerpo, Hilo, Umbral, Pacto…); **Grieta** lo que entra al cuerpo o a la mente (agua, vapor, ceniza, rayo, corriente, tormenta, destello, raíz; psíquico, necrótico, veneno, radiante, relámpago, trueno; la fuerza de Sello, Quietud, Velo, Mirada, Pulso y Sangre); **Quebrado** las de grado 7 o más. Su texto dice los dados nuevos y cómo ablanda. Quedan como estaban las de grado 0, las curas, las 44 pesadas (atraviesan todo) y las 24 de ruptura.

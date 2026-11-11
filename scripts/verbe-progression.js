@@ -49,6 +49,8 @@ export function permisoTurno(grado,{combate=null,estado={},reaccion=false,replic
   if(grado>=6&&mayores>=1)return {ok:false,motivo:'Solo una técnica de grado 6 o más por turno. Las reacciones conservan su propio límite.'};
   return {ok:true,cambios:{combate,acciones:acciones+Number(!adicional),adicionales:adicionales+Number(adicional),mayores:mayores+Number(grado>=6)}};
 }
+export const ORDEN_FUERZA={ninguna:0,rastro:1,debil:2,media:3,plena:4};
+const NOMBRE_FUERZA={rastro:'Rastro',debil:'Débil',media:'Media',plena:'Plena'};
 export function requisitoDote(req={},ctx={}){
   const e=ctx.estado??{},dotes=e.dotes??[];
   if(ctx.nivel<(req.nivel??1))return {ok:false,motivo:`Pide nivel ${req.nivel}.`};
@@ -62,6 +64,9 @@ export function requisitoDote(req={},ctx={}){
   if(req.minNaturalezas&&(ctx.naturalezas?.length??0)<req.minNaturalezas)return {ok:false,motivo:'Pide dominar dos naturalezas.'};
   if(req.herencia&&!ctx.herencia)return {ok:false,motivo:'Pide una herencia.'};
   if(req.fuerzas&&!req.fuerzas.includes(e.fuerza))return {ok:false,motivo:'Pide sangre plena o media.'};
+  // 3.31: legados de las sangres. El linaje (o uno de los que el legado reúne) y la fuerza mínima, sin decir de qué dios.
+  if(req.linajes&&!req.linajes.includes(e.linaje))return {ok:false,motivo:'Pide la sangre de este legado.'};
+  if(req.fuerzaMin&&(ORDEN_FUERZA[e.fuerza]??0)<(ORDEN_FUERZA[req.fuerzaMin]??0))return {ok:false,motivo:`Pide sangre ${NOMBRE_FUERZA[req.fuerzaMin]??req.fuerzaMin} o más.`};
   if(req.trasplante&&!e.trasplantes?.length)return {ok:false,motivo:'Pide una Mirada trasplantada.'};
   if(req.cerrojo&&(Number(e.cerrojos)||0)<req.cerrojo)return {ok:false,motivo:'Primero aprende un Cerrojo.'};
   if(req.propia&&!Object.values(e.cultivos??{}).some(c=>c.nivel>=3))return {ok:false,motivo:'Pide una técnica Propia.'};

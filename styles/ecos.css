@@ -708,3 +708,13 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-quitar-plantillas label.ecos-plantilla{display:inline-flex;gap:6px;align-items:center}
 .ecos-quitar-plantillas small{opacity:.75}
 .ecos-verbe-panel .ecos-turno-verbe{margin:6px 20px}
+
+/* 3.31 · Explicaciones de cada desplegable (despertar y pestaña DM) y «ramas primero» en Aprender. */
+.ecos-ayuda-campo { margin: 0 0 2px; font-size: 0.88em; }
+.ecos-ayuda-campo > summary { cursor: pointer; color: var(--color-text-secondary, #9a9a9a); }
+.ecos-ayuda-campo > p { margin: 2px 0 4px 1em; }
+.ecos-ayuda-sec { margin: 4px 0 8px; padding: 6px 8px; border-left: 3px solid rgba(160, 120, 220, 0.6); background: rgba(160, 120, 220, 0.07); font-size: 0.92em; }
+.ecos-verbe-desc .ecos-aviso { color: #d8a24a; }
+.ev-ramas-primero { margin: 0 0 10px; padding: 8px 10px; border: 1px solid rgba(120, 180, 120, 0.45); border-radius: 6px; background: rgba(120, 180, 120, 0.07); }
+.ev-ramas-primero > summary { cursor: pointer; font-size: 1.05em; }
+.ev-ramas-primero ol { margin: 6px 0 6px 1.2em; }

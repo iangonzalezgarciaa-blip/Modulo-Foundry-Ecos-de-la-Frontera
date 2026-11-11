@@ -12,7 +12,7 @@ test('4.5b: el compendio de jugadores trae ramas, rangos, naturalezas y todas la
   for (const n of D.naturalezas) assert.ok(html.includes(n.nombre), n.nombre);
   for (const c of Object.values(D.combos)) assert.ok(html.includes(c.nombre), c.nombre);
   const filas = (html.match(/<tr>/g) ?? []).length;
-  assert.ok(filas >= D.dotes.length + D.ramas.length + D.rangos.length, 'una fila por dote, rama y rango');
+  assert.ok(filas >= D.dotes.filter(d => !d.legado).length + D.ramas.length + D.rangos.length, 'una fila por dote, rama y rango (los legados de las sangres, no: son secretos)');
   assert.doesNotMatch(html, /undefined|NaN|\[object/);
 });
 
