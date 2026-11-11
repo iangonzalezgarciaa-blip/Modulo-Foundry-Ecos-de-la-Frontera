@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.30.0 — 2026-11-11
+
+- **Re-nivelado táctico de las técnicas** (pedido del autor: D&D es el cañón de golpe; el Verbe ablanda). Las 218 técnicas de grado 1 o más que hacen daño pierden un 30 % de sus dados (con 1 o 2 dados no se tocan) y, a cambio, dejan una ruptura elegida con lógica de elementos: **Brecha** lo que corta, aplasta, quema o congela la coraza (tierra, arena, madera, hierro, magma, viento, fuego, escarcha; daño contundente, cortante, perforante, ácido, fuego o frío; la fuerza física de Cuerpo, Hilo, Umbral, Pacto…); **Grieta** lo que entra al cuerpo o a la mente (agua, vapor, ceniza, rayo, corriente, tormenta, destello, raíz; psíquico, necrótico, veneno, radiante, relámpago, trueno; la fuerza de Sello, Quietud, Velo, Mirada, Pulso y Sangre); **Quebrado** las de grado 7 o más. Su texto dice los dados nuevos y cómo ablanda. Quedan como estaban las de grado 0, las curas, las 44 pesadas (atraviesan todo) y las 24 de ruptura.
+- Las sinergias de 3.28 (rayo sobre Empapado, un golpe sobre Helado…) se suman a esto: el elemento prepara, la ruptura abre y D&D remata.
+
 ## 3.29.0 — 2026-11-11
 
 - **Lo que deja un choque de técnicas** (pedido del autor). Si los grados de las dos técnicas suman 3 o más, el choque **estalla** en el punto del impacto: 5 ft de radio por cada 3 grados (hasta 30 ft), daño del elemento que gana (o de fuerza), y cada token dentro salva DES para la mitad. El lugar queda dibujado como región **«Terreno vivo: …»** (brasas, charco, escombros, polvo, chispas o cráter), que «Aprovechar el terreno» reconoce y deja usar contra otros. Quien pierde por 3 o más (contando el elemento) se lleva el **contragolpe**: daño de fuerza y Desequilibrado; por 5 o más, **Mano rota** (sin Gestos hasta un Descanso Largo o curación mágica). Dos técnicas enormes empatadas rebotan en las dos manos. Ajuste «Lo que deja un choque de técnicas».

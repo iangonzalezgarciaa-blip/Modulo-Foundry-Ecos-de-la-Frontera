@@ -377,9 +377,9 @@ test('si conoce la defensa pero no le alcanza, se explica el coste en vez de cal
 test('las ediciones del DM se aplican al catálogo en uso y se restauran', () => {
   V.aplicarEdicionesMundo({ tecnicas: { 'fuego-aliento': { dadosN: 5 } }, dotes: {} });
   assert.equal(V.tecnicaPorId('fuego-aliento').dmg, '5d6 fuego');
-  assert.equal(V.tecnicaOriginal('fuego-aliento').dmg, '3d6 fuego');
+  assert.equal(V.tecnicaOriginal('fuego-aliento').dmg, '2d6 fuego', '3.30: re-nivelada');
   V.aplicarEdicionesMundo({ tecnicas: {}, dotes: {} });
-  assert.equal(V.tecnicaPorId('fuego-aliento').dmg, '3d6 fuego');
+  assert.equal(V.tecnicaPorId('fuego-aliento').dmg, '2d6 fuego');
 });
 
 test('el DM devuelve Verbe a mano: no pasa del máximo y queda anotado', async () => {

@@ -15,6 +15,7 @@ export function esPesadaCatalogo(t) {
   if (meta.cargada && t.tir && t.dmg) return true;
   return t.tir === 'ataque' && cuerpo(t.alc) && t.g >= 3 && dadosMedios(t.dmg) >= 30;
 }
+if (import.meta.url === `file://${process.argv[1]}`) {
 const D = readCatalog();
 let n = 0;
 for (const t of D.tecnicas) {
@@ -30,3 +31,4 @@ D.pesadas = { version: 1, total: n };
 const errores = validateCatalog(D); if (errores.length) throw Error(errores.join('\n'));
 writeCatalog(D);
 console.log(`Técnicas pesadas: ${n}.`);
+}

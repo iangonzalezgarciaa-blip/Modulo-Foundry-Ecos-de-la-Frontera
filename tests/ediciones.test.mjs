@@ -9,7 +9,7 @@ const tec = id => D.tecnicas.find(t => t.id === id);
 
 test('solo se guardan los campos que cambian frente al original', () => {
   const orig = leerCamposTecnica(tec('fuego-aliento'));
-  assert.equal(orig.areaTam, 4.5); assert.equal(orig.dadosN, 3); assert.equal(orig.tiempo, 'A');
+  assert.equal(orig.areaTam, 4.5); assert.equal(orig.dadosN, 2, '3.30: 3 dados × 0,7'); assert.equal(orig.tiempo, 'A');
   const r = diferencias(CAMPOS_TECNICA, orig, { ...orig, n: 'Aliento de ascuas', dadosN: '4', areaTam: '6' });
   assert.equal(r.ok, true);
   assert.deepEqual(r.cambios, { n: 'Aliento de ascuas', dadosN: 4, areaTam: 6 });

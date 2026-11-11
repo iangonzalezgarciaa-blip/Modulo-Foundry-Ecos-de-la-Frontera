@@ -9,6 +9,8 @@ test('las 778 técnicas anteriores conservan sus reglas estructuradas e identifi
  const anterior=JSON.parse(fs.readFileSync(new URL('../tools/nimerios/potencia-3.2.1.json',import.meta.url)));
  // Las corregidas a propósito en 3.5.0 (plantillas y objetivos, tarea 1.2) quedan registradas con su motivo y sin errores.
  const corregidas=JSON.parse(fs.readFileSync(new URL('../tools/nimerios/correcciones-3.5.0.json',import.meta.url)));
+ // 3.30 (pedido del autor): las que hacen daño pierden un 30 % de dados y dejan una ruptura; se registran con su motivo.
+ Object.assign(corregidas,Object.fromEntries(D.tecnicas.filter(t=>t.rupturaAuto&&!corregidas[t.id]).map(t=>[t.id,[`3.30: re-nivelado táctico (dados ×0,7 y ${t.rupturaAuto.tipo})`]])));
  assert.equal(Object.keys(anterior).length,778);
  for(const[id,huella]of Object.entries(anterior)){const t=D.tecnicas.find(t=>t.id===id);assert.ok(t,id);
   if(corregidas[id]){assert.ok(corregidas[id].length,id);assert.deepEqual(problemasTecnica(t).filter(p=>p.nivel==='error'),[],id);continue;}

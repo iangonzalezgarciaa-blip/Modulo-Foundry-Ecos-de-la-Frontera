@@ -1,4 +1,4 @@
-# Cobertura declarada del catálogo 3.29.0
+# Cobertura declarada del catálogo 3.30.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
@@ -33,92 +33,92 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `forma-replica` | Réplica | 1 | forma | utility | 0 |
 | `forma-transformacion` | Transformación | 1 | forma | utility | 0 |
 | `forma-andar` | Andar por muros | 1 | forma | utility | 0 |
-| `forma-tres-puntas` | Tres puntas | 1 | forma | damage | 0 |
+| `forma-tres-puntas` | Tres puntas | 1 | forma | damage | 1 |
 | `forma-replicas` | Réplicas | 2 | forma | utility | 0 |
-| `forma-nudo` | Nudo de Verbe | 2 | forma | attack | 0 |
+| `forma-nudo` | Nudo de Verbe | 2 | forma | attack | 1 |
 | `forma-paso` | Paso breve | 2 | forma | utility | 0 |
 | `forma-replica-solida` | Réplica sólida | 3 | forma | utility | 0 |
-| `forma-granizo` | Granizo de Verbe | 4 | forma | save | 0 |
-| `forma-lanza` | Lanza de Verbe | 6 | forma | attack | 0 |
+| `forma-granizo` | Granizo de Verbe | 4 | forma | save | 1 |
+| `forma-lanza` | Lanza de Verbe | 6 | forma | attack | 1 |
 | `forma-doble` | Doble perfecto | 7 | forma | utility | 0 |
 | `fuego-brasa` | Brasa | 0 | forma | attack | 0 |
 | `fuego-soplo` | Soplo de brasa | 0 | forma | save | 0 |
-| `fuego-aliento` | Aliento de brasa | 1 | forma | save | 1 |
+| `fuego-aliento` | Aliento de brasa | 1 | forma | save | 2 |
 | `fuego-humo` | Manto de humo | 1 | forma | utility | 0 |
-| `fuego-brasas` | Brasas dispersas | 2 | forma | attack | 1 |
-| `fuego-fragua` | Calor de fragua | 2 | forma | damage | 1 |
-| `fuego-gran-soplo` | Gran soplo | 3 | forma | save | 1 |
-| `fuego-muro` | Muro de llamas | 4 | forma | save | 1 |
-| `fuego-serpiente` | Serpiente de llamas | 5 | forma | save | 1 |
-| `fuego-horno` | Horno | 6 | forma | save | 1 |
-| `fuego-sol` | Sol caído | 8 | forma | save | 1 |
+| `fuego-brasas` | Brasas dispersas | 2 | forma | attack | 2 |
+| `fuego-fragua` | Calor de fragua | 2 | forma | damage | 2 |
+| `fuego-gran-soplo` | Gran soplo | 3 | forma | save | 2 |
+| `fuego-muro` | Muro de llamas | 4 | forma | save | 2 |
+| `fuego-serpiente` | Serpiente de llamas | 5 | forma | save | 2 |
+| `fuego-horno` | Horno | 6 | forma | save | 2 |
+| `fuego-sol` | Sol caído | 8 | forma | save | 2 |
 | `agua-chorro` | Chorro | 0 | forma | attack | 1 |
 | `agua-mano` | Mano de agua | 0 | forma | utility | 0 |
-| `agua-ola` | Ola | 1 | forma | save | 1 |
+| `agua-ola` | Ola | 1 | forma | save | 2 |
 | `agua-cortina` | Cortina de agua | 1 | forma | utility | 0 |
 | `agua-prision` | Prisión de agua | 2 | forma | save | 2 |
-| `agua-torrente` | Torrente | 2 | forma | save | 1 |
+| `agua-torrente` | Torrente | 2 | forma | save | 2 |
 | `agua-niebla` | Niebla oculta | 2 | forma | utility | 0 |
-| `agua-marea` | Marea | 3 | forma | save | 2 |
-| `agua-vortice` | Vórtice | 4 | forma | save | 1 |
-| `agua-diluvio` | Diluvio | 5 | forma | save | 2 |
+| `agua-marea` | Marea | 3 | forma | save | 3 |
+| `agua-vortice` | Vórtice | 4 | forma | save | 2 |
+| `agua-diluvio` | Diluvio | 5 | forma | save | 3 |
 | `agua-mar` | Mar en tierra | 7 | forma | utility | 0 |
 | `viento-filo` | Filo de viento | 0 | forma | attack | 0 |
 | `viento-paso` | Paso del viento | 0 | forma | utility | 0 |
-| `viento-palmada` | Palmada de viento | 1 | forma | save | 1 |
+| `viento-palmada` | Palmada de viento | 1 | forma | save | 2 |
 | `viento-pies` | Pies de viento | 1 | forma | utility | 0 |
-| `viento-tajo` | Tajo largo | 2 | forma | save | 1 |
+| `viento-tajo` | Tajo largo | 2 | forma | save | 2 |
 | `viento-coraza` | Coraza de viento | 2 | forma | utility | 0 |
-| `viento-muro` | Muro de viento | 3 | forma | save | 1 |
+| `viento-muro` | Muro de viento | 3 | forma | save | 2 |
 | `viento-alas` | Alas de viento | 3 | forma | utility | 0 |
-| `viento-torbellino` | Torbellino | 4 | forma | save | 2 |
-| `viento-mil-cortes` | Mil cortes | 5 | forma | save | 1 |
-| `viento-huracan` | Huracán | 7 | forma | save | 1 |
+| `viento-torbellino` | Torbellino | 4 | forma | save | 3 |
+| `viento-mil-cortes` | Mil cortes | 5 | forma | save | 2 |
+| `viento-huracan` | Huracán | 7 | forma | save | 2 |
 | `tierra-guijarro` | Guijarro | 0 | forma | attack | 0 |
 | `tierra-barro` | Barro y piedra | 0 | forma | utility | 0 |
 | `tierra-escudo` | Escudo de piedra | 1 | forma | utility | 0 |
 | `tierra-pozo` | Pozo | 1 | forma | save | 1 |
 | `tierra-muro-barro` | Muro de barro | 2 | forma | utility | 0 |
 | `tierra-puas` | Púas de tierra | 2 | forma | utility | 0 |
-| `tierra-mano` | Mano de la tierra | 3 | forma | save | 2 |
-| `tierra-erupcion` | Erupción | 3 | forma | save | 1 |
+| `tierra-mano` | Mano de la tierra | 3 | forma | save | 3 |
+| `tierra-erupcion` | Erupción | 3 | forma | save | 2 |
 | `tierra-cupula` | Cúpula de tierra | 4 | forma | utility | 0 |
 | `tierra-muralla` | Muralla | 5 | forma | utility | 0 |
 | `tierra-remover` | Remover la tierra | 6 | forma | utility | 0 |
 | `tierra-quiebre` | La tierra se abre | 8 | forma | utility | 0 |
 | `rayo-chispazo` | Chispazo | 0 | forma | attack | 0 |
 | `rayo-aguja` | Aguja de rayo | 0 | forma | attack | 0 |
-| `rayo-arco` | Arco que no suelta | 1 | forma | attack | 1 |
+| `rayo-arco` | Arco que no suelta | 1 | forma | attack | 2 |
 | `rayo-carrera` | Carrera de rayo | 1 | forma | utility | 0 |
-| `rayo-nervio` | Golpe al nervio | 2 | forma | attack | 1 |
+| `rayo-nervio` | Golpe al nervio | 2 | forma | attack | 2 |
 | `rayo-piel` | Piel de chispas | 2 | forma | utility | 0 |
-| `rayo-lanza` | Lanza de rayo | 3 | forma | save | 1 |
-| `rayo-descarga` | Descarga | 3 | forma | save | 2 |
-| `rayo-llamar` | Llamar al rayo | 3 | forma | save | 1 |
-| `rayo-salta` | Rayo que salta | 4 | forma | save | 1 |
-| `rayo-cadena` | Cadena de rayo | 6 | forma | save | 1 |
+| `rayo-lanza` | Lanza de rayo | 3 | forma | save | 2 |
+| `rayo-descarga` | Descarga | 3 | forma | save | 3 |
+| `rayo-llamar` | Llamar al rayo | 3 | forma | save | 2 |
+| `rayo-salta` | Rayo que salta | 4 | forma | save | 2 |
+| `rayo-cadena` | Cadena de rayo | 6 | forma | save | 2 |
 | `rayo-cielo` | El cielo responde | 9 | forma | save | 1 |
-| `escarcha-lanzas` | Lanzas de hielo | 4 | forma | attack | 1 |
-| `escarcha-ataud` | Ataúd de hielo | 6 | forma | save | 2 |
+| `escarcha-lanzas` | Lanzas de hielo | 4 | forma | attack | 2 |
+| `escarcha-ataud` | Ataúd de hielo | 6 | forma | save | 3 |
 | `raiz-raices` | Raíces que atan | 3 | forma | save | 1 |
 | `raiz-bosque` | Bosque súbito | 7 | forma | utility | 0 |
-| `magma-lluvia` | Lluvia de lava | 4 | forma | save | 2 |
-| `magma-rio` | Río de magma | 6 | forma | save | 2 |
-| `vapor-nube` | Nube hirviente | 3 | forma | save | 1 |
+| `magma-lluvia` | Lluvia de lava | 4 | forma | save | 3 |
+| `magma-rio` | Río de magma | 6 | forma | save | 3 |
+| `vapor-nube` | Nube hirviente | 3 | forma | save | 2 |
 | `vapor-cuerpo` | Cuerpo de vapor | 5 | forma | utility | 0 |
 | `ceniza-nube` | Nube de ceniza | 3 | forma | save | 1 |
-| `ceniza-estallido` | Ceniza que arde | 5 | forma | save | 2 |
-| `tormenta-ojo` | Ojo de tormenta | 4 | forma | save | 2 |
-| `tormenta-gran` | Gran tormenta | 7 | forma | save | 2 |
+| `ceniza-estallido` | Ceniza que arde | 5 | forma | save | 3 |
+| `tormenta-ojo` | Ojo de tormenta | 4 | forma | save | 3 |
+| `tormenta-gran` | Gran tormenta | 7 | forma | save | 3 |
 | `hierro-atraer` | Atraer el metal | 3 | forma | save | 1 |
-| `hierro-lluvia` | Lluvia de hierro | 5 | forma | save | 1 |
-| `corriente-salto` | Corriente que salta | 3 | forma | save | 2 |
-| `corriente-mar` | Mar eléctrico | 6 | forma | save | 2 |
-| `destello-destello` | Destello | 3 | forma | save | 2 |
-| `destello-lanza` | Lanza de luz | 5 | forma | save | 2 |
-| `arena-ataud` | Ataúd de arena | 4 | forma | save | 3 |
+| `hierro-lluvia` | Lluvia de hierro | 5 | forma | save | 2 |
+| `corriente-salto` | Corriente que salta | 3 | forma | save | 3 |
+| `corriente-mar` | Mar eléctrico | 6 | forma | save | 3 |
+| `destello-destello` | Destello | 3 | forma | save | 3 |
+| `destello-lanza` | Lanza de luz | 5 | forma | save | 3 |
+| `arena-ataud` | Ataúd de arena | 4 | forma | save | 4 |
 | `arena-tormenta` | Tormenta de arena | 5 | forma | save | 1 |
-| `madera-estacas` | Estacas | 3 | forma | attack | 1 |
+| `madera-estacas` | Estacas | 3 | forma | attack | 2 |
 | `madera-muro` | Muro de troncos | 4 | forma | utility | 0 |
 | `velo-susurro` | Susurro falso | 0 | velo | utility | 0 |
 | `velo-punzada` | Punzada | 0 | velo | save | 0 |
@@ -133,12 +133,12 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `velo-pesadilla` | Pesadilla despierta | 3 | velo | save | 1 |
 | `velo-escenario` | Escenario | 3 | velo | utility | 0 |
 | `velo-patron` | Patrón | 3 | velo | save | 2 |
-| `velo-perseguidor` | El que te persigue | 4 | velo | save | 1 |
+| `velo-perseguidor` | El que te persigue | 4 | velo | save | 2 |
 | `velo-revuelta` | Mente revuelta | 4 | velo | save | 0 |
 | `velo-mano` | Mano en la mente | 5 | velo | save | 1 |
 | `velo-habitacion` | La habitación sin puertas | 6 | velo | save | 1 |
 | `velo-paso-falso` | Paso falso | 1 | velo | utility | 0 |
-| `velo-dolor` | Dolor prestado | 2 | velo | save | 0 |
+| `velo-dolor` | Dolor prestado | 2 | velo | save | 1 |
 | `velo-devolver` | Devolver el Velo | 3 | velo | utility | 0 |
 | `velo-espejos` | Bosque de espejos | 5 | velo | save | 0 |
 | `velo-noche` | Noche para todos | 8 | velo | save | 1 |
@@ -154,7 +154,7 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `cuerpo-pleno` | Golpe pleno | 3 | cuerpo | utility | 0 |
 | `cuerpo-veloz` | Cuerpo veloz | 3 | cuerpo | utility | 0 |
 | `cuerpo-cerrado` | Cuerpo cerrado | 4 | cuerpo | utility | 0 |
-| `cuerpo-terremoto` | Puño del terremoto | 5 | cuerpo | save | 1 |
+| `cuerpo-terremoto` | Puño del terremoto | 5 | cuerpo | save | 2 |
 | `cuerpo-ultimo` | Golpe del último aliento | 7 | cuerpo | utility | 0 |
 | `mirada-aster-abrir` | Abrir el Ojo que registra | 0 | mirada | utility | 0 |
 | `mirada-ikkra-abrir` | Abrir el Ojo de vidrio | 0 | mirada | utility | 0 |
@@ -171,7 +171,7 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `mirada-madre-mandar` | Mandar sobre lo soñado | 5 | mirada | save | 0 |
 | `sello-guardar` | Guardar | 0 | sello | utility | 0 |
 | `sello-marca` | Marca menor | 0 | sello | utility | 0 |
-| `sello-ruptura` | Sello de ruptura | 1 | sello | save | 0 |
+| `sello-ruptura` | Sello de ruptura | 1 | sello | save | 1 |
 | `sello-cierre` | Sello de cierre | 1 | sello | utility | 0 |
 | `sello-alarma` | Sello que avisa | 1 | sello | utility | 0 |
 | `sello-barrera-menor` | Barrera menor | 2 | sello | utility | 0 |
@@ -207,32 +207,32 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `pulso-gris` | Toque gris | 0 | pulso | attack | 0 |
 | `pulso-escuchar` | Escuchar el cuerpo | 0 | pulso | utility | 0 |
 | `pulso-cerrar` | Palma que cierra | 1 | pulso | heal | 0 |
-| `pulso-amarga` | Palma amarga | 1 | pulso | attack | 1 |
+| `pulso-amarga` | Palma amarga | 1 | pulso | attack | 2 |
 | `pulso-restaurar` | Restaurar | 2 | pulso | utility | 0 |
-| `pulso-filo` | Filo interior | 2 | pulso | attack | 0 |
+| `pulso-filo` | Filo interior | 2 | pulso | attack | 1 |
 | `pulso-cien` | Puño de cien | 2 | pulso | utility | 0 |
 | `pulso-devolver` | Devolver el aliento | 3 | pulso | utility | 0 |
-| `pulso-beber` | Beber el Verbe | 3 | pulso | attack | 0 |
+| `pulso-beber` | Beber el Verbe | 3 | pulso | attack | 1 |
 | `pulso-plaga` | Plaga | 4 | pulso | save | 1 |
 | `pulso-muchos` | Aliento para muchos | 5 | pulso | heal | 0 |
 | `pulso-cirugia` | Cirugía | 5 | pulso | utility | 0 |
 | `pulso-rehacer` | Rehacer | 6 | pulso | heal | 0 |
-| `pulso-pudrir` | Pudrir | 6 | pulso | save | 0 |
+| `pulso-pudrir` | Pudrir | 6 | pulso | save | 1 |
 | `pulso-volver-hacer` | Volver a hacer | 7 | pulso | heal | 0 |
 | `pulso-ofrenda` | Ofrenda | 9 | pulso | utility | 0 |
 | `hilo-vuelve` | Arma que vuelve | 0 | hilo | utility | 0 |
 | `hilo-hilo` | Hilo de Verbe | 0 | hilo | utility | 0 |
-| `hilo-agujas` | Lluvia de agujas | 1 | hilo | save | 0 |
+| `hilo-agujas` | Lluvia de agujas | 1 | hilo | save | 1 |
 | `hilo-ata` | Hilo que ata | 1 | hilo | utility | 0 |
 | `hilo-marioneta` | Hilos a la marioneta | 1 | hilo | utility | 0 |
 | `hilo-telarana` | Telaraña de Verbe | 2 | hilo | save | 1 |
 | `hilo-tres` | Tres en una | 2 | hilo | utility | 0 |
 | `hilo-suspendida` | Arma suspendida | 2 | hilo | utility | 0 |
-| `hilo-lluvia` | Lluvia de armas | 3 | hilo | save | 0 |
+| `hilo-lluvia` | Lluvia de armas | 3 | hilo | save | 1 |
 | `hilo-guerra` | Marioneta de guerra | 4 | hilo | utility | 0 |
-| `hilo-jaula` | Jaula de hilos | 5 | hilo | save | 0 |
+| `hilo-jaula` | Jaula de hilos | 5 | hilo | save | 1 |
 | `hilo-viva` | Marioneta viva | 6 | hilo | save | 0 |
-| `hilo-mil` | Mil filos | 6 | hilo | save | 0 |
+| `hilo-mil` | Mil filos | 6 | hilo | save | 1 |
 | `quietud-respirar` | Respirar con el mundo | 0 | quietud | utility | 0 |
 | `quietud-quieto` | Quieto como la piedra | 0 | quietud | utility | 0 |
 | `quietud-calma` | Calma | 0 | quietud | utility | 0 |
@@ -241,7 +241,7 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `quietud-dar` | Aliento compartido | 2 | quietud | utility | 0 |
 | `quietud-vivo` | Sentir lo vivo | 2 | quietud | utility | 0 |
 | `quietud-estado` | Estado de Quietud | 3 | quietud | utility | 0 |
-| `quietud-empuja` | El mundo empuja | 4 | quietud | save | 1 |
+| `quietud-empuja` | El mundo empuja | 4 | quietud | save | 2 |
 | `quietud-tierra` | Aliento de la tierra | 5 | quietud | utility | 0 |
 | `quietud-bosque` | Dormir con el bosque | 6 | quietud | save | 0 |
 | `quietud-uno` | Uno con el mundo | 7 | quietud | utility | 0 |
@@ -264,21 +264,21 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `sangre-despertar` | Despertar del linaje | 5 | sangre | utility | 0 |
 | `sangre-thalos-marea` | Marea interior | 0 | sangre | utility | 0 |
 | `sangre-thalos-dar` | Dar del mar | 2 | sangre | utility | 0 |
-| `sangre-ignis-punto` | Punto de disolución | 3 | sangre | attack | 0 |
-| `sangre-ignis-cubo` | Cubo de disolución | 7 | sangre | save | 0 |
+| `sangre-ignis-punto` | Punto de disolución | 3 | sangre | attack | 1 |
+| `sangre-ignis-cubo` | Cubo de disolución | 7 | sangre | save | 1 |
 | `sangre-varro-lanza` | Arma de hueso | 0 | sangre | utility | 0 |
 | `sangre-varro-coraza` | Coraza de hueso | 2 | sangre | utility | 0 |
-| `sangre-varro-bosque` | Bosque de huesos | 5 | sangre | save | 0 |
+| `sangre-varro-bosque` | Bosque de huesos | 5 | sangre | save | 1 |
 | `sangre-vhaeros-endurecer` | Endurecer | 1 | sangre | utility | 0 |
-| `sangre-vhaeros-aliento` | Aliento del alba | 3 | sangre | save | 1 |
-| `sangre-vhaeros-amanecer` | Amanecer | 7 | sangre | save | 1 |
+| `sangre-vhaeros-aliento` | Aliento del alba | 3 | sangre | save | 2 |
+| `sangre-vhaeros-amanecer` | Amanecer | 7 | sangre | save | 2 |
 | `familia-sombra-ata` | Sombra que ata | 1 | forma | save | 1 |
 | `familia-sombra-aprieta` | Sombra que aprieta | 3 | forma | utility | 0 |
 | `familia-crecer` | Crecer | 2 | cuerpo | utility | 0 |
 | `familia-gigante` | Gigante | 5 | cuerpo | utility | 0 |
 | `familia-mente-leer` | Leer la mente | 2 | velo | utility | 0 |
 | `familia-mente-saltar` | Saltar a otra mente | 3 | velo | save | 0 |
-| `familia-enjambre-nube` | Nube de insectos | 1 | pacto | save | 0 |
+| `familia-enjambre-nube` | Nube de insectos | 1 | pacto | save | 1 |
 | `familia-enjambre-comer` | Insectos que comen Verbe | 3 | pacto | utility | 0 |
 | `familia-colmillo` | Compañero de colmillo | 1 | pacto | utility | 0 |
 | `familia-colmillo-doble` | Colmillo doble | 2 | pacto | utility | 0 |
@@ -288,63 +288,63 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `forma-esfera-mayor` | Esfera mayor | 4 | forma | attack | 1 |
 | `forma-paso-doble` | Paso doble | 0 | forma | utility | 0 |
 | `forma-cuerda` | Cuerda de Verbe | 1 | forma | save | 0 |
-| `forma-bala` | Bala de Verbe | 3 | forma | save | 0 |
+| `forma-bala` | Bala de Verbe | 3 | forma | save | 1 |
 | `forma-cupula` | Cúpula de Verbe | 5 | forma | utility | 0 |
 | `fuego-dedos` | Dedos de brasa | 0 | forma | attack | 0 |
 | `fuego-cola` | Cola de fuego | 1 | forma | utility | 2 |
-| `fuego-anillo` | Anillo de fuego | 2 | forma | save | 1 |
-| `fuego-saeta` | Saeta ardiente | 3 | forma | attack | 1 |
-| `fuego-humo-negro` | Humo negro | 4 | forma | save | 2 |
-| `fuego-fauces` | Fauces de fuego | 7 | forma | save | 1 |
+| `fuego-anillo` | Anillo de fuego | 2 | forma | save | 2 |
+| `fuego-saeta` | Saeta ardiente | 3 | forma | attack | 2 |
+| `fuego-humo-negro` | Humo negro | 4 | forma | save | 3 |
+| `fuego-fauces` | Fauces de fuego | 7 | forma | save | 2 |
 | `agua-gota` | Gota pesada | 0 | forma | attack | 0 |
-| `agua-latigo` | Látigo de agua | 1 | forma | attack | 1 |
+| `agua-latigo` | Látigo de agua | 1 | forma | attack | 2 |
 | `agua-espejo` | Espejo de agua | 2 | forma | utility | 0 |
-| `agua-fauces-rio` | Fauces del río | 3 | forma | save | 1 |
+| `agua-fauces-rio` | Fauces del río | 3 | forma | save | 2 |
 | `agua-burbuja` | Burbuja | 4 | forma | save | 0 |
-| `agua-cascada` | Cascada | 6 | forma | save | 2 |
+| `agua-cascada` | Cascada | 6 | forma | save | 3 |
 | `viento-silbido` | Silbido | 0 | forma | save | 0 |
-| `viento-bala` | Bala de aire | 1 | forma | attack | 1 |
-| `viento-remolino` | Remolino de cuchillas | 2 | forma | save | 1 |
-| `viento-vacio` | Vacío | 3 | forma | save | 1 |
-| `viento-dispersar` | Dispersar | 4 | forma | save | 2 |
-| `viento-filo-creciente` | Filo creciente | 6 | forma | save | 1 |
+| `viento-bala` | Bala de aire | 1 | forma | attack | 2 |
+| `viento-remolino` | Remolino de cuchillas | 2 | forma | save | 2 |
+| `viento-vacio` | Vacío | 3 | forma | save | 2 |
+| `viento-dispersar` | Dispersar | 4 | forma | save | 3 |
+| `viento-filo-creciente` | Filo creciente | 6 | forma | save | 2 |
 | `tierra-puno` | Puño de piedra | 0 | forma | utility | 1 |
 | `tierra-parapeto` | Parapeto | 1 | forma | utility | 0 |
 | `tierra-cienaga` | Ciénaga | 2 | forma | save | 1 |
-| `tierra-pilares` | Pilares | 3 | forma | save | 2 |
+| `tierra-pilares` | Pilares | 3 | forma | save | 3 |
 | `tierra-coraza` | Coraza de roca | 4 | forma | utility | 0 |
-| `tierra-montana` | Montaña que cae | 8 | forma | save | 1 |
+| `tierra-montana` | Montaña que cae | 8 | forma | save | 2 |
 | `rayo-estatica` | Estática | 0 | forma | attack | 0 |
 | `rayo-colmillo` | Colmillo eléctrico | 1 | forma | utility | 2 |
-| `rayo-red` | Red eléctrica | 2 | forma | save | 2 |
-| `rayo-pulso` | Pulso eléctrico | 3 | forma | save | 1 |
-| `rayo-trueno-cae` | Trueno que cae | 5 | forma | save | 1 |
+| `rayo-red` | Red eléctrica | 2 | forma | save | 3 |
+| `rayo-pulso` | Pulso eléctrico | 3 | forma | save | 2 |
+| `rayo-trueno-cae` | Trueno que cae | 5 | forma | save | 2 |
 | `rayo-cuerpo` | Cuerpo de rayo | 6 | forma | utility | 0 |
 | `escarcha-espejos` | Espejos de hielo | 5 | forma | utility | 0 |
 | `madera-casa` | Casa de madera | 3 | forma | utility | 0 |
 | `magma-puno` | Puño de magma | 2 | forma | utility | 3 |
-| `vapor-geiser` | Géiser | 4 | forma | save | 1 |
-| `hierro-arena` | Arena de hierro | 4 | forma | save | 1 |
-| `tormenta-lanza` | Lanza de tormenta | 6 | forma | save | 2 |
-| `corriente-anguilas` | Anguilas | 2 | forma | attack | 2 |
-| `arena-ola` | Ola de arena | 3 | forma | save | 2 |
+| `vapor-geiser` | Géiser | 4 | forma | save | 2 |
+| `hierro-arena` | Arena de hierro | 4 | forma | save | 2 |
+| `tormenta-lanza` | Lanza de tormenta | 6 | forma | save | 3 |
+| `corriente-anguilas` | Anguilas | 2 | forma | attack | 3 |
+| `arena-ola` | Ola de arena | 3 | forma | save | 3 |
 | `velo-ruido` | Ruido falso | 0 | velo | utility | 0 |
 | `velo-cansancio` | Cansancio | 1 | velo | save | 0 |
 | `velo-sin-rostro` | Sin rostro | 2 | velo | utility | 0 |
 | `velo-tiempo-lento` | Tiempo lento | 2 | velo | save | 0 |
-| `velo-herida` | Herida soñada | 3 | velo | save | 0 |
+| `velo-herida` | Herida soñada | 3 | velo | save | 1 |
 | `velo-hacia-dentro` | Mirar hacia dentro | 4 | velo | save | 0 |
 | `velo-ciudad` | Ciudad falsa | 6 | velo | utility | 0 |
-| `velo-reino` | Reino del sueño | 7 | velo | save | 1 |
+| `velo-reino` | Reino del sueño | 7 | velo | save | 2 |
 | `cuerpo-guardia` | Guardia de hierro | 0 | cuerpo | utility | 0 |
-| `cuerpo-codazo` | Codazo | 1 | cuerpo | attack | 1 |
+| `cuerpo-codazo` | Codazo | 1 | cuerpo | attack | 2 |
 | `cuerpo-salto` | Salto del Verbe | 1 | cuerpo | utility | 0 |
-| `cuerpo-presa` | Presa de acero | 2 | cuerpo | save | 1 |
+| `cuerpo-presa` | Presa de acero | 2 | cuerpo | save | 2 |
 | `cuerpo-instinto` | Instinto de pelea | 2 | cuerpo | utility | 0 |
-| `cuerpo-cien-pasos` | Cien pasos | 3 | cuerpo | save | 0 |
-| `cuerpo-espiral` | Caída en espiral | 4 | cuerpo | attack | 1 |
-| `cuerpo-golpe-lejano` | Golpe a distancia | 5 | cuerpo | attack | 0 |
-| `sello-estalla` | Papel que estalla | 1 | sello | save | 0 |
+| `cuerpo-cien-pasos` | Cien pasos | 3 | cuerpo | save | 1 |
+| `cuerpo-espiral` | Caída en espiral | 4 | cuerpo | attack | 2 |
+| `cuerpo-golpe-lejano` | Golpe a distancia | 5 | cuerpo | attack | 1 |
+| `sello-estalla` | Papel que estalla | 1 | sello | save | 1 |
 | `sello-ancla` | Ancla | 2 | sello | save | 0 |
 | `sello-bodega` | Bodega | 2 | sello | utility | 0 |
 | `sello-espejo` | Sello espejo | 3 | sello | utility | 0 |
@@ -360,18 +360,18 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `pulso-sacar-veneno` | Sacar el veneno | 1 | pulso | heal | 0 |
 | `pulso-cura-lejos` | Cura a distancia | 2 | pulso | heal | 0 |
 | `pulso-nervio` | Cortar el nervio | 3 | pulso | save | 0 |
-| `pulso-golpe-dentro` | Golpe por dentro | 4 | pulso | save | 0 |
+| `pulso-golpe-dentro` | Golpe por dentro | 4 | pulso | save | 1 |
 | `pulso-regenerar` | Regenerar | 5 | pulso | utility | 0 |
 | `hilo-dardo` | Dardo de hilo | 0 | hilo | attack | 0 |
 | `hilo-trampa` | Trampa de hilos | 1 | hilo | save | 1 |
-| `hilo-abanico` | Armas en abanico | 2 | hilo | save | 0 |
+| `hilo-abanico` | Armas en abanico | 2 | hilo | save | 1 |
 | `hilo-cubre` | Marioneta que cubre | 2 | hilo | utility | 0 |
 | `hilo-en-el-otro` | Hilos en el otro | 3 | hilo | save | 0 |
-| `hilo-espiral` | Espiral de filos | 4 | hilo | save | 0 |
-| `hilo-cien-armas` | Cien armas | 7 | hilo | save | 0 |
+| `hilo-espiral` | Espiral de filos | 4 | hilo | save | 1 |
+| `hilo-cien-armas` | Cien armas | 7 | hilo | save | 1 |
 | `quietud-escuchar` | Escuchar la tierra | 0 | quietud | utility | 0 |
 | `quietud-sin-peso` | Paso sin peso | 1 | quietud | utility | 0 |
-| `quietud-puno-mundo` | Puño que lleva el mundo | 3 | quietud | attack | 0 |
+| `quietud-puno-mundo` | Puño que lleva el mundo | 3 | quietud | attack | 1 |
 | `quietud-mundo-cura` | El mundo cura | 4 | quietud | heal | 0 |
 | `quietud-sentirlo-todo` | Sentirlo todo | 5 | quietud | utility | 0 |
 | `rastro-marcar` | Marcar la firma | 1 | rastro | utility | 0 |
@@ -398,20 +398,20 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `sangre-bastio-muro` | Muro que no cede | 6 | sangre | utility | 0 |
 | `sangre-orun-cielo` | Leer el cielo | 0 | sangre | utility | 0 |
 | `sangre-orun-presagio` | Presagio | 2 | sangre | utility | 0 |
-| `sangre-orun-estrella` | Estrella que cae | 7 | sangre | save | 0 |
+| `sangre-orun-estrella` | Estrella que cae | 7 | sangre | save | 1 |
 | `sangre-verde-brote` | Brote | 0 | sangre | utility | 0 |
 | `sangre-verde-raices` | Raíces que agarran | 3 | sangre | save | 1 |
 | `sangre-verde-bosque` | Bosque de un día | 7 | sangre | utility | 0 |
 | `sangre-cendra-brasa` | Brasa | 0 | sangre | utility | 0 |
 | `sangre-cendra-horno` | Esconder en el horno | 2 | sangre | utility | 0 |
 | `sangre-cendra-hogar` | Hogar | 5 | sangre | utility | 0 |
-| `fuego-fragua-mundo` | Fragua del mundo | 10 | forma | save | 1 |
-| `agua-ola-valle` | Ola que traga el valle | 10 | forma | save | 2 |
-| `viento-cielo-partido` | Cielo partido | 10 | forma | save | 2 |
-| `tierra-cordillera` | Cordillera | 10 | forma | save | 2 |
+| `fuego-fragua-mundo` | Fragua del mundo | 10 | forma | save | 2 |
+| `agua-ola-valle` | Ola que traga el valle | 10 | forma | save | 3 |
+| `viento-cielo-partido` | Cielo partido | 10 | forma | save | 3 |
+| `tierra-cordillera` | Cordillera | 10 | forma | save | 3 |
 | `rayo-lanza-trueno` | Lanza del trueno | 10 | forma | attack | 1 |
-| `forma-ultima` | Forma última | 11 | forma | save | 0 |
-| `velo-mundo-entero` | Velo del mundo entero | 10 | velo | save | 1 |
+| `forma-ultima` | Forma última | 11 | forma | save | 1 |
+| `velo-mundo-entero` | Velo del mundo entero | 10 | velo | save | 2 |
 | `velo-sueno-sin-fin` | El sueño que no termina | 11 | velo | save | 1 |
 | `cuerpo-parte-montanas` | Golpe que parte montañas | 10 | cuerpo | utility | 1 |
 | `cuerpo-sin-techo` | Cuerpo sin techo | 11 | cuerpo | utility | 0 |
@@ -421,7 +421,7 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `pacto-ser-linaje` | Ser del linaje | 11 | pacto | utility | 0 |
 | `pulso-cierra-todo` | Mano que cierra todo | 10 | pulso | heal | 2 |
 | `pulso-volver-muerte` | Volver de la muerte | 11 | pulso | utility | 0 |
-| `hilo-red-cielo` | Red del cielo | 10 | hilo | save | 1 |
+| `hilo-red-cielo` | Red del cielo | 10 | hilo | save | 2 |
 | `hilo-ultimo-titiritero` | El último titiritero | 11 | hilo | save | 0 |
 | `quietud-mundo-presta` | El mundo presta | 10 | quietud | utility | 0 |
 | `quietud-ser-valle` | Ser el valle | 11 | quietud | utility | 0 |
@@ -439,30 +439,30 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `velo-enlace-grupo` | Enlace de pensamientos | 3 | velo | utility | 0 |
 | `velo-transmision-mente` | Mensaje sin voz | 2 | velo | utility | 0 |
 | `velo-retorno-mente` | Retornar al cuerpo | 1 | velo | utility | 0 |
-| `velo-sueno-corporeo` | Ilusión de peso real | 8 | velo | save | 0 |
+| `velo-sueno-corporeo` | Ilusión de peso real | 8 | velo | save | 1 |
 | `cuerpo-sombra-danzante` | Sombra bajo el salto | 1 | cuerpo | utility | 1 |
-| `cuerpo-combo-leon` | Danza del león | 3 | cuerpo | attack | 1 |
-| `cuerpo-combo-replicas` | Danza de los dobles | 3 | cuerpo | attack | 0 |
-| `cuerpo-loto-frontal` | Loto de la caída | 3 | cuerpo | attack | 1 |
+| `cuerpo-combo-leon` | Danza del león | 3 | cuerpo | attack | 2 |
+| `cuerpo-combo-replicas` | Danza de los dobles | 3 | cuerpo | attack | 1 |
+| `cuerpo-loto-frontal` | Loto de la caída | 3 | cuerpo | attack | 2 |
 | `cuerpo-loto-inverso` | Loto de los tres límites | 5 | cuerpo | attack | 1 |
-| `cuerpo-pavo-alba` | Pavo del amanecer | 7 | cuerpo | save | 0 |
-| `cuerpo-tigre-mediodia` | Tigre del mediodía | 9 | cuerpo | save | 0 |
-| `cuerpo-elefante-ocaso` | Elefante del ocaso | 10 | cuerpo | attack | 0 |
+| `cuerpo-pavo-alba` | Pavo del amanecer | 7 | cuerpo | save | 1 |
+| `cuerpo-tigre-mediodia` | Tigre del mediodía | 9 | cuerpo | save | 1 |
+| `cuerpo-elefante-ocaso` | Elefante del ocaso | 10 | cuerpo | attack | 1 |
 | `cuerpo-noche-ultima` | La noche del último paso | 11 | cuerpo | attack | 0 |
 | `cuerpo-puno-ebrio` | Paso del puño ebrio | 2 | cuerpo | utility | 1 |
-| `cuerpo-arhat` | Puño del arhat | 2 | cuerpo | attack | 0 |
+| `cuerpo-arhat` | Puño del arhat | 2 | cuerpo | attack | 1 |
 | `cuerpo-lariat-rayo` | Lazo del relámpago | 4 | cuerpo | attack | 1 |
-| `cuerpo-palma-vacio` | Palma del vacío | 3 | cuerpo | attack | 0 |
-| `cuerpo-doble-palma` | Muro de dos palmas | 5 | cuerpo | save | 0 |
-| `cuerpo-sesenta-cuatro` | Sesenta y cuatro cauces | 4 | cuerpo | attack | 0 |
+| `cuerpo-palma-vacio` | Palma del vacío | 3 | cuerpo | attack | 1 |
+| `cuerpo-doble-palma` | Muro de dos palmas | 5 | cuerpo | save | 1 |
+| `cuerpo-sesenta-cuatro` | Sesenta y cuatro cauces | 4 | cuerpo | attack | 1 |
 | `cuerpo-ciento-veintiocho` | Ciento veintiocho cauces | 6 | cuerpo | attack | 0 |
 | `cuerpo-rotacion-palmas` | Rotación celeste | 3 | cuerpo | utility | 1 |
 | `cuerpo-leones-gemelos` | Leones gemelos de los cauces | 5 | cuerpo | utility | 1 |
 | `cuerpo-palma-rompe` | Palma que rompe la montaña | 5 | cuerpo | attack | 0 |
 | `cuerpo-guardian-cauces` | Guardia de los sesenta y cuatro | 4 | cuerpo | utility | 1 |
 | `cuerpo-expansion-parcial` | Miembro gigante | 2 | cuerpo | utility | 1 |
-| `cuerpo-tanque-carne` | Rueda del coloso | 3 | cuerpo | save | 0 |
-| `cuerpo-tanque-espinas` | Rueda de las espinas | 4 | cuerpo | save | 0 |
+| `cuerpo-tanque-carne` | Rueda del coloso | 3 | cuerpo | save | 1 |
+| `cuerpo-tanque-espinas` | Rueda de las espinas | 4 | cuerpo | save | 1 |
 | `cuerpo-mariposa` | Alas del gasto vital | 6 | cuerpo | utility | 1 |
 | `cuerpo-bombardeo-mariposa` | Impacto de la mariposa | 7 | cuerpo | attack | 0 |
 | `pulso-regeneracion-prevista` | Herida anticipada | 3 | pulso | heal | 0 |
@@ -486,15 +486,15 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `quietud-modo-bosque` | Quietud del bosque antiguo | 7 | quietud | utility | 1 |
 | `quietud-puertas-dios` | Puertas que sujetan al coloso | 8 | quietud | save | 1 |
 | `quietud-mil-brazos` | Monumento de mil brazos | 10 | quietud | utility | 1 |
-| `quietud-brazos-corona` | Corona de los mil golpes | 11 | quietud | save | 0 |
-| `quietud-aceite-viento-fuego` | Crisol de tres alientos | 8 | quietud | save | 0 |
-| `quietud-agujas-cabello` | Cabellera de mil agujas | 5 | quietud | save | 0 |
+| `quietud-brazos-corona` | Corona de los mil golpes | 11 | quietud | save | 1 |
+| `quietud-aceite-viento-fuego` | Crisol de tres alientos | 8 | quietud | save | 1 |
+| `quietud-agujas-cabello` | Cabellera de mil agujas | 5 | quietud | save | 1 |
 | `quietud-esfera-sabia` | Esfera del equilibrio | 4 | quietud | attack | 0 |
 | `quietud-esfera-sabia-mayor` | Gran esfera del equilibrio | 6 | quietud | attack | 0 |
 | `quietud-esfera-sabia-colosal` | Esfera colosal del equilibrio | 8 | quietud | attack | 0 |
-| `quietud-estrella-sabia` | Estrella del viento sabio | 8 | quietud | save | 0 |
+| `quietud-estrella-sabia` | Estrella del viento sabio | 8 | quietud | save | 1 |
 | `quietud-seis-caminos` | Quietud de las sendas del firmamento | 10 | quietud | utility | 1 |
-| `quietud-estrella-colosal` | Estrella que cubre el cielo | 11 | quietud | save | 0 |
+| `quietud-estrella-colosal` | Estrella que cubre el cielo | 11 | quietud | save | 1 |
 | `rastro-ocultar-firma` | Silencio de la firma | 1 | rastro | utility | 1 |
 | `rastro-firma-aliados` | Reconocer al compañero | 2 | rastro | utility | 0 |
 | `rastro-ojo-interior` | Ojo interior del flujo | 5 | rastro | utility | 0 |
@@ -513,29 +513,29 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `hilo-cuervo` | Cuervo de las cuchillas | 2 | hilo | utility | 1 |
 | `hilo-hormiga` | Hormiga de la prisión | 3 | hilo | utility | 1 |
 | `hilo-salamandra` | Salamandra de la guardia | 3 | hilo | utility | 1 |
-| `hilo-caja-negra` | Secretos de la caja negra | 5 | hilo | attack | 0 |
+| `hilo-caja-negra` | Secretos de la caja negra | 5 | hilo | attack | 1 |
 | `hilo-diez-marionetas` | Diez guardianes blancos | 7 | hilo | utility | 1 |
 | `hilo-cien-marionetas` | Procesión de cien | 10 | hilo | utility | 1 |
 | `hilo-marioneta-humana` | Vínculo con una marioneta humana | 7 | hilo | utility | 0 |
 | `hilo-tercer-herrero` | Marioneta de hierro magnético | 8 | hilo | utility | 1 |
 | `hilo-cuerpo-artificial` | Núcleo entre mecanismos | 8 | hilo | utility | 1 |
 | `hilo-recubrir-viento` | Filo del viento canalizado | 2 | hilo | utility | 1 |
-| `hilo-pergaminos-gemelos` | Dos pergaminos, mil armas | 4 | hilo | save | 0 |
+| `hilo-pergaminos-gemelos` | Dos pergaminos, mil armas | 4 | hilo | save | 1 |
 | `hilo-agujas-sombra` | Armas que cosen la sombra | 3 | hilo | save | 1 |
 | `hilo-hilos-sombra` | Manos desde la sombra | 4 | hilo | save | 1 |
-| `hilo-costura-sombra` | Lanzas de la sombra | 4 | hilo | save | 0 |
+| `hilo-costura-sombra` | Lanzas de la sombra | 4 | hilo | save | 1 |
 | `hilo-dibujos-escuadra` | Escuadra de tinta viva | 4 | hilo | utility | 1 |
-| `hilo-samehada-beber` | Mordida de la espada viva | 5 | hilo | attack | 0 |
+| `hilo-samehada-beber` | Mordida de la espada viva | 5 | hilo | attack | 1 |
 | `hilo-samehada-fusion` | Piel de la espada viva | 7 | hilo | utility | 1 |
 | `hilo-decapitadora` | Filo que bebe hierro | 3 | hilo | attack | 0 |
 | `hilo-espada-gemela` | Maza del doble filo | 5 | hilo | attack | 0 |
 | `hilo-colmillos-rayo` | Colmillos del relámpago | 4 | hilo | attack | 0 |
-| `hilo-espada-explosiva` | Hoja de los sellos estallantes | 4 | hilo | save | 0 |
-| `hilo-aguja-cose` | Aguja que cose enemigos | 4 | hilo | attack | 0 |
+| `hilo-espada-explosiva` | Hoja de los sellos estallantes | 4 | hilo | save | 1 |
+| `hilo-aguja-cose` | Aguja que cose enemigos | 4 | hilo | attack | 1 |
 | `hilo-rompedefensas` | Hacha y martillo | 4 | hilo | attack | 0 |
-| `hilo-kusanagi` | Filo de la serpiente | 5 | hilo | attack | 0 |
+| `hilo-kusanagi` | Filo de la serpiente | 5 | hilo | attack | 1 |
 | `hilo-gunbai` | Abanico que devuelve | 4 | hilo | utility | 1 |
-| `hilo-basho-fuego` | Abanico de cinco naturalezas | 5 | hilo | save | 0 |
+| `hilo-basho-fuego` | Abanico de cinco naturalezas | 5 | hilo | save | 1 |
 | `hilo-totsuka` | Espada del recipiente espiritual | 9 | hilo | save | 1 |
 | `hilo-yata` | Espejo de las mareas espirituales | 8 | hilo | utility | 0 |
 | `sello-cuatro-simbolos` | Sello de los cuatro símbolos | 7 | sello | utility | 0 |
@@ -564,35 +564,35 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `sello-vasija-llamada` | Vasija de la respuesta | 9 | sello | save | 1 |
 | `sello-alma-segador` | Sello del segador de almas | 10 | sello | utility | 0 |
 | `sello-liberar-segador` | Abrir el vientre del segador | 10 | sello | utility | 0 |
-| `pacto-sapo-caida` | Peso del sapo gigante | 5 | pacto | save | 0 |
+| `pacto-sapo-caida` | Peso del sapo gigante | 5 | pacto | save | 1 |
 | `pacto-estomago-sapo` | Pasillo del estómago del sapo | 6 | pacto | save | 1 |
 | `pacto-rashomon` | Puerta del camino oscuro | 4 | pacto | utility | 0 |
 | `pacto-tres-rashomon` | Tres puertas del camino oscuro | 7 | pacto | utility | 0 |
 | `pacto-cinco-rashomon` | Cinco puertas del camino oscuro | 9 | pacto | utility | 0 |
 | `pacto-serpientes-manos` | Manos de serpiente | 2 | pacto | save | 1 |
 | `pacto-muchas-serpientes` | Manos de muchas serpientes | 4 | pacto | save | 1 |
-| `pacto-mandara` | Procesión de serpientes | 6 | pacto | save | 0 |
+| `pacto-mandara` | Procesión de serpientes | 6 | pacto | save | 1 |
 | `pacto-jauria-tierra` | Jauría desde el suelo | 3 | pacto | save | 1 |
 | `pacto-enma-baston` | Rey mono, bastón de combate | 5 | pacto | utility | 1 |
 | `pacto-halcon` | Alas del contrato | 3 | pacto | utility | 1 |
 | `pacto-tortuga` | Caparazón del contrato | 2 | pacto | utility | 1 |
-| `pacto-comadreja` | Comadreja de la siega | 5 | pacto | save | 0 |
-| `pacto-salamandra-veneno` | Nube de la salamandra | 5 | pacto | save | 0 |
+| `pacto-comadreja` | Comadreja de la siega | 5 | pacto | save | 1 |
+| `pacto-salamandra-veneno` | Nube de la salamandra | 5 | pacto | save | 1 |
 | `pacto-babosa-fragmentos` | Fragmentos de la gran babosa | 4 | pacto | utility | 1 |
 | `pacto-abejas` | Colmena del contrato | 3 | pacto | utility | 1 |
 | `pacto-insectos-esfera` | Esfera de la colonia | 4 | pacto | save | 1 |
 | `pacto-insectos-senuelo` | Réplica de la colonia | 3 | pacto | utility | 1 |
 | `pacto-atraer-insectos` | Convocar la colonia local | 1 | pacto | utility | 0 |
-| `pacto-insectos-crecen` | Larvas del crecimiento voraz | 6 | pacto | save | 0 |
-| `pacto-nano-insectos` | Colonia microscópica | 8 | pacto | save | 0 |
+| `pacto-insectos-crecen` | Larvas del crecimiento voraz | 6 | pacto | save | 1 |
+| `pacto-nano-insectos` | Colonia microscópica | 8 | pacto | save | 1 |
 | `pacto-cuatro-patas` | Paso de cuatro patas | 2 | pacto | utility | 1 |
-| `pacto-colmillos-giro` | Colmillos que giran | 4 | pacto | save | 0 |
+| `pacto-colmillos-giro` | Colmillos que giran | 4 | pacto | save | 1 |
 | `pacto-lobo-doble` | Lobo de las dos cabezas | 5 | pacto | utility | 1 |
-| `pacto-gran-colmillo` | Gran colmillo de la manada | 7 | pacto | save | 0 |
+| `pacto-gran-colmillo` | Gran colmillo de la manada | 7 | pacto | save | 1 |
 | `pacto-reanimacion` | Llamada del barro impuro | 9 | pacto | utility | 0 |
 | `pacto-perro-divisible` | Perro de las muchas cabezas | 7 | pacto | utility | 1 |
 | `mirada-aster-luna` | Luna de la pesadilla | 7 | mirada | save | 1 |
-| `mirada-aster-llama-negra` | Llama negra del foco | 7 | mirada | save | 0 |
+| `mirada-aster-llama-negra` | Llama negra del foco | 7 | mirada | save | 1 |
 | `mirada-aster-forma-llama` | Forma de la llama negra | 6 | mirada | utility | 1 |
 | `mirada-aster-voluntad` | Voluntad que no se reconoce | 9 | mirada | save | 1 |
 | `mirada-aster-izanagi` | El desenlace que se niega | 10 | mirada | utility | 0 |
@@ -601,19 +601,19 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `mirada-aster-guerrero` | Guardián humanoide | 7 | mirada | utility | 1 |
 | `mirada-aster-armadura` | Guardián acorazado | 8 | mirada | utility | 1 |
 | `mirada-aster-perfecto` | Guardián perfecto | 10 | mirada | utility | 1 |
-| `mirada-aster-magatama` | Joyas del guardián | 7 | mirada | save | 0 |
-| `mirada-aster-arco` | Arco del guardián | 6 | mirada | attack | 0 |
-| `mirada-aster-indra` | Flecha del cielo de Arvem | 11 | mirada | save | 0 |
+| `mirada-aster-magatama` | Joyas del guardián | 7 | mirada | save | 1 |
+| `mirada-aster-arco` | Arco del guardián | 6 | mirada | attack | 1 |
+| `mirada-aster-indra` | Flecha del cielo de Arvem | 11 | mirada | save | 1 |
 | `mirada-orbe-abrir` | Abrir el Ojo de las sendas del firmamento | 0 | mirada | utility | 0 |
 | `mirada-orbe-atraer` | Mano de la atracción | 4 | mirada | save | 0 |
-| `mirada-orbe-repeler` | Círculo de repulsión | 5 | mirada | save | 0 |
+| `mirada-orbe-repeler` | Círculo de repulsión | 5 | mirada | save | 1 |
 | `mirada-orbe-absorber` | Palmas del sendero hambriento | 6 | mirada | utility | 0 |
 | `mirada-orbe-asura` | Cuerpo del sendero de guerra | 6 | mirada | utility | 1 |
-| `mirada-orbe-proyectiles` | Artillería del sendero de guerra | 7 | mirada | save | 0 |
-| `mirada-orbe-humano` | Mano del sendero humano | 7 | mirada | save | 0 |
+| `mirada-orbe-proyectiles` | Artillería del sendero de guerra | 7 | mirada | save | 1 |
+| `mirada-orbe-humano` | Mano del sendero humano | 7 | mirada | save | 1 |
 | `mirada-orbe-animal` | Llamada de los ojos compartidos | 6 | mirada | utility | 1 |
 | `mirada-orbe-naraka` | Balanza del sendero infernal | 8 | mirada | utility | 0 |
-| `mirada-orbe-receptores` | Receptores negros | 4 | mirada | attack | 0 |
+| `mirada-orbe-receptores` | Receptores negros | 4 | mirada | attack | 1 |
 | `mirada-orbe-seis-cuerpos` | Seis recipientes del sendero | 9 | mirada | utility | 1 |
 | `mirada-orbe-luna` | Núcleo de la luna cautiva | 9 | mirada | save | 1 |
 | `mirada-orbe-retorno` | Retorno del sendero exterior | 11 | mirada | utility | 0 |
@@ -629,22 +629,22 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `sangre-varro-alerce` | Danza del alerce | 4 | sangre | utility | 1 |
 | `sangre-varro-clematide` | Danza de la clemátide | 5 | sangre | save | 1 |
 | `sangre-fluyente-agua` | Cuerpo de la corriente viva | 4 | sangre | utility | 1 |
-| `sangre-fluyente-bala` | Bala del dedo de agua | 3 | sangre | attack | 0 |
+| `sangre-fluyente-bala` | Bala del dedo de agua | 3 | sangre | attack | 1 |
 | `sangre-fluyente-vapor` | Doble del vapor aceitoso | 7 | sangre | utility | 1 |
 | `sangre-mutable-despertar` | Mutación del huésped natural | 4 | sangre | utility | 1 |
 | `sangre-mutable-propulsion` | Propulsión orgánica | 3 | sangre | utility | 1 |
 | `sangre-gemelo-fusion` | Dos cuerpos en una piel | 6 | sangre | utility | 1 |
 | `sangre-humo-cuerpo` | Cuerpo de humo | 5 | sangre | utility | 1 |
 | `sangre-detonacion-contacto` | Mina de la palma | 4 | sangre | attack | 0 |
-| `sangre-arcilla-c1` | Arcilla de la primera forma | 2 | sangre | save | 0 |
+| `sangre-arcilla-c1` | Arcilla de la primera forma | 2 | sangre | save | 1 |
 | `sangre-arcilla-c2` | Dragón de la segunda forma | 5 | sangre | utility | 1 |
-| `sangre-arcilla-c3` | Estatua de la tercera forma | 8 | sangre | save | 0 |
-| `sangre-arcilla-c4` | Polvo de la cuarta forma | 9 | sangre | save | 0 |
+| `sangre-arcilla-c3` | Estatua de la tercera forma | 8 | sangre | save | 1 |
+| `sangre-arcilla-c4` | Polvo de la cuarta forma | 9 | sangre | save | 1 |
 | `sangre-arcilla-cero` | Última forma de la arcilla | 11 | sangre | utility | 0 |
-| `sangre-calor-esferas` | Esferas del calor seco | 6 | sangre | save | 0 |
-| `sangre-magnetismo-lluvia` | Lluvia del hierro negro | 4 | sangre | save | 0 |
-| `sangre-magnetismo-forma` | Geometría del hierro negro | 5 | sangre | attack | 0 |
-| `sangre-magnetismo-espinas` | Bosque del hierro negro | 7 | sangre | save | 0 |
+| `sangre-calor-esferas` | Esferas del calor seco | 6 | sangre | save | 1 |
+| `sangre-magnetismo-lluvia` | Lluvia del hierro negro | 4 | sangre | save | 1 |
+| `sangre-magnetismo-forma` | Geometría del hierro negro | 5 | sangre | attack | 1 |
+| `sangre-magnetismo-espinas` | Bosque del hierro negro | 7 | sangre | save | 1 |
 | `sangre-magnetismo-oro` | Marea del polvo dorado | 6 | sangre | save | 1 |
 | `hilo-papel-danza` | Danza del cuerpo de papel | 5 | hilo | utility | 1 |
 | `hilo-papel-replica` | Réplica de papel | 3 | hilo | utility | 1 |
@@ -656,19 +656,19 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `sangre-efimera` | Paso de la efímera | 6 | sangre | utility | 0 |
 | `sangre-mu-dividir` | Cuerpo que se divide | 7 | sangre | utility | 1 |
 | `sangre-cristal-armadura` | Armadura del cristal vivo | 4 | sangre | utility | 1 |
-| `sangre-cristal-dragon` | Dragón de cristal | 6 | sangre | save | 0 |
+| `sangre-cristal-dragon` | Dragón de cristal | 6 | sangre | save | 1 |
 | `sangre-cristal-laberinto` | Laberinto de cristal | 7 | sangre | utility | 0 |
 | `umbral-formula` | Fórmula del punto de regreso | 0 | umbral | utility | 0 |
 | `umbral-raijin` | Paso a la fórmula | 5 | umbral | utility | 0 |
 | `umbral-raijin-largo` | Camino largo de la fórmula | 7 | umbral | utility | 0 |
-| `umbral-segundo-paso` | Segundo paso del relámpago | 6 | umbral | attack | 0 |
+| `umbral-segundo-paso` | Segundo paso del relámpago | 6 | umbral | attack | 1 |
 | `umbral-intercambio-doble` | Rueda de las dos fórmulas | 8 | umbral | utility | 0 |
 | `umbral-barrera-traslado` | Umbral que desvía la descarga | 9 | umbral | utility | 0 |
 | `umbral-inversa` | Llamada de vuelta al contrato | 5 | umbral | utility | 0 |
 | `umbral-kamui-derecho` | Costura del cuerpo ausente | 8 | umbral | utility | 1 |
 | `umbral-kamui-izquierdo` | Costura del objetivo distante | 9 | umbral | save | 1 |
 | `umbral-kamui-puerta` | Puerta de la cámara ligada | 9 | umbral | utility | 0 |
-| `umbral-kamui-shuriken` | Filo del umbral ocular | 10 | umbral | save | 0 |
+| `umbral-kamui-shuriken` | Filo del umbral ocular | 10 | umbral | save | 1 |
 | `umbral-kamui-corte` | Corte del relámpago ausente | 10 | umbral | attack | 0 |
 | `umbral-intercambio-ojo` | Intercambio del sendero | 8 | umbral | utility | 0 |
 | `umbral-grieta-planos` | Grieta entre los planos | 10 | umbral | utility | 0 |
@@ -689,11 +689,11 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `vasija-kurama-amigo` | Avatar del zorro compañero | 9 | vasija | utility | 1 |
 | `vasija-modo-combinado` | El huésped y el mundo | 10 | vasija | utility | 1 |
 | `vasija-shukaku-sello` | Mausoleo de la primera cola | 7 | vasija | save | 1 |
-| `vasija-matatabi-azul` | Llama de las dos colas | 6 | vasija | save | 0 |
+| `vasija-matatabi-azul` | Llama de las dos colas | 6 | vasija | save | 1 |
 | `vasija-isobu-coral` | Coral de las tres colas | 6 | vasija | save | 1 |
-| `vasija-songoku-lava` | Roca ardiente de cuatro colas | 7 | vasija | save | 0 |
+| `vasija-songoku-lava` | Roca ardiente de cuatro colas | 7 | vasija | save | 1 |
 | `vasija-kokuo-vapor` | Presión de las cinco colas | 6 | vasija | utility | 1 |
-| `vasija-saiken-acido` | Fluido de las seis colas | 6 | vasija | save | 0 |
+| `vasija-saiken-acido` | Fluido de las seis colas | 6 | vasija | save | 1 |
 | `vasija-chomei-alas` | Alas de las siete colas | 5 | vasija | utility | 1 |
 | `vasija-gyuki-tinta` | Tinta de las ocho colas | 5 | vasija | save | 1 |
 | `vasija-gyuki-tentaculos` | Tentáculos de la octava cola | 6 | vasija | save | 1 |
@@ -701,36 +701,36 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `vasija-arbol` | Raíces del árbol divino | 10 | vasija | save | 1 |
 | `vasija-gudodama` | Esferas de la verdad cambiante | 10 | vasija | utility | 1 |
 | `vasija-gudodama-golpe` | Filo de las esferas de verdad | 10 | vasija | attack | 0 |
-| `vasija-nueve-estrellas` | Nueve estrellas del huésped | 11 | vasija | save | 0 |
-| `vasija-estrella-lava` | Estrella del huésped volcánico | 10 | vasija | save | 0 |
+| `vasija-nueve-estrellas` | Nueve estrellas del huésped | 11 | vasija | save | 1 |
+| `vasija-estrella-lava` | Estrella del huésped volcánico | 10 | vasija | save | 1 |
 | `vasija-esfera-magnetica` | Esfera del huésped magnético | 8 | vasija | attack | 0 |
 | `vasija-creacion-todas` | Dar forma y aliento | 11 | vasija | utility | 0 |
 | `vasija-sol-luna` | Sellos del sol y la luna | 11 | vasija | utility | 0 |
-| `vasija-huesos-finales` | Huesos de la ceniza final | 11 | vasija | attack | 0 |
-| `vasija-ochenta-punos` | Ochenta golpes del cielo vacío | 11 | vasija | save | 0 |
+| `vasija-huesos-finales` | Huesos de la ceniza final | 11 | vasija | attack | 1 |
+| `vasija-ochenta-punos` | Ochenta golpes del cielo vacío | 11 | vasija | save | 1 |
 | `vasija-esfera-expansiva` | Esfera del horizonte vacío | 11 | vasija | utility | 0 |
 | `vasija-bosque-primordial` | Raíces del sueño primordial | 11 | vasija | utility | 0 |
-| `vasija-cabello-primordial` | Cabellera del conejo celeste | 10 | vasija | save | 0 |
+| `vasija-cabello-primordial` | Cabellera del conejo celeste | 10 | vasija | save | 1 |
 | `vasija-sora` | Manto del huésped incompleto | 5 | vasija | utility | 1 |
 | `vasija-sincronizar-isobu` | Canción que calma las tres colas | 5 | vasija | save | 1 |
-| `forma-estrella-viento` | Estrella del viento girante | 6 | forma | save | 0 |
+| `forma-estrella-viento` | Estrella del viento girante | 6 | forma | save | 1 |
 | `forma-esfera-viento` | Esfera con naturaleza de viento | 4 | forma | attack | 0 |
 | `cuerpo-dos-esferas` | Dos esferas en un paso | 5 | cuerpo | attack | 0 |
 | `hilo-esferas-orbitales` | Esferas que orbitan | 6 | hilo | attack | 0 |
-| `cuerpo-mil-esferas` | Combinación de las muchas esferas | 8 | cuerpo | save | 0 |
+| `cuerpo-mil-esferas` | Combinación de las muchas esferas | 8 | cuerpo | save | 1 |
 | `cuerpo-chidori` | Mil aves en la palma | 3 | cuerpo | attack | 0 |
 | `cuerpo-raikiri` | Corte del relámpago | 5 | cuerpo | attack | 0 |
-| `hilo-agujas-rayo` | Agujas de las mil aves | 4 | hilo | save | 0 |
-| `forma-circo-tormenta` | Rayos del circo controlado | 5 | forma | save | 0 |
+| `hilo-agujas-rayo` | Agujas de las mil aves | 4 | hilo | save | 1 |
+| `forma-circo-tormenta` | Rayos del circo controlado | 5 | forma | save | 1 |
 | `forma-colmillo-tormenta` | Colmillo de la tormenta sabia | 10 | forma | attack | 0 |
 | `forma-burbuja-transporte` | Burbuja del viajero | 3 | forma | utility | 1 |
 | `forma-burbuja-trampa` | Burbuja de la trampa | 3 | forma | save | 1 |
-| `forma-burbuja-estalla` | Burbuja que estalla | 4 | forma | save | 0 |
+| `forma-burbuja-estalla` | Burbuja que estalla | 4 | forma | save | 1 |
 | `rastro-clima-yota` | Pulso del cielo emotivo | 5 | rastro | utility | 0 |
 | `pulso-fuka` | Beso del flujo robado | 7 | pulso | utility | 0 |
 | `quietud-tsuchigumo` | Aliento prohibido de la tierra | 10 | quietud | utility | 0 |
 | `sangre-estrella-pavo` | Cola del pavo de la estrella | 6 | sangre | utility | 1 |
-| `hilo-raiga` | Espadas del trueno encadenado | 6 | hilo | save | 0 |
+| `hilo-raiga` | Espadas del trueno encadenado | 6 | hilo | save | 1 |
 | `sangre-amachi` | Adaptación del organismo acuático | 4 | sangre | utility | 1 |
 | `sello-limelight` | Cuatro focos del relámpago | 9 | sello | utility | 0 |
 | `forma-clon-agua` | Cuerpo de agua duplicada | 3 | forma | utility | 1 |
@@ -748,36 +748,36 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `vasija-esfera-bestia` | Esfera girante del huésped | 8 | vasija | attack | 0 |
 | `sello-arena-escudo` | Escudo del amor de arena | 3 | sello | utility | 1 |
 | `sello-arena-armadura` | Armadura de arena | 3 | sello | utility | 1 |
-| `sello-arena-funeral` | Funeral de la arena | 5 | sello | save | 0 |
-| `sello-arena-mausoleo` | Mausoleo de la gran arena | 8 | sello | save | 0 |
+| `sello-arena-funeral` | Funeral de la arena | 5 | sello | save | 1 |
+| `sello-arena-mausoleo` | Mausoleo de la gran arena | 8 | sello | save | 1 |
 | `sello-arena-vuelo` | Plataforma de arena | 4 | sello | utility | 1 |
 | `cuerpo-peso-ligero` | Cuerpo de peso aligerado | 4 | cuerpo | utility | 1 |
 | `cuerpo-peso-extremo` | Puño del peso aumentado | 6 | cuerpo | attack | 0 |
 | `cuerpo-ligereza-grupo` | Ligereza de los compañeros | 7 | cuerpo | utility | 0 |
 | `velo-luna-infinita` | Sueño de la luna infinita | 11 | velo | utility | 0 |
-| `hilo-cuerda-relampago` | Cuerda de dos relámpagos | 6 | hilo | save | 0 |
+| `hilo-cuerda-relampago` | Cuerda de dos relámpagos | 6 | hilo | save | 1 |
 | `sangre-cristal-prision` | Prisión del cristal vivo | 5 | sangre | save | 1 |
-| `forma-ola-aceitosa` | Llama del aceite de sapo | 6 | forma | save | 0 |
-| `forma-espiral-espacial` | Espiral de fuego y umbral | 8 | forma | save | 0 |
-| `forma-agua-tiburon` | Tiburón de la corriente | 4 | forma | attack | 0 |
-| `forma-agua-cinco-tiburones` | Cinco cazadores de agua | 5 | forma | save | 0 |
-| `forma-agua-tiburon-mayor` | Tiburón que bebe la descarga | 7 | forma | save | 0 |
-| `forma-agua-filo-presion` | Filo de agua comprimida | 5 | forma | save | 0 |
+| `forma-ola-aceitosa` | Llama del aceite de sapo | 6 | forma | save | 1 |
+| `forma-espiral-espacial` | Espiral de fuego y umbral | 8 | forma | save | 1 |
+| `forma-agua-tiburon` | Tiburón de la corriente | 4 | forma | attack | 1 |
+| `forma-agua-cinco-tiburones` | Cinco cazadores de agua | 5 | forma | save | 1 |
+| `forma-agua-tiburon-mayor` | Tiburón que bebe la descarga | 7 | forma | save | 1 |
+| `forma-agua-filo-presion` | Filo de agua comprimida | 5 | forma | save | 1 |
 | `forma-agua-adhesiva` | Suelo de la marea adhesiva | 3 | forma | save | 1 |
 | `forma-agua-prision-movil` | Prisión del tiburón danzante | 8 | forma | save | 1 |
 | `forma-tierra-golem` | Guardián de roca | 5 | forma | utility | 1 |
 | `forma-tierra-rocas-cierre` | Dos montañas que se cierran | 7 | forma | save | 1 |
 | `forma-tierra-prision-absorbe` | Prisión del cuenco de tierra | 6 | forma | save | 1 |
-| `hilo-rayo-bestia` | Bestia que persigue al rayo | 5 | hilo | attack | 0 |
-| `hilo-rayo-pantera` | Pantera del relámpago negro | 6 | hilo | save | 0 |
-| `hilo-viento-red` | Red del abanico cortante | 4 | hilo | save | 0 |
+| `hilo-rayo-bestia` | Bestia que persigue al rayo | 5 | hilo | attack | 1 |
+| `hilo-rayo-pantera` | Pantera del relámpago negro | 6 | hilo | save | 1 |
+| `hilo-viento-red` | Red del abanico cortante | 4 | hilo | save | 1 |
 | `sello-madera-dragon` | Dragón que sujeta el flujo | 6 | sello | save | 1 |
 | `hilo-madera-coloso` | Guerrero de madera | 8 | hilo | utility | 1 |
 | `sello-madera-prision` | Casa de los cuatro pilares | 5 | sello | save | 1 |
 | `sello-madera-raices` | Raíces que enlazan | 3 | sello | save | 1 |
 | `sello-madera-bosque` | Bosque que despierta | 7 | sello | utility | 0 |
 | `sello-madera-flores` | Bosque de las flores dormidas | 8 | sello | save | 1 |
-| `forma-magma-corrosivo` | Lodo del magma corrosivo | 5 | forma | save | 0 |
+| `forma-magma-corrosivo` | Lodo del magma corrosivo | 5 | forma | save | 1 |
 | `cuerpo-magma-coraza` | Coraza de la roca fundida | 6 | cuerpo | utility | 1 |
 | `cuerpo-vapor-presion` | Fuerza de la presión hirviente | 5 | cuerpo | utility | 1 |
 | `divino-madre-raices` | Raíces protectoras | 1 | sangre | utility | 1 |
@@ -786,20 +786,20 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `divino-madre-santuario` | Santuario de la Madre | 8 | sangre | utility | 1 |
 | `divino-madre-voz` | Voz de la Primera | 9 | sangre | save | 1 |
 | `divino-madre-caminos` | Caminos sin frontera | 10 | sangre | utility | 0 |
-| `divino-madre-jardin` | Jardín del Primer Sueño | 11 | sangre | save | 0 |
-| `divino-nerys-escarcha` | Promesa de escarcha | 1 | sangre | attack | 0 |
+| `divino-madre-jardin` | Jardín del Primer Sueño | 11 | sangre | save | 1 |
+| `divino-nerys-escarcha` | Promesa de escarcha | 1 | sangre | attack | 1 |
 | `divino-nerys-canto` | Canto del hielo | 4 | sangre | save | 1 |
-| `divino-nerys-aurora` | Aurora del juramento | 7 | sangre | save | 0 |
-| `divino-ashka-pluma` | Pluma de la última voz | 1 | sangre | attack | 0 |
+| `divino-nerys-aurora` | Aurora del juramento | 7 | sangre | save | 1 |
+| `divino-ashka-pluma` | Pluma de la última voz | 1 | sangre | attack | 1 |
 | `divino-ashka-alas` | Alas del mensaje perdido | 4 | sangre | utility | 1 |
-| `divino-ashka-tormenta` | Respuesta de la tormenta | 7 | sangre | save | 0 |
-| `divino-thalos-abismo` | Peso del mar primero | 9 | sangre | save | 0 |
-| `divino-ignis-ley` | Ley del Fuego Ordenador | 9 | sangre | save | 0 |
-| `divino-orun-fragmento` | Fragmento del cielo anterior | 9 | sangre | save | 0 |
+| `divino-ashka-tormenta` | Respuesta de la tormenta | 7 | sangre | save | 1 |
+| `divino-thalos-abismo` | Peso del mar primero | 9 | sangre | save | 1 |
+| `divino-ignis-ley` | Ley del Fuego Ordenador | 9 | sangre | save | 1 |
+| `divino-orun-fragmento` | Fragmento del cielo anterior | 9 | sangre | save | 1 |
 | `divino-gracefeel-lumbre` | Lumbre de despedida | 1 | sangre | heal | 0 |
 | `divino-gracefeel-farol` | Farol del último viaje | 3 | sangre | utility | 0 |
 | `divino-cazador-marca` | Rastro sin rostro | 1 | sangre | utility | 0 |
-| `divino-cazador-flecha` | Flecha del claro vacío | 3 | sangre | attack | 0 |
+| `divino-cazador-flecha` | Flecha del claro vacío | 3 | sangre | attack | 1 |
 | `divino-seyra-lazo` | Lazo de auxilio | 1 | sangre | utility | 0 |
 | `divino-seyra-nudo` | Nudo que retiene | 3 | sangre | save | 1 |
 | `divino-dhoren-dintel` | Dintel de guardia | 1 | sangre | utility | 1 |
@@ -888,23 +888,23 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `vida-sello-etiqueta-almacen` | Etiqueta del almacén | 0 | sello | utility | 0 |
 | `forma-cambiar-naturaleza` | Cambiar naturaleza del Verbe | 2 | forma | utility | 0 |
 | `cuerpo-palma-desvia` | Palma que desvía | 1 | cuerpo | utility | 1 |
-| `cuerpo-patada-quiebre` | Patada que quiebra | 2 | cuerpo | attack | 0 |
+| `cuerpo-patada-quiebre` | Patada que quiebra | 2 | cuerpo | attack | 1 |
 | `hilo-red-parada` | Red de parada | 1 | hilo | utility | 1 |
-| `hilo-cuchillas-suspendidas` | Cuchillas suspendidas | 3 | hilo | attack | 0 |
+| `hilo-cuchillas-suspendidas` | Cuchillas suspendidas | 3 | hilo | attack | 1 |
 | `velo-reflejo-falso` | Reflejo falso | 1 | velo | utility | 1 |
-| `velo-punzada-mente` | Punzada en la mente | 2 | velo | save | 0 |
+| `velo-punzada-mente` | Punzada en la mente | 2 | velo | save | 1 |
 | `sello-parada` | Sello de parada | 2 | sello | utility | 1 |
-| `sello-lanza` | Lanza de sello | 3 | sello | attack | 0 |
+| `sello-lanza` | Lanza de sello | 3 | sello | attack | 1 |
 | `rastro-paso-medido` | Paso medido | 1 | rastro | utility | 1 |
-| `rastro-golpe-grieta` | Golpe en la grieta | 2 | rastro | attack | 0 |
+| `rastro-golpe-grieta` | Golpe en la grieta | 2 | rastro | attack | 1 |
 | `umbral-paso-corto` | Paso de umbral | 2 | umbral | utility | 1 |
-| `umbral-desgarro` | Desgarro del umbral | 4 | umbral | save | 0 |
+| `umbral-desgarro` | Desgarro del umbral | 4 | umbral | save | 1 |
 | `quietud-raiz-firme` | Raíz firme | 1 | quietud | utility | 1 |
-| `quietud-peso-entorno` | Peso del entorno | 3 | quietud | save | 0 |
+| `quietud-peso-entorno` | Peso del entorno | 3 | quietud | save | 1 |
 | `vasija-piel-huesped` | Piel del huésped | 2 | vasija | utility | 1 |
 | `vasija-zarpazo` | Zarpazo del huésped | 3 | vasija | attack | 0 |
 | `pacto-guardian` | Guardián del pacto | 1 | pacto | utility | 1 |
-| `pacto-embestida` | Embestida del aliado | 3 | pacto | attack | 0 |
+| `pacto-embestida` | Embestida del aliado | 3 | pacto | attack | 1 |
 | `forma-fuego-sol-cautivo` | Sol cautivo | 3 | forma | save | 0 |
 | `forma-agua-ola-contenida` | Ola contenida | 3 | forma | save | 0 |
 | `forma-tierra-puno-montana` | Puño de la montaña | 4 | forma | attack | 0 |
@@ -921,23 +921,23 @@ El catálogo reúne **936 técnicas y 237 dotes**.
 | `forma-pura-chispa` | Chispa de Verbe | 0 | forma | attack | 0 |
 | `forma-pura-empujon` | Empujón de Verbe | 0 | forma | save | 0 |
 | `forma-pura-guardia` | Guardia de Verbe | 0 | forma | utility | 1 |
-| `forma-pura-dardo` | Dardo de Verbe | 1 | forma | attack | 0 |
-| `forma-pura-filo` | Filo de Verbe | 1 | forma | attack | 0 |
+| `forma-pura-dardo` | Dardo de Verbe | 1 | forma | attack | 1 |
+| `forma-pura-filo` | Filo de Verbe | 1 | forma | attack | 1 |
 | `forma-pura-escudo` | Escudo de Verbe | 1 | forma | utility | 1 |
 | `forma-pura-impulso` | Impulso | 1 | forma | utility | 1 |
-| `forma-pura-red` | Red de Verbe | 1 | forma | save | 1 |
-| `forma-pura-lluvia` | Lluvia de agujas | 2 | forma | save | 0 |
-| `forma-pura-lanza` | Lanza de Verbe | 2 | forma | attack | 0 |
-| `forma-pura-martillo` | Martillo de Verbe | 2 | forma | attack | 1 |
+| `forma-pura-red` | Red de Verbe | 1 | forma | save | 2 |
+| `forma-pura-lluvia` | Lluvia de agujas | 2 | forma | save | 1 |
+| `forma-pura-lanza` | Lanza de Verbe | 2 | forma | attack | 1 |
+| `forma-pura-martillo` | Martillo de Verbe | 2 | forma | attack | 2 |
 | `forma-pura-muro` | Muro de Verbe | 2 | forma | utility | 0 |
-| `forma-pura-orbes` | Orbes guía | 3 | forma | attack | 0 |
-| `forma-pura-estallido` | Estallido de Verbe | 3 | forma | save | 0 |
+| `forma-pura-orbes` | Orbes guía | 3 | forma | attack | 1 |
+| `forma-pura-estallido` | Estallido de Verbe | 3 | forma | save | 1 |
 | `forma-pura-coraza` | Coraza de Verbe | 3 | forma | utility | 1 |
 | `forma-pura-salto` | Salto de Verbe | 3 | forma | utility | 0 |
-| `forma-pura-cadena` | Cadena de Verbe | 4 | forma | save | 1 |
-| `forma-pura-ariete` | Ariete de Verbe | 4 | forma | save | 1 |
+| `forma-pura-cadena` | Cadena de Verbe | 4 | forma | save | 2 |
+| `forma-pura-ariete` | Ariete de Verbe | 4 | forma | save | 2 |
 | `forma-pura-baluarte` | Baluarte | 5 | forma | utility | 1 |
-| `forma-pura-cometa` | Cometa de Verbe | 5 | forma | save | 0 |
+| `forma-pura-cometa` | Cometa de Verbe | 5 | forma | save | 1 |
 | `forma-agua-lluvia-ablanda` | Lluvia que ablanda | 1 | forma | save | 1 |
 | `forma-fuego-descascara` | Fuego que descascara | 2 | forma | attack | 1 |
 | `forma-tierra-golpe-cantero` | Golpe de cantero | 1 | forma | attack | 1 |

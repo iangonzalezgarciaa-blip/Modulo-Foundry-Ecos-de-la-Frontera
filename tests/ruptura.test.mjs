@@ -105,3 +105,25 @@ test('3.28 · el catálogo trae 24 técnicas de ruptura (todas las ramas salvo M
   for (const x of t) { assert.ok(!/Naruto|Shippuden|shinobi/i.test(JSON.stringify(x.item.system.source) + x.item.system.description.value), x.id); assert.ok(x.item.effects[0].statuses.some(s => s.startsWith('ecos')), x.id); }
   assert.ok(D.categoriasDote.some(c => c.id === 'ruptura'));
 });
+
+test('3.30 · re-nivelado táctico: menos dados y una ruptura con lógica de elementos; las pesadas, las de grado 0 y las curas no se tocan', async () => {
+  const { rupturaDe, reducir } = await import('../tools/rebalance-ruptura.mjs');
+  assert.equal(rupturaDe({ g: 2, nat: 'tierra', rama: 'forma', tipos: ['bludgeoning'] }), 'ecosBrecha');
+  assert.equal(rupturaDe({ g: 2, nat: 'agua', rama: 'forma', tipos: ['bludgeoning'] }), 'ecosGrieta', 'el agua entra al cuerpo aunque golpee');
+  assert.equal(rupturaDe({ g: 3, nat: 'rayo', rama: 'forma', tipos: ['lightning'] }), 'ecosGrieta');
+  assert.equal(rupturaDe({ g: 3, nat: null, rama: 'velo', tipos: ['psychic'] }), 'ecosGrieta');
+  assert.equal(rupturaDe({ g: 3, nat: null, rama: 'cuerpo', tipos: ['force'] }), 'ecosBrecha');
+  assert.equal(rupturaDe({ g: 3, nat: null, rama: 'sello', tipos: ['force'] }), 'ecosGrieta');
+  assert.equal(rupturaDe({ g: 8, nat: 'fuego', rama: 'forma', tipos: ['fire'] }), 'ecosQuebrado', 'lo enorme quiebra');
+  assert.deepEqual([1, 2, 3, 4, 6, 10].map(reducir), [1, 2, 2, 3, 4, 7]);
+  const { readCatalog } = await import('../tools/catalog.mjs');
+  const D = readCatalog(), t = id => D.tecnicas.find(x => x.id === id);
+  assert.equal(t('fuego-aliento').dmg, '2d6 fuego'); assert.equal(t('fuego-aliento').rupturaAuto.antes[0], 3);
+  assert.ok(!t('cuerpo-chidori').rupturaAuto, 'la pesada conserva su daño');
+  assert.ok(!t('fuego-brasa').rupturaAuto, 'grado 0 igual');
+  assert.ok(D.tecnicas.filter(x => x.rupturaAuto).length >= 200);
+  for (const x of D.tecnicas.filter(y => y.rupturaAuto)) {
+    const a = Object.values(x.item.system.activities).find(z => z.effects?.some(e => x.item.effects.some(f => f._id === e._id && f.flags['ecos-frontera'].verbe.rupturaAuto)));
+    assert.ok(a, `${x.id}: el efecto va en su actividad`);
+  }
+});
