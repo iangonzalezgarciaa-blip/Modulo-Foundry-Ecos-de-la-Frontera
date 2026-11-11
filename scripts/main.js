@@ -24,6 +24,7 @@
 import "./mesa-propio.js";
 import "./turno-tracker.js";
 import "./verbe-334.js";
+import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
 import { CALENDARIO, eventosDelDia, faseLunar, diaCampana, sumarDias, mesPrimerAno } from "./calendario.js";
@@ -45,7 +46,7 @@ import "./resonancia.js";
 import { quitarPlantillas } from "./ecos-327.js";
 import { motivoPausaMoneda } from "./mesa-control.js";
 import { crearCola } from "./verbe-core.js";
-import { recuperacionDGLarga, presupuestoCorto, ajustarRecuperacionDG } from "./rest-core.js";
+import { topeDGLugar, recuperacionDGLarga, presupuestoCorto, ajustarRecuperacionDG } from "./rest-core.js";
 import { tipoCuracionVerbe, tratarHeridaConPulso } from "./verbe-medicina.js";
 import { infoTirada, opcionesModo, modoDeMensaje, modoActual, modoNormal, modosNuevos, objetivosMensaje, cambio, quitar, puenteRitmoViaje } from "./compat.js";
 import { sistema } from "./sistema/index.js";
@@ -64,13 +65,13 @@ const RESISTENTES_INICIALES = ["kij3VDH2ofqyR95p", "ktHmACdpqjhNnwTS"];
 const ID_REGLAS = "G0rD0J3JkpOkXM00"; // Reglas de la casa (Libro VI)
 
 const DESC = {
-  acechado: "<p>Estás a 0 PG pero consciente. Estás Derribado: puedes hablar y arrastrarte, pero no puedes tomar acciones, acciones adicionales ni reacciones.</p><p>Al inicio de cada turno tiras una salvación de muerte (la tira el módulo). Con 3 éxitos o un 20 natural te levantas con 1 PG. Con 3 fallos no mueres: te queda una Secuela (pierdes 1 punto de Fuerza, Destreza o Constitución, según 1d6), las salvaciones vuelven a 0 y sigues en el suelo. Recibir daño cuenta como un fallo.</p>",
+  acechado: "<p>Estás a 0 PG pero consciente y Derribado. No tienes reacciones (ni de D&D ni del Verbe) y no puedes atacar, lanzar conjuros ni usar técnicas. Sí puedes hacer acciones básicas para sobrevivir: Esquivar, Desengancharte, arrastrarte (cada pie cuesta el doble), esconderte, tomar una poción o ayudar.</p><p>Al inicio de cada turno tiras una salvación de muerte (la tira el módulo); después puedes gastar tu acción en otra con ventaja (si falla, +1 Agotamiento). Con 3 éxitos o un 20 natural te levantas con 1 PG. Con 3 fallos no mueres: te queda una Secuela (pierdes 1 punto de Fuerza, Destreza o Constitución, según 1d6), las salvaciones vuelven a 0 y sigues en el suelo. Recibir daño cuenta como un fallo.</p><p>Al volver pagas el precio: salvación de Constitución (CD 8 + 2 × tu Agotamiento) o +1 Agotamiento. Con un 20 natural no pagas: te quitas 1 de Agotamiento y actúas ya.</p>",
   malherido: "<p>Tus PG máximos bajan en tu nivel y ninguna curación te sube del 50 % de tus PG máximos. Una vez tratado (un día de tratamiento exitoso de un sanador en un Santuario, o magia como Restauración menor), el tope sube al 75 %.</p><p>Se quita con 3 Descansos Largos en un Santuario (no hace falta que sean seguidos). No cuentan los días con combate, viaje forzado o trabajo con Agotamiento 3 o más. Fuera de un Santuario no recuperas PG descansando ni con Dados de Golpe.</p>",
   heridant: "<p>No puedes quitarte Agotamiento con Descansos Largos.</p><p>Cada nivel se cura con 3 días de tratamiento en un Santuario: el sanador hace una prueba de Medicina (CD 10 + el nivel de quien está herido) después de cada Descanso Largo. Si falla, el día no cuenta; con un 1 natural la herida se infecta y suma un nivel. También la curan <em>Restauración Menor</em>, <em>Sanar</em> o la Imposición de Manos (5 puntos por nivel).</p><p><em>En el token: clic izquierdo +1 nivel, clic derecho −1.</em></p>",
   secuela: "<p>Puntos de Fuerza, Destreza o Constitución que perdiste (por 3 fallos de muerte). Es la puntuación de la característica, no tus PG. No vuelven solos: cada día de tratamiento con éxito en un Santuario, sin combate ni trabajo pesado, devuelve 1 punto, primero el de la característica que más bajó. Si la Fuerza, la Destreza o la Constitución llegan a 0, el personaje muere.</p><p><em>No es lo mismo que Malherido: Malherido limita cuánto te curas; la Secuela te quita puntos de característica.</em></p>"
 };
 
-const EXPLICA_ACECHADO = "Está Derribado: solo puede hablar y arrastrarse. Al inicio de su turno tira salvación de muerte (la tira el módulo). <b>3 fallos</b> = Secuela (−1 FUE, DES o CON), no muerte. Recibir daño = 1 fallo.";
+const EXPLICA_ACECHADO = TEXTO_ACECHADO;
 
 /* ------------------------------------------------------------------ */
 /*  Utilidades                                                        */
@@ -497,7 +498,7 @@ async function procesarActualizacion(actor, changes, options) {
       L.push(`<b>${actor.name}</b> despierta después de pasar unas horas Estable.`);
     }
     titulo ??= "🩹 Vuelve de 0 PG";
-    await precioDeVolver(actor, L);
+    await precioDeVolver(actor, L, { epico: !!(salv?.levanta && salv?.critico) });
     G.push(...GUIA_COMPLETA);
   }
 
@@ -561,7 +562,7 @@ async function laSangreSostiene(actor, golpe, L) {
   });
 }
 
-async function precioDeVolver(actor, L) {
+async function precioDeVolver(actor, L, { epico = false } = {}) {
   await quitarStatus(actor, "acechado");
   await quitarStatus(actor, "stable");
   if (actor.getFlag(MOD, "despertar")) await actor.unsetFlag(MOD, "despertar");
@@ -577,8 +578,11 @@ async function precioDeVolver(actor, L) {
   if (hp.valor > tope) await actor.update(sistema.datosPg(tope), { ecosInterno: true });
 
   L.push(`<b>${actor.name}</b> vuelve en sí con ${sistema.pg(actor).valor} PG${sistema.tieneEstado(actor, "prone") ? " (sigue Derribado)" : ""}.`);
-  L.push(`El precio de volver: <b>+1 Agotamiento</b> (${exh} → ${nuevoExh}), <b>Herida No Tratada ${n}</b> y <b>Malherido</b> (0/${DESCANSOS_MALHERIDO}).`);
-  await actor.update(sistema.datosAgotamiento(nuevoExh));
+  // 3.35 (pedido del autor): el Agotamiento ya no es seguro: salvación de CON escalada; con 20 natural se quita 1 y actúa ya.
+  void exh; void nuevoExh;
+  const p = await precioVolver335(actor, { epico });
+  L.push(...p.L);
+  L.push(`Además: <b>Herida No Tratada ${n}</b> y <b>Malherido</b> (0/${DESCANSOS_MALHERIDO}).`);
 }
 
 /* ------------------------------------------------------------------ */
@@ -4650,7 +4654,8 @@ Hooks.once("init", () => {
   const CT = CONFIG.DND5E.conditionTypes;
   CT.acechado = {
     name: "Acechado por la Muerte", img: `${RUTA}/icons/acechado.svg`,
-    statuses: ["incapacitated"], riders: ["prone"], description: DESC.acechado
+    // 3.35: ya no queda Incapacitado: puede hacer acciones básicas para sobrevivir; sin reacciones (lo frena muerte-335.js).
+    statuses: [], riders: ["prone"], description: DESC.acechado
   };
   CT.malherido = { name: "Malherido", img: `${RUTA}/icons/malherido.svg`, description: DESC.malherido };
   CT.heridant = { name: "Herida No Tratada", img: `${RUTA}/icons/heridant.svg`, description: DESC.heridant };
@@ -7329,12 +7334,14 @@ function dgARecuperar(actor, tipo, santuario = enSantuario()) {
 }
 
 /** Cuántos Dados de Golpe se pueden gastar por descanso. */
-function topeDG(actor) {
+function topeDG(actor, { tipo = null } = {}) {
   const c = cfgDesc();
   if (c.tope === "sin") return Infinity;
-  if (c.tope === "mitad") return Math.ceil(nivelDG(actor) / 2);
-  return Math.max(1, Number(actor?.system?.attributes?.prof) || 2);
+  const base = c.tope === "mitad" ? Math.ceil(nivelDG(actor) / 2) : Math.max(1, Number(actor?.system?.attributes?.prof) || 2);
+  // 3.35 (pedido del autor): el Santuario es el techo; a la intemperie un Largo deja gastar la mitad y un Corto, 1.
+  return topeDGLugar(base, { santuario: enSantuario(), tipo: tipo ?? (enDescansoCorto(actor) ? "short" : "long") });
 }
+
 
 /** Lo que le queda por gastar ahora (en la ventana del Descanso Largo, o desde el último descanso). */
 function dgQuedan(actor) {
@@ -7630,7 +7637,7 @@ function abrirGastoDG(actor, datos = {}) {
   if (!actor?.isOwner) return null;
   const ya = foundry.applications.instances?.get?.(`ecos-gastar-dg-${actor.id}`);
   if (ya?.rendered) return ya.bringToFront?.();
-  GASTO_LARGO.set(actor.uuid, { n: 0, tope: topeDG(actor) });
+  GASTO_LARGO.set(actor.uuid, { n: 0, tope: topeDG(actor, { tipo: "long" }) });
   return new GastarDG(actor, datos).render({ force: true });
 }
 

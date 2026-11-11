@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 3.35.0 — 2026-11-11
+
+- **A 0 PG (Acechado por la Muerte)** (regla del autor): ya no queda Incapacitado. Pierde sus **reacciones** (de D&D y del Verbe) y no puede atacar, lanzar conjuros ni usar técnicas, pero sí hace **acciones básicas para sobrevivir**: Esquivar, Desengancharse, arrastrarse (cada pie cuesta el doble), esconderse, tomar una poción, ayudar. No se le ofrece levantarse: se arrastra.
+- **Otra salvación con tu acción:** después de la salvación de muerte automática del turno, el jugador puede gastar su acción en otra con **ventaja**; si falla, además **+1 Agotamiento**.
+- **El precio de volver** ya no es siempre +1 Agotamiento: **salvación de Constitución CD 8 + 2 × el Agotamiento** que ya tiene; si falla, +1. Con un **20 natural** en la salvación de muerte no tira: **se quita 1 de Agotamiento y actúa ya** (el DM tiene el botón «Darle su turno ahora»). La Herida No Tratada y Malherido siguen igual.
+- **Descansar fuera del Santuario:** el Santuario es el techo. A la intemperie, un Descanso Largo deja gastar la **mitad** de los Dados de Golpe habituales (mínimo 1) y un Descanso Corto, **1**. Ajuste nuevo: A 0 PG, ofrecer otra salvación con la acción.
+
 ## 3.34.0 — 2026-11-11
 
 - **Forzarte con aviso** (pedido del autor): si una técnica te deja en Verbe negativo, primero pregunta «¿Quieres forzarte más allá de tus límites?» con la CD de Constitución y el Agotamiento que arriesgas. Si dices que sí, te llega un susurro (solo a ti y al DM) con lo que haces, lo que arriesgas y cómo recuperarte. Las **reacciones del Verbe** también se pueden usar forzándote: el botón lo avisa.

@@ -57,3 +57,11 @@ export function ajustarRecuperacionDG(actor, result, { largo = false, limiteRec 
     result.ecosDG = { recuperados };
   return result;
 }
+
+/** 3.35 · El tope de Dados de Golpe por descanso según dónde se descansa: el Santuario es el techo; a la intemperie un
+ * Descanso Largo deja gastar la mitad (mínimo 1) y un Corto, como mucho 1. Puro. */
+export function topeDGLugar(base, { santuario = true, tipo = "long" } = {}) {
+  if (!Number.isFinite(base)) return base;
+  if (santuario) return base;
+  return tipo === "short" ? Math.min(1, base) : Math.max(1, Math.floor(base / 2));
+}
