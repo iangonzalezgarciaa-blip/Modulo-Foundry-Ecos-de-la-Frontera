@@ -29,12 +29,13 @@ export function evaluarGasto({ valor, costo, limite = 0, agotamiento = 0, grado 
   if (grado > gradoMaximo) return { ok: false, motivo: `Puede usar hasta grado ${gradoMaximo} en esta rama.` };
   if (incapacitado) return { ok: false, motivo: "Su estado no le permite actuar." };
   if (reaccion && !puedeReaccionar) return { ok: false, motivo: "No tiene una reacción disponible." };
-  if (grado === 0 && valor < 1) return { ok: false, motivo: "Las técnicas de grado 0 piden al menos 1 de Verbe." };
   if (grado >= 6 && altoGastado) return { ok: false, motivo: "Ya usó esta técnica a grado 6 o más desde su último Descanso Largo." };
-  const despues = entero(valor) - costo;
+  // 3.34 (regla del autor): sin Verbe que gastar, una técnica de grado 0 cuesta 1 en negativo: puedes seguir forzándote.
+  const costoReal = grado === 0 && valor < 1 ? Math.max(1, costo) : costo;
+  const despues = entero(valor) - costoReal;
   if (despues < entero(limite)) return { ok: false, motivo: `No le alcanza el Verbe: no puede bajar de ${limite}.` };
   if (despues < 0 && agotamiento >= 4) return { ok: false, motivo: "Con Agotamiento 4 no puede gastar Verbe en negativo." };
-  return { ok: true, despues, sobreesfuerzo: despues < 0 };
+  return { ok: true, despues, sobreesfuerzo: despues < 0, costo: costoReal };
 }
 
 /** Dos grados de ventaja elemental; una diferencia mayor de potencia puede vencerla. */

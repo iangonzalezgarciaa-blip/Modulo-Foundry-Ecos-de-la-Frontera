@@ -127,9 +127,20 @@ export function defensaDe(actor) {
 const efectoActual = actor => actor?.effects?.find?.(e => e.getFlag?.(MOD, "defensa"));
 
 /** Deja la ficha con el efecto que corresponde a su defensa (o sin él). Solo el DM. */
-export async function sincronizarDefensa(actor) {
-  if (!game.user.isGM || !actor) return;
-  const d = defensaDe(actor), ef = efectoActual(actor);
+const COLA_DEFENSA = new Map();
+/** Los aliados (token amistoso o del equipo del Verbe) no llevan la defensa de la campaña. */
+export const esAliado = a => !!a?.getFlag?.(MOD, "equipoVerbe") || (a?.prototypeToken?.disposition ?? -1) === (globalThis.CONST?.TOKEN_DISPOSITIONS?.FRIENDLY ?? 1);
+/** 3.34: en cola por ficha (crear la ficha y su bandera disparaban dos sincronizaciones a la vez y duplicaban el efecto). */
+export function sincronizarDefensa(actor) {
+  if (!game.user.isGM || !actor) return Promise.resolve();
+  const p = (COLA_DEFENSA.get(actor.uuid) ?? Promise.resolve()).catch(() => null).then(() => sincronizarInterno(actor));
+  COLA_DEFENSA.set(actor.uuid, p);
+  return p;
+}
+async function sincronizarInterno(actor) {
+  const todos = actor.effects?.filter?.(e => e.getFlag?.(MOD, "defensa")) ?? [];
+  if (todos.length > 1) await actor.deleteEmbeddedDocuments("ActiveEffect", todos.slice(1).map(e => e.id));
+  const d = defensaDe(actor), ef = todos[0] ?? null;
   if (!d) { if (ef) await ef.delete(); return; }
   const datos = efectoDefensa(d.tipo, d.n);
   datos.disabled = tieneEstado(actor, QUEBRADO);
@@ -151,7 +162,7 @@ export async function defensasAutomaticas({ forzar = false } = {}) {
   if (!game.user.isGM) return 0;
   let n = 0;
   for (const a of game.actors ?? []) {
-    if (!esNPC(a) || a.hasPlayerOwner) continue;
+    if (!esNPC(a) || a.hasPlayerOwner || esAliado(a)) continue;
     const f = a.getFlag(MOD, "defensa");
     if (f && !forzar) continue;
     if (f?.elegida) continue;
@@ -350,6 +361,12 @@ if (globalThis.Hooks) {
     import("./acciones-comunes.js").then(m => m.paginaReglas("guiaRuptura", "16 · Ablandar: Coraza, Fortaleza, Brecha y Grieta", guiaRupturaHTML())).catch(err => console.error(`${MOD} | guía de ruptura`, err));
     try {
       if (leer("defensasCampana", "auto") === "no") { for (const a of game.actors) if (efectoActual(a)) await efectoActual(a).delete(); return; }
+      // 3.34: arregla los efectos de defensa duplicados y quita la defensa automática a los aliados (el equipo del Verbe).
+      for (const a of game.actors) {
+        const f = a.getFlag(MOD, "defensa");
+        if (esAliado(a) && f && !f.elegida) { await a.unsetFlag(MOD, "defensa"); await sincronizarDefensa(a); }
+        else if ((a.effects?.filter?.(e => e.getFlag?.(MOD, "defensa")).length ?? 0) > 1) await sincronizarDefensa(a);
+      }
       if (leer("defensasCampana", "auto") === "auto") {
         const n = await defensasAutomaticas();
         if (n) ChatMessage.create({ whisper: game.users.filter(u => u.isGM).map(u => u.id), speaker: { alias: "Ecos" },
@@ -358,7 +375,7 @@ if (globalThis.Hooks) {
     } catch (err) { console.error(`${MOD} | defensas`, err); }
   });
   Hooks.on("createActor", actor => {
-    if (!game.user.isGM || game.users.activeGM?.isSelf === false || leer("defensasCampana", "auto") !== "auto" || !esNPC(actor) || actor.getFlag(MOD, "defensa")) return;
+    if (!game.user.isGM || game.users.activeGM?.isSelf === false || leer("defensasCampana", "auto") !== "auto" || !esNPC(actor) || esAliado(actor) || actor.getFlag(MOD, "defensa")) return;
     const tipo = defensaSugerida(datosCriatura(actor));
     if (tipo) actor.setFlag(MOD, "defensa", { tipo, n: bonoDefensa(vdDe(actor)), elegida: false }).then(() => sincronizarDefensa(actor)).catch(err => console.error(`${MOD} | defensas`, err));
   });

@@ -7,17 +7,17 @@
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      5,
-      5,
-      5
+      2,
+      0,
+      0
     ],
-    "acciones": 9,
+    "acciones": 5,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 49.5,
-    "gasto": 0,
+    "mediaDados": 27.5,
+    "gasto": 5,
     "corto": 0,
-    "largo": 0
+    "largo": 1
   },
   {
     "nivel": 1,
@@ -27,17 +27,17 @@
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      5,
-      5,
-      5
+      2,
+      0,
+      0
     ],
-    "acciones": 9,
+    "acciones": 5,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 49.5,
-    "gasto": 0,
+    "mediaDados": 27.5,
+    "gasto": 5,
     "corto": 0,
-    "largo": 0
+    "largo": 1
   },
   {
     "nivel": 1,
@@ -47,17 +47,17 @@
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      5,
-      5,
-      5
+      2,
+      0,
+      0
     ],
-    "acciones": 9,
+    "acciones": 5,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 49.5,
-    "gasto": 0,
+    "mediaDados": 27.5,
+    "gasto": 5,
     "corto": 0,
-    "largo": 0
+    "largo": 1
   },
   {
     "nivel": 1,
@@ -67,17 +67,17 @@
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      6,
-      6,
-      6
+      3,
+      0,
+      0
     ],
-    "acciones": 9,
+    "acciones": 6,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 49.5,
-    "gasto": 0,
+    "mediaDados": 33,
+    "gasto": 6,
     "corto": 0,
-    "largo": 0
+    "largo": 1
   },
   {
     "nivel": 1,

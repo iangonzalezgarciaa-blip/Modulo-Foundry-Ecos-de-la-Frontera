@@ -1,6 +1,6 @@
 {
   "name": "ecos-frontera",
-  "version": "3.33.0",
+  "version": "3.34.0",
   "private": true,
   "type": "module",
   "description": "Herramientas de validación del módulo de Foundry VTT",
@@ -12,7 +12,7 @@
     "balance": "node tools/balance.mjs && node tools/session-audit.mjs",
     "ui:preview": "node tools/preview-ui.mjs && node tools/preview-mesa.mjs && node tools/prepare-playtest.mjs",
     "package": "python3 tools/package.py",
-    "catalog:expand": "node tools/expand-shinobi.mjs && node tools/evolve-catalog.mjs && node tools/expand-divinity.mjs && node tools/expand-vida.mjs && node tools/expand-naturaleza.mjs && node tools/expand-contra.mjs && node tools/expand-cargadas.mjs && node tools/expand-clones.mjs && node tools/expand-forma-pura.mjs && node tools/expand-ruptura.mjs && node tools/expand-legados.mjs && node tools/repair-plantillas.mjs && node tools/clarify-catalog.mjs && node tools/build-relics.mjs && node tools/originalizar.mjs && node tools/build-memoria.mjs && node tools/rebalance-ruptura.mjs && node tools/pesadas.mjs && node tools/efectos-propios.mjs",
+    "catalog:expand": "node tools/expand-shinobi.mjs && node tools/evolve-catalog.mjs && node tools/expand-divinity.mjs && node tools/expand-vida.mjs && node tools/expand-naturaleza.mjs && node tools/expand-contra.mjs && node tools/expand-cargadas.mjs && node tools/expand-clones.mjs && node tools/expand-forma-pura.mjs && node tools/expand-ruptura.mjs && node tools/expand-legados.mjs && node tools/expand-334.mjs && node tools/repair-plantillas.mjs && node tools/clarify-catalog.mjs && node tools/build-relics.mjs && node tools/originalizar.mjs && node tools/build-memoria.mjs && node tools/rebalance-ruptura.mjs && node tools/pesadas.mjs && node tools/efectos-propios.mjs",
     "audit:text": "node tools/text-audit.mjs",
     "audit:balance": "node tools/audit-progression.mjs",
     "validate:techniques": "node tools/validate-techniques.mjs"

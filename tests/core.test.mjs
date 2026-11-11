@@ -25,10 +25,14 @@ test('sobreesfuerzo, incapacidad, reacción y grado alto se validan juntos', () 
   const base = { valor: 0, costo: 2, limite: -4, grado: 1, agotamiento: 3 };
   assert.equal(evaluarGasto(base).ok, true);
   for (const patch of [{ agotamiento: 4 }, { incapacitado: true }, { reaccion: true, puedeReaccionar: false },
-    { costo: NaN }, { costo: -1 }, { grado: 1.5 }, { grado: 12 }, { gradoMaximo: 0 }, { grado: 0 }]) {
+    { costo: NaN }, { costo: -1 }, { grado: 1.5 }, { grado: 12 }, { gradoMaximo: 0 }]) {
     assert.equal(evaluarGasto({ ...base, ...patch }).ok, false, JSON.stringify(patch));
   }
   assert.equal(evaluarGasto({ ...base, grado: 6, altoGastado: true }).ok, false);
+  // 3.34: sin Verbe, grado 0 cuesta 1 en negativo (se puede seguir forzando).
+  const g0 = evaluarGasto({ ...base, grado: 0, costo: 0 });
+  assert.equal(g0.ok, true); assert.equal(g0.despues, -1); assert.equal(g0.costo, 1); assert.equal(g0.sobreesfuerzo, true);
+  assert.equal(evaluarGasto({ ...base, valor: 3, grado: 0, costo: 0 }).despues, 3, 'con Verbe, grado 0 sigue gratis');
   assert.equal(evaluarGasto({ ...base, valor: 2, agotamiento: 6 }).ok, true);
 });
 test('el ciclo no vence diferencias ilimitadas de potencia', () => {
@@ -74,9 +78,9 @@ test('la creación señala daño y geometría fuera de presupuesto', () => {
   assert.ok(r.errores.some(e => e.includes('daño')));
 });
 test('el catálogo conserva las 401 técnicas base, añade el repertorio y codifica sin pérdida', () => {
-  assert.equal(D.tecnicas.length, 401 + D.shinobi.nuevas + (D.divinidad?.nuevas??0) + (D.vida?.nuevas??0) + (D.entrenamiento?.nuevas??0) + (D.contra?.nuevas??0) + (D.cargadas?.nuevas??0) + (D.clones?.tecnicas??0) + (D.ruptura?.tecnicas??0) + (D.formaPura?.nuevas??0));
-  assert.equal(D.tecnicas.filter(t=>!t.item.flags['ecos-frontera'].verbe.shinobi && !t.divina && !t.vida && !t.entrenamiento && !t.contra && !t.cargadaNueva && !t.clonNuevo && !t.formaPura && !t.ruptura).length,401);
-  assert.equal(D.dotes.length, D.progresion.dotesBase+D.progresion.dotesNuevas+(D.clones?.dotes??0)+(D.ruptura?.dotes??0)+(D.legados?.dotes??0));
+  assert.equal(D.tecnicas.length, 401 + D.shinobi.nuevas + (D.divinidad?.nuevas??0) + (D.vida?.nuevas??0) + (D.entrenamiento?.nuevas??0) + (D.contra?.nuevas??0) + (D.cargadas?.nuevas??0) + (D.clones?.tecnicas??0) + (D.ruptura?.tecnicas??0) + (D.formaPura?.nuevas??0) + (D.reglas334?.escapes??0));
+  assert.equal(D.tecnicas.filter(t=>!t.item.flags['ecos-frontera'].verbe.shinobi && !t.divina && !t.vida && !t.entrenamiento && !t.contra && !t.cargadaNueva && !t.clonNuevo && !t.formaPura && !t.ruptura && !t.escape).length,401);
+  assert.equal(D.dotes.length, D.progresion.dotesBase+D.progresion.dotesNuevas+(D.clones?.dotes??0)+(D.ruptura?.dotes??0)+(D.legados?.dotes??0)+(D.reglas334?.dotes??0));
   assert.deepEqual(decodeCatalog(encodeCatalog(D)), D);
   assert.deepEqual(validateCatalog(D), []);
 });

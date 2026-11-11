@@ -1,6 +1,6 @@
 {
-  "tecnicas": 936,
-  "dotes": 470,
+  "tecnicas": 949,
+  "dotes": 471,
   "nuevas": 64,
   "dotesDetalle": [
     {
@@ -3316,6 +3316,19 @@
         "ramas": {
           "mirada": 1
         },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "moneda-al-verbe",
+      "nombre": "Moneda al Verbe",
+      "trazos": 0,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
         "dotes": [],
         "tecnicas": [],
         "dm": false

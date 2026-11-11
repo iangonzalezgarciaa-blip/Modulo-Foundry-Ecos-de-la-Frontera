@@ -1,5 +1,17 @@
 # Historial de cambios
 
+## 3.34.0 — 2026-11-11
+
+- **Forzarte con aviso** (pedido del autor): si una técnica te deja en Verbe negativo, primero pregunta «¿Quieres forzarte más allá de tus límites?» con la CD de Constitución y el Agotamiento que arriesgas. Si dices que sí, te llega un susurro (solo a ti y al DM) con lo que haces, lo que arriesgas y cómo recuperarte. Las **reacciones del Verbe** también se pueden usar forzándote: el botón lo avisa.
+- **Nuevas reglas de coste:** sin Verbe que gastar, una técnica de grado 0 cuesta **1 en negativo** (puedes seguir forzándote); y **toda técnica que hace daño cuesta al menos 1 Verbe** (de ahí para arriba ya sube con el grado).
+- **Manos y movimiento ocupados:** canalizar una técnica de recarga larga empieza con tu **acción Verbe**. Mientras canalizas, lo de D&D que usa las manos (armas, conjuros con gestos, objetos) o moverte se frena con un aviso: «¿Cancelas la canalización y recuperas tu Verbe?».
+- **Sustitución te mueve:** al defenderte eliges la casilla a la que vas (adyacente; +5 ft por cada mejora cultivada y 30 ft con Sustitución lejana), sin gastar movimiento ni provocar ataques.
+- **Sombra bajo el salto** te deja elegir dónde caer, no gasta movimiento y ofrece **Golpe hondo** al caer.
+- **Un escape por rama** (13 técnicas nuevas de grado 1, mejorables): te mueves 10 ft (+5 por grado), sin ataques de oportunidad, y cada enemigo cercano tira Percepción (o Arcanos en las ramas de engaño y sello) contra tu CD: si falla, te pierde de vista.
+- **Moneda al Verbe:** dote obligatoria que se da al despertar (y a quien ya despertó). Un botón con monedas junto a la barra del Verbe de la hoja recarga el Verbe; en combate gasta tu acción Verbe.
+- **Choques con efecto:** quien gana sale con **Ímpetu** (+2 a sus ataques hasta el final de su próximo turno) y quien pierde, con **Brecha** (−2 a la CA).
+- **Arreglo:** la defensa de la campaña ya no se duplica al crear una criatura; al abrir el mundo se borran los duplicados y los aliados (el equipo del Verbe) quedan sin defensa automática.
+
 ## 3.33.0 — 2026-11-11
 
 - **El turno a la vista** (pedido del autor): bajo el carrusel de iniciativa sale una barra con el turno de quien actúa. Muestra el **movimiento que le queda** (se descuenta solo al mover el token; arrastrarse Derribado cuesta el doble) y sus acciones: **Acción, Acción adicional y Reacción** de D&D (se marcan solas al usar algo de la hoja) y **Acción, Adicional y Reacción del Verbe**. Botones **Correr**, **Desengancharse** y **Esquivar** (gastan la Acción y ponen su efecto). El DM tiene **Devolver movimiento**, **+5 ft** y **Reiniciar** para corregir un movimiento equivocado. Al pasar el turno se borra y empieza de nuevo; la reacción se recupera al empezar tu turno.

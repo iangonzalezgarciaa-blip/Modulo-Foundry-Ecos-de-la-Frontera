@@ -110,11 +110,13 @@ test('4.1c: un conjuro ofensivo de D&D choca con la naturaleza de su daño y la 
   assert.equal(conjuroChocable(tecnica), false);
 });
 test('3.12: solo choca lo que cuesta Verbe; una técnica de coste 0 no abre el choque ni sirve para chocar',async()=>{
-  const a=actor(),b=actor();agregar(b,'fuego-aliento');agregar(b,'fuego-brasa');
-  const brasa=a.items.find(i=>i.getFlag?.('ecos-frontera','verbe')?.id==='fuego-brasa')??agregar(a,'fuego-brasa');
+  const a=actor(),b=actor();agregar(b,'fuego-aliento');agregar(b,'rastro-cerca');
+  // 3.34: lo que hace daño cuesta al menos 1 (la Brasa ya choca); lo de grado 0 sin daño sigue gratis.
+  const pb=agregar(actor(),'fuego-brasa');assert.equal(V.cuestaVerbe(pb.parent??pb.actor,pb.getFlag('ecos-frontera','verbe'),0),true);
+  const brasa=a.items.find(i=>i.getFlag?.('ecos-frontera','verbe')?.id==='rastro-cerca')??agregar(a,'rastro-cerca');
   assert.equal(V.cuestaVerbe(a,brasa.getFlag('ecos-frontera','verbe'),0),false);
   assert.ok(V._prueba.opcionesChoque(b).every(o=>o.costo>0),'ninguna opción gratis');
-  assert.ok(!V._prueba.opcionesChoque(b).some(o=>o.id==='fuego-brasa'&&o.grado===0));
+  assert.ok(!V._prueba.opcionesChoque(b).some(o=>o.id==='rastro-cerca'));
   let preguntas=0;foundry.applications.api.DialogV2.wait=async()=>{preguntas++;return 'recibir';};
   const wf={actor:a,item:brasa,activity:Object.values(brasa.system.activities)[0],targets:new Set([{actor:b,name:b.name}])};
   await V._prueba.choqueAutomatico(wf);assert.equal(preguntas,0,'contra una técnica de coste 0 no hay choque');

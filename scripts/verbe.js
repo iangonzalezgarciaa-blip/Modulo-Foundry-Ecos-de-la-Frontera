@@ -30,7 +30,7 @@ import { clonDe, limitesClones, repartoClones } from "./verbe-clones.js";
 import { iconoTecnica, iconoDote, esGenerico } from "./verbe-iconos.js";
 import { ventanaLinaje, linajeDeEleccion, pasosOjo } from "./linaje-diario.js";
 import { linajePortador, LINAJE_ALA } from "./sangre-sosten.js";
-import { ESTADO_MANO_ROTA, consecuenciasDelChoque } from "./choque-consecuencias.js";
+import { ESTADO_MANO_ROTA, ESTADO_IMPETU, consecuenciasDelChoque } from "./choque-consecuencias.js";
 import { ESTADOS_RUPTURA, DEFENSAS, defensaDe, ponerDefensa, bonoDefensa, defensaSugerida } from "./ruptura.js";
 import { DADOS_VERBE, dadoNivel, modoReserva, reservaBase, nivelesSinTirar } from "./verbe-reserva.js";
 import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, MODOS_SEGUNDA, modoSegunda, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
@@ -114,7 +114,8 @@ export const ESTADOS = {
   ...ESTADOS_RUPTURA,
   // 3.29: el contragolpe de un choque puede reventar la mano.
   ...ESTADO_MANO_ROTA,
-  ...ESTADO_DESENGANCHE
+  ...ESTADO_DESENGANCHE,
+  ...ESTADO_IMPETU
 };
 const TIPO_NAT = { fuego: "fire", agua: "bludgeoning", viento: "slashing", tierra: "bludgeoning", rayo: "lightning", escarcha: "cold",
   raiz: "piercing", magma: "fire", vapor: "fire", ceniza: "fire", tormenta: "lightning", hierro: "piercing", corriente: "lightning",
@@ -345,11 +346,14 @@ export function canalizar(actor, id) { return serializarActor(actor, async () =>
   const e = estado(actor), costo = costoUso(actor, meta, Number(meta.g) || 0);
   const permiso = evaluarGasto({ valor: Number(e.valor) || 0, costo, limite: limiteNegativo(actor), grado: Number(meta.g) || 0, agotamiento: sistema.agotamiento(actor) });
   if (!permiso.ok) return rechazar(permiso.motivo, "warn");
+  // 3.34: lo que se carga más de un turno empieza con tu acción Verbe.
+  const turno = permisoTurno(Number(meta.g) || 0, { combate: game.combat?.started ? (game.combat.id ?? "combate") : null, estado: e.turnoTecnicas, maximo: maxAccionesVerbe(actor) });
+  if (!turno.ok) return rechazar(turno.motivo, "warn");
   const ef = efectoEstado("canalizando", foundry.utils.randomID());
-  ef.flags[MOD][F].canalizar = { id, carga: 0, min: c.min, max: c.max };
+  ef.flags[MOD][F].canalizar = { id, carga: 0, min: c.min, max: c.max, pagado: Number(e.valor || 0) - permiso.despues };
   ef.name = `Canalizando: ${item.name}`;
   await actor.createEmbeddedDocuments("ActiveEffect", [ef]);
-  await guardar(actor, { valor: permiso.despues, canalizada: null, historial: hist(e, `Canaliza ${item.name} (${costo} Verbe)`) });
+  await guardar(actor, { valor: permiso.despues, canalizada: null, ...(turno.cambios ? { turnoTecnicas: turno.cambios } : {}), historial: hist(e, `Canaliza ${item.name} (${costo} Verbe)`) });
   aLaMesa(actor, `✦ Canaliza ${escH(item.name)}`, `<p>${escH(actor.name)} empieza a cargar <b>${escH(item.name)}</b> (${costo} Verbe). Queda quieto, sin reacciones ni choques. Puede liberarla desde el turno ${c.min}; cada turno suma carga (hasta ${c.max}).</p>`);
   if (permiso.despues < 0) await sobreesfuerzo(actor, Number(meta.g) || 0, permiso.despues);
   refrescarPanel(actor.id);
@@ -941,6 +945,16 @@ export function ajusteClima(nat, meta = {}) {
   return (fav && !con) ? -1 : ((con && !fav) ? 1 : 0);
 }
 
+const DANO_CACHE = new Map();
+/** ¿La técnica hace daño? (alguna actividad con partes de daño). */
+export function hazDanoMeta(meta, actor = null) {
+  if (!meta?.id) return false;
+  if (DANO_CACHE.has(meta.id)) return DANO_CACHE.get(meta.id);
+  let t = null; try { t = tecnicaPorId(meta.id, actor); } catch { t = null; }
+  const si = !!t && Object.values(t.item?.system?.activities ?? {}).some(a => a?.damage?.parts?.length);
+  if (t) DANO_CACHE.set(meta.id, si);
+  return si;
+}
 export function costoUso(actor, meta, grado, { infusion = null } = {}) {
   const e = estado(actor) ?? {};
   let c = meta.costoBase === undefined ? costoGrado(grado) : Number(meta.costoBase) + costoGrado(grado) - costoGrado(meta.g);
@@ -976,6 +990,8 @@ export function costoUso(actor, meta, grado, { infusion = null } = {}) {
     if (D?.combos?.[infusion] && tieneDote(actor, "combinacion-dominada")) extra -= 1;
     if (cul?.infusionFija !== infusion) c += Math.max(0, extra);
   }
+  // 3.34 (regla del autor): si la técnica hace daño, cuesta al menos 1 Verbe.
+  if (hazDanoMeta(meta, actor)) c = Math.max(1, c);
   if (e.reserva === meta.id && !e.reservaUsada && grado === meta.g) c = 0;
   // La técnica cargada ya se pagó al empezar a canalizarla.
   if (e.canalizada?.id === meta.id && e.canalizada?.lista) c = 0;
@@ -4626,6 +4642,14 @@ export function turnoVerbe(actor) {
   const max = maxAccionesVerbe(actor), usadas = Math.min(max, Number(t.acciones) || 0);
   return { enCombate: !!comb && enCombate(actor), max, usadas, accionLibre: usadas < max, adicionalLibre: !(Number(t.adicionales) >= 1), reaccionLibre: reaccionDisponible(actor) };
 }
+/** 3.34: gasta la acción Verbe de este turno (recargar con una Moneda Antigua en combate). */
+export async function gastarAccionVerbe(actor) {
+  const e = estado(actor) ?? {}, comb = game.combat?.started ? (game.combat.id ?? "combate") : null;
+  const turno = permisoTurno(0, { combate: comb, estado: e.turnoTecnicas, maximo: maxAccionesVerbe(actor) });
+  if (!turno.ok) { ui.notifications.warn(turno.motivo); return false; }
+  if (turno.cambios) await guardar(actor, { turnoTecnicas: turno.cambios });
+  return true;
+}
 /** La línea de arriba: «Acción Verbe ◆ libre · Reacción Verbe ◆ gastada». */
 export function turnoVerbeHTML(actor) {
   const t = turnoVerbe(actor);
@@ -4732,13 +4756,15 @@ async function elegirDefensa(actor, info) {
     ? `<p><b>${escH(info.quien)}</b> usa <b>${escH(info.con)}</b>: un área que pide salvación de Destreza.</p>`
     : `<p><b>${escH(info.quien)}</b> te ataca con <b>${escH(info.con)}</b>: <b>${info.total}</b> contra tu CA ${info.ca}${info.critico ? " (crítico)" : ""}. Va a impactar.</p>`;
   const html = `<div class="ecos-verbe-form">${cab}
+    ${opciones.some(o => (Number(e.valor) || 0) - o.costo < 0) ? `<p class="ecos-aviso">⚠ Algunas defensas te dejan en Verbe negativo: puedes usarlas, pero te fuerzas (salvación de CON o 1 nivel de Agotamiento). Con Agotamiento 4 no puedes.</p>` : ""}
     <p class="ecos-nota">Tienes ${Number(e.valor) || 0} de Verbe y tu <b>reacción Verbe</b> libre (defenderte la gasta; tu Reacción de D&D no se toca). Grado del ataque: ${info.grado}; el tuyo: ${gradoMax(actor)}.</p>
     <ul class="ecos-verbe-lista">${opciones.map(o => `<li><b>${escH(o.nombre)}</b> · ${o.costo} Verbe${o.extra ? ` (incluye ${o.extra} por ser un ataque más grande que tú)` : ""}${o.refleja ? " · gratis por Sustitución refleja" : ""}: ${escH(o.texto)}${o.aviso ? ` <i>(${escH(o.aviso)})</i>` : ""}.</li>`).join("")}</ul></div>`;
   let dlg = null;
   const r = await DialogV2.wait({
     window: { title: `¿Te defiendes? · ${actor.name}`, icon: "fa-solid fa-shield-halved" },
     content: html,
-    buttons: [...opciones.map((o, i) => ({ action: o.id, label: `${o.nombre} · ${o.costo} Verbe`, default: i === 0 })), { action: "no", label: "No hacer nada" }],
+    // 3.34: también se puede reaccionar forzándose; el botón lo avisa.
+    buttons: [...opciones.map((o, i) => ({ action: o.id, label: `${o.nombre} · ${o.costo} Verbe${(Number(e.valor) || 0) - o.costo < 0 ? " ⚠ te fuerzas (CON o Agotamiento)" : ""}`, default: i === 0 })), { action: "no", label: "No hacer nada" }],
     render: (ev, d) => { dlg = d ?? ev?.target; setTimeout(() => { try { dlg?.close?.(); } catch { /* ya cerró */ } }, 28000); },
     rejectClose: false
   });
@@ -4799,6 +4825,11 @@ async function usarDefensaInterno(actor, id, info = {}) {
   const nativo = info.nativo ? ({ falla: " <b>El ataque no le hace nada: no apliques su daño.</b>", ca: ` Su CA sube +${def.ca} contra este ataque${Number.isFinite(Number(info.total)) ? `: ${Number(info.total) >= Number(info.ca) + Number(def.ca) ? `${info.total} sigue impactando` : `${info.total} ya no alcanza (CA ${Number(info.ca) + Number(def.ca)}), no apliques el daño`}` : ""}.`, desventaja: " El atacante repite el d20 y se queda con el menor." }[def.tipo] ?? "") : "";
   aLaMesa(actor, `✦ ${escH(op.nombre)}`, `<p>${escH(actor.name)} ${que} (${op.costo} Verbe${op.refleja ? ", gratis por Sustitución refleja" : ""}).${nativo}</p>${enCombate(actor) ? `<p class="ecos-gasto-verbe">✦ Se gastó la <b>reacción Verbe</b>. Su Reacción de D&D sigue libre.</p>` : ""}`);
   if (valor < 0) await sobreesfuerzo(actor, op.g, valor);
+  // 3.34: la Sustitución te deja en la casilla que eliges (adyacente; más lejos con mejoras o Sustitución lejana).
+  if (id === "forma-sustitucion") {
+    const pies = (await import("./verbe-334.js")).alcanceSustitucion({ mejoras: (estado(actor)?.cultivos?.[id]?.mejoras ?? []).length, lejana: tieneDote(actor, "sustitucion-lejana") });
+    import("./verbe-334.js").then(m => m.moverLibre(actor, pies, "Sustitución")).catch(err => console.warn(`${MOD} | sustitución`, err));
+  }
   return true;
 }
 
@@ -5001,8 +5032,14 @@ export function decorarHoja(app, html) {
       const bloque = document.createElement("div");
       bloque.className = "ecos-verbe-bloque";
       bloque.dataset.tooltip = "Verbe · clic para abrir el panel";
-      bloque.innerHTML = `<div class="ecos-verbe-barra ${v < 0 ? "negativo" : ""}"><div style="width:${pct * 100}%"></div><span>Verbe ${v} / ${max}</span></div>`;
-      bloque.addEventListener("click", ev => { ev.preventDefault(); abrirPanel(actor); });
+      const mon = tieneDote(actor, "moneda-al-verbe") ? sistema.moneda(actor) : 0;
+      bloque.innerHTML = `<div class="ecos-verbe-barra ${v < 0 ? "negativo" : ""}"><div style="width:${pct * 100}%"></div><span>Verbe ${v} / ${max}</span></div>${tieneDote(actor, "moneda-al-verbe") ? `<button type="button" class="ecos-verbe-moneda" data-ecos-moneda ${mon ? "" : "disabled"} data-tooltip="Gastar 1 Moneda Antigua para recargar el Verbe (en combate gasta tu acción Verbe). Te quedan ${mon}."><i class="fa-solid fa-coins"></i> ${mon}</button>` : ""}`;
+      bloque.addEventListener("click", ev => {
+        ev.preventDefault();
+        // 3.34: el botón de la Moneda recarga; el resto de la barra abre el panel.
+        if (ev.target.closest("[data-ecos-moneda]")) return import("./verbe-334.js").then(m => m.recargarConMoneda(actor)).catch(err => console.error(`${MOD} | moneda`, err));
+        abrirPanel(actor);
+      });
       const hp = raiz.querySelector(".sidebar .meter-group, .meter-group, .attributes .hit-points");
       if (hp) hp.after(bloque);
       else (raiz.querySelector(".window-content") ?? raiz).prepend(bloque);

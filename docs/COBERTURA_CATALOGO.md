@@ -1,26 +1,26 @@
-# Cobertura declarada del catálogo 3.33.0
+# Cobertura declarada del catálogo 3.34.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **936 técnicas y 470 dotes**.
+El catálogo reúne **949 técnicas y 471 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
-| Forma | 205 | 46 |
-| Velo | 58 | 24 |
-| Cuerpo | 70 | 24 |
-| Mirada | 59 | 30 |
-| Sello | 76 | 41 |
-| Pacto | 62 | 32 |
-| Pulso | 53 | 30 |
-| Hilo | 70 | 16 |
-| Quietud | 54 | 28 |
-| Rastro | 55 | 45 |
-| Sangre | 87 | 31 |
-| Umbral | 38 | 28 |
-| Vasija | 49 | 18 |
+| Forma | 206 | 47 |
+| Velo | 59 | 25 |
+| Cuerpo | 71 | 25 |
+| Mirada | 60 | 31 |
+| Sello | 77 | 42 |
+| Pacto | 63 | 33 |
+| Pulso | 54 | 31 |
+| Hilo | 71 | 17 |
+| Quietud | 55 | 29 |
+| Rastro | 56 | 46 |
+| Sangre | 88 | 32 |
+| Umbral | 39 | 29 |
+| Vasija | 50 | 19 |
 
 ## Técnicas
 
@@ -962,6 +962,19 @@ El catálogo reúne **936 técnicas y 470 dotes**.
 | `quietud-toque-vacio` | Toque en el vacío | 1 | quietud | attack | 1 |
 | `quietud-respiracion-ajena` | Respiración ajena | 3 | quietud | save | 1 |
 | `sangre-corroe` | Sangre que corroe | 2 | sangre | save | 1 |
+| `forma-escape` | Paso de humo | 1 | forma | utility | 0 |
+| `velo-escape` | Velo que se cierra | 1 | velo | utility | 0 |
+| `cuerpo-escape` | Salto de liebre | 1 | cuerpo | utility | 0 |
+| `mirada-escape` | Parpadeo ajeno | 1 | mirada | utility | 0 |
+| `sello-escape` | Sello de huida | 1 | sello | utility | 0 |
+| `pacto-escape` | Lo que te lleva | 1 | pacto | utility | 0 |
+| `pulso-escape` | Pulso que se apaga | 1 | pulso | utility | 0 |
+| `hilo-escape` | Hilo de retirada | 1 | hilo | utility | 0 |
+| `quietud-escape` | Quietud total | 1 | quietud | utility | 0 |
+| `rastro-escape` | Borrar la huella | 1 | rastro | utility | 0 |
+| `sangre-escape` | La sangre que llama | 1 | sangre | utility | 0 |
+| `umbral-escape` | Puerta corta | 1 | umbral | utility | 0 |
+| `vasija-escape` | Lo que llevas dentro corre | 1 | vasija | utility | 0 |
 
 ## Dotes
 
@@ -1206,6 +1219,7 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `cadena-de-ruptura` | Cadena de ruptura | 3 | nivel 7 | Texto/mesa |
 | `rompeguardias` | Rompeguardias | 3 | nivel 3 | Texto/mesa |
 | `ver-la-grieta` | Ver la grieta | 2 | rama Mirada | Texto/mesa |
+| `moneda-al-verbe` | Moneda al Verbe | 0 | — | Texto/mesa |
 | `legado-maethra-marca` | Hija del primer sueño | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
 | `legado-maethra-1-1` | Raíz que sostiene | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
 | `legado-maethra-1-2` | Bosque en la sangre | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |

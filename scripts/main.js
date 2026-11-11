@@ -23,6 +23,7 @@
 
 import "./mesa-propio.js";
 import "./turno-tracker.js";
+import "./verbe-334.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
 import { CALENDARIO, eventosDelDia, faseLunar, diaCampana, sumarDias, mesPrimerAno } from "./calendario.js";
