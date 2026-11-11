@@ -1,4 +1,4 @@
-import {dadoNatural,tablaAzar,tablaAzarGuia,CONTEXTOS_AZAR,REGLA_AZAR} from './azar-core.js';
+import {dadoNatural,tablaAzar,tablaAzarGuia,CONTEXTOS_AZAR,REGLA_AZAR,contextoHabilidad} from './azar-core.js';
 import {paginaReglas} from './acciones-comunes.js';
 import {regla} from './combate-tactico.js';
 import {infoTirada,cambio,objetivosMensaje} from './compat.js';
@@ -11,7 +11,8 @@ const arr=x=>Array.from(x?.contents??x??[]);
 export function contextoMensaje(m,combate){
  const r=infoTirada(m);if(!r)return null;
  if(m.getFlag?.(MOD,'azarExcluir')||r.skill==='cvb'||r.tipo==='concentration'||r.tipo==='death'||r.tipo==='initiative')return null;
- return ({attack:combate?'ataque':'escena',save:combate?'salvacion':'escena',savingThrow:combate?'salvacion':'escena',skill:combate?'habilidad':'escena',ability:combate?'habilidad':'escena',tool:combate?'habilidad':'escena'})[r.tipo]??null;
+ const base=({attack:combate?'ataque':'escena',save:combate?'salvacion':'escena',savingThrow:combate?'salvacion':'escena',skill:combate?'habilidad':'escena',ability:combate?'habilidad':'escena',tool:combate?'habilidad':'escena'})[r.tipo]??null;
+ return ['skill','ability'].includes(r.tipo)&&base?contextoHabilidad(base,r):base;
 }
 /** Solo el GM principal observa mensajes ya creados; no hay sockets que acepten consecuencias del cliente. */
 export async function proponerAzar(m){

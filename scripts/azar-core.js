@@ -1,5 +1,15 @@
 /** Complicaciones y oportunidades: consecuencias pequeñas, temporales y separadas del éxito normal. */
-export const CONTEXTOS_AZAR={ataque:'Ataque',salvacion:'Salvación',habilidad:'Prueba en combate',escena:'Prueba fuera de combate'};
+export const CONTEXTOS_AZAR={ataque:'Ataque',salvacion:'Salvación',habilidad:'Prueba en combate',escena:'Prueba fuera de combate',social:'Prueba social (Persuasión, Engaño, Intimidación, Interpretación, Perspicacia)',saber:'Prueba de saber (Arcanos, Historia, Investigación, Naturaleza, Religión)'};
+/** 3.27 (pedido del autor): con Persuasión no se cae una herramienta ni te tuerces un tobillo. Cada habilidad saca su tabla. */
+export const HABILIDADES_SOCIALES=new Set(['per','dec','itm','prf','ins']);
+export const HABILIDADES_SABER=new Set(['arc','his','inv','nat','rel']);
+/** El contexto de una prueba según la habilidad (o la característica, si no hay habilidad). Pura. */
+export function contextoHabilidad(base,{skill=null,ability=null,tool=null}={}){
+ if(tool)return base;
+ if(HABILIDADES_SOCIALES.has(skill)||(!skill&&ability==='cha'))return 'social';
+ if(HABILIDADES_SABER.has(skill)||(!skill&&ability==='int'))return 'saber';
+ return base;
+}
 export function dadoNatural(roll){
  const die=roll?.dice?.find(d=>d.faces===20);if(!die)return null;
  const activos=(die.results??[]).filter(r=>r.active!==false&&!r.discarded&&!r.rerolled);
@@ -16,10 +26,10 @@ export function escalaAzar(nivel){
 const adversos={
  ataque:[
  ['Pierdes el equilibrio','Quedas Derribado.','estado','prone'],
- ['Se te escapa el arma','Lo que usabas cae a 1,5 m de ti. Recogerlo es tu interacción con un objeto. Una técnica sin arma te deja la mano entumecida: tu próximo ataque con ella recibe −{bono}.'],
+ ['Se te escapa el arma','Lo que usabas cae a 5 ft de ti. Recogerlo es tu interacción con un objeto. Una técnica sin arma te deja la mano entumecida: tu próximo ataque con ella recibe −{bono}.'],
  ['Guardia abierta','Hasta el inicio de tu próximo turno tu CA baja {bono}.','ca',-1],
- ['Golpe al aliado','Si hay un aliado a 1,5 m del objetivo, salva Destreza contra 10 + tu bono de ataque o recibe la mitad del daño que habrías hecho.'],
- ['Te tuerces','En tu próximo turno tu velocidad baja 3 m, como mínimo a 1,5 m.','paso',-2],
+ ['Golpe al aliado','Si hay un aliado a 5 ft del objetivo, salva Destreza contra 10 + tu bono de ataque o recibe la mitad del daño que habrías hecho.'],
+ ['Te tuerces','En tu próximo turno tu velocidad baja 10 ft, como mínimo a 5 ft.','paso',-2],
  ['Le das la espalda','El objetivo puede usar su reacción ahora para hacerte un ataque cuerpo a cuerpo, si te alcanza.'],
  ['Arma trabada','Tu próximo ataque con esa arma o técnica tiene desventaja.'],
  ['Te delatas','Si estabas escondido, todos saben dónde estás. Si no, el enemigo más cercano tiene ventaja en su próximo ataque contra ti.']
@@ -31,18 +41,38 @@ const adversos={
  ['Sin reacción','Pierdes tu reacción hasta el inicio de tu próximo turno.'],
  ['Guardia rota','Hasta el inicio de tu próximo turno tu CA baja {bono}.','ca',-1],
  ['Pánico','Quedas Asustado de la fuente del efecto hasta el final de tu próximo turno.','estado','frightened'],
- ['Tambaleo','En tu próximo turno tu velocidad baja 3 m, como mínimo a 1,5 m.','paso',-2],
+ ['Tambaleo','En tu próximo turno tu velocidad baja 10 ft, como mínimo a 5 ft.','paso',-2],
  ['Marcado','Tu próxima salvación antes del final de tu siguiente turno tiene desventaja.']
  ],
  habilidad:[
  ['Te enredas','Quedas Derribado.','estado','prone'],
- ['Herramienta perdida','Lo que usabas cae a 3 m. Si era frágil, se daña: el DM dice si aún sirve.'],
+ ['Herramienta perdida','Lo que usabas cae a 10 ft. Si era frágil, se daña: el DM dice si aún sirve.'],
  ['Llamas la atención','El enemigo más cercano te elige: su próximo ataque contra ti tiene ventaja.'],
  ['Te lastimas','Recibes {temporal} de daño contundente: un mal golpe, un tirón, una caída.'],
  ['Mala lectura','El DM te da un dato equivocado pero creíble sobre lo que intentabas.'],
  ['Guardia distraída','Hasta el inicio de tu próximo turno tu CA baja {bono}.','ca',-1],
  ['Sin poder repetir','No puedes volver a intentar lo mismo hasta el final de tu próximo turno.'],
- ['Arrastras a otro','Un aliado que te ayudaba o estaba a 1,5 m tiene desventaja en su próxima tirada.']
+ ['Arrastras a otro','Un aliado que te ayudaba o estaba a 5 ft tiene desventaja en su próxima tirada.']
+ ],
+ social:[
+ ['Ofendes','Dices justo lo que no debías: su actitud hacia ti baja un paso.'],
+ ['Te cierra la puerta','No vuelve a escucharte sobre esto hasta mañana o hasta que alguien interceda por ti.'],
+ ['Se corre la voz','Lo que dijiste llega a alguien más: −1 al Prestigio con su gente.'],
+ ['Pide algo a cambio','Si cede, pide un favor o un precio mayor del que esperabas (el DM dice cuál).'],
+ ['Te calan','Nota tu intención real: tu próxima prueba de Carisma con él tiene desventaja.'],
+ ['Malentendido','Entiende otra cosa y hace algo distinto de lo que pedías (el DM decide qué).'],
+ ['Testigo incómodo','Alguien que no debía oye la conversación.'],
+ ['Pierdes la calma','Hasta el final de la escena tienes desventaja en Perspicacia.']
+ ],
+ saber:[
+ ['Dato falso','El DM te da un dato equivocado pero creíble.'],
+ ['Te confundes','Mezclas dos cosas parecidas: la mitad de lo que crees es cierta y la otra no.'],
+ ['Te bloqueas','No puedes volver a intentarlo hasta mañana o hasta encontrar otra fuente.'],
+ ['El doble de tiempo','Tardas el doble de lo normal.'],
+ ['Pierdes el hilo','Si buscabas en un lugar, desordenas algo: la próxima búsqueda allí tiene desventaja.'],
+ ['Llamas la atención','Alguien nota lo que estabas averiguando.'],
+ ['Seguro de ti','Crees haberlo resuelto: el DM no te dice que fallaste hasta que importe.'],
+ ['Te agotas','Hasta tu próximo descanso tienes desventaja en otra prueba de Inteligencia.']
  ],
  escena:[
  ['El doble de tiempo','Tardas el doble de lo normal.'],
@@ -58,18 +88,18 @@ const adversos={
 const favorables={
  ataque:[
  ['Lo derribas','El impacto lo tira al suelo: queda Derribado.','estado','prone','objetivo'],
- ['Lo desarmas','Lo que sostiene en una mano sale volando 3 m en la dirección que elijas.'],
+ ['Lo desarmas','Lo que sostiene en una mano sale volando 10 ft en la dirección que elijas.'],
  ['Lo dejas sin aire','Pierde su reacción hasta el inicio de su próximo turno.'],
  ['Herida abierta','Queda Sangrando: al inicio de cada uno de sus turnos recibe {temporal} de daño, hasta que alguien use una acción para cortarlo (Medicina CD 10) o reciba curación.','estado','bleeding','objetivo'],
  ['Guardia rota','Hasta el inicio de tu próximo turno, los ataques de tus aliados contra él tienen ventaja.'],
- ['Lo empujas','Lo apartas 3 m de ti en línea recta. Si choca contra algo sólido, recibe {temporal} de daño contundente.'],
+ ['Lo empujas','Lo apartas 10 ft de ti en línea recta. Si choca contra algo sólido, recibe {temporal} de daño contundente.'],
  ['Golpe preciso','Un dado del daño de este golpe cuenta con su valor máximo.'],
  ['Te creces','Ganas {temporal} PG temporales y tu próximo ataque antes del final de tu siguiente turno recibe +{bono}.','pgTemp',1]
  ],
  salvacion:[
  ['Te sacudes','Además, terminas un estado que ya tuvieras: Asustado, Hechizado, Cegado, Ensordecido o Envenenado.'],
- ['Contraataque','Si quien te forzó la salvación está a 1,5 m, puedes usar tu reacción para atacarlo ahora.'],
- ['Esquiva perfecta','Te mueves 3 m sin provocar ataques de oportunidad.'],
+ ['Contraataque','Si quien te forzó la salvación está a 5 ft, puedes usar tu reacción para atacarlo ahora.'],
+ ['Esquiva perfecta','Te mueves 10 ft sin provocar ataques de oportunidad.'],
  ['Aguante','Ganas {temporal} PG temporales.','pgTemp',1],
  ['Lo lees','Hasta el inicio de tu próximo turno tu CA aumenta {bono}.','ca',1],
  ['Ánimo','Un aliado que te vea suma +{bono} a su próxima tirada antes del final de tu siguiente turno.'],
@@ -81,10 +111,30 @@ const favorables={
  ['Ves algo más','El DM te dice algo útil del enemigo o del lugar que no habías preguntado.'],
  ['Ventaja ganada','Tu próxima tirada contra el mismo objetivo o sobre la misma tarea tiene ventaja.'],
  ['Por dos','Tu éxito también vale para un aliado que intentaba lo mismo.'],
- ['Paso libre','En tu próximo turno tu velocidad aumenta 3 m.','paso',2],
+ ['Paso libre','En tu próximo turno tu velocidad aumenta 10 ft.','paso',2],
  ['Guardia alta','Hasta el inicio de tu próximo turno tu CA aumenta {bono}.','ca',1],
  ['Te ven hacerlo','Los enemigos dudan: el más cercano tiene desventaja en su próximo ataque.'],
  ['Aliento','Ganas {temporal} PG temporales.','pgTemp',1]
+ ],
+ social:[
+ ['Te ganas su confianza','Su actitud hacia ti sube un paso.'],
+ ['Algo más','Te cuenta algo útil que no habías preguntado.'],
+ ['Sin precio','Acepta sin pedir nada a cambio.'],
+ ['Buena fama','Quien te escuchó te recuerda: +1 al Prestigio con su gente o un favor pequeño.'],
+ ['Otra puerta','Te presenta a alguien o te recomienda.'],
+ ['Lo lees','Ves qué quiere de verdad: tu próxima prueba de Carisma con él tiene ventaja.'],
+ ['Arrastras a otros','Los presentes que escucharon se inclinan a tu favor.'],
+ ['Ánimo','Un aliado presente suma +{bono} a su próxima tirada antes del final de la escena.']
+ ],
+ saber:[
+ ['Lo sabías','Recuerdas algo de tu vida que te sirve aquí: el DM te da un dato ligado a tu trasfondo.'],
+ ['Algo más','Además, descubres algo que no buscabas (el DM decide qué).'],
+ ['La mitad de tiempo','Tardas la mitad de lo normal.'],
+ ['Ves la debilidad','Si era sobre una criatura, sabes una de sus resistencias, vulnerabilidades o inmunidades.'],
+ ['Contagias','Un aliado tiene ventaja en su próxima prueba sobre lo mismo.'],
+ ['Atajo','Tu próxima prueba relacionada recibe +{bono}.'],
+ ['Conexión','Lo unes con algo que ya viste: el DM te da la pista que une las dos cosas.'],
+ ['Sabes a quién preguntar','Sabes quién podría saber más: un nombre o un lugar.']
  ],
  escena:[
  ['La mitad de tiempo','Tardas la mitad de lo normal.'],

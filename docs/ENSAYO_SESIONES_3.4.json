@@ -3,13 +3,13 @@
     "nivel": 1,
     "estilo": "ofensiva",
     "linaje": "ninguna",
-    "inicio": 8,
+    "inicio": 5,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      8,
-      8,
-      8
+      5,
+      5,
+      5
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -23,13 +23,13 @@
     "nivel": 1,
     "estilo": "ofensiva",
     "linaje": "varro",
-    "inicio": 8,
+    "inicio": 5,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      8,
-      8,
-      8
+      5,
+      5,
+      5
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -43,13 +43,13 @@
     "nivel": 1,
     "estilo": "ofensiva",
     "linaje": "ignis",
-    "inicio": 8,
+    "inicio": 5,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      8,
-      8,
-      8
+      5,
+      5,
+      5
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -63,13 +63,13 @@
     "nivel": 1,
     "estilo": "ofensiva",
     "linaje": "maethra",
-    "inicio": 10,
+    "inicio": 6,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      10,
-      10,
-      10
+      6,
+      6,
+      6
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -83,87 +83,87 @@
     "nivel": 1,
     "estilo": "mixta",
     "linaje": "ninguna",
-    "inicio": 8,
+    "inicio": 5,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      2,
+      0,
       0,
       0
     ],
-    "acciones": 4,
-    "contratecnicas": 4,
+    "acciones": 3,
+    "contratecnicas": 2,
     "sustituciones": 0,
-    "mediaDados": 42,
-    "gasto": 8,
+    "mediaDados": 31.5,
+    "gasto": 5,
     "corto": 0,
-    "largo": 4
+    "largo": 1
   },
   {
     "nivel": 1,
     "estilo": "mixta",
     "linaje": "varro",
-    "inicio": 8,
+    "inicio": 5,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      2,
+      0,
       0,
       0
     ],
-    "acciones": 4,
-    "contratecnicas": 4,
+    "acciones": 3,
+    "contratecnicas": 2,
     "sustituciones": 0,
-    "mediaDados": 42,
-    "gasto": 8,
+    "mediaDados": 31.5,
+    "gasto": 5,
     "corto": 0,
-    "largo": 4
+    "largo": 1
   },
   {
     "nivel": 1,
     "estilo": "mixta",
     "linaje": "ignis",
-    "inicio": 8,
+    "inicio": 5,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      2,
+      0,
       0,
       0
     ],
-    "acciones": 4,
-    "contratecnicas": 4,
+    "acciones": 3,
+    "contratecnicas": 2,
     "sustituciones": 0,
-    "mediaDados": 42,
-    "gasto": 8,
+    "mediaDados": 31.5,
+    "gasto": 5,
     "corto": 0,
-    "largo": 4
+    "largo": 1
   },
   {
     "nivel": 1,
     "estilo": "mixta",
     "linaje": "maethra",
-    "inicio": 10,
+    "inicio": 6,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      4,
+      0,
       0,
       0
     ],
-    "acciones": 5,
-    "contratecnicas": 5,
+    "acciones": 3,
+    "contratecnicas": 3,
     "sustituciones": 0,
-    "mediaDados": 52.5,
-    "gasto": 10,
+    "mediaDados": 31.5,
+    "gasto": 6,
     "corto": 0,
-    "largo": 5
+    "largo": 1
   },
   {
     "nivel": 1,
     "estilo": "defensiva",
     "linaje": "ninguna",
-    "inicio": 8,
+    "inicio": 5,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
@@ -172,304 +172,244 @@
       0
     ],
     "acciones": 0,
-    "contratecnicas": 4,
+    "contratecnicas": 3,
+    "sustituciones": 1,
+    "mediaDados": 0,
+    "gasto": 5,
+    "corto": 0,
+    "largo": 1
+  },
+  {
+    "nivel": 1,
+    "estilo": "defensiva",
+    "linaje": "varro",
+    "inicio": 5,
+    "libres": 2,
+    "tecnicaAlta": "Brasa",
+    "encuentros": [
+      0,
+      0,
+      0
+    ],
+    "acciones": 0,
+    "contratecnicas": 3,
+    "sustituciones": 1,
+    "mediaDados": 0,
+    "gasto": 5,
+    "corto": 0,
+    "largo": 1
+  },
+  {
+    "nivel": 1,
+    "estilo": "defensiva",
+    "linaje": "ignis",
+    "inicio": 5,
+    "libres": 2,
+    "tecnicaAlta": "Brasa",
+    "encuentros": [
+      0,
+      0,
+      0
+    ],
+    "acciones": 0,
+    "contratecnicas": 3,
+    "sustituciones": 1,
+    "mediaDados": 0,
+    "gasto": 5,
+    "corto": 0,
+    "largo": 1
+  },
+  {
+    "nivel": 1,
+    "estilo": "defensiva",
+    "linaje": "maethra",
+    "inicio": 6,
+    "libres": 2,
+    "tecnicaAlta": "Brasa",
+    "encuentros": [
+      0,
+      0,
+      0
+    ],
+    "acciones": 0,
+    "contratecnicas": 2,
     "sustituciones": 2,
     "mediaDados": 0,
-    "gasto": 8,
+    "gasto": 6,
     "corto": 0,
-    "largo": 4
-  },
-  {
-    "nivel": 1,
-    "estilo": "defensiva",
-    "linaje": "varro",
-    "inicio": 8,
-    "libres": 2,
-    "tecnicaAlta": "Brasa",
-    "encuentros": [
-      0,
-      0,
-      0
-    ],
-    "acciones": 0,
-    "contratecnicas": 4,
-    "sustituciones": 2,
-    "mediaDados": 0,
-    "gasto": 8,
-    "corto": 0,
-    "largo": 4
-  },
-  {
-    "nivel": 1,
-    "estilo": "defensiva",
-    "linaje": "ignis",
-    "inicio": 8,
-    "libres": 2,
-    "tecnicaAlta": "Brasa",
-    "encuentros": [
-      0,
-      0,
-      0
-    ],
-    "acciones": 0,
-    "contratecnicas": 4,
-    "sustituciones": 2,
-    "mediaDados": 0,
-    "gasto": 8,
-    "corto": 0,
-    "largo": 4
-  },
-  {
-    "nivel": 1,
-    "estilo": "defensiva",
-    "linaje": "maethra",
-    "inicio": 10,
-    "libres": 2,
-    "tecnicaAlta": "Brasa",
-    "encuentros": [
-      0,
-      0,
-      0
-    ],
-    "acciones": 0,
-    "contratecnicas": 4,
-    "sustituciones": 3,
-    "mediaDados": 0,
-    "gasto": 10,
-    "corto": 0,
-    "largo": 5
+    "largo": 1
   },
   {
     "nivel": 1,
     "estilo": "utilidad",
     "linaje": "ninguna",
-    "inicio": 8,
+    "inicio": 5,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      2,
-      0,
-      0
+      1,
+      1,
+      1
     ],
-    "acciones": 4,
+    "acciones": 2,
     "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 0,
-    "gasto": 8,
+    "gasto": 4,
     "corto": 0,
-    "largo": 4
+    "largo": 1
   },
   {
     "nivel": 1,
     "estilo": "utilidad",
     "linaje": "varro",
-    "inicio": 8,
+    "inicio": 5,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      2,
-      0,
-      0
+      1,
+      1,
+      1
     ],
-    "acciones": 4,
+    "acciones": 2,
     "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 0,
-    "gasto": 8,
+    "gasto": 4,
     "corto": 0,
-    "largo": 4
+    "largo": 1
   },
   {
     "nivel": 1,
     "estilo": "utilidad",
     "linaje": "ignis",
-    "inicio": 8,
+    "inicio": 5,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      2,
-      0,
-      0
+      1,
+      1,
+      1
     ],
-    "acciones": 4,
+    "acciones": 2,
     "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 0,
-    "gasto": 8,
+    "gasto": 4,
     "corto": 0,
-    "largo": 4
+    "largo": 1
   },
   {
     "nivel": 1,
     "estilo": "utilidad",
     "linaje": "maethra",
-    "inicio": 10,
+    "inicio": 6,
     "libres": 2,
     "tecnicaAlta": "Brasa",
     "encuentros": [
-      4,
+      0,
       0,
       0
     ],
-    "acciones": 5,
+    "acciones": 3,
     "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 0,
-    "gasto": 10,
+    "gasto": 6,
     "corto": 0,
-    "largo": 5
+    "largo": 1
   },
   {
     "nivel": 5,
     "estilo": "ofensiva",
     "linaje": "ninguna",
-    "inicio": 37,
-    "libres": 5,
-    "tecnicaAlta": "Sol cautivo",
-    "encuentros": [
-      34,
-      34,
-      31
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 9,
-    "corto": 3,
-    "largo": 6
-  },
-  {
-    "nivel": 5,
-    "estilo": "ofensiva",
-    "linaje": "varro",
-    "inicio": 37,
-    "libres": 5,
-    "tecnicaAlta": "Sol cautivo",
-    "encuentros": [
-      34,
-      34,
-      31
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 9,
-    "corto": 3,
-    "largo": 6
-  },
-  {
-    "nivel": 5,
-    "estilo": "ofensiva",
-    "linaje": "ignis",
-    "inicio": 41,
-    "libres": 5,
-    "tecnicaAlta": "Sol cautivo",
-    "encuentros": [
-      38,
-      38,
-      35
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 9,
-    "corto": 3,
-    "largo": 6
-  },
-  {
-    "nivel": 5,
-    "estilo": "ofensiva",
-    "linaje": "maethra",
-    "inicio": 55,
-    "libres": 5,
-    "tecnicaAlta": "Sol cautivo",
-    "encuentros": [
-      52,
-      52,
-      49
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 9,
-    "corto": 3,
-    "largo": 6
-  },
-  {
-    "nivel": 5,
-    "estilo": "mixta",
-    "linaje": "ninguna",
-    "inicio": 37,
+    "inicio": 34,
     "libres": 5,
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       31,
-      28,
-      22
+      31,
+      28
     ],
     "acciones": 9,
-    "contratecnicas": 9,
+    "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 157.5,
-    "gasto": 18,
+    "gasto": 9,
     "corto": 3,
-    "largo": 15
+    "largo": 6
   },
   {
     "nivel": 5,
-    "estilo": "mixta",
+    "estilo": "ofensiva",
     "linaje": "varro",
-    "inicio": 37,
+    "inicio": 34,
     "libres": 5,
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       31,
-      28,
-      22
+      31,
+      28
     ],
     "acciones": 9,
-    "contratecnicas": 9,
+    "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 157.5,
-    "gasto": 18,
+    "gasto": 9,
     "corto": 3,
-    "largo": 15
+    "largo": 6
   },
   {
     "nivel": 5,
-    "estilo": "mixta",
+    "estilo": "ofensiva",
     "linaje": "ignis",
-    "inicio": 41,
+    "inicio": 38,
     "libres": 5,
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       35,
-      32,
-      26
+      35,
+      32
     ],
     "acciones": 9,
-    "contratecnicas": 9,
+    "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 157.5,
-    "gasto": 18,
+    "gasto": 9,
     "corto": 3,
-    "largo": 15
+    "largo": 6
+  },
+  {
+    "nivel": 5,
+    "estilo": "ofensiva",
+    "linaje": "maethra",
+    "inicio": 51,
+    "libres": 5,
+    "tecnicaAlta": "Sol cautivo",
+    "encuentros": [
+      48,
+      48,
+      45
+    ],
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 9,
+    "corto": 3,
+    "largo": 6
   },
   {
     "nivel": 5,
     "estilo": "mixta",
-    "linaje": "maethra",
-    "inicio": 55,
+    "linaje": "ninguna",
+    "inicio": 34,
     "libres": 5,
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
-      49,
-      46,
-      40
+      28,
+      25,
+      19
     ],
     "acciones": 9,
     "contratecnicas": 9,
@@ -477,59 +417,79 @@
     "mediaDados": 157.5,
     "gasto": 18,
     "corto": 3,
-    "largo": 15
+    "largo": 8
   },
   {
     "nivel": 5,
-    "estilo": "defensiva",
-    "linaje": "ninguna",
-    "inicio": 37,
-    "libres": 5,
-    "tecnicaAlta": "Sol cautivo",
-    "encuentros": [
-      25,
-      16,
-      4
-    ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
-    "corto": 3,
-    "largo": 18
-  },
-  {
-    "nivel": 5,
-    "estilo": "defensiva",
+    "estilo": "mixta",
     "linaje": "varro",
-    "inicio": 37,
+    "inicio": 34,
     "libres": 5,
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
+      28,
       25,
-      16,
-      4
+      19
     ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
     "corto": 3,
-    "largo": 18
+    "largo": 8
   },
   {
     "nivel": 5,
-    "estilo": "defensiva",
+    "estilo": "mixta",
     "linaje": "ignis",
-    "inicio": 41,
+    "inicio": 38,
     "libres": 5,
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
+      32,
       29,
-      20,
-      8
+      23
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 3,
+    "largo": 9
+  },
+  {
+    "nivel": 5,
+    "estilo": "mixta",
+    "linaje": "maethra",
+    "inicio": 51,
+    "libres": 5,
+    "tecnicaAlta": "Sol cautivo",
+    "encuentros": [
+      45,
+      42,
+      36
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 3,
+    "largo": 12
+  },
+  {
+    "nivel": 5,
+    "estilo": "defensiva",
+    "linaje": "ninguna",
+    "inicio": 34,
+    "libres": 5,
+    "tecnicaAlta": "Sol cautivo",
+    "encuentros": [
+      22,
+      13,
+      1
     ],
     "acciones": 0,
     "contratecnicas": 18,
@@ -537,19 +497,59 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 3,
-    "largo": 20
+    "largo": 8
+  },
+  {
+    "nivel": 5,
+    "estilo": "defensiva",
+    "linaje": "varro",
+    "inicio": 34,
+    "libres": 5,
+    "tecnicaAlta": "Sol cautivo",
+    "encuentros": [
+      22,
+      13,
+      1
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 3,
+    "largo": 8
+  },
+  {
+    "nivel": 5,
+    "estilo": "defensiva",
+    "linaje": "ignis",
+    "inicio": 38,
+    "libres": 5,
+    "tecnicaAlta": "Sol cautivo",
+    "encuentros": [
+      26,
+      17,
+      5
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 3,
+    "largo": 9
   },
   {
     "nivel": 5,
     "estilo": "defensiva",
     "linaje": "maethra",
-    "inicio": 55,
+    "inicio": 51,
     "libres": 5,
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
-      43,
-      34,
-      22
+      39,
+      30,
+      18
     ],
     "acciones": 0,
     "contratecnicas": 18,
@@ -557,19 +557,19 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 3,
-    "largo": 27
+    "largo": 12
   },
   {
     "nivel": 5,
     "estilo": "utilidad",
     "linaje": "ninguna",
-    "inicio": 37,
+    "inicio": 34,
     "libres": 5,
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
-      31,
       28,
-      22
+      25,
+      19
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -577,19 +577,19 @@
     "mediaDados": 0,
     "gasto": 18,
     "corto": 3,
-    "largo": 15
+    "largo": 8
   },
   {
     "nivel": 5,
     "estilo": "utilidad",
     "linaje": "varro",
-    "inicio": 37,
+    "inicio": 34,
     "libres": 5,
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
-      31,
       28,
-      22
+      25,
+      19
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -597,19 +597,19 @@
     "mediaDados": 0,
     "gasto": 18,
     "corto": 3,
-    "largo": 15
+    "largo": 8
   },
   {
     "nivel": 5,
     "estilo": "utilidad",
     "linaje": "ignis",
-    "inicio": 41,
+    "inicio": 38,
     "libres": 5,
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
-      35,
       32,
-      26
+      29,
+      23
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -617,19 +617,19 @@
     "mediaDados": 0,
     "gasto": 18,
     "corto": 3,
-    "largo": 15
+    "largo": 9
   },
   {
     "nivel": 5,
     "estilo": "utilidad",
     "linaje": "maethra",
-    "inicio": 55,
+    "inicio": 51,
     "libres": 5,
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
-      49,
-      46,
-      40
+      45,
+      42,
+      36
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -637,19 +637,19 @@
     "mediaDados": 0,
     "gasto": 18,
     "corto": 3,
-    "largo": 15
+    "largo": 12
   },
   {
     "nivel": 11,
     "estilo": "ofensiva",
     "linaje": "ninguna",
-    "inicio": 95,
+    "inicio": 92,
     "libres": 13,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      80,
-      69,
-      54
+      77,
+      66,
+      51
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -657,19 +657,19 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 4,
-    "largo": 41
+    "largo": 23
   },
   {
     "nivel": 11,
     "estilo": "ofensiva",
     "linaje": "varro",
-    "inicio": 95,
+    "inicio": 92,
     "libres": 13,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      80,
-      69,
-      54
+      77,
+      66,
+      51
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -677,19 +677,19 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 4,
-    "largo": 41
+    "largo": 23
   },
   {
     "nivel": 11,
     "estilo": "ofensiva",
     "linaje": "ignis",
-    "inicio": 109,
+    "inicio": 105,
     "libres": 13,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      94,
-      83,
-      68
+      90,
+      79,
+      64
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -697,179 +697,179 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 4,
-    "largo": 41
+    "largo": 26
   },
   {
     "nivel": 11,
     "estilo": "ofensiva",
     "linaje": "maethra",
-    "inicio": 156,
+    "inicio": 151,
     "libres": 13,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      141,
-      130,
-      115
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 220.5,
-    "gasto": 45,
-    "corto": 4,
-    "largo": 41
-  },
-  {
-    "nivel": 11,
-    "estilo": "mixta",
-    "linaje": "ninguna",
-    "inicio": 95,
-    "libres": 13,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      89,
-      87,
-      81
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 18,
-    "corto": 4,
-    "largo": 14
-  },
-  {
-    "nivel": 11,
-    "estilo": "mixta",
-    "linaje": "varro",
-    "inicio": 95,
-    "libres": 13,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      89,
-      87,
-      81
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 18,
-    "corto": 4,
-    "largo": 14
-  },
-  {
-    "nivel": 11,
-    "estilo": "mixta",
-    "linaje": "ignis",
-    "inicio": 109,
-    "libres": 13,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      103,
-      101,
-      95
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 18,
-    "corto": 4,
-    "largo": 14
-  },
-  {
-    "nivel": 11,
-    "estilo": "mixta",
-    "linaje": "maethra",
-    "inicio": 156,
-    "libres": 13,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      150,
-      148,
-      142
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 18,
-    "corto": 4,
-    "largo": 14
-  },
-  {
-    "nivel": 11,
-    "estilo": "defensiva",
-    "linaje": "ninguna",
-    "inicio": 95,
-    "libres": 13,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      83,
-      75,
-      63
-    ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
-    "corto": 4,
-    "largo": 32
-  },
-  {
-    "nivel": 11,
-    "estilo": "defensiva",
-    "linaje": "varro",
-    "inicio": 95,
-    "libres": 13,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      83,
-      75,
-      63
-    ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
-    "corto": 4,
-    "largo": 32
-  },
-  {
-    "nivel": 11,
-    "estilo": "defensiva",
-    "linaje": "ignis",
-    "inicio": 109,
-    "libres": 13,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      97,
-      89,
-      77
-    ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
-    "corto": 4,
-    "largo": 32
-  },
-  {
-    "nivel": 11,
-    "estilo": "defensiva",
-    "linaje": "maethra",
-    "inicio": 156,
-    "libres": 13,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      144,
       136,
-      124
+      125,
+      110
+    ],
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
+    "mediaDados": 220.5,
+    "gasto": 45,
+    "corto": 4,
+    "largo": 37
+  },
+  {
+    "nivel": 11,
+    "estilo": "mixta",
+    "linaje": "ninguna",
+    "inicio": 92,
+    "libres": 13,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      86,
+      84,
+      78
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 4,
+    "largo": 14
+  },
+  {
+    "nivel": 11,
+    "estilo": "mixta",
+    "linaje": "varro",
+    "inicio": 92,
+    "libres": 13,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      86,
+      84,
+      78
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 4,
+    "largo": 14
+  },
+  {
+    "nivel": 11,
+    "estilo": "mixta",
+    "linaje": "ignis",
+    "inicio": 105,
+    "libres": 13,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      99,
+      97,
+      91
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 4,
+    "largo": 14
+  },
+  {
+    "nivel": 11,
+    "estilo": "mixta",
+    "linaje": "maethra",
+    "inicio": 151,
+    "libres": 13,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      145,
+      143,
+      137
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 4,
+    "largo": 14
+  },
+  {
+    "nivel": 11,
+    "estilo": "defensiva",
+    "linaje": "ninguna",
+    "inicio": 92,
+    "libres": 13,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      80,
+      72,
+      60
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 4,
+    "largo": 23
+  },
+  {
+    "nivel": 11,
+    "estilo": "defensiva",
+    "linaje": "varro",
+    "inicio": 92,
+    "libres": 13,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      80,
+      72,
+      60
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 4,
+    "largo": 23
+  },
+  {
+    "nivel": 11,
+    "estilo": "defensiva",
+    "linaje": "ignis",
+    "inicio": 105,
+    "libres": 13,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      93,
+      85,
+      73
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 4,
+    "largo": 26
+  },
+  {
+    "nivel": 11,
+    "estilo": "defensiva",
+    "linaje": "maethra",
+    "inicio": 151,
+    "libres": 13,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      139,
+      131,
+      119
     ],
     "acciones": 0,
     "contratecnicas": 18,
@@ -883,13 +883,13 @@
     "nivel": 11,
     "estilo": "utilidad",
     "linaje": "ninguna",
-    "inicio": 95,
+    "inicio": 92,
     "libres": 13,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      89,
-      87,
-      81
+      86,
+      84,
+      78
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -903,13 +903,13 @@
     "nivel": 11,
     "estilo": "utilidad",
     "linaje": "varro",
-    "inicio": 95,
+    "inicio": 92,
     "libres": 13,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      89,
-      87,
-      81
+      86,
+      84,
+      78
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -923,13 +923,13 @@
     "nivel": 11,
     "estilo": "utilidad",
     "linaje": "ignis",
-    "inicio": 109,
+    "inicio": 105,
     "libres": 13,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      103,
-      101,
-      95
+      99,
+      97,
+      91
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -943,13 +943,13 @@
     "nivel": 11,
     "estilo": "utilidad",
     "linaje": "maethra",
-    "inicio": 156,
+    "inicio": 151,
     "libres": 13,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      150,
-      148,
-      142
+      145,
+      143,
+      137
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -963,13 +963,13 @@
     "nivel": 16,
     "estilo": "ofensiva",
     "linaje": "ninguna",
-    "inicio": 121,
+    "inicio": 118,
     "libres": 33,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      106,
-      96,
-      81
+      103,
+      93,
+      78
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -977,19 +977,59 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 5,
-    "largo": 40
+    "largo": 29
   },
   {
     "nivel": 16,
     "estilo": "ofensiva",
     "linaje": "varro",
-    "inicio": 121,
+    "inicio": 118,
     "libres": 33,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      106,
-      96,
-      81
+      103,
+      93,
+      78
+    ],
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
+    "mediaDados": 220.5,
+    "gasto": 45,
+    "corto": 5,
+    "largo": 29
+  },
+  {
+    "nivel": 16,
+    "estilo": "ofensiva",
+    "linaje": "ignis",
+    "inicio": 139,
+    "libres": 33,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      124,
+      114,
+      99
+    ],
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
+    "mediaDados": 220.5,
+    "gasto": 45,
+    "corto": 5,
+    "largo": 34
+  },
+  {
+    "nivel": 16,
+    "estilo": "ofensiva",
+    "linaje": "maethra",
+    "inicio": 212,
+    "libres": 33,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      197,
+      187,
+      172
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -1001,275 +1041,235 @@
   },
   {
     "nivel": 16,
-    "estilo": "ofensiva",
+    "estilo": "mixta",
+    "linaje": "ninguna",
+    "inicio": 118,
+    "libres": 33,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      112,
+      111,
+      105
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 5,
+    "largo": 13
+  },
+  {
+    "nivel": 16,
+    "estilo": "mixta",
+    "linaje": "varro",
+    "inicio": 118,
+    "libres": 33,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      112,
+      111,
+      105
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 5,
+    "largo": 13
+  },
+  {
+    "nivel": 16,
+    "estilo": "mixta",
     "linaje": "ignis",
-    "inicio": 142,
+    "inicio": 139,
+    "libres": 33,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      133,
+      132,
+      126
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 5,
+    "largo": 13
+  },
+  {
+    "nivel": 16,
+    "estilo": "mixta",
+    "linaje": "maethra",
+    "inicio": 212,
+    "libres": 33,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      206,
+      205,
+      199
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 5,
+    "largo": 13
+  },
+  {
+    "nivel": 16,
+    "estilo": "defensiva",
+    "linaje": "ninguna",
+    "inicio": 118,
+    "libres": 33,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      106,
+      99,
+      87
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 5,
+    "largo": 29
+  },
+  {
+    "nivel": 16,
+    "estilo": "defensiva",
+    "linaje": "varro",
+    "inicio": 118,
+    "libres": 33,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      106,
+      99,
+      87
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 5,
+    "largo": 29
+  },
+  {
+    "nivel": 16,
+    "estilo": "defensiva",
+    "linaje": "ignis",
+    "inicio": 139,
     "libres": 33,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
       127,
-      117,
-      102
+      120,
+      108
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 5,
+    "largo": 31
+  },
+  {
+    "nivel": 16,
+    "estilo": "defensiva",
+    "linaje": "maethra",
+    "inicio": 212,
+    "libres": 33,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      200,
+      193,
+      181
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 5,
+    "largo": 31
+  },
+  {
+    "nivel": 16,
+    "estilo": "utilidad",
+    "linaje": "ninguna",
+    "inicio": 118,
+    "libres": 33,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      112,
+      111,
+      105
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 220.5,
-    "gasto": 45,
+    "mediaDados": 0,
+    "gasto": 18,
     "corto": 5,
-    "largo": 40
+    "largo": 13
   },
   {
     "nivel": 16,
-    "estilo": "ofensiva",
-    "linaje": "maethra",
-    "inicio": 217,
+    "estilo": "utilidad",
+    "linaje": "varro",
+    "inicio": 118,
     "libres": 33,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      202,
-      192,
-      177
+      112,
+      111,
+      105
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 220.5,
-    "gasto": 45,
-    "corto": 5,
-    "largo": 40
-  },
-  {
-    "nivel": 16,
-    "estilo": "mixta",
-    "linaje": "ninguna",
-    "inicio": 121,
-    "libres": 33,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      115,
-      114,
-      108
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
+    "mediaDados": 0,
     "gasto": 18,
     "corto": 5,
     "largo": 13
   },
   {
     "nivel": 16,
-    "estilo": "mixta",
-    "linaje": "varro",
-    "inicio": 121,
-    "libres": 33,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      115,
-      114,
-      108
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 18,
-    "corto": 5,
-    "largo": 13
-  },
-  {
-    "nivel": 16,
-    "estilo": "mixta",
+    "estilo": "utilidad",
     "linaje": "ignis",
-    "inicio": 142,
+    "inicio": 139,
     "libres": 33,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      136,
-      135,
-      129
+      133,
+      132,
+      126
     ],
     "acciones": 9,
-    "contratecnicas": 9,
+    "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 157.5,
+    "mediaDados": 0,
     "gasto": 18,
     "corto": 5,
     "largo": 13
   },
   {
     "nivel": 16,
-    "estilo": "mixta",
+    "estilo": "utilidad",
     "linaje": "maethra",
-    "inicio": 217,
+    "inicio": 212,
     "libres": 33,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      211,
-      210,
-      204
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 18,
-    "corto": 5,
-    "largo": 13
-  },
-  {
-    "nivel": 16,
-    "estilo": "defensiva",
-    "linaje": "ninguna",
-    "inicio": 121,
-    "libres": 33,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      109,
-      102,
-      90
-    ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
-    "corto": 5,
-    "largo": 31
-  },
-  {
-    "nivel": 16,
-    "estilo": "defensiva",
-    "linaje": "varro",
-    "inicio": 121,
-    "libres": 33,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      109,
-      102,
-      90
-    ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
-    "corto": 5,
-    "largo": 31
-  },
-  {
-    "nivel": 16,
-    "estilo": "defensiva",
-    "linaje": "ignis",
-    "inicio": 142,
-    "libres": 33,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      130,
-      123,
-      111
-    ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
-    "corto": 5,
-    "largo": 31
-  },
-  {
-    "nivel": 16,
-    "estilo": "defensiva",
-    "linaje": "maethra",
-    "inicio": 217,
-    "libres": 33,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
+      206,
       205,
-      198,
-      186
-    ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
-    "corto": 5,
-    "largo": 31
-  },
-  {
-    "nivel": 16,
-    "estilo": "utilidad",
-    "linaje": "ninguna",
-    "inicio": 121,
-    "libres": 33,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      115,
-      114,
-      108
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 0,
-    "gasto": 18,
-    "corto": 5,
-    "largo": 13
-  },
-  {
-    "nivel": 16,
-    "estilo": "utilidad",
-    "linaje": "varro",
-    "inicio": 121,
-    "libres": 33,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      115,
-      114,
-      108
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 0,
-    "gasto": 18,
-    "corto": 5,
-    "largo": 13
-  },
-  {
-    "nivel": 16,
-    "estilo": "utilidad",
-    "linaje": "ignis",
-    "inicio": 142,
-    "libres": 33,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      136,
-      135,
-      129
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 0,
-    "gasto": 18,
-    "corto": 5,
-    "largo": 13
-  },
-  {
-    "nivel": 16,
-    "estilo": "utilidad",
-    "linaje": "maethra",
-    "inicio": 217,
-    "libres": 33,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      211,
-      210,
-      204
+      199
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -1283,233 +1283,233 @@
     "nivel": 18,
     "estilo": "ofensiva",
     "linaje": "ninguna",
-    "inicio": 146,
+    "inicio": 143,
     "libres": 29,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      131,
-      122,
-      107
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 252,
-    "gasto": 45,
-    "corto": 6,
-    "largo": 39
-  },
-  {
-    "nivel": 18,
-    "estilo": "ofensiva",
-    "linaje": "varro",
-    "inicio": 146,
-    "libres": 29,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      131,
-      122,
-      107
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 252,
-    "gasto": 45,
-    "corto": 6,
-    "largo": 39
-  },
-  {
-    "nivel": 18,
-    "estilo": "ofensiva",
-    "linaje": "ignis",
-    "inicio": 175,
-    "libres": 29,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      160,
-      151,
-      136
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 252,
-    "gasto": 45,
-    "corto": 6,
-    "largo": 39
-  },
-  {
-    "nivel": 18,
-    "estilo": "ofensiva",
-    "linaje": "maethra",
-    "inicio": 277,
-    "libres": 29,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      262,
-      253,
-      238
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 252,
-    "gasto": 45,
-    "corto": 6,
-    "largo": 39
-  },
-  {
-    "nivel": 18,
-    "estilo": "mixta",
-    "linaje": "ninguna",
-    "inicio": 146,
-    "libres": 29,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      140,
-      140,
-      134
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 18,
-    "corto": 6,
-    "largo": 12
-  },
-  {
-    "nivel": 18,
-    "estilo": "mixta",
-    "linaje": "varro",
-    "inicio": 146,
-    "libres": 29,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      140,
-      140,
-      134
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 18,
-    "corto": 6,
-    "largo": 12
-  },
-  {
-    "nivel": 18,
-    "estilo": "mixta",
-    "linaje": "ignis",
-    "inicio": 175,
-    "libres": 29,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      169,
-      169,
-      163
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 18,
-    "corto": 6,
-    "largo": 12
-  },
-  {
-    "nivel": 18,
-    "estilo": "mixta",
-    "linaje": "maethra",
-    "inicio": 277,
-    "libres": 29,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      271,
-      271,
-      265
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 18,
-    "corto": 6,
-    "largo": 12
-  },
-  {
-    "nivel": 18,
-    "estilo": "defensiva",
-    "linaje": "ninguna",
-    "inicio": 146,
-    "libres": 29,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      134,
       128,
-      116
+      119,
+      104
     ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
+    "mediaDados": 252,
+    "gasto": 45,
     "corto": 6,
-    "largo": 30
+    "largo": 35
   },
   {
     "nivel": 18,
-    "estilo": "defensiva",
+    "estilo": "ofensiva",
     "linaje": "varro",
-    "inicio": 146,
+    "inicio": 143,
     "libres": 29,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      134,
       128,
-      116
+      119,
+      104
     ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
+    "mediaDados": 252,
+    "gasto": 45,
     "corto": 6,
-    "largo": 30
+    "largo": 35
   },
   {
     "nivel": 18,
-    "estilo": "defensiva",
+    "estilo": "ofensiva",
     "linaje": "ignis",
-    "inicio": 175,
+    "inicio": 171,
     "libres": 29,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      163,
-      157,
-      145
+      156,
+      147,
+      132
     ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
+    "mediaDados": 252,
+    "gasto": 45,
     "corto": 6,
-    "largo": 30
+    "largo": 39
   },
   {
     "nivel": 18,
-    "estilo": "defensiva",
+    "estilo": "ofensiva",
     "linaje": "maethra",
-    "inicio": 277,
+    "inicio": 271,
+    "libres": 29,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      256,
+      247,
+      232
+    ],
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
+    "mediaDados": 252,
+    "gasto": 45,
+    "corto": 6,
+    "largo": 39
+  },
+  {
+    "nivel": 18,
+    "estilo": "mixta",
+    "linaje": "ninguna",
+    "inicio": 143,
+    "libres": 29,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      137,
+      137,
+      131
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 6,
+    "largo": 12
+  },
+  {
+    "nivel": 18,
+    "estilo": "mixta",
+    "linaje": "varro",
+    "inicio": 143,
+    "libres": 29,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      137,
+      137,
+      131
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 6,
+    "largo": 12
+  },
+  {
+    "nivel": 18,
+    "estilo": "mixta",
+    "linaje": "ignis",
+    "inicio": 171,
+    "libres": 29,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      165,
+      165,
+      159
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 6,
+    "largo": 12
+  },
+  {
+    "nivel": 18,
+    "estilo": "mixta",
+    "linaje": "maethra",
+    "inicio": 271,
     "libres": 29,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
       265,
+      265,
+      259
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 6,
+    "largo": 12
+  },
+  {
+    "nivel": 18,
+    "estilo": "defensiva",
+    "linaje": "ninguna",
+    "inicio": 143,
+    "libres": 29,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      131,
+      125,
+      113
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 6,
+    "largo": 30
+  },
+  {
+    "nivel": 18,
+    "estilo": "defensiva",
+    "linaje": "varro",
+    "inicio": 143,
+    "libres": 29,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      131,
+      125,
+      113
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 6,
+    "largo": 30
+  },
+  {
+    "nivel": 18,
+    "estilo": "defensiva",
+    "linaje": "ignis",
+    "inicio": 171,
+    "libres": 29,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      159,
+      153,
+      141
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 6,
+    "largo": 30
+  },
+  {
+    "nivel": 18,
+    "estilo": "defensiva",
+    "linaje": "maethra",
+    "inicio": 271,
+    "libres": 29,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
       259,
-      247
+      253,
+      241
     ],
     "acciones": 0,
     "contratecnicas": 18,
@@ -1523,117 +1523,117 @@
     "nivel": 18,
     "estilo": "utilidad",
     "linaje": "ninguna",
-    "inicio": 146,
+    "inicio": 143,
     "libres": 29,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      140,
-      140,
-      134
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 0,
-    "gasto": 18,
-    "corto": 6,
-    "largo": 12
-  },
-  {
-    "nivel": 18,
-    "estilo": "utilidad",
-    "linaje": "varro",
-    "inicio": 146,
-    "libres": 29,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      140,
-      140,
-      134
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 0,
-    "gasto": 18,
-    "corto": 6,
-    "largo": 12
-  },
-  {
-    "nivel": 18,
-    "estilo": "utilidad",
-    "linaje": "ignis",
-    "inicio": 175,
-    "libres": 29,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      169,
-      169,
-      163
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 0,
-    "gasto": 18,
-    "corto": 6,
-    "largo": 12
-  },
-  {
-    "nivel": 18,
-    "estilo": "utilidad",
-    "linaje": "maethra",
-    "inicio": 277,
-    "libres": 29,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      271,
-      271,
-      265
-    ],
-    "acciones": 9,
-    "contratecnicas": 0,
-    "sustituciones": 0,
-    "mediaDados": 0,
-    "gasto": 18,
-    "corto": 6,
-    "largo": 12
-  },
-  {
-    "nivel": 20,
-    "estilo": "ofensiva",
-    "linaje": "ninguna",
-    "inicio": 170,
-    "libres": 19,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      155,
-      146,
+      137,
+      137,
       131
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
-    "mediaDados": 252,
-    "gasto": 45,
+    "mediaDados": 0,
+    "gasto": 18,
     "corto": 6,
-    "largo": 39
+    "largo": 12
   },
   {
-    "nivel": 20,
-    "estilo": "ofensiva",
+    "nivel": 18,
+    "estilo": "utilidad",
     "linaje": "varro",
-    "inicio": 170,
-    "libres": 19,
+    "inicio": 143,
+    "libres": 29,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      155,
-      146,
+      137,
+      137,
       131
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
+    "mediaDados": 0,
+    "gasto": 18,
+    "corto": 6,
+    "largo": 12
+  },
+  {
+    "nivel": 18,
+    "estilo": "utilidad",
+    "linaje": "ignis",
+    "inicio": 171,
+    "libres": 29,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      165,
+      165,
+      159
+    ],
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
+    "mediaDados": 0,
+    "gasto": 18,
+    "corto": 6,
+    "largo": 12
+  },
+  {
+    "nivel": 18,
+    "estilo": "utilidad",
+    "linaje": "maethra",
+    "inicio": 271,
+    "libres": 29,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      265,
+      265,
+      259
+    ],
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
+    "mediaDados": 0,
+    "gasto": 18,
+    "corto": 6,
+    "largo": 12
+  },
+  {
+    "nivel": 20,
+    "estilo": "ofensiva",
+    "linaje": "ninguna",
+    "inicio": 167,
+    "libres": 19,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      152,
+      143,
+      128
+    ],
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
+    "mediaDados": 252,
+    "gasto": 45,
+    "corto": 6,
+    "largo": 39
+  },
+  {
+    "nivel": 20,
+    "estilo": "ofensiva",
+    "linaje": "varro",
+    "inicio": 167,
+    "libres": 19,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      152,
+      143,
+      128
+    ],
+    "acciones": 9,
+    "contratecnicas": 0,
+    "sustituciones": 0,
     "mediaDados": 252,
     "gasto": 45,
     "corto": 6,
@@ -1643,13 +1643,13 @@
     "nivel": 20,
     "estilo": "ofensiva",
     "linaje": "ignis",
-    "inicio": 212,
+    "inicio": 208,
     "libres": 19,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      197,
-      188,
-      173
+      193,
+      184,
+      169
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -1663,13 +1663,13 @@
     "nivel": 20,
     "estilo": "ofensiva",
     "linaje": "maethra",
-    "inicio": 340,
+    "inicio": 334,
     "libres": 19,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      325,
-      316,
-      301
+      319,
+      310,
+      295
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -1683,13 +1683,13 @@
     "nivel": 20,
     "estilo": "mixta",
     "linaje": "ninguna",
-    "inicio": 170,
+    "inicio": 167,
     "libres": 19,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      164,
-      164,
-      158
+      161,
+      161,
+      155
     ],
     "acciones": 9,
     "contratecnicas": 9,
@@ -1703,13 +1703,13 @@
     "nivel": 20,
     "estilo": "mixta",
     "linaje": "varro",
-    "inicio": 170,
+    "inicio": 167,
     "libres": 19,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      164,
-      164,
-      158
+      161,
+      161,
+      155
     ],
     "acciones": 9,
     "contratecnicas": 9,
@@ -1723,13 +1723,13 @@
     "nivel": 20,
     "estilo": "mixta",
     "linaje": "ignis",
-    "inicio": 212,
+    "inicio": 208,
     "libres": 19,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      206,
-      206,
-      200
+      202,
+      202,
+      196
     ],
     "acciones": 9,
     "contratecnicas": 9,
@@ -1743,93 +1743,93 @@
     "nivel": 20,
     "estilo": "mixta",
     "linaje": "maethra",
-    "inicio": 340,
-    "libres": 19,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      334,
-      334,
-      328
-    ],
-    "acciones": 9,
-    "contratecnicas": 9,
-    "sustituciones": 0,
-    "mediaDados": 157.5,
-    "gasto": 18,
-    "corto": 6,
-    "largo": 12
-  },
-  {
-    "nivel": 20,
-    "estilo": "defensiva",
-    "linaje": "ninguna",
-    "inicio": 170,
-    "libres": 19,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      158,
-      152,
-      140
-    ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
-    "corto": 6,
-    "largo": 30
-  },
-  {
-    "nivel": 20,
-    "estilo": "defensiva",
-    "linaje": "varro",
-    "inicio": 170,
-    "libres": 19,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      158,
-      152,
-      140
-    ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
-    "corto": 6,
-    "largo": 30
-  },
-  {
-    "nivel": 20,
-    "estilo": "defensiva",
-    "linaje": "ignis",
-    "inicio": 212,
-    "libres": 19,
-    "tecnicaAlta": "Humo negro",
-    "encuentros": [
-      200,
-      194,
-      182
-    ],
-    "acciones": 0,
-    "contratecnicas": 18,
-    "sustituciones": 9,
-    "mediaDados": 0,
-    "gasto": 36,
-    "corto": 6,
-    "largo": 30
-  },
-  {
-    "nivel": 20,
-    "estilo": "defensiva",
-    "linaje": "maethra",
-    "inicio": 340,
+    "inicio": 334,
     "libres": 19,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
       328,
+      328,
+      322
+    ],
+    "acciones": 9,
+    "contratecnicas": 9,
+    "sustituciones": 0,
+    "mediaDados": 157.5,
+    "gasto": 18,
+    "corto": 6,
+    "largo": 12
+  },
+  {
+    "nivel": 20,
+    "estilo": "defensiva",
+    "linaje": "ninguna",
+    "inicio": 167,
+    "libres": 19,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      155,
+      149,
+      137
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 6,
+    "largo": 30
+  },
+  {
+    "nivel": 20,
+    "estilo": "defensiva",
+    "linaje": "varro",
+    "inicio": 167,
+    "libres": 19,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      155,
+      149,
+      137
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 6,
+    "largo": 30
+  },
+  {
+    "nivel": 20,
+    "estilo": "defensiva",
+    "linaje": "ignis",
+    "inicio": 208,
+    "libres": 19,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
+      196,
+      190,
+      178
+    ],
+    "acciones": 0,
+    "contratecnicas": 18,
+    "sustituciones": 9,
+    "mediaDados": 0,
+    "gasto": 36,
+    "corto": 6,
+    "largo": 30
+  },
+  {
+    "nivel": 20,
+    "estilo": "defensiva",
+    "linaje": "maethra",
+    "inicio": 334,
+    "libres": 19,
+    "tecnicaAlta": "Humo negro",
+    "encuentros": [
       322,
-      310
+      316,
+      304
     ],
     "acciones": 0,
     "contratecnicas": 18,
@@ -1843,13 +1843,13 @@
     "nivel": 20,
     "estilo": "utilidad",
     "linaje": "ninguna",
-    "inicio": 170,
+    "inicio": 167,
     "libres": 19,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      164,
-      164,
-      158
+      161,
+      161,
+      155
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -1863,13 +1863,13 @@
     "nivel": 20,
     "estilo": "utilidad",
     "linaje": "varro",
-    "inicio": 170,
+    "inicio": 167,
     "libres": 19,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      164,
-      164,
-      158
+      161,
+      161,
+      155
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -1883,13 +1883,13 @@
     "nivel": 20,
     "estilo": "utilidad",
     "linaje": "ignis",
-    "inicio": 212,
+    "inicio": 208,
     "libres": 19,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      206,
-      206,
-      200
+      202,
+      202,
+      196
     ],
     "acciones": 9,
     "contratecnicas": 0,
@@ -1903,13 +1903,13 @@
     "nivel": 20,
     "estilo": "utilidad",
     "linaje": "maethra",
-    "inicio": 340,
+    "inicio": 334,
     "libres": 19,
     "tecnicaAlta": "Humo negro",
     "encuentros": [
-      334,
-      334,
-      328
+      328,
+      328,
+      322
     ],
     "acciones": 9,
     "contratecnicas": 0,

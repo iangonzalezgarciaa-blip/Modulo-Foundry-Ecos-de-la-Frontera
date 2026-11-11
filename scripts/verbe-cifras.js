@@ -17,14 +17,14 @@ const TEXTOS_ES = {
   grappled: "Su velocidad es 0 hasta que se suelte (prueba de Atletismo o Acrobacias contra quien lo sujeta).",
   restrained: "Velocidad 0. Sus ataques y sus salvaciones de Destreza tienen desventaja; los ataques contra él, ventaja.",
   stunned: "No puede actuar ni reaccionar y apenas habla. Falla las salvaciones de Fuerza y Destreza; los ataques contra él tienen ventaja.",
-  paralyzed: "No puede moverse ni actuar. Falla Fuerza y Destreza; un golpe a 1,5 m que lo alcance es crítico.",
+  paralyzed: "No puede moverse ni actuar. Falla Fuerza y Destreza; un golpe a 5 ft que lo alcance es crítico.",
   blinded: "No ve. Sus ataques tienen desventaja y los ataques contra él, ventaja.",
   frightened: "Desventaja en pruebas y ataques mientras vea la fuente del miedo; no puede acercarse a ella.",
   charmed: "No puede atacar a quien lo hechizó, que tiene ventaja en las pruebas sociales contra él.",
   poisoned: "Desventaja en ataques y pruebas de característica.",
   incapacitated: "No puede tomar acciones, acciones adicionales ni reacciones.",
   deafened: "No oye; falla lo que dependa del oído.",
-  unconscious: "Cae Derribado e Incapacitado; no se entera de nada. Un golpe a 1,5 m que lo alcance es crítico.",
+  unconscious: "Cae Derribado e Incapacitado; no se entera de nada. Un golpe a 5 ft que lo alcance es crítico.",
   invisible: "No se le ve sin magia o sentidos especiales. Sus ataques tienen ventaja y los ataques contra él, desventaja."
 };
 const CORTO = { str: "FUE", dex: "DES", con: "CON", int: "INT", wis: "SAB", cha: "CAR" };

@@ -35,12 +35,19 @@ export function permisoCuota(grado,{nivel=1,dotes=[],usados={}}={}){
   return {ok:true,cambios:{[grupo]:(Number(usados[grupo])||0)+1,...(grado===11?{trascendentes:(Number(usados.trascendentes)||0)+1}:{})}};
 }
 export function pisoCosto(grado,costos){return grado>0?Math.max(1,Math.ceil((Number(costos[grado])||0)*(grado>=6?.7:.5))):0;}
-export function permisoTurno(grado,{combate=null,estado={},reaccion=false,replica=false}={}){
+/** Acciones Verbe por turno (3.27): una; desde el nivel 11, dos (la excepción de nivel). Aparte de las acciones de D&D. */
+export const accionesVerbePorTurno=(nivel,extra=0)=>1+(Number(nivel)>=11?1:0)+Math.max(0,Number(extra)||0);
+/**
+ * El turno del Verbe (3.27): una acción Verbe (dos desde el nivel 11) y una acción adicional Verbe, aparte de las de
+ * D&D. `adicional` dice si la técnica es de Acción adicional. Una sola técnica de grado 6 o más por turno.
+ */
+export function permisoTurno(grado,{combate=null,estado={},reaccion=false,replica=false,maximo=2,adicional=false,maximoAdicional=1}={}){
   if(!combate||reaccion||replica)return {ok:true,cambios:null};
-  const e=estado.combate===combate?estado:{},acciones=Number(e.acciones)||0,mayores=Number(e.mayores)||0;
-  if(acciones>=2)return {ok:false,motivo:'Ya usó dos técnicas con acción o acción adicional en este turno.'};
+  const e=estado.combate===combate?estado:{},acciones=Number(e.acciones)||0,adicionales=Number(e.adicionales)||0,mayores=Number(e.mayores)||0;
+  if(adicional&&adicionales>=maximoAdicional)return {ok:false,motivo:'Ya gastaste tu acción adicional Verbe de este turno (tu Acción adicional de D&D sigue libre).'};
+  if(!adicional&&acciones>=maximo)return {ok:false,motivo:maximo===1?'Ya gastaste tu acción Verbe de este turno (tu Acción de D&D sigue libre).':`Ya gastaste tus ${maximo} acciones Verbe de este turno (tu Acción de D&D sigue libre).`};
   if(grado>=6&&mayores>=1)return {ok:false,motivo:'Solo una técnica de grado 6 o más por turno. Las reacciones conservan su propio límite.'};
-  return {ok:true,cambios:{combate,acciones:acciones+1,mayores:mayores+Number(grado>=6)}};
+  return {ok:true,cambios:{combate,acciones:acciones+Number(!adicional),adicionales:adicionales+Number(adicional),mayores:mayores+Number(grado>=6)}};
 }
 export function requisitoDote(req={},ctx={}){
   const e=ctx.estado??{},dotes=e.dotes??[];

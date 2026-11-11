@@ -15,7 +15,7 @@ export function validarUniversal(f, { ramas, naturalezas, estados, propuesta, va
   if (!ramas.includes(f.rama) || (f.nat && !naturalezas.includes(f.nat))) errores.push("Rama o naturaleza no válida.");
   if (!enteroEntre(f.grado,0,11) || !enteroEntre(f.dadosN,0,100) || ![4,6,8,10,12].includes(Number(f.dadosD))) errores.push("Grado o dados no válidos.");
   if (!["A","AA","R","1 min","10 min"].includes(f.tiempo) || !["inst.","1 asalto","1 min","10 min","1 h"].includes(f.duracion)) errores.push("Tiempo o duración no válidos.");
-  if (!["yo","toque"].includes(f.alcance) && (!Number.isFinite(Number(f.alcance)) || Number(f.alcance) <= 0 || Number(f.alcance)>1500)) errores.push("Alcance: hasta 1500 m.");
+  if (!["yo","toque"].includes(f.alcance) && (!Number.isFinite(Number(f.alcance)) || Number(f.alcance) <= 0 || Number(f.alcance)>1500)) errores.push("Alcance: hasta 5000 ft.");
   if (!["ninguna","cono","esfera","cubo","línea","cilindro"].includes(f.areaTipo) || (f.areaTipo!=="ninguna" && (!Number.isFinite(Number(f.areaTam)) || Number(f.areaTam)<=0 || Number(f.areaTam)>180))) errores.push("Área no válida.");
   if (!["ninguna","ataque","FUE","DES","CON","INT","SAB","CAR"].includes(f.tirada) || !["normal","healing"].includes(f.tipoActividad)) errores.push("Tipo de actividad o tirada no válido.");
   if (!["verbe","fisica","str","dex","con","int","wis","cha"].includes(f.usa)) errores.push("Característica no válida.");

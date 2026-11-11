@@ -8,18 +8,18 @@ Técnica examinada: **Aliento de brasa**, grado 1. La media incluye solamente su
 
 | Nivel | Perfil | Reserva | Rango | Afinidad | Grado máximo de rama | Dados a grado base | Media de dados | Coste base | Usos sin deuda | Usos con clima favorable | Recupera Santuario/intemperie |
 |---:|---|---:|---|---:|---:|---|---:|---:|---:|---:|---|
-| 1 | Repartido | 8 | Entrenado | 1 | 1 | 3d6 | 10.5 | 1 | 8 | 8 | 4/2 |
-| 1 | Especialista | 8 | Entrenado | 1 | 1 | 3d6 | 10.5 | 1 | 8 | 8 | 4/2 |
-| 3 | Repartido | 21 | Entrenado | 1 | 2 | 3d6 | 10.5 | 1 | 21 | 21 | 10/5 |
-| 3 | Especialista | 21 | Entrenado | 1 | 2 | 3d6 | 10.5 | 1 | 21 | 21 | 10/5 |
-| 5 | Repartido | 37 | Entrenado | 1 | 3 | 3d6 | 10.5 | 1 | 37 | 37 | 18/9 |
-| 5 | Especialista | 37 | Experto | 2 | 3 | 5d6 | 17.5 | 1 | 37 | 37 | 18/9 |
-| 11 | Repartido | 95 | Entrenado | 1 | 3 | 3d6 | 10.5 | 1 | 95 | 95 | 47/23 |
-| 11 | Especialista | 95 | Maestro | 3 | 4 | 5d6 | 17.5 | 1 | 95 | 95 | 47/23 |
-| 17 | Repartido | 137 | Entrenado | 1 | 3 | 3d6 | 10.5 | 1 | 137 | 137 | 68/34 |
-| 17 | Especialista | 137 | Maestro | 3 | 4 | 5d6 | 17.5 | 1 | 137 | 137 | 68/34 |
-| 20 | Repartido | 170 | Entrenado | 1 | 3 | 3d6 | 10.5 | 1 | 170 | 170 | 85/42 |
-| 20 | Especialista | 170 | Mítico | 3 | 4 | 5d6 | 17.5 | 1 | 170 | 170 | 85/42 |
+| 1 | Repartido | 5 | Entrenado | 1 | 1 | 3d6 | 10.5 | 1 | 5 | 5 | 2/1 |
+| 1 | Especialista | 5 | Entrenado | 1 | 1 | 3d6 | 10.5 | 1 | 5 | 5 | 2/1 |
+| 3 | Repartido | 18 | Entrenado | 1 | 2 | 3d6 | 10.5 | 1 | 18 | 18 | 9/4 |
+| 3 | Especialista | 18 | Entrenado | 1 | 2 | 3d6 | 10.5 | 1 | 18 | 18 | 9/4 |
+| 5 | Repartido | 34 | Entrenado | 1 | 3 | 3d6 | 10.5 | 1 | 34 | 34 | 17/8 |
+| 5 | Especialista | 34 | Experto | 2 | 3 | 5d6 | 17.5 | 1 | 34 | 34 | 17/8 |
+| 11 | Repartido | 92 | Entrenado | 1 | 3 | 3d6 | 10.5 | 1 | 92 | 92 | 46/23 |
+| 11 | Especialista | 92 | Maestro | 3 | 4 | 5d6 | 17.5 | 1 | 92 | 92 | 46/23 |
+| 17 | Repartido | 134 | Entrenado | 1 | 3 | 3d6 | 10.5 | 1 | 134 | 134 | 67/33 |
+| 17 | Especialista | 134 | Maestro | 3 | 4 | 5d6 | 17.5 | 1 | 134 | 134 | 67/33 |
+| 20 | Repartido | 167 | Entrenado | 1 | 3 | 3d6 | 10.5 | 1 | 167 | 167 | 83/41 |
+| 20 | Especialista | 167 | Mítico | 3 | 4 | 5d6 | 17.5 | 1 | 167 | 167 | 83/41 |
 
 ## Lectura para el diseño
 

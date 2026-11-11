@@ -35,6 +35,7 @@ import "./ordenar-diarios.js";
 import "./nombres-mundo.js";
 import "./conjuros.js";
 import "./resonancia.js";
+import { quitarPlantillas } from "./ecos-327.js";
 import { motivoPausaMoneda } from "./mesa-control.js";
 import { crearCola } from "./verbe-core.js";
 import { recuperacionDGLarga, presupuestoCorto, ajustarRecuperacionDG } from "./rest-core.js";
@@ -58,7 +59,7 @@ const ID_REGLAS = "G0rD0J3JkpOkXM00"; // Reglas de la casa (Libro VI)
 const DESC = {
   acechado: "<p>Estás a 0 PG pero consciente. Estás Derribado: puedes hablar y arrastrarte, pero no puedes tomar acciones, acciones adicionales ni reacciones.</p><p>Al inicio de cada turno tiras una salvación de muerte (la tira el módulo). Con 3 éxitos o un 20 natural te levantas con 1 PG. Con 3 fallos no mueres: te queda una Secuela (pierdes 1 punto de Fuerza, Destreza o Constitución, según 1d6), las salvaciones vuelven a 0 y sigues en el suelo. Recibir daño cuenta como un fallo.</p>",
   malherido: "<p>Tus PG máximos bajan en tu nivel y ninguna curación te sube del 50 % de tus PG máximos. Una vez tratado (un día de tratamiento exitoso de un sanador en un Santuario, o magia como Restauración menor), el tope sube al 75 %.</p><p>Se quita con 3 Descansos Largos en un Santuario (no hace falta que sean seguidos). No cuentan los días con combate, viaje forzado o trabajo con Agotamiento 3 o más. Fuera de un Santuario no recuperas PG descansando ni con Dados de Golpe.</p>",
-  heridant: "<p>No puedes quitarte Agotamiento con Descansos Largos.</p><p>Cada nivel se cura con 3 días de tratamiento en un Santuario: el sanador hace una prueba de Medicina (CD 10 + nivel) después de cada Descanso Largo. Si falla, el día no cuenta; con un 1 natural la herida se infecta y suma un nivel. También la curan <em>Restauración Menor</em>, <em>Sanar</em> o la Imposición de Manos (5 puntos por nivel).</p><p><em>En el token: clic izquierdo +1 nivel, clic derecho −1.</em></p>",
+  heridant: "<p>No puedes quitarte Agotamiento con Descansos Largos.</p><p>Cada nivel se cura con 3 días de tratamiento en un Santuario: el sanador hace una prueba de Medicina (CD 10 + el nivel de quien está herido) después de cada Descanso Largo. Si falla, el día no cuenta; con un 1 natural la herida se infecta y suma un nivel. También la curan <em>Restauración Menor</em>, <em>Sanar</em> o la Imposición de Manos (5 puntos por nivel).</p><p><em>En el token: clic izquierdo +1 nivel, clic derecho −1.</em></p>",
   secuela: "<p>Puntos de Fuerza, Destreza o Constitución que perdiste (por 3 fallos de muerte). Es la puntuación de la característica, no tus PG. No vuelven solos: cada día de tratamiento con éxito en un Santuario, sin combate ni trabajo pesado, devuelve 1 punto, primero el de la característica que más bajó. Si la Fuerza, la Destreza o la Constitución llegan a 0, el personaje muere.</p><p><em>No es lo mismo que Malherido: Malherido limita cuánto te curas; la Secuela te quita puntos de característica.</em></p>"
 };
 
@@ -195,7 +196,7 @@ function itemsGuia(actor, claves = []) {
       items.push(`<b>Malherido (${d}/${DESCANSOS_MALHERIDO}):</b> ${r === 1 ? "falta 1 Descanso Largo" : `faltan ${r} Descansos Largos`} en un Santuario, en días sin combate. Hasta entonces la curación no lo sube de ${topeMalherido(actor)} PG${malTratado(actor) ? " (ya tratado: 75 %)" : " (50 %; cuando lo traten un sanador o la magia, sube al 75 %)"}.`);
     } else if ((k === "heridant") && nh) {
       const dias = (DIAS_TRATAMIENTO - diaHNT(actor)) + (DIAS_TRATAMIENTO * (nh - 1));
-      items.push(`<b>Herida No Tratada ${nh}:</b> ${dias === 1 ? "falta 1 día" : `faltan ${dias} días`} de tratamiento. Una vez por día, alguien con Medicina (o con un kit de sanador) lo trata: CD ${10 + nh}, dentro o fuera del Santuario (botón <b>Curar</b> en su hoja; Nessa cobra ${TARIFA_TRATAMIENTO} c). Sin tratamiento, al descansar tira Constitución o se agrava. <em>Restauración Menor</em> quita un nivel.`);
+      items.push(`<b>Herida No Tratada ${nh}:</b> ${dias === 1 ? "falta 1 día" : `faltan ${dias} días`} de tratamiento. Una vez por día, alguien con Medicina (o con un kit de sanador) lo trata: CD ${cdTratamiento(actor)} (10 + su nivel), dentro o fuera del Santuario (botón <b>Curar</b> en su hoja; Nessa cobra ${TARIFA_TRATAMIENTO} c). Sin tratamiento, al descansar tira Constitución o se agrava. <em>Restauración Menor</em> quita un nivel.`);
     } else if ((k === "agotamiento") && (exh > 0)) {
       items.push(`<b>Agotamiento ${exh}:</b> baja 1 con cada Descanso Largo en un Santuario${nh ? ", pero solo después de curar la Herida No Tratada" : ""}.`);
     } else if ((k === "secuela") && totalSecuela(actor)) {
@@ -418,7 +419,7 @@ async function procesarActualizacion(actor, changes, options) {
       ]);
     } else if (sangreQueSostiene(actor) === "barrera") {
       await susurrarDM("Un portador cae", [
-        `${actor.name} cayó a 0 PG. Su sangre puede responder con el <b>Eco</b> (Tramas · 3): medio segundo de tiempo detenido, aparece hasta 9 m más allá y vuelve con 1 PG.`,
+        `${actor.name} cayó a 0 PG. Su sangre puede responder con el <b>Eco</b> (Tramas · 3): medio segundo de tiempo detenido, aparece hasta 30 ft más allá y vuelve con 1 PG.`,
         "Cuesta el precio de volver y +1 al Reloj de la Barrera. Úsalo solo si la escena lo pide."
       ], { extra: cajaBotones([boton("eco", "Disparar Eco", "fa-hourglass-half", { soloDM: true })]), flags: { [MOD]: { ref: { actorId: actor.id } } } });
     }
@@ -681,7 +682,7 @@ async function dialogoDescansoLargo(actor, config) {
       const d = mal.getFlag(MOD, "descansos") ?? 0;
       fila("Malherido", `${d}/${DESCANSOS_MALHERIDO} → ${d + 1}/${DESCANSOS_MALHERIDO} si el día cuenta`);
     }
-    if (nh || sec || mal) fila("Tratamiento", `${curaDeHoy(actor)?.exito ? "Hoy ya te trataron: esta noche no empeora. " : "Hoy no te trataron: al terminar el descanso tiras Constitución (CD " + (8 + nh + (mal ? 1 : 0)) + "). "}Mañana, el DM tira la Medicina de tu sanador${nh ? ` (CD ${10 + nh})` : ""}, o te trata alguien con el botón Curar. Con Nessa cuesta ${TARIFA_TRATAMIENTO} c.`);
+    if (nh || sec || mal) fila("Tratamiento", `${curaDeHoy(actor)?.exito ? "Hoy ya te trataron: esta noche no empeora. " : "Hoy no te trataron: al terminar el descanso tiras Constitución (CD " + (8 + nh + (mal ? 1 : 0)) + "). "}Mañana, el DM tira la Medicina de tu sanador${nh ? ` (CD ${cdTratamiento(actor)}: 10 + tu nivel)` : ""}, o te trata alguien con el botón Curar. Con Nessa cuesta ${TARIFA_TRATAMIENTO} c.`);
 
     const marcar = (mal || nh || sec)
       ? `<label class="ecos-check"><input type="checkbox" name="cortado" ${combate ? "checked" : ""}> Hoy hubo combate, un viaje forzado o trabajé con Agotamiento 3 o más <span class="ecos-nota">(el día no cuenta para Malherido ni para el tratamiento)</span></label>`
@@ -1075,7 +1076,8 @@ function apoyoVerbeMedico(sanador) {
   const partes = [bono ? `+${bono} por su rango en Pulso` : "", ventaja ? "ventaja por Médico del Verbe" : ""].filter(Boolean);
   return { bono, ventaja, texto: partes.join(" y ") };
 }
-const cdTratamiento = a => 10 + nivelHNT(a);
+/** 3.27: la Medicina del tratamiento es contra 10 + el nivel de quien está herido (VD en un PNJ), no el de la herida. */
+const cdTratamiento = a => 10 + Math.max(1, Number(sistema.nivel(a)) || 1);
 /** El tratamiento de hoy (entre un descanso y el siguiente): { intento, exito, por }. Sin bandera: todavía no hay registro. */
 const curaDeHoy = a => a.getFlag(MOD, "cura") ?? null;
 
@@ -1483,7 +1485,7 @@ async function avisoReloj(v) {
   await susurrarDM("La Barrera parpadea", L);
 }
 
-const textoEco = actor => `⏳ El tiempo se detiene medio segundo. <b>${actor.name}</b> aparece hasta 9 m más allá, en un lugar que pueda ver (muévele el token), y puede llevarse a una criatura que esté tocando.`;
+const textoEco = actor => `⏳ El tiempo se detiene medio segundo. <b>${actor.name}</b> aparece hasta 30 ft más allá, en un lugar que pueda ver (muévele el token), y puede llevarse a una criatura que esté tocando.`;
 
 /** El Eco (Tramas · 3, Etapa 1). Lo dispara el DM desde el susurro o con la API. */
 async function dispararEco(actor, messageId) {
@@ -7985,8 +7987,8 @@ const PERDERSE = "Fuera de un camino, mantener el rumbo pide Supervivencia CD 15
 const CIELOS = {
   despejado: { n: "Despejado", ic: "☀️", fx: [], ef: ["Buena visibilidad: el cielo no cambia nada."], favor: ["fuego"] },
   nublado: { n: "Nublado", ic: "☁️", fx: [fx("clouds")], ef: ["Luz de día apagada. De noche, sin luna ni estrellas: fuera de la luz de antorchas y faroles está muy oscuro."] },
-  niebla: { n: "Niebla", ic: "🌫️", fx: [fx("fog")], ef: ["Todo está <b>ligeramente oscurecido</b>: desventaja en Percepción con la vista.", "Más allá de 18 m no se distingue nada (muy oscurecido)."], favor: ["agua"] },
-  nieblaDensa: { n: "Niebla cerrada", ic: "🌫️", fx: [fx("fog", { density: 0.06, alpha: 0.3 })], ef: ["A más de 3 m todo está <b>muy oscurecido</b> (no se ve); más cerca, ligeramente oscurecido.", "Ataques a distancia: si no ves al objetivo, desventaja.", PERDERSE], favor: ["agua"] },
+  niebla: { n: "Niebla", ic: "🌫️", fx: [fx("fog")], ef: ["Todo está <b>ligeramente oscurecido</b>: desventaja en Percepción con la vista.", "Más allá de 60 ft no se distingue nada (muy oscurecido)."], favor: ["agua"] },
+  nieblaDensa: { n: "Niebla cerrada", ic: "🌫️", fx: [fx("fog", { density: 0.06, alpha: 0.3 })], ef: ["A más de 10 ft todo está <b>muy oscurecido</b> (no se ve); más cerca, ligeramente oscurecido.", "Ataques a distancia: si no ves al objetivo, desventaja.", PERDERSE], favor: ["agua"] },
   llovizna: { n: "Llovizna", ic: "🌦️", fx: [fx("rainsimple")], ef: ["Las huellas se borran en unas horas: rastrear algo de hace más de 4 h, desventaja.", "Encender un fuego al descubierto lleva un minuto y yesca seca."], favor: ["agua"], contra: ["fuego"] },
   lluvia: { n: "Lluvia", ic: "🌧️", fx: [fx("rain")], ef: ["Desventaja en Percepción para oír.", "Rastrear: desventaja (las huellas se borran).", "Las llamas abiertas sin refugio se apagan; los caminos de tierra se embarran."], favor: ["agua"], contra: ["fuego"] },
   aguacero: { n: "Aguacero", ic: "🌧️", fx: [fx("rain", { density: 1.1, alpha: 0.7 })], ef: [PRECIP_FUERTE, "Apaga las llamas abiertas.", "Barro: los caminos sin empedrar son terreno difícil y los arroyos crecen."], favor: ["agua"], contra: ["fuego"] },
@@ -7995,7 +7997,7 @@ const CIELOS = {
   aguanieve: { n: "Aguanieve", ic: "🌨️", fx: [fx("rain", { density: 0.4 }), fx("snow", { density: 0.25 })], ef: ["Suelo resbaladizo: terreno difícil. Quien corre o lucha encima tira Acrobacias CD 10 o cae Derribado (a criterio).", "Ropa mojada y frío: descansar sin fuego ni refugio es una miseria."], favor: ["agua"], contra: ["fuego"] },
   nieve: { n: "Nieve", ic: "🌨️", fx: [fx("snow")], ef: ["Mientras nieva, lo lejano está ligeramente oscurecido: desventaja en Percepción con la vista a distancia.", "Las huellas se marcan bien (ventaja para rastrear) hasta que vuelva a nevar.", "Si cuaja, fuera de los caminos es terreno difícil."], favor: ["agua"], contra: ["fuego"] },
   nevada: { n: "Nevada fuerte", ic: "❄️", fx: [fx("snow", { density: 0.8 })], ef: [PRECIP_FUERTE, "Nieve acumulada: terreno difícil.", PERDERSE], favor: ["agua"], contra: ["fuego"] },
-  ventisca: { n: "Ventisca", ic: "❄️", fx: [fx("snowstorm")], ef: ["Nieve y viento: a más de 9 m todo está muy oscurecido; desventaja en Percepción.", "Nieve acumulada: terreno difícil. " + PERDERSE, "Cada hora a la intemperie sin abrigo: salvación de CON CD 10 o 1 de Agotamiento."], favor: ["viento", "agua"], contra: ["fuego"] },
+  ventisca: { n: "Ventisca", ic: "❄️", fx: [fx("snowstorm")], ef: ["Nieve y viento: a más de 30 ft todo está muy oscurecido; desventaja en Percepción.", "Nieve acumulada: terreno difícil. " + PERDERSE, "Cada hora a la intemperie sin abrigo: salvación de CON CD 10 o 1 de Agotamiento."], favor: ["viento", "agua"], contra: ["fuego"] },
   granizo: { n: "Granizo", ic: "🧊", fx: [fx("rain", { density: 0.9, speed: 1.4 })], ef: ["Al descubierto, una granizada fuerte hace daño (1 contundente por minuto, a criterio) y no deja oír: desventaja en Percepción para oír.", "Los animales se espantan: Trato con Animales CD 12 para que no se desboquen."], favor: ["agua", "viento"], contra: ["fuego"] },
   polvo: { n: "Polvo", ic: "🌪️", fx: [fx("fog", { tint: { apply: true, value: "#b59a6a" } })], ef: ["Ligeramente oscurecido: desventaja en Percepción con la vista.", "Sin taparse boca y ojos, cada hora: salvación de CON CD 10 o 1 de Agotamiento (a criterio)."], favor: ["tierra", "viento"], contra: ["agua"] },
   incendio: { n: "Humo de incendio", ic: "🔥", fx: [fx("embers"), fx("fog", { tint: { apply: true, value: "#6b625a" } })], ef: ["Humo: ligeramente oscurecido; cerca del fuego, muy oscurecido.", "Respirar humo mucho rato: salvación de CON CD 10 por hora o 1 de Agotamiento.", "Los animales huyen del fuego: el bosque está revuelto."], favor: ["fuego", "viento"], contra: ["agua"] },
@@ -8654,13 +8656,13 @@ const MEGA_SECCIONES = [
 ];
 const MEGA_GRUPOS = {
   tokens: { s: "jugar", d: "Lo de la partida: seleccionar y mover tokens, y medir (apuntar: tecla T sobre un token). De Ecos hay un solo botón: el Menú del DM (la montaña) o, para los jugadores, la brújula.", c: "Siempre: es el modo normal de juego." },
-  templates: { s: "jugar", d: "Plantillas de área (círculo, cono, rectángulo, línea) para conjuros, alientos y explosiones.", c: "En combate, cuando alguien pone un área a mano. Midi las pone solo al usar el conjuro desde la hoja." },
+  templates: { s: "jugar", d: "Plantillas de área (círculo, cono, rectángulo, línea) para conjuros, alientos y explosiones. En Foundry 14 ya no existe este grupo: las plantillas son regiones (ver Regiones) y se quitan con la goma de la barra de Tokens.", c: "En combate, cuando alguien pone un área a mano. dnd5e la pone sola al usar el conjuro desde la hoja." },
   notes: { s: "jugar", d: "Notas del mapa: chinchetas que abren un diario o una página (una casa, una tienda, una pista). Aquí están también el calendario y el clima.", c: "Para marcar lugares en mapas de exploración y del pueblo." },
   walls: { s: "mapa", d: "Paredes, puertas y ventanas: bloquean la vista, el paso, la luz y el sonido.", c: "Solo en mapas donde los tokens se mueven con visión y niebla de guerra (tableros y mazmorras). En los telones narrados no hacen falta." },
   lighting: { s: "mapa", d: "Luces fijas (fogatas, faroles, ventanas iluminadas) y el paso del día a la noche en la escena.", c: "En mapas con visión: sin luces ni paredes, la escena se ve entera o no se ve. También para pasar a noche con un clic." },
   tiles: { s: "mapa", d: "Teselas: imágenes encima del mapa (objetos, techos, carteles). Con Monk's Active Tiles pueden hacer cosas al pisarlas o clicarlas.", c: "Al preparar escenas: techos que se ocultan al entrar, objetos que se mueven, trampas." },
   drawings: { s: "mapa", d: "Dibujos y textos a mano alzada sobre el mapa: rectángulos, elipses, polígonos y etiquetas.", c: "Para marcar algo rápido en mesa (una zona, una flecha, un nombre) o escribir sobre un mapa mudo." },
-  regions: { s: "mapa", d: "Regiones: zonas con comportamientos (terreno difícil, daño, teletransporte, cambiar de escena, ejecutar un macro).", c: "Al preparar escenas con reglas: una escalera que lleva a otro piso, una zona de daño, una salida a otra escena." },
+  regions: { s: "jugar", d: "Regiones: zonas con comportamientos (terreno difícil, daño, teletransporte, cambiar de escena, ejecutar un macro). En Foundry 14 también son las plantillas de área de conjuros y técnicas: para quitarlas sin buscar aquí, usa la goma (Quitar plantillas) de la barra de Tokens.", c: "Al preparar escenas con reglas: una escalera que lleva a otro piso, una zona de daño, una salida a otra escena." },
   levels: { s: "mapa", d: "Levels: pisos y alturas (sótanos, segundo piso, escaleras, puentes).", c: "Solo en mapas de varios pisos, como el Veth Solaan o una torre." },
   sounds: { s: "ambiente", d: "Sonidos ambiente colocados en el mapa (río, taberna, viento, fragua) que se oyen al acercarse.", c: "Para dar vida a una escena: el agua del vado, el ruido del Roble." },
   effects: { s: "ambiente", d: "FXMaster: lluvia, nieve, niebla, hojas y filtros de color sobre la escena.", c: "Cuando quieras un clima concreto a mano. El clima de cada día ya lo pone Simple Weather solo." },
@@ -8677,6 +8679,8 @@ const MEGA_HERRAMIENTAS = {
   unconstrainedMovement: "Mover sin que las paredes frenen los tokens (solo el DM).",
   ecosMenu: "Menú de Ecos para los jugadores: jornada de trabajo, mercadillo, calendario y toda la barra explicada.",
   ecosPanel: "Menú del DM: todo Ecos, las hojas, toda la barra izquierda y los ajustes, cada botón explicado.",
+  ecosPlantillas: "Quitar plantillas: lista las plantillas de área de la escena (en Foundry 14 son regiones) y quita las marcadas o todas.",
+  ecosVerbe: "Verbe: tus técnicas en una ventana, con lo que gasta cada una (acción o reacción Verbe), alcance y duración.",
   ecosSantuario: "Santuario SÍ/NO: decide si el Descanso Largo es completo.",
   ecosRelojes: "Relojes del valle: todos los de Tramas · 9 en una ventana, con + y −.",
   ecosClima: "El clima: elígelo a mano (cielo, viento, temperatura) o al azar, ponlo en la escena o márcala bajo techo. La tarjeta del chat dice qué cambia en el juego.",
@@ -9118,7 +9122,9 @@ const OPS_PANEL = [
   ["Mesa", [
     ["jornada", "Jornada de trabajo", "fa-hammer", "Abre la jornada de trabajo de un PJ."],
     ["mercadillo", "Mercadillo", "fa-store", "Abre el Mercadillo de Arcegris."],
-    ["pantalla", "Pantalla del DM", "fa-table-columns", "Abre o cierra la Pantalla del DM (pestaña «Ecos · DM»)."]
+    ["pantalla", "Pantalla del DM", "fa-table-columns", "Abre o cierra la Pantalla del DM (pestaña «Ecos · DM»)."],
+    ["plantillas", "Quitar plantillas", "fa-eraser", "Lista las plantillas de área de la escena (en Foundry 14 son regiones) y quita las marcadas o todas. También está la goma en la barra de Tokens."],
+    ["choqueVerbe", "Choque de técnicas", "fa-burst", "Resuelve a mano un choque entre dos técnicas (elemento, grado y Control)."]
   ]]
 ];
 
@@ -9137,7 +9143,7 @@ function textoEstadoPanel() {
 const PESTANAS_PANEL = [
   ["ecos", "Ecos", "fa-mountain-sun", "El día, el grupo, el mundo y la mesa."],
   ["hojas", "Hojas", "fa-users", "Qué tiene encendido cada hoja (PJ y PNJ)."],
-  ["jugar", "En la partida", "fa-chess-pawn", "Tokens, plantillas y notas del mapa."],
+  ["jugar", "En la partida", "fa-chess-pawn", "Tokens, regiones y plantillas, y notas del mapa."],
   ["mapa", "Preparar el mapa", "fa-map", "Paredes, luces, teselas, dibujos, regiones y pisos."],
   ["ambiente", "Ambiente", "fa-cloud-sun", "Sonidos y efectos de la escena."],
   ["modulos", "Módulos", "fa-puzzle-piece", "Lo que agregan los módulos instalados."],
@@ -9455,6 +9461,8 @@ async function ejecutarPanel(op) {
     case "hora": await game.time.advance(3600); break;
     case "calendario": abrirCalendario(); break;
     case "santuario": await game.settings.set(MOD, "santuario", !game.settings.get(MOD, "santuario")); ui.controls?.render?.({ reset: true }); break;
+    case "plantillas": await quitarPlantillas(); break;
+    case "choqueVerbe": await api?.verbe?.choque?.(); break;
     case "estado": game.journal.get("G0rD0J3JkpOkXM00")?.pages.find(p => p.getFlag(MOD, "estado"))?.sheet?.render(true); break;
     case "tirada":
       if (!game.MonksTokenBar?.requestRoll) return ui.notifications.warn("Hace falta Monk's TokenBar activo.");
@@ -9619,7 +9627,7 @@ async function cacheCalendario() {
 
 const CONFIG_MODULOS = [
   { id: "midi-qol", v: 2, aplicar: () => unirMidi(MIDI_V19),
-    texto: "configurado como pide Chris's Premades (sus automatizaciones mandan sobre Convenient Effects) y con las reglas de 2024 activas: atacar sin ser visto da ventaja, un enemigo a 1,5 m da desventaja a distancia, más allá del alcance largo no se puede, la altura cuenta en las distancias y avisa si alguien incapacitado intenta actuar." },
+    texto: "configurado como pide Chris's Premades (sus automatizaciones mandan sobre Convenient Effects) y con las reglas de 2024 activas: atacar sin ser visto da ventaja, un enemigo a 5 ft da desventaja a distancia, más allá del alcance largo no se puede, la altura cuenta en las distancias y avisa si alguien incapacitado intenta actuar." },
   { id: "chris-premades", v: 1, ajustes: {
     weaponMastery: 1, heroicInspiration: true, applyConditionChanges: true, legendaryActionsPrompt: true,
     playerSelectsConjures: true, updateSummonInitiative: true, updateCompanionInitiative: true,

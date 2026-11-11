@@ -50,8 +50,15 @@ test('dos compras distintas conservan ambos cambios y cobran sus Trazos', async 
 });
 test('aprender dos veces no duplica objetos ni gasto', async () => {
   const a = new MockActor();
-  await Promise.all([V.aprender(a, tec('fuego-aliento')), V.aprender(a, tec('fuego-aliento'))]);
+  await Promise.all([V.aprender(a, tec('fuego-aliento'), { instantaneo: true }), V.aprender(a, tec('fuego-aliento'), { instantaneo: true })]);
   assert.equal(a.items.length, 1); assert.equal(V.estado(a).gastados, 1);
+});
+test('3.27 · estudiar dos veces la misma técnica no cobra dos veces ni crea el objeto antes de tiempo', async () => {
+  const a = new MockActor();
+  await Promise.all([V.aprender(a, tec('fuego-aliento')), V.aprender(a, tec('fuego-aliento'))]);
+  assert.equal(a.items.length, 0, 'por días: primero se estudia');
+  assert.equal(V.estado(a).gastados, 1);
+  assert.equal(V.estudioDe(a, 'fuego-aliento')?.progreso, 0);
 });
 test('si falla el cargo de Trazos, se retira el objeto recién creado', async () => {
   const a = new MockActor(); a.failNextUpdate = true;

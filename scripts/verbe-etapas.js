@@ -41,7 +41,10 @@ export const DESCUBRIR = {
   cambio: { trazos: 0, dias: 7, cd: 15, nombre: "un cambio de naturaleza" }
 };
 /** Cómo se descubre la primera naturaleza: «secreta» (la fijó el DM), «elige» (la elige el jugador al descubrirla) o «visible» (la sabe desde el principio). */
-export const MODOS_NATURALEZA = { secreta: "Secreta: la fijas tú y la descubre entrenando", elige: "La elige el jugador cuando la descubra entrenando", visible: "La sabe desde el principio" };
+export const MODOS_NATURALEZA = { dado: "La tira el jugador con un dado cuando la descubre entrenando (3.27)", secreta: "Secreta: la fijas tú y la descubre entrenando", elige: "La elige el jugador cuando la descubra entrenando", visible: "La sabe desde el principio" };
+/** La segunda naturaleza (3.27): al azar con el dado del jugador al descubrirla, o la que fijaste tú (la «oculta»). */
+export const MODOS_SEGUNDA = { dado: "Al azar: la tira el jugador con un dado al descubrirla", fija: "La fijas tú (la naturaleza oculta)" };
+export const modoSegunda = e => (e?.segundaModo === "dado" ? "dado" : "fija");
 /** Las fichas de antes de 3.6 no tienen modo: siguen como estaban (la naturaleza se elige o ya se sabe). */
 export const modoNaturaleza = e => e?.natModo ?? "visible";
 

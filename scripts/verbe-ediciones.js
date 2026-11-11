@@ -1,3 +1,4 @@
+import { aPiesTexto } from "./verbe-327.js";
 /**
  * Ediciones del DM sobre el catálogo base (tarea 1.4b y 1.4c).
  * Solo se guardan las diferencias en un ajuste del mundo: una actualización del módulo trae el catálogo nuevo
@@ -15,8 +16,8 @@ export const CAMPOS_TECNICA = [
   ["trazos", "Trazos para aprenderla", "entero", 0, 100],
   ["nivelMin", "Nivel mínimo", "entero", 1, 20],
   ["tiempo", "Tiempo de uso", "tiempo"],
-  ["alcance", "Alcance en metros", "numero", 0, 1500],
-  ["areaTam", "Tamaño del área en metros", "numero", 0, 180],
+  ["alcance", "Alcance en metros (en la mesa se ve en pies: 1,5 m = 5 ft)", "numero", 0, 1500],
+  ["areaTam", "Tamaño del área en metros (3 m = 10 ft)", "numero", 0, 180],
   ["dadosN", "Dados de daño o curación", "entero", 0, 100],
   ["dadosD", "Caras del dado", "dado"]
 ];
@@ -92,11 +93,11 @@ export function aplicarEdicionTecnica(tec, cambios = {}) {
   if ("tiempo" in cambios) { t.t = cambios.tiempo; sys.activation = { ...(sys.activation ?? {}), type: TIEMPOS[cambios.tiempo], value: 1 }; }
   if ("alcance" in cambios) {
     sys.range = { ...(sys.range ?? {}), units: cambios.alcance > 0 ? "m" : "self", value: cambios.alcance > 0 ? cambios.alcance : null };
-    t.alc = cambios.alcance > 0 ? String(cambios.alcance) : "yo";
+    t.alc = cambios.alcance > 0 ? aPiesTexto(`${metros(cambios.alcance)} m`) : "yo";
   }
   if ("areaTam" in cambios && sys.target?.template?.type) {
     sys.target.template.size = cambios.areaTam;
-    if (t.area) t.area = t.area.replace(/\d+(?:[,.]\d+)?\s*m\b/, `${metros(cambios.areaTam)} m`);
+    if (t.area) t.area = t.area.replace(/\d+(?:[,.]\d+)?\s*(?:m|ft)\b/, aPiesTexto(`${metros(cambios.areaTam)} m`));
   }
   const p = parteDados(t);
   if (p && ("dadosN" in cambios || "dadosD" in cambios)) {

@@ -26,7 +26,7 @@ test('la edición cambia la técnica sin tocar el original y sigue siendo válid
   const act = Object.values(t.item.system.activities)[0];
   assert.equal(act.damage.parts[0].number, 4);
   assert.equal(t.item.system.target.template.size, 6);
-  assert.equal(t.area, 'cono 6 m');
+  assert.equal(t.area, 'cono 20 ft', '3.27: lo que se lee va en pies (6 m)');
   assert.equal(t.item.flags['ecos-frontera'].verbe.costoBase, 3);
   assert.match(t.item.system.description.value, /<h3>Qué hace<\/h3><p>Un cono de ascuas\.<\/p>/);
   assert.match(t.item.system.description.value, /Ajustada por el DM/);

@@ -674,3 +674,37 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-verbe-panel .ev-estados-info dt { font-weight: 700; color: var(--ev-acento); }
 .ecos-verbe-panel .ev-estados-info dd { margin: 0 0 4px; color: var(--ev-suave); }
 @media (max-width: 720px) { .ecos-verbe-panel .ev-tarjetas { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- 3.27 ---------- */
+.ecos-turno-verbe{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:6px 0;padding:6px 10px;border-radius:6px;background:rgba(45,123,224,.08);border:1px solid rgba(45,123,224,.25);font-size:.9em}
+.ecos-turno-verbe span{display:inline-flex;gap:4px;align-items:center}
+.ecos-turno-verbe span.libre b{color:#2e7d32}
+.ecos-turno-verbe span.gastada b{color:#b3261e}
+.ecos-turno-verbe span.gastada{opacity:.75}
+.ecos-turno-verbe.fuera{opacity:.85}
+.ecos-turno-verbe small{flex-basis:100%;opacity:.8}
+.ecos-turno-mini{display:inline-flex;gap:3px;margin-left:6px;font-size:.8em;vertical-align:middle}
+.ecos-turno-mini .libre{color:#4caf50}
+.ecos-turno-mini .gastada{color:#b3261e;opacity:.6}
+.ecos-gasto-verbe{margin:4px 0 0;padding:3px 6px;border-left:3px solid #2d7be0;background:rgba(45,123,224,.07);font-size:.92em}
+.ecos-azar{margin-left:4px;padding:0 6px;min-width:0;width:auto;line-height:1.6;cursor:pointer}
+.ecos-uso-rapido button{display:flex;flex-direction:column;align-items:flex-start;width:100%;text-align:left;gap:1px;padding:4px 8px;height:auto;line-height:1.3}
+.ecos-uso-rapido button .nom{font-weight:bold}
+.ecos-uso-rapido button small{opacity:.85;white-space:normal}
+.ecos-uso-rapido button small.expl{font-style:italic}
+.ecos-uso-rapido button.ecos-uso-accion{border-left:3px solid #2d7be0}
+.ecos-uso-rapido button.ecos-uso-reaccion{border-left:3px solid #8e44ad}
+.ecos-uso-rapido button.ecos-uso-adicional{border-left:3px solid #e08a2d}
+.ecos-uso-rapido button.ecos-uso-largo{border-left:3px solid #888}
+.ecos-uso-rapido .ecos-uso-grupo{margin-top:6px;border-bottom:1px solid rgba(0,0,0,.15)}
+.ecos-uso-ayuda{margin:4px 0 8px}
+.ecos-uso-ayuda ul{margin:4px 0;padding-left:18px}
+.ecos-verbe-estudio{display:block;font-size:.9em}
+.ecos-verbe-estudios{margin:6px 0;padding:6px 10px;border-radius:6px;background:rgba(46,125,50,.08);border:1px solid rgba(46,125,50,.3)}
+.ecos-verbe-tec.estudia > summary{background:rgba(46,125,50,.06)}
+.ecos-vistazo details{margin:4px 0}
+.ecos-vistazo li{margin:3px 0}
+.ecos-vistazo li.sabe{opacity:.7}
+.ecos-quitar-plantillas label.ecos-plantilla{display:inline-flex;gap:6px;align-items:center}
+.ecos-quitar-plantillas small{opacity:.75}
+.ecos-verbe-panel .ecos-turno-verbe{margin:6px 20px}

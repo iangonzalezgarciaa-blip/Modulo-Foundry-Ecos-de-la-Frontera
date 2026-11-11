@@ -1,5 +1,25 @@
 # Historial de cambios
 
+## 3.27.2 — 2026-11-10
+
+- **La 3.27 entra al repositorio.** La 3.27.0 y la 3.27.1 se hicieron e instalaron directo en el Foundry del autor, sin pasar por aquí ni por un Release. Esta versión trae ese mismo código al repositorio, con su Release, para que el actualizador de Foundry siga funcionando y el trabajo siguiente parta de ella. La 3.27.1 instalada apuntaba su descarga al ZIP de la 3.26.1; ahora apunta al suyo.
+- Pruebas puestas al día con lo que la 3.27 cambió a propósito (todo en pies, el pase del DM también con lo que él mueve, aprender por días, 54 pruebas de mesa) y pruebas nuevas para sus reglas: pies, plan de estudio y práctica diaria, naturaleza por dado, reserva y recuperación con Constitución, acción y reacción Verbe, artes de familia y dos estudios a la vez de la misma técnica (no cobra dos veces).
+- Un nombre de la campaña que había quedado en un texto del código ahora se dice por su papel («la sangre de la Barrera»).
+
+## 3.27.1 / 3.27.0 — 2026-11-10 (hechas fuera del repositorio)
+
+Pedidos del autor, tal como llegaron instalados:
+- **Todo en pies.** Lo que se lee (panel, alcances, fichas, chat del módulo) va en pies: 1,5 m = 5 ft. Las cuentas internas siguen en metros. Una migración pasa las escenas en metros a 5 ft por casilla y apaga las unidades métricas de dnd5e.
+- **Quitar plantillas.** En Foundry 14 las plantillas son regiones: un botón del DM en la barra de Tokens (y en el Menú del DM) lista las de la escena y quita las marcadas.
+- **El pase del DM, más amplio.** Por defecto pregunta por toda acción con objetivo (armas, conjuros, técnicas y acciones de cualquiera). Ajuste nuevo «El pase del DM · cuando el DM mueve a alguien»: siempre, solo PNJ contra PNJ, o no. La tirada que sigue a un pase no vuelve a preguntar.
+- **Artes de familia por nacimiento.** Las seis familias (Atadura de sombra, Crecer, Cambio de mente, Colonia de insectos, Manada de colmillos y Tinta viva) ya no piden «un maestro»: piden la familia, que solo se tiene por nacimiento. El DM la da por historia o con 🎲.
+- **El 🎲 del DM** al despertar y en Naturalezas y linaje (linaje, familia, fuerza, rama). Las sangres de guion no salen al azar.
+- **Aprender por días** (ajuste «Verbe · aprender por días»): pagar los Trazos empieza el estudio; después, un día bueno por vez con Control del Verbe CD 10 + grado, hasta grado + 1 días. El DM puede dar una técnica por aprendida o poner a una ficha a aprender al instante.
+- **Naturaleza por dado:** la primera (1d5) y la segunda (1d4) las puede tirar el jugador.
+- **Reserva con Constitución:** suma el modificador de CON por nivel, y el Descanso Largo recupera un cuarto más CON por cada 4 niveles.
+- **Acción y reacción Verbe:** una de cada una por turno, aparte de las de D&D, con su estado en el panel y en el rastreador de combate.
+- **Técnicas de golpe** con el arma que elijas, y tablas de azar distintas para pruebas sociales y de saber.
+
 ## 3.26.1 — 2026-11-10
 
 - Corrección del texto de la ventana de la sangre, comprobada en el mundo del autor: el linaje del ojo de vidrio decía «Este linaje no abre una herencia de Sangre por sí solo», cuando desde 3.26.0 su sangre también sostiene ante el daño masivo. Ahora lo dice, con lo que no hace (no desgasta la Barrera, no suma al Reloj, no tiene Eco). La herencia de la Barrera ya no cita un diario que ahora cuenta otra cosa.

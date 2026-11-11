@@ -5,7 +5,7 @@
 export const TIPOS_PLANTILLA = new Set(['cone', 'sphere', 'cube', 'line', 'cylinder', 'square', 'radius', 'wall', 'circle', 'rect', 'ray']);
 /** Palabra del texto → tipo de plantilla de dnd5e. */
 export const FORMA_AREA = { cono: 'cone', 'línea': 'line', linea: 'line', franja: 'line', esfera: 'sphere', semiesfera: 'sphere', cubo: 'cube', cilindro: 'cylinder', cuadrado: 'square', muro: 'wall', aura: 'radius' };
-const AREA_EN_TEXTO = /\b(?:un|una|en un|en una|de un|de una)\s+(cono|línea|linea|franja|esfera|semiesfera|cubo|cilindro|cuadrado|muro)\s+de\s+(\d+(?:[,.]\d+)?)\s*m\b/i;
+const AREA_EN_TEXTO = /\b(?:un|una|en un|en una|de un|de una)\s+(cono|línea|linea|franja|esfera|semiesfera|cubo|cilindro|cuadrado|muro)\s+de\s+(\d+(?:[,.]\d+)?)\s*(?:m|ft)\b/i;
 const MEDIDA_AREA = /^(cono|línea|linea|franja|esfera|semiesfera|cubo|cilindro|cuadrado|muro|aura)\s+(\d+(?:[,.]\d+)?)/i;
 export const CODIGOS = {
   'area-sin-plantilla': 'El texto describe un área, pero la ficha no tiene plantilla: no se puede colocar en la escena.',

@@ -44,13 +44,13 @@ export function idEstable(texto) {
 export const ACCIONES = [
   { car: "str", acciones: [
     { id: "presa", nombre: "Presa", act: "action", tipo: "save", salv: ["str", "dex"], cd: "str", estado: "grappled", alcance: 5, pf2e: "Grapple", base: "Presa (Golpe sin armas)",
-      texto: "Sujetas a una criatura a 1,5 m, de hasta una categoría de tamaño más que tú, con una mano libre. Va en lugar de uno de tus ataques. Si falla, queda Agarrada (velocidad 0). Puedes moverte arrastrándola a mitad de velocidad. Se suelta con su acción: Atletismo o Acrobacias contra la misma CD." },
+      texto: "Sujetas a una criatura a 5 ft, de hasta una categoría de tamaño más que tú, con una mano libre. Va en lugar de uno de tus ataques. Si falla, queda Agarrada (velocidad 0). Puedes moverte arrastrándola a mitad de velocidad. Se suelta con su acción: Atletismo o Acrobacias contra la misma CD." },
     { id: "derribar", nombre: "Empujón: derribar", act: "action", tipo: "save", salv: ["str", "dex"], cd: "str", estado: "prone", alcance: 5, pf2e: "Trip", base: "Empujón (Golpe sin armas)",
-      texto: "Empujas al suelo a una criatura a 1,5 m, de hasta una categoría de tamaño más que tú. Va en lugar de uno de tus ataques. Si falla, queda Derribado." },
+      texto: "Empujas al suelo a una criatura a 5 ft, de hasta una categoría de tamaño más que tú. Va en lugar de uno de tus ataques. Si falla, queda Derribado." },
     { id: "apartar", nombre: "Empujón: apartar", act: "action", tipo: "save", salv: ["str", "dex"], cd: "str", alcance: 5, pf2e: "Shove", base: "Empujón (Golpe sin armas)",
-      texto: "Apartas 1,5 m a una criatura a 1,5 m, de hasta una categoría de tamaño más que tú. Va en lugar de uno de tus ataques. Sirve para tirarla por un borde, a un fuego o fuera de una puerta." },
+      texto: "Apartas 5 ft a una criatura a 5 ft, de hasta una categoría de tamaño más que tú. Va en lugar de uno de tus ataques. Sirve para tirarla por un borde, a un fuego o fuera de una puerta." },
     { id: "lanzar", nombre: "Lanzar a quien sujetas", act: "action", tipo: "save", salv: ["str"], cd: "str", estado: "prone", dano: [1, 6, "bludgeoning"], alcance: 5, pf2e: null,
-      texto: "Arrojas a quien tienes Agarrado hasta 3 m (4,5 m con Fuerza 18 o más). Si falla, cae Derribado y recibe 1d6 contundente. La presa termina." },
+      texto: "Arrojas a quien tienes Agarrado hasta 10 ft (15 ft con Fuerza 18 o más). Si falla, cae Derribado y recibe 1d6 contundente. La presa termina." },
     { id: "abrirse-paso", nombre: "Abrirse paso", act: "special", tipo: "save", salv: ["str"], cdPericia: ["ath"], alcance: 5, pf2e: null,
       texto: "Una vez por turno, durante tu movimiento, intentas cruzar el espacio de un enemigo. Si falla, pasas (cuenta como terreno difícil). Si es dos tamaños más pequeño que tú, además cae Derribado." },
     { id: "escapar", nombre: "Escapar o forzar", act: "action", tipo: "check", pericias: ["ath", "acr"], pf2e: "Escape / Force Open", base: "Escapar de una presa",
@@ -76,7 +76,7 @@ export const ACCIONES = [
       texto: "Solo si no te has movido este turno: +2 a tus ataques a distancia hasta el final del turno. Después tu velocidad es 0 hasta el final del turno. Si tu clase tiene Apuntar con firmeza (pícaro), esa es mejor: da ventaja." },
     { id: "interponerse", nombre: "Interponerse", act: "reaction", tipo: "utility", alcance: 5,
       efecto: { nombre: "Protegido", img: "systems/dnd5e/icons/svg/checked-shield.svg", cambios: [["system.attributes.ac.bonus", "add", "2"]], turnos: 1 }, pf2e: null,
-      texto: "Cuando una criatura que ves ataca a un aliado que está a 1,5 m de ti: el aliado tiene +2 a la CA contra ese ataque (pon este efecto en él). Si aun así impacta, el daño lo recibes tú en vez de él. No puedes si estás Incapacitado, Agarrado o con velocidad 0. Si tienes el estilo de combate Protección o Intercepción, puedes usar ese en su lugar: es la misma reacción." },
+      texto: "Cuando una criatura que ves ataca a un aliado que está a 5 ft de ti: el aliado tiene +2 a la CA contra ese ataque (pon este efecto en él). Si aun así impacta, el daño lo recibes tú en vez de él. No puedes si estás Incapacitado, Agarrado o con velocidad 0. Si tienes el estilo de combate Protección o Intercepción, puedes usar ese en su lugar: es la misma reacción." },
     { id: "esconderse", nombre: "Esconderse", act: "action", tipo: "check", pericias: ["ste"], cdFija: 15, pf2e: "Hide / Sneak", base: "Esconderse",
       texto: "Como en el Manual: muy oscuro o tras cobertura de tres cuartos o total, y fuera de la vista de los enemigos. Sigilo CD 15. Si lo logras, ponte el estado Escondido: los demás te buscan con su Percepción contra tu tirada." }
   ] },
@@ -106,7 +106,7 @@ export const ACCIONES = [
       efecto: { nombre: "Desprevenido", img: "systems/dnd5e/icons/svg/statuses/surprised.svg", statuses: [DESPREVENIDO] }, pf2e: null,
       texto: "Le miras los hombros, los pies, la respiración. Si falla, queda Desprevenido hasta el final de tu siguiente turno (todo ataque contra él suma +2) y el DM te dice qué piensa hacer en su próximo turno." },
     { id: "ayudar", nombre: "Ayudar", act: "action", tipo: "utility", alcance: 5, pf2e: "Aid", base: "Ayudar",
-      texto: "Das ventaja al próximo ataque de un aliado contra una criatura a 1,5 m de ti, o a su próxima prueba si sabes ayudar con eso. Antes de tu siguiente turno." },
+      texto: "Das ventaja al próximo ataque de un aliado contra una criatura a 5 ft de ti, o a su próxima prueba si sabes ayudar con eso. Antes de tu siguiente turno." },
     { id: "serenarse", nombre: "Serenarse", act: "action", tipo: "check", car: "wis", pf2e: null,
       texto: "Respiras hondo: repites ahora la salvación contra estar Asustado o Hechizado, con +2, en vez de esperar al final de tu turno." }
   ] },
@@ -208,7 +208,7 @@ export const tieneGolpePropio = items => (items ?? []).some(i => i?.type === "we
 export function datosGolpe(dado = null) {
   const id = idEstable("ecos-accion-golpe");
   return { name: "Golpe sin armas", type: "weapon", img: `${S}damage/bludgeoning.svg`,
-    system: { description: { value: `<p>Puños, codos, rodillas, cabeza. Ataque cuerpo a cuerpo a 1,5 m: ${dado ? "el dado de tu clase" : "1"} + tu ${dado ? "Fuerza o Destreza" : "Fuerza"} contundente. Lo tiene todo el mundo. Las técnicas de Cuerpo que piden un golpe pueden usarlo.</p>`, chat: "" },
+    system: { description: { value: `<p>Puños, codos, rodillas, cabeza. Ataque cuerpo a cuerpo a 5 ft: ${dado ? "el dado de tu clase" : "1"} + tu ${dado ? "Fuerza o Destreza" : "Fuerza"} contundente. Lo tiene todo el mundo. Las técnicas de Cuerpo que piden un golpe pueden usarlo.</p>`, chat: "" },
       type: { value: "natural", baseItem: "" }, identifier: "ecos-golpe-sin-armas", quantity: 1, equipped: true, proficient: 1, properties: dado ? ["fin"] : [],
       damage: { base: { number: null, denomination: null, bonus: "", types: ["bludgeoning"], custom: { enabled: true, formula: dado ?? "1" }, scaling: { mode: "", number: null, formula: "" } } },
       activities: { [id]: { _id: id, sort: 0, name: "Golpe sin armas", type: "attack", activation: { type: "action", value: 1, override: false },

@@ -9,7 +9,7 @@
  * Las fichas y el panteón vienen de los datos; las reglas de crecimiento se calculan con sus identificadores.
  */
 
-import { VERSION_PROGRESION, NIVEL_GRADO, limiteEscalado, accesoObtencion, permisoCuota, cuotasPoder, pisoCosto, limiteDadosExtra, requisitoDote, validarConcentraciones, permisoTurno, gradoReplicas } from "./verbe-progression.js";
+import { VERSION_PROGRESION, NIVEL_GRADO, limiteEscalado, accesoObtencion, permisoCuota, cuotasPoder, pisoCosto, limiteDadosExtra, requisitoDote, validarConcentraciones, accionesVerbePorTurno, permisoTurno, gradoReplicas } from "./verbe-progression.js";
 import { abrirReliquias } from "./relics.js";
 import { actoresPresentes } from './mesa-actores.js';
 import { prepararRecibo, registrarPaso } from "./mesa-resolucion.js";
@@ -31,7 +31,7 @@ import { iconoTecnica, iconoDote, esGenerico } from "./verbe-iconos.js";
 import { ventanaLinaje, linajeDeEleccion, pasosOjo } from "./linaje-diario.js";
 import { linajePortador, LINAJE_ALA } from "./sangre-sosten.js";
 import { DADOS_VERBE, dadoNivel, modoReserva, reservaBase, nivelesSinTirar } from "./verbe-reserva.js";
-import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
+import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, MODOS_SEGUNDA, modoSegunda, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
 import { presupuestoCorto } from "./rest-core.js";
@@ -42,6 +42,8 @@ import { VERSION_REGLAS, recuperarReserva, evaluarGasto, requisitoNatural, crear
 import { configurarAtaque, configurarSalvacion, despuesAtaque, normalizarHielo,
   revisarEstados, consumirMetal, metrosEnHoja } from "./verbe-effects.js";
 import { pasoInicial, progresoHTML, estadoUsoHTML, tarjetaHTML, avisosJugadorHTML, ROLES_RAMA } from "./verbe-ui.js";
+import { FAMILIAS, esFamilia, marcarFamilias, familiaDeTecnica, aPiesTexto, textosAPies, piesAMetros, planEstudio, practicar, naturalezaPorDado,
+  reservaPorCon, recuperacionLargaCon, golpeDeTexto, dadosGolpe, armaSirve, diasParaLlenar, gastoVerbe, economiaVerbe, TIEMPOS_EXPLICADOS } from "./verbe-327.js";
 
 const MOD = "ecos-frontera";
 const F = "verbe";
@@ -102,7 +104,7 @@ export const ESTADOS = {
     texto: "Prepara una técnica cargada: velocidad 0, sin reacciones ni choques. Si recibe daño, salvación de Constitución (CD 10 o la mitad del daño, la mayor) o la pierde; también si queda incapacitado o lo mueven a la fuerza." },
   helado: { name: "Helado", img: "systems/dnd5e/icons/svg/statuses/restrained.svg", dura: 60,
     changes: [{ key: "system.attributes.movement.walk", mode: 2, value: "-3" }],
-    texto: "−3 m de velocidad cada vez; con velocidad 0, queda Apresado por el hielo." }
+    texto: "−10 ft de velocidad cada vez; con velocidad 0, queda Apresado por el hielo." }
 };
 const TIPO_NAT = { fuego: "fire", agua: "bludgeoning", viento: "slashing", tierra: "bludgeoning", rayo: "lightning", escarcha: "cold",
   raiz: "piercing", magma: "fire", vapor: "fire", ceniza: "fire", tormenta: "lightning", hierro: "piercing", corriente: "lightning",
@@ -161,7 +163,29 @@ async function cargarDatos() {
   const r = await fetch(`${RUTA}/data/verbe.txt?v=${Date.now()}`, { cache: "no-store" });
   return r.ok ? descifrar(await r.text()) : null;
 }
-export function usarDatos(datos, modo = null) { D = datos; BASE = datos ? { tecnicas: datos.tecnicas, dotes: datos.dotes } : null; if (modo) MODO = modo; }
+/** 3.27: familias por nacimiento y todo en pies, antes de guardar la base del catálogo. */
+function prepararDatos327(datos) {
+  if (!datos || datos.prep327) return datos;
+  marcarFamilias(datos); textosAPies(datos);
+  // La recuperación ahora es más lenta (un cuarto + CON): las dotes de reserva dicen su proporción nueva.
+  const dote = id => datos.dotes?.find(d => d.id === id);
+  if (dote("hijo-santuario")) dote("hijo-santuario").texto = "El Descanso Largo en el Santuario te devuelve la mitad más: tres octavos de tu Verbe en vez de un cuarto (más tu Constitución).";
+  if (dote("sueno-reparador")) dote("sueno-reparador").texto = String(dote("sueno-reparador").texto).replace("A la intemperie recuperas un tercio de tu Verbe en vez de un cuarto.", "A la intemperie recuperas un sexto de tu Verbe en vez de un octavo.");
+  // Técnicas de golpe: con tu arma, o el próximo golpe (lo que pide la técnica, leído de su texto).
+  for (const t of datos.tecnicas ?? []) {
+    const g = golpeDeTexto(t.texto);
+    if (!g) continue;
+    const efs = t.item?.effects ?? [];
+    g.yaTiene = efs.some(e => e.flags?.[MOD]?.[F]?.golpeSiguiente || (e.changes ?? []).some(c => /bonuses\.(mwak|rwak|msak|rsak)\.damage/.test(c.key)));
+    for (const e of efs) if (e.flags?.[MOD]?.[F]?.golpeSiguiente) e.flags[MOD][F].consumir = true;
+    t.golpe327 = g;
+    const meta = t.item?.flags?.[MOD]?.[F];
+    if (meta) meta.golpe327 = g;
+  }
+  datos.prep327 = true;
+  return datos;
+}
+export function usarDatos(datos, modo = null) { prepararDatos327(datos); D = datos; BASE = datos ? { tecnicas: datos.tecnicas, dotes: datos.dotes } : null; if (modo) MODO = modo; }
 const edicionesMundo = () => { try { return game.settings.get(MOD, AJ.ediciones) ?? {}; } catch { return {}; } };
 /** Vuelve a montar técnicas y dotes desde el módulo con las diferencias que guardó el DM en el mundo. */
 export function aplicarEdicionesMundo(ediciones = edicionesMundo()) {
@@ -563,9 +587,11 @@ export function maxVerbe(actor) {
   const e = estado(actor);
   if (!e?.despierto) return 0;
   const n = nivelDe(actor);
-  const baseDivina = Math.max(0, Number(D.verbeMax[n]) + modDe(actor, e.car));
+  // 3.27: toda la cantidad de Verbe va ligada a la Constitución: su modificador se suma una vez por nivel, como los PG.
+  const conNivel = reservaPorCon(modDe(actor, "con"), n);
+  const baseDivina = Math.max(0, Number(D.verbeMax[n]) + conNivel);
   // Reserva base: la tabla fija («promedio») o la suma de sus dados por nivel («dados», 2.2). La sangre divina sigue usando la tabla.
-  let max = reservaBase(e, n, D.verbeMax) + modDe(actor, e.car);
+  let max = reservaBase(e, n, D.verbeMax) + conNivel;
   if (tieneDote(actor, "reserva-profunda")) max += n;
   max += sumaEf(actor, ef => (Number(ef.max?.plano) || 0) + (n >= 10 ? Number(ef.max?.desde10) || 0 : 0) + ((Number(ef.max?.nivel) || 0) * n));
   if (tieneDote(actor, "eco-sangre") && ["plena", "media"].includes(e.fuerza)) max += (n >= 11 ? 2 : 1) * n;
@@ -724,7 +750,14 @@ export function concederShinobi(actor,campo,valor,extra=null) {
   if(!game.user.isGM)return Promise.resolve(false);
   return serializarActor(actor,async()=>{
     const e=estado(actor);if(!e?.despierto)return false;
-    if(campo==='tradicion'){
+    if(campo==='familia'||(campo==='tradicion'&&esFamilia(valor))){
+      // 3.27: la familia es de nacimiento y hay una sola. «ninguna» la quita.
+      const sinFam=(e.tradiciones??[]).filter(x=>!esFamilia(x));
+      const nueva=esFamilia(valor)?valor:null;
+      const t=nueva?D.tradicionesShinobi?.find(x=>x.id===nueva):null;
+      await guardar(actor,{tradiciones:nueva?[...sinFam,nueva]:sinFam,familiaNacimiento:nueva,...(t?.pacto?{pactos:[...new Set([...(e.pactos??[]),t.pacto])]}:{}),
+        historial:hist(e,nueva?`Familia de nacimiento: ${FAMILIAS[nueva].nombre}`:"Sin familia de nacimiento")});
+    }else if(campo==='tradicion'){
       const t=D.tradicionesShinobi?.find(t=>t.id===valor);if(!t)return false;
       const tiene=e.tradiciones?.includes(valor);await guardar(actor,{tradiciones:tiene?e.tradiciones.filter(x=>x!==valor):[...(e.tradiciones??[]),valor],...(!tiene&&t.pacto?{pactos:[...new Set([...(e.pactos??[]),t.pacto])]}:{})});
     }else if(campo==='hito'){
@@ -799,6 +832,7 @@ export function requisitos(actor, tec) {
   const e = estado(actor);
   if (!e?.despierto) return { ok: false, motivo: "No despertó." };
   if (conoce(actor, tec.id)) return { ok: false, motivo: "Ya la sabe." };
+  if (e.estudios?.[tec.id]) return { ok: false, estudio: true, motivo: "La está estudiando: practica un día más desde Aprender." };
   const etapa = permisoEtapa(e, { rama: tec.rama, grado: Number(tec.g) || 0, ramasDeTecnicas: itemsTecnica(actor).map(i => i.getFlag(MOD, F)?.rama) });
   if (!etapa.ok) return etapa;
   const acceso = accesoShinobi(tec.item?.flags?.[MOD]?.[F] ?? tec, contextoShinobi(actor), false);
@@ -951,7 +985,7 @@ export function previsualizarUso(actor, meta, grado = Number(meta?.g) || 0, {rep
   if(!cuota.ok)return {...cuota,costo};
   if (replica && (grado>capacidadReplicas(actor) || !efectoV(actor,"replicas") || e.accionReplicaUsada)) return {ok:false,costo,motivo:"No hay acción de réplicas disponible o supera el grado permitido."};
   const item = itemsDe(actor, meta.id)[0];
-  const turno=choque?{ok:true}:permisoTurno(grado,{combate:game.combat?.started?(game.combat.id??"combate"):null,estado:e.turnoTecnicas,reaccion:item?.system.activation?.type==="reaction",replica});if(!turno.ok)return {...turno,costo};
+  const turno=choque?{ok:true}:permisoTurno(grado,{combate:game.combat?.started?(game.combat.id??"combate"):null,estado:e.turnoTecnicas,reaccion:item?.system.activation?.type==="reaction",replica,maximo:maxAccionesVerbe(actor),adicional:gastoVerbe(tecnicaPorId(meta.id,actor)?.t??item?.system?.activation?.type)==="adicional"});if(!turno.ok)return {...turno,costo};
   const permiso = evaluarGasto({ valor: Number(replica?e.reservaReplicas:e.valor) || 0, costo, limite: replica?0:limiteNegativo(actor), grado,
     gradoMaximo: gradoUsable(actor, meta), agotamiento: sistema.agotamiento(actor),
     incapacitado: noPuedeActuar(actor), reaccion: item?.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R",
@@ -993,7 +1027,7 @@ function efectoEstado(st, id, doble = false) {
  */
 const metricoMundo = () => { try { return !!game.settings.get("dnd5e", "metricLengthUnits"); } catch { return false; } };
 const aPies = v => (Number.isFinite(Number(v)) && v !== "" && v !== null ? Math.round(Number(v) / 0.3 * 100) / 100 : v);
-export function medidasDelMundo(data, metrico = metricoMundo()) {
+export function medidasDelMundo(data, metrico = false) { // 3.27: todo en pies, como D&D y PF2e
   if (metrico || !data?.system) return data;
   const r = data.system.range;
   if (r?.units === "m") Object.assign(r, { units: "ft", value: aPies(r.value), ...(r.long ? { long: aPies(r.long) } : {}), ...(r.reach ? { reach: aPies(r.reach) } : {}) });
@@ -1116,6 +1150,7 @@ export function datosItem(actor, tec) {
   meta.cultivo = cul?.nivel ?? 0;
   data.system.description.value = (data.system.description.value ?? "") + fichaCarga(meta) + notaPersonal(actor, tec, extra, inf, cul);
   medidasDelMundo(data);
+  textosAPies(data.system); textosAPies(data.effects ?? []); // 3.27: lo que se lee, en pies
   if (esGenerico(data.img)) data.img = iconoTecnica(data) ?? data.img;
   const {firma:anteriorFirma,...metadatos}=meta;
   meta.firma = firma(JSON.stringify([data.name, data.system, data.effects,metadatos]));
@@ -1191,7 +1226,7 @@ export async function corregirGastoSimple(actor,recibo){
 }
 
 export function aprender(actor, ...args) { return serializarActor(actor, () => aprenderInterno(actor, ...args)); }
-async function aprenderInterno(actor, tec, { gratis = false, nota = null, aprobado = false } = {}) {
+async function aprenderInterno(actor, tec, { gratis = false, nota = null, aprobado = false, instantaneo = false } = {}) {
   if (!editarActor(actor) || !tec || conoce(actor, tec.id)) return false;
   if (gratis && !game.user.isGM) return rechazar("Solo el DM puede conceder una técnica gratis.", "warn");
   const conocida = tecnicaPorId(tec.id, actor);
@@ -1203,6 +1238,16 @@ async function aprenderInterno(actor, tec, { gratis = false, nota = null, aproba
     if (r.pideDM && !game.user.isGM) {
       return pedirAlDM(actor, "tecnica", { id: tec.id }, tec.n, `Pide: ${tec.req ?? ""}.`);
     }
+  }
+  if (!gratis && !instantaneo && aprenderPorDias(actor)) {
+    // 3.27: pagar los Trazos es el primer paso; después, días de práctica con una tirada diaria.
+    const e0 = estado(actor), costo0 = Number(tec.trazos) || 0, plan = planEstudio(tec.g);
+    const est = { id: tec.id, g: tec.g, ...plan, progreso: 0, dias: 0, desde: Number(game.time?.worldTime) || 0, trazos: costo0 };
+    const texto0 = `Empieza a estudiar ${tec.n} (${costo0} Trazos)${nota ? ` · ${nota}` : ""}`;
+    await guardar(actor, { gastados: (Number(e0.gastados) || 0) + costo0, estudios: { [tec.id]: est }, historial: hist(e0, texto0),
+      compras: compra(e0, "tecnica", { id: tec.id }, costo0, texto0) });
+    aLaMesa(actor, "✦ Empieza a estudiar", `<p>${escH(actor.name)} paga ${costo0} Trazos y empieza a estudiar <b>${escH(tec.n)}</b>: necesita <b>${plan.exitos} día${plan.exitos === 1 ? "" : "s"} bueno${plan.exitos === 1 ? "" : "s"}</b> de práctica. Cada día del calendario puede tirar Control del Verbe CD ${plan.cd} desde su panel (Aprender). Un 20 natural cuenta doble; un 1 natural le hace perder un día de avance.</p>`, { soloDueno: true });
+    return true;
   }
   const data = datosItem(actor, tec);
   data.sort = (tec.g * 100000) + (itemsTecnica(actor).length * 10);
@@ -1229,6 +1274,8 @@ const opciones = (pares, sel) => pares.map(([k, v]) => `<option value="${escH(k)
 /** Nombre de un linaje: el jugador ve el camuflado; el DM, los dos. */
 const nombreLinaje = l => (!l ? "" : dm() ? `${l.alias ?? l.nombre} · ${l.real ?? l.nombre}` : (l.alias ?? l.nombre));
 const paresLinaje = () => [["ninguno", "Sin linaje"], ...D.linajes.map(l => [l.id, `${nombreLinaje(l)}${l.herencia ? ` · ${l.herencia}` : ""}`])];
+/** 3.27: las sangres de guion (la de la Barrera, la del portador) no salen al azar: se dan por historia. */
+const opcionesLinaje = sel => paresLinaje().map(([k, v]) => `<option value="${escH(k)}" ${String(k) === String(sel) ? "selected" : ""} ${D.linajes.find(l => l.id === k)?.portador ? "data-no-azar" : ""}>${escH(v)}</option>`).join("");
 const ramasLibres = () => D.ramas.filter(r => !RAMAS_LINAJE.includes(r.id)).map(r => [r.id, r.nombre]);
 /** 3.26: al elegir un linaje o un ojo, el DM ve la ventana de esa sangre con el enlace a su diario. */
 function abrirSangre(campo, valor, actor = null) {
@@ -1244,6 +1291,80 @@ function abrirSangre(campo, valor, actor = null) {
 }
 const otraNat = n => { const o = Object.keys(NATS).filter(x => x !== n); return o[Math.floor(Math.random() * o.length)]; };
 
+/* ---------- 3.27: azar del DM en todo lo elegible y el diario de las familias ---------- */
+/**
+ * Pone un 🎲 al lado de cada lista marcada con `data-azar`. Al pulsarlo tira 1dN (N = opciones que entran), lo deja en
+ * el chat solo para el DM y elige ese resultado en la lista (dispara «change», así se ve qué es antes de guardar).
+ * `data-azar="sin-ninguno"` no sortea «Sin linaje», «Sin familia» ni «Sin sangre»; una opción con `data-no-azar` tampoco.
+ */
+export function ponerAzar(raiz) {
+  if (!raiz?.querySelectorAll || !game.user.isGM) return;
+  for (const sel of raiz.querySelectorAll("select[data-azar]")) {
+    if (sel.dataset.azarListo) continue;
+    sel.dataset.azarListo = "1";
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "ecos-azar"; b.textContent = "🎲";
+    b.dataset.tooltip = "Tirar al azar (solo DM): sale en el chat y queda elegido; todavía no se guarda.";
+    b.setAttribute("aria-label", `Tirar ${sel.dataset.azarNombre ?? "al azar"}`);
+    b.addEventListener("click", async ev => {
+      ev.preventDefault(); ev.stopPropagation();
+      const sinNinguno = sel.dataset.azar === "sin-ninguno";
+      const ops = [...sel.options].filter(o => o.value !== "" && !o.disabled && !o.hasAttribute("data-no-azar") && !(sinNinguno && ["ninguno", "ninguna"].includes(o.value)));
+      if (!ops.length) return;
+      const r = await new Roll(`1d${ops.length}`).evaluate();
+      const op = ops[Math.max(0, Math.min(ops.length - 1, r.total - 1))];
+      sel.value = op.value;
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+      await r.toMessage({ flavor: `🎲 Azar del DM · ${escH(sel.dataset.azarNombre ?? "elección")}: <b>${escH(op.text)}</b> (1d${ops.length} = ${r.total})`, speaker: { alias: "Ecos · azar del DM" } },
+        { rollMode: CONST.DICE_ROLL_MODES?.PRIVATE ?? "gmroll" }).catch(() => null);
+    });
+    sel.after(b);
+  }
+}
+const VERSION_FAMILIAS = 1;
+const NOMBRE_DIARIO_FAMILIAS = "Mundo 12 · Las familias del Verbe";
+const paginaFamilia = id => { for (const j of game.journal ?? []) for (const p of j.pages ?? []) if (p.getFlag?.(MOD, "familia") === id) return p; return null; };
+/** El texto de una familia: cómo se hereda y sus artes por nivel, con lo que hace cada una (sacado del catálogo). */
+function familiaHTML(id) {
+  const f = FAMILIAS[id];
+  const tecs = D.tecnicas.filter(t => t.familia === id).sort((a, b) => ((a.obtencion?.nivel ?? a.nivelMin ?? 1) - (b.obtencion?.nivel ?? b.nivelMin ?? 1)) || (a.g - b.g) || a.n.localeCompare(b.n, "es"));
+  const porNivel = new Map();
+  for (const t of tecs) { const n = Number(t.obtencion?.nivel ?? t.nivelMin ?? 1) || 1; if (!porNivel.has(n)) porNivel.set(n, []); porNivel.get(n).push(t); }
+  const filas = [...porNivel.entries()].map(([n, ts]) => `<h3>Desde el nivel ${n}</h3><ul>${ts.map(t => `<li><b>${escH(t.n)}</b> · grado ${t.g} · ${escH(nombreRama(t.rama))} · ${escH(t.usoL ?? t.uso ?? "")}<br>${escH(textoDe(t))}</li>`).join("")}</ul>`).join("");
+  return `<h1>${escH(f.nombre)}</h1><p><em>Solo DM. Arte de familia: solo se tiene por nacimiento. No se gana subiendo una rama ni con un maestro.</em></p>
+    <h2>Cómo se da</h2><ul><li>Al despertar a alguien, en «Familia de nacimiento» (o con 🎲 para tirarla al azar).</li><li>Después, en su panel → DM → «Naturalezas y linaje» → Familia de nacimiento → Guardar.</li><li>Una sola familia por persona. Sin ella, sus artes no aparecen en la tienda del jugador.</li></ul>
+    <h2>Sus artes, nivel a nivel (${tecs.length})</h2>${filas || "<p>Esta familia todavía no tiene artes en el catálogo.</p>"}
+    <p class="ecos-nota">Cada técnica sigue pidiendo además su rama, su rango y su grado, como cualquier otra.</p>`;
+}
+/** Crea o pone al día el diario de las familias (solo el DM principal). */
+export async function asegurarDiarioFamilias() {
+  if (!soyGM() || !D) return null;
+  let j = game.journal.find(x => x.getFlag(MOD, "familias") !== undefined) ?? game.journal.getName?.(NOMBRE_DIARIO_FAMILIAS);
+  const paginas = [{ name: "0 · Cómo se usa", type: "text", flags: { [MOD]: { familia: "_indice" } }, text: { format: 1, content: `<h1>Las familias del Verbe</h1><p><em>Solo DM.</em> Las seis artes de familia se heredan por nacimiento: ${Object.values(FAMILIAS).map(f => `<b>${escH(f.nombre)}</b>`).join(", ")}. Desde 3.27 nadie las aprende sin haber nacido en la familia, aunque suba la rama o tenga un maestro.</p><p>Al elegir una familia en el panel (o al despertar a alguien), el botón «Su diario» trae aquí.</p>` } },
+    ...Object.keys(FAMILIAS).map((id, i) => ({ name: `${i + 1} · ${FAMILIAS[id].nombre}`, type: "text", flags: { [MOD]: { familia: id } }, text: { format: 1, content: familiaHTML(id) } }))];
+  if (!j) {
+    j = await JournalEntry.create({ name: NOMBRE_DIARIO_FAMILIAS, ownership: { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE }, flags: { [MOD]: { familias: VERSION_FAMILIAS } }, pages: paginas });
+    return j;
+  }
+  if (j.getFlag(MOD, "familias") === VERSION_FAMILIAS && j.pages.size >= paginas.length) return j;
+  for (const p of paginas) {
+    const ya = j.pages.find(x => x.getFlag(MOD, "familia") === p.flags[MOD].familia);
+    if (ya) await ya.update({ "text.content": p.text.content });
+    else await j.createEmbeddedDocuments("JournalEntryPage", [p]);
+  }
+  await j.setFlag(MOD, "familias", VERSION_FAMILIAS);
+  return j;
+}
+/** Abre la página de una familia (o la portada). */
+export async function abrirFamilia(id) {
+  if (!game.user.isGM) return;
+  if (!esFamilia(id)) return aviso("Elige una familia en la lista para leer su diario.", "info");
+  let p = paginaFamilia(id);
+  if (!p) { await asegurarDiarioFamilias(); p = paginaFamilia(id); }
+  if (!p) return aviso("No encuentro el diario de las familias.", "warn");
+  return p.parent.sheet.render(true, { pageId: p.id });
+}
+
 export async function dialogoDespertar(actor) {
   if (!game.user.isGM) return;
   const { DialogV2 } = foundry.applications.api;
@@ -1254,14 +1375,16 @@ export async function dialogoDespertar(actor) {
     <p>Despierta a <b>${escH(actor.name)}</b>. Desde ahí su hoja muestra la barra, la habilidad Control y el panel.</p>
     <label>Característica <select name="car">${opciones(Object.entries(CARS), caracteristicaSugerida(actor))}</select></label>
     <label>Etapa del Verbe <select name="etapa">${opciones(ETAPAS.filter(x => x.n > 0).map(x => [x.n, `${x.n} · ${x.nombre}`]), 1)}</select> <small>quién le enseña decide cuánto se abre; luego subes la etapa con «Abrir la siguiente etapa»</small></label>
-    <label>Primera naturaleza <select name="natModo">${opciones(Object.entries(MODOS_NATURALEZA), "secreta")}</select></label>
+    <label>Primera naturaleza <select name="natModo">${opciones(Object.entries(MODOS_NATURALEZA), "dado")}</select></label>
+    <label>Segunda naturaleza <select name="segundaModo">${opciones(Object.entries(MODOS_SEGUNDA), "dado")}</select> <small>si es fija, manda la «naturaleza oculta» de abajo</small></label>
     <label>Cuál <select name="nat"><option value="">Al azar (secreta) o la que elija el jugador</option>${opciones(Object.entries(NATS), "")}</select> <small>solo la ves tú si es secreta</small></label>
-    <label>Naturaleza oculta <select name="oculta">${opciones(Object.entries(NATS), oculta)}</select> <small>sorteada; solo la ves tú</small></label>
-    <label>Linaje <select name="linaje" data-desc="linaje">${opciones(paresLinaje(), portador ? linPortador : "ninguno")}</select></label>
-    <label>Fuerza de la sangre <select name="fuerza" data-desc="fuerza">${opciones(Object.entries(FUERZA).map(([k, v]) => [k, v.nombre]), portador ? "plena" : "ninguna")}</select></label>
+    <label>Naturaleza oculta <select name="oculta" data-azar data-azar-nombre="Naturaleza oculta">${opciones(Object.entries(NATS), oculta)}</select> <small>sorteada; solo la ves tú</small></label>
+    <label>Linaje <select name="linaje" data-desc="linaje" data-azar="sin-ninguno" data-azar-nombre="Linaje">${opcionesLinaje(portador ? linPortador : "ninguno")}</select> <button type="button" data-ecos-leer-linaje title="Leer su diario antes de dárselo"><i class="fa-solid fa-book-open"></i> Su diario</button></label>
+    <label>Familia de nacimiento <select name="familia" data-azar="sin-ninguno" data-azar-nombre="Familia de nacimiento">${opciones([["ninguna", "Sin familia"], ...Object.entries(FAMILIAS).map(([k, f]) => [k, f.nombre])], "ninguna")}</select> <button type="button" data-ecos-leer-familia title="Leer la familia y sus artes"><i class="fa-solid fa-book-open"></i> Su diario</button> <small>artes de familia: solo por nacimiento</small></label>
+    <label>Fuerza de la sangre <select name="fuerza" data-desc="fuerza" data-azar="sin-ninguno" data-azar-nombre="Fuerza de la sangre">${opciones(Object.entries(FUERZA).map(([k, v]) => [k, v.nombre]), portador ? "plena" : "ninguna")}</select></label>
     <label><input type="checkbox" name="linajeVisible" ${portador ? "" : "checked"}> El jugador sabe su linaje <small>(si no, no ve la rama Sangre ni su linaje)</small></label>
     <details><summary>Consultar linajes y fuerzas antes de asignar</summary><div class="ecos-verbe-consulta" role="region" aria-label="Consulta de linajes y fuerzas" tabindex="0">${Object.entries(FUERZA).map(([k])=>describir("fuerza",k,actor)).join("")}${D.linajes.map(l=>describir("linaje",l.id,actor)).join("")}</div></details>
-    <label>Rama principal <select name="principal"><option value="">Que la elija el jugador</option>${opciones(ramasLibres(), "")}</select></label>
+    <label>Rama principal <select name="principal" data-azar data-azar-nombre="Rama principal"><option value="">Que la elija el jugador</option>${opciones(ramasLibres(), "")}</select></label>
     ${actor.type !== "character" ? `<label>Nivel (PNJ) <input type="number" name="nivel" min="1" max="20" value="${nivelDe(actor)}"></label>` : ""}
     <label>Reserva de Verbe <select name="reservaModo">${opciones([["dados", `Tirar dados por nivel (${DADOS_VERBE.map(t => `${t.desde}–${t.hasta}: ${t.formula}`).join(" · ")})`], ["promedio", "Usar el promedio (la tabla fija)"]], "dados")}</select></label>
     <label><input type="checkbox" name="lleno" checked> Empieza con la reserva llena</label>
@@ -1271,7 +1394,13 @@ export async function dialogoDespertar(actor) {
     window: { title: `Despertar · ${actor.name}`, icon: "fa-solid fa-droplet", resizable: true },
     position: { width: 680, height: "auto" },
     content: html,
-    render: (ev, dialogo) => (dialogo?.element ?? ev?.target?.element)?.querySelector?.('select[name="linaje"]')?.addEventListener("change", e => abrirSangre("linaje", e.target.value, actor)),
+    render: (ev, dialogo) => {
+      const el = dialogo?.element ?? ev?.target?.element;
+      el?.querySelector?.('select[name="linaje"]')?.addEventListener("change", e => abrirSangre("linaje", e.target.value, actor));
+      el?.querySelector?.("[data-ecos-leer-linaje]")?.addEventListener("click", ev2 => { ev2.preventDefault(); abrirSangre("linaje", el.querySelector('select[name="linaje"]')?.value, actor); });
+      el?.querySelector?.("[data-ecos-leer-familia]")?.addEventListener("click", ev2 => { ev2.preventDefault(); abrirFamilia(el.querySelector('select[name="familia"]')?.value); });
+      ponerAzar(el);
+    },
     buttons: [{ action: "ok", label: "Despertar", default: true, callback: (ev, btn) => new foundry.applications.ux.FormDataExtended(btn.form).object },
       { action: "no", label: "Cancelar" }],
     rejectClose: false
@@ -1290,8 +1419,9 @@ export async function despertar(actor, o) {
   const etapa = Math.max(1, Math.min(ETAPA_MAX, Math.trunc(Number(o.etapa)) || 1));
   const e = {
     despierto: true, car: o.car || caracteristicaSugerida(actor), nats: natModo === "visible" && nat ? [nat] : [], oc: revolver(oculta, actor.id), descubierta: false,
-    natModo, oc1: natModo === "secreta" ? revolver(nat, actor.id) : null, etapa, maestros: [],
+    natModo, oc1: natModo === "secreta" ? revolver(nat, actor.id) : null, etapa, maestros: [], segundaModo: o.segundaModo === "fija" ? "fija" : "dado", estudios: {},
     dadosVerbe: o.reservaModo === "promedio" ? { modo: "promedio", version: 1 } : { modo: "dados", fijoHasta: 0, tiradas: {}, version: 1 },
+    tradiciones: esFamilia(o.familia) ? [o.familia] : [], familiaNacimiento: esFamilia(o.familia) ? o.familia : null,
     probadas: [], linaje: o.linaje || "ninguno", fuerza: o.fuerza || "ninguna", linajeVisible: !!o.linajeVisible, principal: o.principal || null,
     segunda: null, maestria: null, escuela: null, rangos: {}, ordenRamas: [], abiertas: [], afinidad: {}, trazosExtra: 0, gastados: 0,
     dotes: [...(D.innatos ?? [])], natsExtra: [], combos: [], miradas: {}, trasplantes: [], pactos: [], cerrojos: 0, cultivos: {}, infusiones: {}, propias: [],
@@ -1342,7 +1472,7 @@ async function asegurarRasgos(actor) {
   }
   await asegurarAEDotes(actor);
   const lin = linajeDe(actor);
-  const html = `<p>El Verbe corre por ti. Tu reserva sube con el nivel y se recupera poco a poco: la mitad en un Descanso Largo en el Santuario, hasta un cuarto en una noche a la intemperie. Las noches, Respiro y Aliento comparten un presupuesto limitado entre largos.</p>
+  const html = `<p>El Verbe corre por ti. Tu reserva sube con el nivel y con tu Constitución, y se recupera despacio: tarda varios días en llenarse (un cuarto más tu Constitución por Descanso Largo en el Santuario, un octavo en una noche a la intemperie). Las noches, Respiro y Aliento comparten un presupuesto limitado entre largos.</p>
     <p><b>Característica:</b> ${CARS[e.car]} · <b>Naturaleza:</b> ${[...natsDe(actor)].map(n => NATS[n] ?? n).join(", ") || "por elegir"} · <b>Rama principal:</b> ${e.principal ? nombreRama(e.principal) : "por elegir"}${e.linajeVisible && lin ? ` · <b>Linaje:</b> ${escH(lin.alias ?? lin.nombre)} (${FUERZA[e.fuerza]?.nombre})` : ""}</p>
     <p>Las técnicas están en la pestaña de conjuros, en «Técnicas del Verbe». Lo demás, en el panel (botón «Verbe» en la cabecera de la hoja).</p>`;
   const it = actor.items.find(i => i.getFlag(MOD, F)?.rasgo);
@@ -1537,7 +1667,7 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
     if (replica && (grado > capacidadReplicas(actor) || meta.dividirVerbe || meta.ritual || meta.liberarReserva || meta.prestamo || e.accionReplicaUsada || !efectoV(actor,"replicas") || Object.values(item.system.activities ?? {}).some(a=>a.type === "utility"))) { avisoUso("Las réplicas comparten una acción ofensiva, respetan su límite de grado y no duplican poderes o recursos especiales."); return false; }
     const valor = Number(replica ? e.reservaReplicas : e.valor) || 0;
     const reaccion = item.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R";
-    const turno=consumosChoque.has(usageConfig)?{ok:true}:permisoTurno(grado,{combate:game.combat?.started?(game.combat.id??"combate"):null,estado:e.turnoTecnicas,reaccion,replica});if(!turno.ok){avisoUso(turno.motivo);return false;}
+    const turno=consumosChoque.has(usageConfig)?{ok:true}:permisoTurno(grado,{combate:game.combat?.started?(game.combat.id??"combate"):null,estado:e.turnoTecnicas,reaccion,maximo:maxAccionesVerbe(actor),adicional:gastoVerbe(tecnicaPorId(meta.id,actor)?.t??item.system?.activation?.type)==="adicional",replica});if(!turno.ok){avisoUso(turno.motivo);return false;}
     const permiso = evaluarGasto({ valor, costo, limite: replica ? 0 : limiteNegativo(actor), grado, gradoMaximo: replica ? Math.min(capacidadReplicas(actor),gradoUsable(actor,meta)) : gradoUsable(actor, meta),
       agotamiento: sistema.agotamiento(actor), incapacitado: noPuedeActuar(actor),
       reaccion, puedeReaccionar: reaccionDisponible(actor), altoGastado: !!e.usosAltos?.[meta.id] });
@@ -1588,13 +1718,118 @@ async function despuesDeUsar(activity, usageConfig) {
   const meta = item.getFlag(MOD, F);
   if (v.fuerte?.extra) aLaMesa(actor, "Contra alguien más fuerte", `<p>${escH(actor.name)} paga <b>${v.fuerte.extra} Verbe más</b>: ${escH(v.fuerte.quien ?? "su objetivo")} es más fuerte que su grado.</p>`, { soloDueno: true });
   if (!v.replica && v.despues < 0) await sobreesfuerzo(actor, v.grado, v.despues);
+  // 3.27: cada uso en combate dice qué gastó de la economía del Verbe, aparte de la de D&D.
+  if (!v.replica && enCombate(actor)) {
+    const reac = item.system?.activation?.type === "reaction" || tecnicaPorId(meta.id, actor)?.t === "R";
+    const tipo = reac ? "reaccion" : gastoVerbe(tecnicaPorId(meta.id, actor)?.t ?? item.system?.activation?.type);
+    const t = turnoVerbe(actor);
+    const nombre = { accion: "acción Verbe", adicional: "acción adicional Verbe", reaccion: "reacción Verbe" }[tipo];
+    const dnd = { accion: "Su Acción de D&D sigue libre", adicional: "Su Acción adicional de D&D sigue libre", reaccion: "Su Reacción de D&D sigue libre" }[tipo];
+    if (nombre) aLaMesa(actor, nombre.charAt(0).toUpperCase() + nombre.slice(1),
+      `<p class="ecos-gasto-verbe">✦ Se gastó la <b>${nombre}</b> de ${escH(actor.name)}${tipo === "accion" && t.max > 1 ? ` (${t.usadas}/${t.max} este turno)` : ""}. ${dnd}.</p>`);
+  }
   await efectosShinobi(actor,item,v);
+  if (meta.golpe327 && !v.replica) await golpeConArma(actor, item, meta, v).catch(err => console.error(`${MOD} | golpe con arma`, err));
   if (clonDe(meta)) await pedirClones(actor, item, meta);
   else explicarUso(actor, item, meta).catch(() => null);
   // Estados de poder que se ponen al usar su técnica.
   if (meta.id === "sangre-despertar") await ponerDespertar(actor);
   else if (meta.rama === "mirada" && /-abrir$/.test(meta.id)) await ponerOjo(actor, meta.id.split("-")[1]);
 }
+
+/* ---------- 3.27: echar un vistazo a los grados de más arriba ---------- */
+/**
+ * Todas las técnicas de una rama que se ganan subiéndola (sin las de familia, linaje, sangre, Mirada ni las del DM),
+ * por grado, con lo que pide cada una. Así el jugador sabe qué le espera antes de gastar Trazos en un rango.
+ */
+export async function vistazoRama(actor, rama) {
+  const r = D.ramas.find(x => x.id === rama);
+  if (!r) return;
+  COMO_JUGADOR = game.user.isGM; // se ve como lo vería el jugador
+  let html;
+  try {
+    const tecs = D.tecnicas.filter(t => t.rama === rama && !t.retirada && !t.soloDM && !t.familia && visibleJugador(t) && naturalezaVisible(actor, t) && !t.item?.flags?.[MOD]?.[F]?.acceso?.tradicion);
+    const porGrado = new Map();
+    for (const t of tecs) { if (!porGrado.has(t.g)) porGrado.set(t.g, []); porGrado.get(t.g).push(t); }
+    const rg = rangoDe(actor, rama), alcanza = Math.min(gradoMax(actor), rangoGrado(rg));
+    const rangoPara = g => D.rangos.find(x => x.grado >= g)?.nombre ?? "—";
+    html = `<div class="ecos-vistazo"><p>Rama <b>${escH(r.nombre)}</b> · tu rango: <b>${nombreRango(rg)}</b> · hoy llegas hasta <b>grado ${alcanza}</b>. Abajo, todas sus técnicas, también las que todavía no alcanzas. No incluye artes de familia ni de linaje.</p>
+      ${[...porGrado.entries()].sort((a, b) => a[0] - b[0]).map(([g, ts]) => `<details ${g === alcanza + 1 ? "open" : ""}><summary><b>Grado ${g}</b> · pide nivel ${nivelParaGrado(g)} y rango ${escH(rangoPara(g))} ${g <= alcanza ? "· <i>ya a tu alcance</i>" : ""} (${ts.length})</summary>
+        <ul>${ts.sort((x, y) => x.n.localeCompare(y.n, "es")).map(t => `<li class="${conoce(actor, t.id) ? "sabe" : ""}"><b>${escH(t.n)}</b>${conoce(actor, t.id) ? " ✓" : ""} · ${escH(TIEMPO_L[t.t] ?? t.t)}${t.alc ? ` · ${escH(alcanceL(t.alc, t.area))}` : ""}${t.nat && NATS[t.nat] ? ` · ${escH(NATS[t.nat])}` : ""} · ${t.trazos} Trazo${t.trazos === 1 ? "" : "s"}<br><small>${escH(avanceTexto(textoDe(t)))}</small></li>`).join("")}</ul></details>`).join("")}</div>`;
+  } finally { COMO_JUGADOR = false; }
+  return foundry.applications.api.DialogV2.wait({ window: { title: `Vistazo · ${r.nombre}`, icon: "fa-solid fa-binoculars", resizable: true }, position: { width: 680, height: 640 },
+    content: html, buttons: [{ action: "cerrar", label: "Cerrar", default: true }], rejectClose: false });
+}
+
+/* ---------- 3.27: técnicas de golpe ---------- */
+const NOMBRE_ARMA = { cac: "un arma cuerpo a cuerpo o un golpe sin armas", cacLigera: "un golpe cuerpo a cuerpo o un arma ligera", arma: "un arma", arrojadiza: "un arma arrojadiza", sinArmas: "un golpe sin armas" };
+/** Qué es cada arma de la hoja: cuerpo a cuerpo, a distancia, arrojadiza, ligera, sin armas. */
+function rasgosArma(i) {
+  const tipo = String(i.system?.type?.value ?? ""), props = new Set(Array.from(i.system?.properties ?? []));
+  const unarmed = tipo === "natural" || i.system?.identifier === "unarmed-strike" || i.system?.identifier === "ecos-golpe-sin-armas" || /sin armas|unarmed/i.test(i.name);
+  return { melee: /M$/.test(tipo) || tipo === "improv" || unarmed, ranged: /R$/.test(tipo), thrown: props.has("thr"), light: props.has("lgt"), unarmed };
+}
+/** Las armas de la hoja que sirven para el golpe, las equipadas primero. */
+const armasPara = (actor, req) => actor.items.filter(i => i.type === "weapon" && armaSirve(req, rasgosArma(i)))
+  .sort((a, b) => (Number(!!b.system?.equipped) - Number(!!a.system?.equipped)) || a.name.localeCompare(b.name, "es"));
+/** Elige con qué atacar (ventana del dueño). Devuelve el objeto o null. */
+async function elegirArma(actor, req, titulo) {
+  const armas = armasPara(actor, req);
+  if (!armas.length) { avisoUso(`${actor.name} no tiene ${NOMBRE_ARMA[req] ?? "un arma"} para este golpe. Ponlo en la hoja y vuelve a usarlo.`); return null; }
+  if (armas.length === 1) return armas[0];
+  const r = await foundry.applications.api.DialogV2.wait({ window: { title: `¿Con qué atacas? · ${titulo}`, icon: "fa-solid fa-hand-fist" }, position: { width: 420 },
+    content: `<div class="ecos-verbe-form"><p>Elige ${escH(NOMBRE_ARMA[req] ?? "un arma")}. El ataque usa su característica y su bonificador, y suma lo de la técnica.</p>
+      <select name="arma">${armas.map(i => `<option value="${i.id}">${escH(i.name)}${i.system?.equipped ? "" : " (no equipada)"}</option>`).join("")}</select></div>`,
+    buttons: [{ action: "ok", label: "Atacar", icon: "fa-solid fa-dice-d20", default: true, callback: (ev, b) => b.form.elements.arma.value }, { action: "no", label: "Cancelar" }], rejectClose: false });
+  return r && r !== "no" ? actor.items.get(r) : null;
+}
+/**
+ * Una técnica de golpe, al usarse: pone en la hoja el bono de daño (el próximo golpe, o mientras dure) y, si la técnica
+ * ataca con un arma, pide cuál y tira ese ataque con su característica. El bono del próximo golpe se gasta al tirar el daño.
+ */
+async function golpeConArma(actor, item, meta, v) {
+  const g = meta.golpe327;
+  if (!g || !actor.isOwner) return;
+  const dados = g.yaTiene ? null : dadosGolpe(g, { nivel: nivelDe(actor), gradosExtra: (Number(v?.grado) || meta.g) - meta.g, extra: dadosExtra(actor, meta) });
+  const claves = ["cac", "sinArmas", "cacLigera"].includes(g.arma) ? ["mwak"] : ["mwak", "rwak"];
+  const dur = item.system?.duration ?? {};
+  const segundos = g.turno ? 6 : Math.max(6, (Number(dur.value) || 1) * ({ round: 6, turn: 6, minute: 60, hour: 3600 }[dur.units] ?? 60));
+  if ((dados || g.nota) && !g.yaTiene) {
+    await actor.createEmbeddedDocuments("ActiveEffect", [{
+      name: `${g.modo === "durante" ? "Golpes" : "Próximo golpe"} · ${item.name}`, img: item.img, origin: item.uuid, transfer: false,
+      changes: dados ? claves.map(k => ({ key: `system.bonuses.${k}.damage`, mode: 2, value: `+ ${dados.formula}` })) : [],
+      duration: { seconds: segundos, rounds: Math.ceil(segundos / 6), startTime: game.time?.worldTime ?? 0, startRound: game.combat?.round ?? null, startTurn: game.combat?.turn ?? null },
+      description: `<p>${dados ? `Tus golpes con ${escH(NOMBRE_ARMA[g.arma])} suman ${dados.n}d${dados.d} de ${escH(DANO_ES[dados.tipo] ?? dados.tipo)}. ` : ""}${g.modo === "durante" ? "Mientras dure la técnica." : `Se gasta al tirar el daño del próximo golpe${g.modo === "ataque" && g.veces > 1 ? ` (${g.veces} golpes)` : ""}.`}${g.nota ? ` Además: ${escH(g.nota)}` : ""}</p>`,
+      flags: { [MOD]: { [F]: { golpe327: { tec: meta.id, nombre: item.name, nota: g.nota, arma: g.arma, consumir: g.modo !== "durante", restantes: g.modo === "ataque" ? g.veces : 1 } } } }
+    }]);
+  }
+  if (g.modo !== "ataque") {
+    aLaMesa(actor, `✦ ${escH(item.name)}`, `<p>${g.modo === "durante" ? "Mientras dure, los golpes" : "El próximo golpe"} de ${escH(actor.name)} con ${escH(NOMBRE_ARMA[g.arma])}${dados ? ` suma <b>${dados.n}d${dados.d}</b> de ${escH(DANO_ES[dados.tipo] ?? dados.tipo)}` : ""}${g.nota ? `; además, ${escH(g.nota)}` : ""}.${g.modo === "durante" ? "" : " Se gasta al tirar el daño."}</p>`, { soloDueno: false });
+    return;
+  }
+  const arma = await elegirArma(actor, g.arma, item.name);
+  if (!arma) return;
+  for (let i = 0; i < (Number(g.veces) || 1); i++) {
+    const act = (arma.system?.activities?.contents ?? [...(arma.system?.activities?.values?.() ?? [])]).find(a => a.type === "attack");
+    if (!act) { avisoUso(`${arma.name} no tiene una actividad de ataque.`); break; }
+    await act.use({ ecosGolpe: meta.id }, {}, {});
+  }
+}
+/** Al tirar el daño de un ataque con arma: se gasta el bono del próximo golpe y se recuerda lo que además hace. */
+async function gastarProximoGolpe(activity) {
+  const actor = activity?.actor;
+  if (!actor?.isOwner || activity?.type !== "attack" || activity.item?.type !== "weapon") return;
+  const r = rasgosArma(activity.item);
+  for (const ef of actor.effects.filter(x => x.getFlag?.(MOD, F)?.golpe327?.consumir || (x.getFlag?.(MOD, F)?.golpeSiguiente && x.getFlag?.(MOD, F)?.consumir))) {
+    const gl = ef.getFlag(MOD, F).golpe327 ?? { nombre: ef.name, arma: "arma", restantes: 1, nota: "" };
+    if (!armaSirve(gl.arma, r)) continue;
+    const quedan = (Number(gl.restantes) || 1) - 1;
+    if (quedan > 0) await ef.setFlag(MOD, F, { ...ef.getFlag(MOD, F), golpe327: { ...gl, restantes: quedan } });
+    else await ef.delete();
+    if (gl.nota) aLaMesa(actor, `✦ ${escH(gl.nombre)}`, `<p>El golpe de ${escH(actor.name)} con ${escH(activity.item.name)}: ${escH(gl.nota)}</p>`);
+  }
+}
+Hooks.on("dnd5e.rollDamageV2", (rolls, datos) => { if (activo()) gastarProximoGolpe(datos?.subject).catch(err => console.error(`${MOD} | próximo golpe`, err)); });
 
 /** Gastar en negativo: CON (CD 10 + grado) o 1 Agotamiento; y la Barrera lo siente si su sangre la toca. */
 async function sobreesfuerzo(actor, grado, despues) {
@@ -1668,8 +1903,11 @@ export function antesDelDano(config) {
 
 /** La recuperación larga es la referencia común para Respiro y Aliento. */
 export function recuperacionLargaVerbe(actor) {
-  const frac = efectosDotes(actor).reduce((t, ef) => Math.max(t, Number(ef.rec?.largo) || 0), 0.5);
-  const base = Math.floor(maxVerbe(actor) * frac) + (tieneDote(actor, "aliento-soldado") ? competencia(actor) : 0)+sumaEf(actor,ef=>ef.recLargoPlano);
+  // 3.27: la reserva tarda varios días en llenarse. Base: un cuarto de la reserva más la Constitución (su modificador por
+  // cada 4 niveles). Las dotes que antes subían «la mitad» a otra fracción suben en la misma proporción desde el cuarto.
+  const fracDote = efectosDotes(actor).reduce((t, ef) => Math.max(t, Number(ef.rec?.largo) || 0), 0.5);
+  const frac = 0.25 * (fracDote / 0.5);
+  const base = recuperacionLargaCon(maxVerbe(actor), modDe(actor, "con"), nivelDe(actor), frac) + (tieneDote(actor, "aliento-soldado") ? competencia(actor) : 0)+sumaEf(actor,ef=>ef.recLargoPlano);
   return Math.floor(base * (Number(herenciaDe(actor)?.recMult) || 1));
 }
 export const presupuestoBreveVerbe = (actor, usado = 0, cantidad = Infinity) => presupuestoCorto(Math.min(maxVerbe(actor), recuperacionLargaVerbe(actor)), usado, cantidad, tieneDote(actor, "sueno-reparador") ? 2 / 3 : 0.5);
@@ -1697,7 +1935,7 @@ async function alDescansarInterno(actor, result, config) {
       return;
     }
     // La noche a la intemperie conserva su cuarto de reserva, dentro del mismo presupuesto breve.
-    const frac = efectosDotes(actor).reduce((t, ef) => Math.max(t, Number(ef.rec?.intemperie) || 0), 0.25);
+    const frac = efectosDotes(actor).reduce((t, ef) => Math.max(t, Number(ef.rec?.intemperie) || 0), 0.25) / 2; // 3.27: la mitad que antes
     const rec = largo ? recuperacionLargaVerbe(actor) : Math.floor(max * frac * (Number(herenciaDe(actor)?.recMult) || 1));
     const breve = !largo ? recuperacionBreve(actor, rec) : null;
     const cambios = largo ? cambiosRecuperacion(actor, rec) : { valor: breve.valor, recResto: breve.recResto, recCortos: breve.recCortos };
@@ -2006,6 +2244,10 @@ async function resolverEntreno(actor, total) {
     cambios.natsExtra = (e.natsExtra ?? []).map(n => (n === en.de ? en.a : n));
     if (ocultaDe(actor) === en.de && e.descubierta) cambios.oc = revolver(en.a, actor.id);
     texto = `Cambia su naturaleza: ${NATS[en.de]} por ${NATS[en.a]}`;
+  } else if ((en.tipo === "primera" && modoNaturaleza(e) === "dado") || (en.tipo === "segunda" && modoSegunda(e) === "dado")) {
+    // 3.27: la naturaleza la decide un dado que tira el jugador.
+    cambios.tirarNat = en.tipo;
+    texto = `Descubre ${DESCUBRIR[en.tipo].nombre}: la tira con un dado`;
   } else if (modoNaturaleza(e) === "elige") {
     cambios.elegirNat = en.tipo;
     texto = `Descubre ${DESCUBRIR[en.tipo].nombre}: la elige`;
@@ -2021,7 +2263,7 @@ async function resolverEntreno(actor, total) {
   cambios.historial = hist(e, `${texto} (${total} contra CD ${en.cd}${en.trazos ? `, ${en.trazos} Trazos` : ""})`);
   if (en.trazos) cambios.compras = compra(e, "naturaleza", { tipo: en.tipo }, en.trazos, texto);
   await guardar(actor, cambios);
-  aLaMesa(actor, "✦ El Verbe responde", `<p>${escH(actor.name)} saca ${total} contra CD ${en.cd}. ${cambios.elegirNat ? "Su Verbe se abre a un elemento: <b>elígelo en su panel</b> (Mejorar → Tus elementos)." : escH(texto) + "."}</p>`, { soloDueno: true });
+  aLaMesa(actor, "✦ El Verbe responde", `<p>${escH(actor.name)} saca ${total} contra CD ${en.cd}. ${cambios.tirarNat ? "Su Verbe se abre a un elemento: <b>tira tu dado de naturaleza en tu panel</b> (Inicio)." : cambios.elegirNat ? "Su Verbe se abre a un elemento: <b>elígelo en su panel</b> (Mejorar → Tus elementos)." : escH(texto) + "."}</p>`, { soloDueno: true });
   await asegurarRasgos(actor);
   await refrescar(actor);
   return true;
@@ -2036,6 +2278,83 @@ export function pruebaEntreno(actor) { return serializarActor(actor, async () =>
   if (!roll) return false;
   return resolverEntreno(actor, roll.total);
 }); }
+/**
+ * 3.27: el jugador tira su naturaleza. Un dado con tantas caras como naturalezas le quedan (d5 la primera, d4 la
+ * segunda); el chat muestra qué número es cada una. Solo vale si el entrenamiento lo dejó pendiente (o lo da el DM).
+ */
+export function tirarNaturaleza(actor) { return serializarActor(actor, async () => {
+  const e = estado(actor), tipo = e?.tirarNat;
+  if (!tipo) return rechazar("No hay ninguna naturaleza pendiente de tirar.", "warn");
+  const lista = Object.keys(NATS).filter(n => !natsDe(actor).has(n));
+  if (!lista.length) return false;
+  const r = await new Roll(`1d${lista.length}`).evaluate();
+  const nat = naturalezaPorDado(lista, r.total);
+  await r.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<b>${tipo === "primera" ? "Naturaleza del Verbe" : "Segunda naturaleza"}</b> · 1d${lista.length}: ${lista.map((n, i) => `${i + 1} ${NATS[n]}`).join(" · ")} → <b>${NATS[nat]}</b>` });
+  const cambios = { tirarNat: null };
+  if (tipo === "primera") {
+    cambios.nats = [nat];
+    if (ocultaDe(actor) === nat) cambios.oc = revolver(otraNat(nat), actor.id);
+  } else { cambios.oc = revolver(nat, actor.id); cambios.descubierta = true; }
+  cambios.historial = hist(e, `Tira su ${tipo === "primera" ? "naturaleza" : "segunda naturaleza"}: ${NATS[nat]} (1d${lista.length} = ${r.total})`);
+  await guardar(actor, cambios);
+  aLaMesa(actor, "✦ El Verbe responde", `<p>El Verbe de ${escH(actor.name)} se abre a <b>${NATS[nat]}</b>.</p>`, { soloDueno: true });
+  await asegurarRasgos(actor);
+  await refrescar(actor);
+  return nat;
+}); }
+/** El DM deja pendiente la tirada de naturaleza (sin entrenamiento), o la quita. */
+export async function pedirTiradaNaturaleza(actor, tipo = null) {
+  if (!game.user.isGM || !despierto(actor)) return false;
+  const t = tipo ?? (natsDe(actor).size ? "segunda" : "primera");
+  await guardar(actor, { tirarNat: t });
+  aLaMesa(actor, "✦ Tu naturaleza", `<p>${escH(actor.name)}: tira tu ${t === "primera" ? "naturaleza" : "segunda naturaleza"} en tu panel del Verbe (Inicio).</p>`, { soloDueno: true });
+  refrescarPanel(actor.id);
+  return true;
+}
+
+/* ---------- 3.27: aprender por días ---------- */
+/** Ajuste del mundo: ¿se aprende por días? (si no, al pagar como antes). Y por personaje, el DM puede ponerlo «al instante». */
+const aprenderPorDias = actor => ajuste("verbeAprenderDias", true) && !estado(actor)?.aprenderAlInstante;
+export const estudioDe = (actor, id) => estado(actor)?.estudios?.[id] ?? null;
+/** Termina un estudio: la técnica pasa a «Mis técnicas» (los Trazos ya se pagaron al empezar). */
+async function terminarEstudio(actor, id, nota = "") {
+  const e = estado(actor), est = e.estudios?.[id];
+  const tec = tecnicaPorId(id, actor);
+  if (!est || !tec) return false;
+  const data = datosItem(actor, tec);
+  data.sort = (tec.g * 100000) + (itemsTecnica(actor).length * 10);
+  await actor.createEmbeddedDocuments("Item", [data], { keepEmbeddedIds: true });
+  await actor.update(Object.fromEntries([quitar(`flags.${MOD}.${F}.estudios.${id}`)]));
+  await guardar(actor, { historial: hist(estado(actor), `Termina de aprender ${tec.n}${nota ? ` · ${nota}` : ""}`) });
+  aLaMesa(actor, "✦ Técnica aprendida", `<p>${escH(actor.name)} ya domina <b>${escH(tec.n)}</b>${nota ? ` (${escH(nota)})` : ""}. Está en «Mis técnicas».</p>`, { soloDueno: true });
+  refrescarPanel(actor.id);
+  return true;
+}
+/** La práctica del día: Control del Verbe contra la CD del estudio. Una por técnica y por día del mundo. */
+export function practicarEstudio(actor, id) { return serializarActor(actor, async () => {
+  const est = estudioDe(actor, id), tec = tecnicaPorId(id, actor);
+  if (!est || !tec) return rechazar("No está estudiando esa técnica.", "warn");
+  const dia = diaMundo();
+  if (est.ultimoDia === dia) return rechazar("Hoy ya practicó esta técnica: mañana (en el calendario del mundo) puede seguir.", "warn");
+  const res = await sistema.tirarHabilidad(actor, "cvb", { target: est.cd }, {}, { data: { flavor: `Practicar ${tec.n} · Control del Verbe (CD ${est.cd}) · día ${(Number(est.dias) || 0) + 1}` } });
+  const roll = Array.isArray(res) ? res[0] : res;
+  if (!roll) return false;
+  const natural = Number(roll.dice?.[0]?.results?.find(x => x.active)?.result ?? roll.d20?.total) || null;
+  const r = practicar(est, { total: roll.total, natural, dia });
+  if (!r.ok) return rechazar(r.motivo, "warn");
+  await guardar(actor, { estudios: { [id]: r.estudio } });
+  const cuenta = `${r.progreso}/${est.exitos} días buenos`;
+  aLaMesa(actor, `Práctica · ${escH(tec.n)}`, `<p>${escH(actor.name)} saca <b>${roll.total}</b> contra CD ${est.cd}${natural === 20 ? " (20 natural: cuenta doble)" : natural === 1 ? " (1 natural: pierde un día de avance)" : ""}. ${r.exito ? "El día cuenta." : "Hoy no sale."} Lleva <b>${cuenta}</b>.</p>`, { soloDueno: true });
+  if (r.terminado) await terminarEstudio(actor, id);
+  else refrescarPanel(actor.id);
+  return r;
+}); }
+/** El DM la da por aprendida ya (creación de personajes de más nivel, o un maestro que acelera). */
+export function aprenderYa(actor, id) {
+  if (!game.user.isGM) return Promise.resolve(false);
+  return serializarActor(actor, () => terminarEstudio(actor, id, "el DM la da por aprendida"));
+}
+
 /** Abre un diario del mundo (y una de sus páginas) por su nombre; avisa si no existe en este mundo. */
 function abrirDiarioPorNombre(nombre, pagina = null) {
   const j = game.journal?.getName?.(nombre) ?? game.journal?.find?.(x => x.name === nombre);
@@ -2247,7 +2566,7 @@ export function tecnicaNueva(actor, f) {
     },
     flags: { [MOD]: { [F]: meta } }
   };
-  const alc = f.alcance === "yo" ? "yo" : f.alcance === "toque" ? "toque" : `${f.alcance} m`;
+  const alc = f.alcance === "yo" ? "yo" : f.alcance === "toque" ? "toque" : aPiesTexto(`${f.alcance} m`);
   const uso = [f.tiempo, alc, tplTipo ? `${f.areaTipo} ${f.areaTam} m` : null, f.duracion].filter(Boolean).join(" · ");
   return { id, n: item.name, rama: f.rama, sec, g, nat, rara: combo, req: null, incl: false, grupo: null, trazos: trazosN, costo: costoGrado(g),
     t: f.tiempo, alc, dur: `${f.conc ? "C " : ""}${f.duracion || "inst."}`, comp: [f.voz ? "V" : "", f.gestos ? "G" : ""].filter(Boolean).join(""), area: tplTipo ? `${f.areaTipo} ${f.areaTam} m` : null,
@@ -2274,7 +2593,7 @@ async function crearAprobadaInterno(actor, d) {
     else await game.settings.set(MOD, AJ.extra, extraMundo().filter(x => x.id !== tec.id));
   };
   try {
-    const aprendida = await aprender(actor, tec, { nota: tec.modo ?? "creada", aprobado: true });
+    const aprendida = await aprender(actor, tec, { nota: tec.modo ?? "creada", aprobado: true, instantaneo: true });
     if (aprendida !== true) { await retirar(); return false; }
   } catch (error) {
     await retirar();
@@ -2308,7 +2627,7 @@ export async function dialogoCrear(actor, { base = null, modo = null } = {}) {
     <label>Naturaleza <select name="nat"><option value="">Ninguna</option>${opciones([...nats, ...combos], tb?.nat ?? "")}</select></label>
     <label>Grado <select name="grado">${opciones(gs.map(g => [g, `Grado ${g} · ${costoGrado(g)} Verbe`]), gs[0])}</select></label>
     <label>Tiempo <select name="tiempo">${opciones([["A", "Acción"], ["AA", "Acción adicional"], ["R", "Reacción"], ["1 min", "1 minuto"]], "A")}</select></label>
-    <label>Alcance <select name="alcance">${opciones([["yo", "Yo"], ["toque", "Toque"], ["9", "9 m"], ["18", "18 m"], ["36", "36 m"], ["45", "45 m"], ["90", "90 m"], ["150", "150 m"], ["1500", "1,5 km"]], "18")}</select></label>
+    <label>Alcance <select name="alcance">${opciones([["yo", "Yo"], ["toque", "Toque"], ["9", "30 ft"], ["18", "60 ft"], ["36", "120 ft"], ["45", "150 ft"], ["90", "300 ft"], ["150", "500 ft"], ["1500", "1,5 km"]], "18")}</select></label>
     <label>Área <select name="areaTipo">${opciones([["ninguna", "Un blanco"], ["cono", "Cono"], ["esfera", "Esfera"], ["cubo", "Cubo"], ["línea", "Línea"], ["cilindro", "Cilindro"]], "ninguna")}</select> <input type="number" name="areaTam" step="1.5" min="1.5" value="4.5"> m</label>
     <label>Duración <select name="duracion">${opciones([["inst.", "Instantánea"], ["1 asalto", "1 asalto"], ["1 min", "1 minuto"], ["10 min", "10 minutos"], ["1 h", "1 hora"]], "inst.")}</select> <input type="checkbox" name="conc"> Concentración</label>
     <label><input type="checkbox" name="persistente"> El daño se repite durante la duración <small>(reduce el daño propuesto; la descripción debe indicar cuándo se repite)</small></label>
@@ -2556,7 +2875,7 @@ export class EditorCatalogoVerbe extends foundry.applications.api.ApplicationV2 
       <fieldset><legend>Identidad y aprendizaje</legend>${input("nombre","Nombre","text",'maxlength="100"')}${select("rama","Especialidad",D.ramas.map(r=>[r.id,r.nombre]))}${select("nat","Elemento",[["","Sin elemento"],...Object.keys(NATS).map(n=>[n,nombreNat(n)]),...Object.keys(D.combos).map(n=>[n,nombreNat(n)])])}${input("grado","Grado (0–11)","number",'min="0" max="11"')}${input("trazos","Trazos para aprender","number",'min="0" max="100"')}${input("nivelMin","Nivel mínimo adicional","number",'min="1" max="20"')}${select("previa","Técnica previa",[["","Ninguna"],...[...D.tecnicas,...extraMundo()].filter(t=>t.id!==this.idTecnica).map(t=>[t.id,t.n])])}${input("req","Requisito narrativo o maestro","text",'maxlength="500"')}</fieldset>
       <fieldset><legend>Uso y recursos</legend>${select("tiempo","Tiempo",[["A","Acción"],["AA","Acción adicional"],["R","Reacción"],["1 min","1 minuto"],["10 min","10 minutos"]])}${input("disparador","Disparador (obligatorio en reacciones)","text",'maxlength="500"')}${input("costoBase","Verbe base (vacío: tabla por grado)","number",'min="0" max="100"')}${select("usa","Característica",[["verbe","La del Verbe"],["fisica","Mejor de Fuerza/Destreza"],...Object.entries(CARS)])}${select("tipoActividad","Actividad",[["normal","Daño, ataque, salvación o utilidad"],["healing","Curación"]])}${select("tirada","Resolución",[["ninguna","Ninguna"],["ataque","Ataque"],...Object.keys(SALV).map(k=>[k,`Salvación de ${k}`])])}${check("mitad","Mitad del daño si supera la salvación")}</fieldset>
       <fieldset><legend>Daño, curación y escalado</legend>${input("dadosN","Cantidad de dados (0: utilidad)","number",'min="0" max="100"')}${select("dadosD","Dado",[4,6,8,10,12].map(n=>[n,`d${n}`]))}${input("bono","Bonificación fija","number",'min="-20" max="100"')}${select("tipoDano","Tipo de daño",Object.keys(DANO).map(k=>[k,k]))}${input("escaladoDados","Dados por grado adicional (0: sin dados extra)","number",'min="0" max="10"')}${check("persistente","Daño repetido: resolver disparadores en mesa")}</fieldset>
-      <fieldset><legend>Alcance, blancos y duración</legend>${input("alcance","Alcance: yo, toque o metros")}${select("areaTipo","Área",["ninguna","cono","esfera","cubo","línea","cilindro"].map(k=>[k,k]))}${input("areaTam","Tamaño de área (m)","number",'min="0.1" max="180" step="0.1"')}${input("blancos","Blancos sin área","number",'min="1" max="100"')}${select("duracion","Duración",Object.keys(DUR).map(k=>[k,k]))}${input("duracionValor","Duración personalizada (vacío: la anterior)","number",'min="1" max="1440"')}${select("duracionUnidad","Unidad personalizada",[["round","Asaltos"],["minute","Minutos"],["hour","Horas"]])}${check("conc","Requiere Concentración")}</fieldset>
+      <fieldset><legend>Alcance, blancos y duración</legend>${input("alcance","Alcance: yo, toque o metros (1,5 m = 5 ft en la mesa)")}${select("areaTipo","Área",["ninguna","cono","esfera","cubo","línea","cilindro"].map(k=>[k,k]))}${input("areaTam","Tamaño de área (m; 3 m = 10 ft)","number",'min="0.1" max="180" step="0.1"')}${input("blancos","Blancos sin área","number",'min="1" max="100"')}${select("duracion","Duración",Object.keys(DUR).map(k=>[k,k]))}${input("duracionValor","Duración personalizada (vacío: la anterior)","number",'min="1" max="1440"')}${select("duracionUnidad","Unidad personalizada",[["round","Asaltos"],["minute","Minutos"],["hour","Horas"]])}${check("conc","Requiere Concentración")}</fieldset>
       <fieldset><legend>Componentes</legend>${check("voz","Voz")}${check("gestos","Gestos")}${input("material","Material requerido","text",'maxlength="500"')}${input("materialCosto","Valor del material (oro)","number",'min="0" step="0.01"')}${check("materialConsumido","El material se consume (gestionar inventario en mesa)")}</fieldset>
       <fieldset><legend>Estados aplicables</legend><p>Hasta tres estados registrados. El daño elemental añade también su estado. La actividad enlaza los efectos nativos; el DM confirma condiciones y finalización especiales.</p>${estadosEditor().map(st=>`<label class="ecos-check"><input type="checkbox" data-estado="${escH(st)}" ${(f.estadosElegidos??[]).includes(st)?"checked":""}>${escH(ESTADOS[st]?.name ?? CONFIG.statusEffects?.find(e=>e.id===st)?.name ?? st)}</label>`).join("")}</fieldset></div>
       <label>Qué hace y cómo termina<textarea data-editor name="efecto" rows="6" maxlength="4000">${escH(f.efecto)}</textarea></label>
@@ -2719,7 +3038,7 @@ async function inicioDeTurno(combat) {
   const actor = combat?.combatant?.actor;
   if (!actor) return;
   if (efectoCanal(actor)) await subirCarga(actor);
-  if (despierto(actor)) await guardar(actor, { reaccionUsada: false, accionReplicaUsada:false,turnoTecnicas:{combate:game.combat?.id??"combate",acciones:0,mayores:0} });
+  if (despierto(actor)) await guardar(actor, { reaccionUsada: false, accionReplicaUsada:false,turnoTecnicas:{combate:game.combat?.id??"combate",acciones:0,adicionales:0,mayores:0} });
   for (const ef of actor.effects.filter(x => { const fl = x.getFlag(MOD, F);
     return fl && !fl.herencia && !fl.dotesAE && duracionFinita(x); })) {
     const r = ef.duration?.remaining;
@@ -2878,6 +3197,7 @@ export async function deshacer(actor, cid, { forzar = false } = {}) {
     await quitarItems(actor, i => i.getFlag(MOD, F)?.id === d.id);
     if (e.cultivos?.[d.id]) borrar.push(`cultivos.${d.id}`);
     if (e.infusiones?.[d.id]) borrar.push(`infusiones.${d.id}`);
+    if (e.estudios?.[d.id]) borrar.push(`estudios.${d.id}`);
   } else if (c.tipo === "rango") {
     if (rangoDe(actor, d.rama) !== d.a && no(`Primero deshaz el rango más alto de ${nombreRama(d.rama)}.`)) return;
     cambios.rangos = { [d.rama]: d.a - 1 };
@@ -3101,9 +3421,9 @@ export function describir(tipo, v, actor = null) {
 }
 
 const AYUDA = {
-  verbe: "Tu reserva. Cada técnica gasta Verbe al usarla. Se recupera la mitad en un Descanso Largo en el Santuario. Respiro, Aliento y noches a la intemperie comparten un presupuesto breve de hasta la mitad de esa recuperación larga, renovado solo por un largo (Sueño reparador lo eleva hasta dos tercios). Sube sola con tu nivel.",
+  verbe: "Tu reserva. Cada técnica gasta Verbe al usarla. Crece con tu nivel y tu Constitución (su modificador por nivel). Tarda varios días en llenarse: cada Descanso Largo en el Santuario devuelve un cuarto de la reserva más tu modificador de Constitución por cada 4 niveles. Respiro, Aliento y noches a la intemperie comparten un presupuesto breve de hasta la mitad de esa recuperación larga, renovado solo por un largo (Sueño reparador lo eleva hasta dos tercios). Sube sola con tu nivel.",
   trazos: "Tus puntos para crecer. Con ellos aprendes técnicas, subes rangos, compras dotes y cultivas. Ganas 4 por nivel, y a veces más por hitos de la historia o Monedas Antiguas. Lo que compras es para siempre.",
-  car: "La característica con la que usas el Verbe. Da la CD de tus técnicas (8 + competencia + modificador), su bonificador de ataque y suma a tu reserva.",
+  car: "La característica con la que usas el Verbe. Da la CD de tus técnicas (8 + competencia + modificador) y su bonificador de ataque. La cantidad de Verbe (reserva y recuperación) va siempre con la Constitución.",
   grado: "Potencia de una técnica, de 0 a 11. Es distinto de tu nivel de personaje y de tu rango en una rama. Tu grado máximo sube con tu nivel: grado 1 al nivel 1, 2 al 3, 3 al 5, 6 al 11, 8 al 16, 9 al 18, 10 al 19 y 11 al 20. En cada rama, además, llegas solo hasta lo que deja tu rango.",
   sobre: "Puedes gastar Verbe que no tienes hasta el límite negativo que indique tu barra. Normalmente es la mitad de tu reserva; algunas dotes lo amplían. Cada técnica que usas en negativo te pide una salvación de CON (CD 10 + su grado); si fallas, ganas 1 Agotamiento. Lo que quede en negativo cuesta el doble de recuperar.",
   control: "Una habilidad de tu hoja basada en Sabiduría. Decide un choque cuando las potencias empatan entre dos técnicas, romper un Velo, abrir los Cerrojos y no perderse en la Quietud. Se compra en Mejorar → Especialidades."
@@ -3135,8 +3455,8 @@ ${h2("primeros-pasos", "Primeros pasos")}
 <li>Abre <b>Mis técnicas</b> para usarlas. También están en la sección «Técnicas del Verbe» de tu hoja. La ventana de uso comprueba el gasto al confirmar.</li>
 <li>Si te equivocaste al comprar, pídeselo al DM: puede deshacerlo y devolverte los Trazos.</li></ol>
 ${h2("verbe-y-descansos", "Verbe y descansos")}
-<ul><li>Tu reserva sube con tu nivel y suma el modificador de tu característica de Verbe.</li>
-<li>Recuperas la <b>mitad</b> en un Descanso Largo en el Santuario y hasta un <b>cuarto</b> en una noche a la intemperie. Noches, Aliento y Respiro comparten un presupuesto breve que solo se renueva con un largo.</li>
+<ul><li>Tu reserva sube con tu nivel y suma tu modificador de <b>Constitución por cada nivel</b>, como los PG (3.27).</li>
+<li>Tarda <b>varios días</b> en llenarse: en un Descanso Largo en el Santuario recuperas <b>un cuarto</b> de la reserva más tu modificador de Constitución por cada 4 niveles; en una noche a la intemperie, hasta <b>un octavo</b>. Noches, Aliento y Respiro comparten un presupuesto breve que solo se renueva con un largo.</li>
 <li>Una <b>Moneda Antigua</b> devuelve 2 × tu competencia de Verbe, o se vuelve 1 Trazo (como mucho 2 por nivel).</li></ul>
 ${tablaG(["Nivel", ...[1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 20].map(String)], [["Reserva base", ...[1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 20].map(n => D.verbeMax[n] ?? D.verbeMax[String(n)])]])}
 ${h2("trazos", "Trazos")}
@@ -3186,14 +3506,14 @@ ${h2("siete-cerrojos", "Ocho Cerrojos")}
 ${tablaG(["Cerrojo", "Grado", "Da", "PG por turno", "Al cerrar"], D.cerrojos.map(c => [`${c.n} · ${escH(c.nombre)}`, c.grado, escH(c.da), c.pg || "—", escH(c.cierre)]))}
 ${h2("defensas", "Sustitución y otras defensas")}
 <p>Con midi-qol, cuando un ataque te va a impactar aparece un aviso con las defensas que sabes y su costo exacto (Sustitución, Cortina de agua, Escudo de piedra, Paso falso, Leer el golpe y otras). Usar una gasta tu reacción. Sin esa integración se resuelven en mesa; el DM debe comprobar también los críticos y la posición del objeto de Sustitución.</p>
-<ul><li><b>Sustitución</b>: el ataque falla y golpea un objeto. Cuesta 2 Verbe, y 2 más por cada grado que el ataque supere tu grado máximo. El grado de un ataque es el de su técnica o conjuro; si es un arma o una criatura, la mitad de su nivel o VD. Pide un objeto de tu tamaño o menor a 3 m. No sirve contra áreas ni salvaciones, salvo con la dote Sustitución amplia.</li>
+<ul><li><b>Sustitución</b>: el ataque falla y golpea un objeto. Cuesta 2 Verbe, y 2 más por cada grado que el ataque supere tu grado máximo. El grado de un ataque es el de su técnica o conjuro; si es un arma o una criatura, la mitad de su nivel o VD. Pide un objeto de tu tamaño o menor a 10 ft. No sirve contra áreas ni salvaciones, salvo con la dote Sustitución amplia.</li>
 <li>Las demás suben tu CA contra ese ataque o le dan desventaja.</li></ul>
 ${h2("dones-despertar", "Dones del despertar")}
 <p>Todo el que despierta tiene cuatro dones desde el primer día (Mejorar → Dotes, «Dones del despertar»). No cuestan nada y se mejoran con Trazos:</p>
-<ul><li><b>Sentido del Verbe:</b> al tocar a alguien sabes si despertó, y notas el Verbe que se usa a 1,5 m. Crece con Sentir el Verbe (9 m) y Sentir más lejos (36 m).</li>
+<ul><li><b>Sentido del Verbe:</b> al tocar a alguien sabes si despertó, y notas el Verbe que se usa a 5 ft. Crece con Sentir el Verbe (30 ft) y Sentir más lejos (120 ft).</li>
 <li><b>Cuerpo despierto:</b> el sobreesfuerzo te cuesta menos (CD 9 + grado). II y III: más PG máximos.</li>
 <li><b>Aliento del Verbe:</b> cada Dado de Golpe que gastas al descansar te devuelve 1 de Verbe (2 con el II); con el III, además cura tu modificador de Verbe.</li>
-<li><b>Paso del Verbe:</b> con al menos 1 de Verbe andas un turno por paredes o sobre agua quieta. II: +3 m de velocidad y el agua movida también te sostiene. III: saltos triples y caídas sin daño.</li></ul>
+<li><b>Paso del Verbe:</b> con al menos 1 de Verbe andas un turno por paredes o sobre agua quieta. II: +10 ft de velocidad y el agua movida también te sostiene. III: saltos triples y caídas sin daño.</li></ul>
 ${h2("titeres-y-medicina", "Títeres y medicina")}
 <p>Dos artes finas de Control, con dotes en tres pasos (Mejorar → Dotes, «Títeres y medicina»):</p>
 <ul><li><b>Títeres (rama Hilo):</b> Titiritero, Titiritero de oficio y Maestro titiritero. Las marionetas se compran y se mejoran con oro (Equipo): blindaje, muelles, depósitos y ojos de vidrio.</li>
@@ -3315,21 +3635,46 @@ export async function usoRapido(actor) {
   if (!actor || !despierto(actor) || !actor.isOwner) return aviso("Selecciona un token propio con el Verbe despierto, o elige tu personaje.", "warn");
   const filas = itemsTecnica(actor).map(i => ({ i, m: i.getFlag(MOD, F) })).sort((x, y) => (x.m.g - y.m.g) || x.i.name.localeCompare(y.i.name, "es"));
   if (!filas.length) return aviso(`${actor.name} aún no tiene técnicas aprendidas.`, "info");
-  const lista = filas.map(({ i, m }) => {
+  // 3.27: cada fila dice qué gasta (acción Verbe, reacción Verbe o tiempo fuera de combate), su alcance, cuánto dura y para qué sirve.
+  const DUR = { inst: "instantánea", round: "asalto", minute: "min", hour: "h", day: "día", perm: "permanente", spec: "especial" };
+  const fila = ({ i, m }) => {
     let costo = "?"; try { costo = previsualizarUso(actor, m).costo; } catch { /* sin vista previa */ }
-    return `<li><button type="button" data-id="${escH(m.id)}"><span>${escH(i.name)}</span><small>Grado ${m.g} · ${costo} Verbe</small></button></li>`;
-  }).join("");
+    const tec = tecnicaPorId(m.id, actor), tKey = tec?.t ?? ({ action: "A", bonus: "AA", reaction: "R" }[i.system?.activation?.type] ?? "A");
+    const [tiempo, expl] = TIEMPOS_EXPLICADOS[tKey] ?? [TIEMPO_L[tKey] ?? tKey, ""];
+    const r = i.system?.range ?? {}, alc = r.units === "self" ? "sobre ti" : r.units === "touch" ? "toque" : r.value ? `${r.value} ${r.units === "ft" ? "ft" : r.units}` : "";
+    const d = i.system?.duration ?? {}, dur = d.units === "inst" ? "instantánea" : d.value ? `${d.value} ${DUR[d.units] ?? d.units}${Number(d.value) > 1 && ["round", "day"].includes(d.units) ? "s" : ""}` : (DUR[d.units] ?? "");
+    const conc = (i.system?.properties?.has?.("concentration") || i.system?.properties?.includes?.("concentration")) ? " · concentración" : "";
+    const resumen = String(textoDe(tec ?? { texto: "" }) ?? "").split(/(?<=\.)\s/)[0].slice(0, 160);
+    return `<li><button type="button" data-id="${escH(m.id)}" class="ecos-uso-${gastoVerbe(tKey) ?? "largo"}">
+      <span class="nom">${escH(i.name)}</span>
+      <small class="gasto"><b>${escH(tiempo)}</b> · ${costo} Verbe · grado ${m.g}${alc ? ` · ${escH(alc)}` : ""}${dur ? ` · dura ${escH(dur)}` : ""}${conc}</small>
+      ${expl ? `<small class="expl">${escH(expl)}</small>` : ""}
+      ${resumen ? `<small class="res">${escH(resumen)}</small>` : ""}</button></li>`;
+  };
+  const grupos = [["accion", `Con tu acción Verbe (${maxAccionesVerbe(actor) === 1 ? "una" : maxAccionesVerbe(actor)} por turno)`, f => gastoVerbe(tecnicaPorId(f.m.id, actor)?.t ?? "A") === "accion"],
+    ["adicional", "Con tu acción adicional Verbe (una por turno)", f => gastoVerbe(tecnicaPorId(f.m.id, actor)?.t ?? "A") === "adicional"],
+    ["reaccion", "Con tu reacción Verbe (una por ronda)", f => gastoVerbe(tecnicaPorId(f.m.id, actor)?.t ?? "") === "reaccion"],
+    ["largo", "Fuera del turno (minutos, horas o rituales)", f => !gastoVerbe(tecnicaPorId(f.m.id, actor)?.t ?? "A")]];
+  const lista = grupos.map(([k, titulo, prueba]) => { const fs = filas.filter(prueba); return fs.length ? `<li class="ecos-uso-grupo"><b>${titulo}</b></li>${fs.map(fila).join("")}` : ""; }).join("");
+  const cabecera = () => `<p><b>Reserva:</b> <span data-ecos-reserva>${Number(estado(actor)?.valor) || 0} / ${maxVerbe(actor)}</span></p>${turnoVerbeHTML(actor)}
+    <details class="ecos-uso-ayuda"><summary>¿Cómo funcionan las acciones del Verbe?</summary><ul>
+      <li><b>Acción Verbe:</b> cada turno tienes ${maxAccionesVerbe(actor) === 1 ? "una" : maxAccionesVerbe(actor)} para las técnicas de Acción. No gasta tu Acción de D&D: puedes atacar y además usar una técnica.</li>
+      <li><b>Acción adicional Verbe:</b> una por turno para las técnicas de Acción adicional. No gasta tu Acción adicional de D&D ni tu acción Verbe.</li>
+      <li><b>Reacción Verbe:</b> una por ronda, para técnicas de reacción, Sustitución, las defensas y el Choque. Tu Reacción de D&D (ataque de oportunidad, Escudo…) queda aparte.</li>
+      <li><b>El orden del turno no cambia:</b> la iniciativa es la de siempre. Las tres se renuevan al empezar tu turno. Desde el nivel 11 tienes dos acciones Verbe por turno.</li>
+      <li><b>Gratuito:</b> pagar Verbe, mantener una técnica activa o una concentración, y leer tu panel. Moverte e interactuar con un objeto siguen siendo de D&D.</li>
+      <li><b>Más de un turno</b> (1 minuto o más): no caben en un combate; úsalas antes o después.</li></ul></details>`;
   const { DialogV2 } = foundry.applications.api;
   await DialogV2.wait({
-    window: { title: `Verbe · ${actor.name}`, resizable: true }, position: { width: 360 },
-    content: `<p><b>Reserva:</b> <span data-ecos-reserva>${Number(estado(actor)?.valor) || 0} / ${maxVerbe(actor)}</span></p><ul class="ecos-uso-rapido" style="list-style:none;margin:0;padding:0;display:grid;gap:4px">${lista}</ul>`,
+    window: { title: `Verbe · ${actor.name}`, resizable: true }, position: { width: 460 },
+    content: `<div class="ecos-uso-cab">${cabecera()}</div><ul class="ecos-uso-rapido" style="list-style:none;margin:0;padding:0;display:grid;gap:4px">${lista}</ul>`,
     buttons: [{ action: "cerrar", label: "Cerrar", default: true }],
     render: (ev, dialog) => {
       const el = dialog.element;
       el.querySelectorAll(".ecos-uso-rapido button").forEach(b => b.addEventListener("click", async e => {
         e.preventDefault(); b.disabled = true;
         try { await usarTecnica(actor, b.dataset.id); } catch (err) { console.error(`${MOD} | uso rápido`, err); aviso("No se pudo usar la técnica. Puedes intentarlo desde tu hoja.", "error"); }
-        finally { b.disabled = false; const r = el.querySelector("[data-ecos-reserva]"); if (r) r.textContent = `${Number(estado(actor)?.valor) || 0} / ${maxVerbe(actor)}`; }
+        finally { b.disabled = false; const c = el.querySelector(".ecos-uso-cab"); if (c) setTimeout(() => { c.innerHTML = cabecera(); }, 600); }
       }));
     },
     rejectClose: false
@@ -3421,6 +3766,13 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         if (r.pideDM && !game.user.isGM) return pedirAlDM(this.actor, "tecnica", { id: tec.id }, tec.n, `${escH(tec.n)} (${tec.trazos} Trazos). Pide: ${escH(tec.req ?? "")}.`);
         correr(this, aprender(this.actor, tec));
       },
+      practicar(ev, t) { ev?.preventDefault?.(); correr(this, practicarEstudio(this.actor, t.dataset.id)); },
+      vistazo(ev, t) { ev?.preventDefault?.(); vistazoRama(this.actor, t.dataset.rama); },
+      aprenderYa(ev, t) { ev?.preventDefault?.(); correr(this, aprenderYa(this.actor, t.dataset.id)); },
+      tirarNat(ev) { ev?.preventDefault?.(); correr(this, tirarNaturaleza(this.actor)); },
+      pedirTiradaNat() { correr(this, pedirTiradaNaturaleza(this.actor)); },
+      segundaModo() { correr(this, guardar(this.actor, { segundaModo: valorDe(this, "segundaModo") === "fija" ? "fija" : "dado" })); },
+      alInstante() { const e = estado(this.actor); correr(this, guardar(this.actor, { aprenderAlInstante: !e.aprenderAlInstante, historial: hist(e, e.aprenderAlInstante ? "Vuelve a aprender por días" : "Aprende al instante (creación de personaje)") })); },
       probar(ev, t) {
         ev?.preventDefault?.();
         const tec = tecnicaPorId(t.dataset.id, this.actor);
@@ -3511,13 +3863,15 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
           .then(() => asegurarRasgos(this.actor)).then(() => refrescar(this.actor)));
       },
       diarioLinaje() { abrirSangre("linaje", valorDe(this, "linaje"), this.actor); },
+      diarioFamilia() { abrirFamilia(valorDe(this, "familia")); },
+      familia() { correr(this, concederShinobi(this.actor, "familia", valorDe(this, "familia"))); },
       linaje() {
         const c = conflictoSangre(this.actor, { linaje: valorDe(this, "linaje") });
         if (c) return rechazar(c, "warn");
         correr(this, guardar(this.actor, { linaje: valorDe(this, "linaje"), fuerza: valorDe(this, "fuerza"), linajeVisible: marcado(this, "linajeVisible") })
           .then(() => asegurarRasgos(this.actor)).then(() => refrescar(this.actor)));
       },
-      oculta() { correr(this, guardar(this.actor, { oc: revolver(valorDe(this, "oculta"), this.actor.id), descubierta: false })); },
+      oculta() { correr(this, guardar(this.actor, { oc: revolver(valorDe(this, "oculta"), this.actor.id), descubierta: false, segundaModo: "fija" })); },
       descubrirNat() { correr(this, pedirDescubrimiento(this.actor)); },
       activarFamilia() { correr(this, activarFamilia(this.actor, valorDe(this, "notaFamilia"))); },
       leerObjetivos() { correr(this, leerObjetivos(this.actor)); },
@@ -3627,6 +3981,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     }));
     if (game.user.isGM) for (const nombre of ["linaje", "mirada"]) content.querySelectorAll(`select[name="${nombre}"]`)
       .forEach(sel => sel.addEventListener("change", () => { if (!this.comoJugador) abrirSangre(nombre, sel.value, this.actor); }));
+    if (game.user.isGM && !this.comoJugador) ponerAzar(content);
   }
 
   #cabecera() {
@@ -3645,7 +4000,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       <div class="ecos-verbe-res"><div class="ev-recurso-titulo"><b><i class="fa-solid fa-droplet" aria-hidden="true"></i> Verbe <span>${v} / ${max}</span></b><small>ENERGÍA PARA USAR</small></div><div class="ecos-verbe-barra grande ${v < 0 ? "negativo" : ""}" role="meter" aria-label="${v < 0 ? "Deuda de Verbe" : "Reserva de Verbe"}" aria-valuemin="${v < 0 ? limiteNegativo(a) : 0}" aria-valuemax="${max}" aria-valuenow="${v}" aria-valuetext="${v} de ${max} de Verbe"><div style="width:${pct * 100}%"></div></div>
         <small>${v < 0 ? "Estás en deuda: recuperarla cuesta el doble." : "Se gasta al usar técnicas; vuelve al descansar."}</small></div>
       <div class="ecos-verbe-trazos ${t.libres > 0 ? "hay" : ""}"><span class="n">${t.libres}</span><span class="t"><b>Trazos</b> para aprender</span><small>Se gastan una vez por compra</small>${sistema.moneda(a) >= MONEDAS_POR_TRAZO ? `<button type="button" data-action="monedasTrazos" class="ev-monedas" data-tooltip="${MONEDAS_POR_TRAZO} Moneda${MONEDAS_POR_TRAZO > 1 ? "s" : ""} Antigua${MONEDAS_POR_TRAZO > 1 ? "s" : ""} = 1 Trazo (hasta ${TRAZOS_POR_NIVEL} Trazos por nivel)"><i class="fa-solid fa-coins" aria-hidden="true"></i> Cambiar Monedas</button>` : ""}</div>
-    </header>${barraDM}`;
+    </header>${turnoVerbeHTML(a)}${barraDM}`;
   }
 
   #tarjeta(t, { aprender: compra = false, item = null, fav = null, tipo = null } = {}) {
@@ -3681,7 +4036,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const a = this.actor, e = estado(a), et = datosEtapa(etapaDe(e)), sig = ETAPAS[et.n + 1];
     const d = estadoDescubrimiento(a), nat = DESCUBRIR[d.entreno?.tipo ?? d.tipo] ?? null;
     let natHTML = "";
-    if (d.elegir) natHTML = `<p><b>Tu Verbe se abrió a un elemento.</b> Elígelo: es para siempre (solo el DM puede cambiarlo).</p><p><select name="nat">${opciones(Object.entries(NATS).filter(([n]) => !natsDe(a).has(n)), "")}</select> <button type="button" data-action="elegir" data-campo="nat">Elegir</button></p>`;
+    if (e.tirarNat) natHTML = `<p><b>Tu Verbe se abrió a un elemento.</b> Tira tu dado: ${Object.keys(NATS).filter(n => !natsDe(a).has(n)).map((n, i) => `${i + 1} ${NATS[n]}`).join(" · ")}. Es para siempre (solo el DM puede cambiarlo).</p><p><button type="button" data-action="tirarNat"><i class="fa-solid fa-dice"></i> Tirar mi naturaleza</button></p>`;
+    else if (d.elegir) natHTML = `<p><b>Tu Verbe se abrió a un elemento.</b> Elígelo: es para siempre (solo el DM puede cambiarlo).</p><p><select name="nat">${opciones(Object.entries(NATS).filter(([n]) => !natsDe(a).has(n)), "")}</select> <button type="button" data-action="elegir" data-campo="nat">Elegir</button></p>`;
     else if (d.entreno) natHTML = d.faltan > 0
       ? `<p><b>Entrenando</b> ${d.entreno.tipo === "cambio" ? `para cambiar ${escH(NATS[d.entreno.de])} por ${escH(NATS[d.entreno.a])}` : `para descubrir ${nat.nombre}`}: faltan <b>${d.faltan} día${d.faltan === 1 ? "" : "s"}</b> del calendario del mundo. Después harás una prueba de Control del Verbe CD ${d.entreno.cd}.</p>${dm() ? `<p><button type="button" data-action="terminarEntreno">DM: dar por terminados los días</button></p>` : ""}`
       : `<p><b>Terminaste el entrenamiento.</b> Haz la prueba de Control del Verbe CD ${d.entreno.cd}${d.entreno.trazos ? `; si la superas, pagas ${d.entreno.trazos} Trazos` : ""}. Si fallas, no pierdes Trazos y puedes volver a entrenar.</p><p><button type="button" data-action="pruebaEntreno"><i class="fa-solid fa-dice-d20"></i> Hacer la prueba</button></p>`;
@@ -3742,7 +4098,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
 
   #guia() {
     const a=this.actor,e=estado(a),v=Number(e.valor)||0,largo=recuperacionLargaVerbe(a),limite=presupuestoBreveVerbe(a),breve=presupuestoBreveVerbe(a,e.recCortos);
-    const santuario=cambiosRecuperacion(a,largo),fracNoche=efectosDotes(a).reduce((t,ef)=>Math.max(t,Number(ef.rec?.intemperie)||0),.25),noche=recuperacionBreve(a,Math.floor(maxVerbe(a)*fracNoche*(Number(herenciaDe(a)?.recMult)||1)));
+    const santuario=cambiosRecuperacion(a,largo),fracNoche=efectosDotes(a).reduce((t,ef)=>Math.max(t,Number(ef.rec?.intemperie)||0),.25)/2,noche=recuperacionBreve(a,Math.floor(maxVerbe(a)*fracNoche*(Number(herenciaDe(a)?.recMult)||1)));
     const pregunta=(q,html)=>`<details><summary>${q}</summary>${html}</details>`;
     return `<div class="ev-titulo-pagina"><div><span class="ev-kicker">EMPIEZA POR LO QUE QUIERES HACER</span><h2>Lo necesario para jugar</h2><p>No necesitas memorizar el catálogo. Abre una pregunta cuando aparezca esa situación.</p></div></div>
       <section class="ev-bienvenida"><h3>Para tu primera escena</h3><ol><li>Abre <b>Inicio</b> y completa las elecciones que te falten.</li><li>Aprende una técnica con <b>Trazos</b>. Puedes guardar los puntos restantes.</li><li>En <b>Mis técnicas</b>, lee qué hace, marca el objetivo si hace falta y pulsa <b>Usar técnica</b>.</li><li>Comprueba el coste en <b>Verbe</b>, confirma el uso y resuelve la tirada o el efecto con el DM.</li></ol><div class="ev-acciones"><button type="button" data-action="pestana" data-p="resumen">Ir a Inicio</button><button type="button" data-action="pestana" data-p="jugar">Ir a Mis técnicas</button><button type="button" data-action="pestana" data-p="tienda">Aprender una técnica</button></div></section>
@@ -3882,7 +4238,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       return `<section class="ecos-verbe-rama ${abierta ? "" : "cerrada"}">
         <header><b>${r.nombre}</b>${principal ? " <span class='ecos-verbe-pill'>principal</span>" : ""}${e.segunda === r.id ? " <span class='ecos-verbe-pill'>segunda</span>" : ""}
           <span>${ahora}</span>${boton}</header><p class="ecos-nota">${abierta?"El rango abre un límite de aprendizaje; no enseña automáticamente las técnicas. Desde grado 6 también necesitas las dotes de senda indicadas en cada ficha.":""}</p>
-        <p class="ecos-nota">${abierta || r.id !== "sangre" ? escH(leadDe(r)) : ""} ${abierta ? "" : `<b>${cerradaPor}</b>`}</p>${dones ? `<details class="ev-dones"><summary>Qué dones gano en esta rama</summary><ul class="ecos-verbe-dones">${dones}</ul></details>` : ""}</section>`;
+        <p class="ecos-nota">${abierta || r.id !== "sangre" ? escH(leadDe(r)) : ""} ${abierta ? "" : `<b>${cerradaPor}</b>`}</p>${vePropia && !["sangre", "mirada"].includes(r.id) ? `<p><button type="button" data-action="vistazo" data-rama="${r.id}" data-tooltip="Mira todas las técnicas de la rama, también las de grados que todavía no alcanzas (sin las de familia ni de linaje)"><i class="fa-solid fa-binoculars"></i> Echa un vistazo a niveles superiores</button></p>` : ""}${dones ? `<details class="ev-dones"><summary>Qué dones gano en esta rama</summary><ul class="ecos-verbe-dones">${dones}</ul></details>` : ""}</section>`;
     }).join("");
     const af = [...natsDe(a)].map(n => {
       const v = Number(e.afinidad?.[n]) || 1;
@@ -3920,6 +4276,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       if (f.texto && !`${t.n} ${(t.alias ?? []).join(" ")} ${textoDe(t)}`.toLowerCase().includes(f.texto.toLowerCase())) return false;
       if (!dm()) {
         if (t.soloDM) return false;
+        if (t.familia && !(e.tradiciones ?? []).includes(t.familia)) return false; // 3.27: artes de familia, solo de nacimiento
         const esSangre = t.sec === "sangre" || D.linajes.some(l => l.req && l.req === t.req);
         if (esSangre && !t.item.flags[MOD][F].shinobi && (!ve || !herenciaDe(a) || (t.req !== "una herencia" && herenciaDe(a).req !== t.req))) return false;
         if (t.rama === "mirada" && !(e.miradas ?? {})[t.id.split("-")[1]]) return false;
@@ -3931,7 +4288,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     for (const t of lista) {
       const r = requisitos(a, t);
       const sabe = conoce(a, t.id);
-      if (f.solo && !r.ok && !sabe && !combosDe(a).has(t.nat)) { ocultas += 1; continue; }
+      if (f.solo && !r.ok && !r.estudio && !sabe && !combosDe(a).has(t.nat)) { ocultas += 1; continue; }
       const g = f.agrupar === "grado" ? [`g${t.g}`, `Grado ${t.g} · pide nivel ${nivelParaGrado(t.g)}`, t.g] : grupoDe(t);
       if (!porGrupo.has(g[0])) porGrupo.set(g[0], { titulo: g[1], orden: g[2], filas: [], pueden: 0 });
       const gr = porGrupo.get(g[0]);
@@ -3951,6 +4308,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         <li><b>Verbe</b> es lo que gasta cada uso; el botón dice cuántos <b>Trazos</b> cuesta aprenderla.</li>
         <li><b>Probar</b>: es de una naturaleza que no tienes. Si tu Verbe responde, la aprendes; si no, no pierdes nada.</li>
         <li><b>Pedir al DM</b>: pide un maestro; el DM la aprueba.</li></ul>`, "tecnicas-y-grados")}
+      ${Object.keys(e.estudios ?? {}).length ? `<div class="ecos-verbe-estudios"><b>Estudiando ahora:</b> ${Object.values(e.estudios).map(x => `${escH(tecnicaPorId(x.id, a)?.n ?? x.id)} (${x.progreso}/${x.exitos})`).join(" · ")}. Busca cada una en la lista para practicar hoy.</div>` : ""}
+      ${aprenderPorDias(a) ? `<p class="ecos-nota"><b>Aprender lleva días (3.27).</b> Pagas los Trazos y empiezas a estudiar. Cada día del calendario tiras Control del Verbe (CD 10 + grado); necesitas tantos días buenos como su grado + 1. Un 20 natural cuenta doble; un 1 natural te hace perder un día de avance.</p>` : ""}
       <div class="ev-contraste-recursos"><div><b>Aprender = pagar Trazos una vez</b><span>Lo aprendido pasa a «Mis técnicas».</span></div><div><b>Usar = gastar Verbe cada vez</b><span>El coste tiene en cuenta tus mejoras y el contexto actual.</span></div></div>
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar una técnica</span><input type="search" data-filtro="texto" placeholder="Nombre o efecto…" value="${escH(f.texto)}"></label>
       <label><input type="checkbox" data-filtro="solo" ${f.solo ? "checked" : ""}> Solo disponibles y aprendidas</label><button type="button" data-action="limpiarFiltros">Restablecer</button></div>
@@ -3964,14 +4323,19 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
   }
 
   #filaTec(t, r, sabe) {
-    const btn = sabe ? '<button type="button" data-action="pestana" data-p="jugar">Aprendida · ir a Mis técnicas</button>'
+    const est = r.estudio ? estudioDe(this.actor, t.id) : null;
+    const hoy = diaMundo();
+    const btn = est ? `<span class="ecos-verbe-estudio"><b>Estudiando:</b> ${est.progreso}/${est.exitos} días buenos · CD ${est.cd}</span>
+        ${est.ultimoDia === hoy ? `<small>Hoy ya practicó: mañana sigue.</small>` : `<button type="button" data-action="practicar" data-id="${t.id}" data-tooltip="Una tirada de Control del Verbe por día del calendario"><i class="fa-solid fa-dice-d20"></i> Practicar hoy</button>`}
+        ${dm() ? `<button type="button" data-action="aprenderYa" data-id="${t.id}" data-tooltip="DM: darla por aprendida ya">DM: aprender ya</button>` : ""}`
+      : sabe ? '<button type="button" data-action="pestana" data-p="jugar">Aprendida · ir a Mis técnicas</button>'
       : r.ok && r.probar ? `<button type="button" data-action="probar" data-id="${t.id}" data-tooltip="Si tu Verbe responde, la descubres y aprendes. Si no, no pierdes Trazos">Probar · ${t.trazos} ${t.trazos === 1 ? "Trazo" : "Trazos"} si responde</button>`
-        : r.ok ? `<button type="button" data-action="aprender" data-id="${t.id}">${r.pideDM && !game.user.isGM ? "Pedir al DM" : "Aprender"} · ${t.trazos} Trazo${t.trazos === 1 ? "" : "s"}</button>`
+        : r.ok ? `<button type="button" data-action="aprender" data-id="${t.id}" data-tooltip="${aprenderPorDias(this.actor) ? `Pagas los Trazos y empiezas a estudiarla: ${planEstudio(t.g).exitos} día(s) bueno(s) de práctica, Control CD ${planEstudio(t.g).cd}` : "Pagas los Trazos y la sabes ya"}">${r.pideDM && !game.user.isGM ? "Pedir al DM" : aprenderPorDias(this.actor) ? "Estudiar" : "Aprender"} · ${t.trazos} Trazo${t.trazos === 1 ? "" : "s"}</button>`
           : `<span class="ecos-verbe-no" data-tooltip="${escH(r.motivo)}">${escH(textoClaro(r.motivo))}</span>`;
     const tiempo = TIEMPO_L[t.t] ?? t.t ?? "";
     const meta = itemsDe(this.actor, t.id)[0]?.getFlag(MOD, F) ?? { ...t.item.flags[MOD][F], infusion: estado(this.actor)?.infusiones?.[t.id] ?? null };
     const costo = previsualizarUso(this.actor, meta).costo;
-    return `<details class="ecos-verbe-tec ${sabe ? "sabe" : r.ok ? "puede" : "no"}" data-id="${t.id}" data-tipo="tec"><summary>
+    return `<details class="ecos-verbe-tec ${sabe ? "sabe" : est ? "puede estudia" : r.ok ? "puede" : "no"}" data-id="${t.id}" data-tipo="tec"><summary>
       <span class="gr">Grado ${t.g}</span><span class="nom"><b>${escH(t.n)}</b><small>${escH((t.alias??[]).slice(0,2).join(" · "))}</small><small>${escH([tiempo, t.alc ? alcanceL(t.alc, t.area) : null, t.area].filter(Boolean).join(" · "))}</small><small class="ev-efecto-breve">${escH(avanceTexto(textoDe(t)))}</small><small>Abre la ficha para leer todas sus condiciones.</small></span>
       <span class="vb"><b>${costo} Verbe</b><small>por uso base</small></span><span class="acc">${btn}${!sabe && r.ok && !r.probar ? `<small>Te quedarían ${trazos(this.actor).libres - t.trazos} Trazos</small>` : ""}</span></summary><div class="ecos-verbe-ficha-cont"></div></details>`;
   }
@@ -4127,7 +4491,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     return `<p><button type="button" data-action="editorCatalogo"><i class="fa-solid fa-pen-nib"></i> Taller del DM · crear y publicar técnicas universales</button> <button type="button" data-action="panteonDM">Panteón y nota de lore (solo DM)</button> <button type="button" data-action="reliquiasDM">Compendio de reliquias</button></p>${intro("Solo tú ves esta pestaña.", "Para preparar una hoja: elige linaje y fuerza, decide si el jugador conoce ese origen y revisa el resultado con «Ver como el jugador». Ese botón oculta tus controles de administración. Las opciones de más abajo permiten conceder recursos, enseñar técnicas o deshacer compras.")}
       ${sec("Reorientar un cultivo sin volver a cobrar",`<p>Tras cambiar el balance, puedes sustituir la última mejora registrada de una técnica conservando sus Trazos y nivel de cultivo.</p><select name="reorientarTecnica">${opciones(itemsTecnica(a).filter(i=>e.cultivos?.[i.getFlag(MOD,F)?.id]?.mejoras?.length).map(i=>[i.getFlag(MOD,F).id,i.name]),"")}</select><select name="reorientarMejora">${opciones(Object.entries(MEJORAS),"")}</select><button type="button" data-action="reorientarDM">Sustituir última mejora</button>`)}
       ${D.shinobi?sec("Archivo del Verbe: tradiciones, bestias y rituales",`
-        <p>Tradición: <select name="shinobiTradicion">${opciones((D.tradicionesShinobi??[]).map(t=>[t.id,`${e.tradiciones?.includes(t.id)?"✓ ":""}${t.nombre}`]),"")}</select><button type="button" data-action="shinobiDM" data-campo="tradicion" data-de="shinobiTradicion">Conceder / retirar</button></p>
+        <p>Tradición: <select name="shinobiTradicion">${opciones((D.tradicionesShinobi??[]).filter(t=>!esFamilia(t.id)).map(t=>[t.id,`${e.tradiciones?.includes(t.id)?"✓ ":""}${t.nombre}`]),"")}</select><button type="button" data-action="shinobiDM" data-campo="tradicion" data-de="shinobiTradicion">Conceder / retirar</button></p>
         <p>Hito: <select name="shinobiHito">${opciones((D.hitosShinobi??[]).map(h=>[h.id,`${e.hitosShinobi?.includes(h.id)?"✓ ":""}${h.nombre}`]),"")}</select><button type="button" data-action="shinobiDM" data-campo="hito" data-de="shinobiHito">Conceder / retirar</button></p>
         <p>Bestia: <select name="shinobiBestia"><option value="">Sin vínculo</option>${opciones((D.bestiasShinobi??[]).map(b=>[b.id,b.nombre]),e.vasija?.bestia??"")}</select> Vínculo <select name="shinobiVinculo">${opciones([[1,"1 · inestable"],[2,"2 · control"],[3,"3 · cooperación"]],e.vasija?.vinculo??1)}</select><button type="button" data-action="shinobiDM" data-campo="vasija" data-de="shinobiBestia">Guardar vínculo</button></p>
         <p>Ritual preparado: <select name="shinobiRitual">${opciones(itemsTecnica(a).filter(i=>i.getFlag(MOD,F)?.ritual).map(i=>[i.getFlag(MOD,F).id,i.name]),"")}</select><button type="button" data-action="shinobiDM" data-campo="ritual" data-de="shinobiRitual">Autorizar un uso</button></p><p class="ecos-nota">Confirma antes preparación, participantes, precio, salvación y resultado. El permiso se consume al usarlo; un descanso no lo repone.</p>
@@ -4168,19 +4532,26 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       ${sec("Naturaleza secreta", `<p>Modo: <select name="natModo">${opciones(Object.entries(MODOS_NATURALEZA), modoNaturaleza(e))}</select> <button type="button" data-action="natModo">Guardar modo</button></p>
         <p>Primera naturaleza ${natsDe(a).size ? `ya descubierta: <b>${[...natsDe(a)].map(n => NATS[n] ?? n).join(", ")}</b>` : `oculta: <select name="ocultaPrimera">${opciones(Object.entries(NATS), ocultaPrimeraDe(a) ?? "")}</select> <button type="button" data-action="ocultaPrimera">Fijar en secreto</button>`}</p>
         <p>Se descubre entrenando: ${DESCUBRIR.primera.dias} días y Control CD ${DESCUBRIR.primera.cd} (${DESCUBRIR.primera.trazos} Trazos) desde nivel 5 o nivel 3 con Entrenado en Forma, y en etapa Practicante o más. La segunda: ${DESCUBRIR.segunda.dias} días, CD ${DESCUBRIR.segunda.cd}, ${DESCUBRIR.segunda.trazos} Trazos, desde nivel 5.</p>
+        <p>Segunda naturaleza: <select name="segundaModo">${opciones(Object.entries(MODOS_SEGUNDA), modoSegunda(e))}</select> <button type="button" data-action="segundaModo">Guardar</button> <small>Al azar: la tira el jugador al terminar su entrenamiento. Fija: sale la oculta que pusiste.</small></p>
+        <p><button type="button" data-action="pedirTiradaNat"><i class="fa-solid fa-dice"></i> Que tire ya su ${natsDe(a).size ? "segunda " : ""}naturaleza (sin entrenamiento)</button>${e.tirarNat ? ` <i>Tiene pendiente tirar su ${e.tirarNat === "primera" ? "naturaleza" : "segunda naturaleza"}.</i>` : ""}</p>
         <p><button type="button" data-action="revelarNat">Revelar ya, sin entrenamiento</button>${estado(a)?.entrenoNat ? ` <button type="button" data-action="terminarEntreno">Dar por terminados los días</button>` : ""}</p>`)}
       ${sec("Naturalezas y linaje", `<p>Oculta: <select name="oculta">${opciones(Object.entries(NATS), ocultaDe(a))}</select> <button type="button" data-action="oculta">Cambiar</button> ${e.descubierta ? "(ya la descubrió)" : ""} · probadas sin suerte: ${(e.probadas ?? []).map(n => NATS[n]).join(", ") || "ninguna"}</p>
         <p>Dar una naturaleza: <select name="natsExtra">${opciones(Object.entries(NATS).filter(([k]) => !natsDe(a).has(k)), "")}</select> <button type="button" data-action="lista" data-campo="natsExtra" data-texto="naturaleza">Dar</button>
           · combinación: <select name="combos">${opciones(Object.entries(D.combos).filter(([k]) => !combosDe(a).has(k)).map(([k, v]) => [k, `${v.nombre} (${v.de.map(n => NATS[n]).join(" + ")})`]), "")}</select> <button type="button" data-action="lista" data-campo="combos" data-texto="combinación">Dar</button></p>
-        <p>Linaje: <select name="linaje" data-desc="linaje">${opciones(paresLinaje(), e.linaje)}</select> <select name="fuerza" data-desc="fuerza">${opciones(Object.entries(FUERZA).map(([k, v]) => [k, v.nombre]), e.fuerza)}</select>
+        <p>Linaje: <select name="linaje" data-desc="linaje" data-azar="sin-ninguno" data-azar-nombre="Linaje">${opcionesLinaje(e.linaje)}</select> <select name="fuerza" data-desc="fuerza" data-azar="sin-ninguno" data-azar-nombre="Fuerza de la sangre">${opciones(Object.entries(FUERZA).map(([k, v]) => [k, v.nombre]), e.fuerza)}</select>
           <label><input type="checkbox" name="linajeVisible" ${e.linajeVisible ? "checked" : ""}> el jugador lo sabe</label> <button type="button" data-action="linaje">Guardar</button> <button type="button" data-action="diarioLinaje" title="Ver la sangre elegida y abrir su diario"><i class="fa-solid fa-book-open"></i> Su diario</button></p>
         <div class="ecos-verbe-desc" data-de="linaje">${describir("linaje", e.linaje, a)}</div><div class="ecos-verbe-desc" data-de="fuerza">${describir("fuerza", e.fuerza, a)}</div>
-        <p class="ecos-nota">El linaje lo eliges siempre tú: el jugador nunca lo elige. Si no lo sabe, en su panel dice «Desconocido», igual que para quien no tiene ninguno.</p>`)}
+        <p class="ecos-nota">El linaje lo eliges siempre tú (o lo tiras con 🎲): el jugador nunca lo elige. Si no lo sabe, en su panel dice «Desconocido», igual que para quien no tiene ninguno. Antes de guardar, «Su diario» abre la página que cuenta su dios y lo que hereda su línea nivel a nivel.</p>
+        <p>Familia de nacimiento: <select name="familia" data-azar="sin-ninguno" data-azar-nombre="Familia de nacimiento">${opciones([["ninguna", "Sin familia"], ...Object.entries(FAMILIAS).map(([k, f]) => [k, f.nombre])], (e.tradiciones ?? []).find(esFamilia) ?? "ninguna")}</select>
+          <button type="button" data-action="familia">Guardar</button> <button type="button" data-action="diarioFamilia" title="Leer esa familia y sus artes nivel a nivel"><i class="fa-solid fa-book-open"></i> Su diario</button></p>
+        <p class="ecos-nota">Las artes de familia (Crecer, Sombra, Mente, Enjambre, Colmillo, Tinta) solo las aprende quien nace en ella. Nadie las gana subiendo una rama ni con un maestro: la das tú por historia o la tiras al azar.</p>`)}
       ${sec("Ramas, ojos, pactos y escuela", `${cerradas.length ? `<p>Abrir una rama: <select name="abiertas">${opciones(cerradas, "")}</select> <button type="button" data-action="lista" data-campo="abiertas" data-texto="rama">Abrir</button></p>` : ""}
         <p>Despertar un ojo: <select name="mirada">${opciones(D.miradas.map(m => [m.id, `${m.nombre}${m.real && m.real !== m.nombre ? ` (${m.real})` : ""}`]), "")}</select> <select name="etapa">${opciones([[1, "Etapa 1 · 3 Trazos"], [2, "Etapa 2 · 5"], [3, "Etapa 3 · 8"]], 1)}</select>
           <label><input type="checkbox" name="trasplante"> trasplantado</label> <button type="button" data-action="mirada">Despertar o subir</button></p>
         <p>Pacto: <select name="pactos">${opciones(D.pactos.map(p => [p.linaje, p.linaje]), "")}</select> <button type="button" data-action="lista" data-campo="pactos" data-texto="pacto">Dar</button>
           · escuela: <select name="escuela"><option value="">Ninguna</option>${opciones(D.escuelas.map(s => [s.nombre, `${s.nombre} (${s.rama})`]), e.escuela ?? "")}</select> <button type="button" data-action="escuela">Guardar</button></p>`)}
+      ${sec("Aprender al instante (creación de personaje)", `<p>Ahora aprende <b>${e.aprenderAlInstante ? "al instante, al pagar" : aprenderPorDias(a) ? "por días de práctica" : "al instante (el ajuste del mundo está apagado)"}</b>. Para armar una ficha de más nivel, ponlo al instante, compra lo que necesite y vuelve a ponerlo por días.</p>
+        <p><button type="button" data-action="alInstante">${e.aprenderAlInstante ? "Volver a aprender por días" : "Aprender al instante"}</button>${Object.keys(e.estudios ?? {}).length ? ` · Estudiando: ${Object.values(e.estudios).map(x => `${escH(tecnicaPorId(x.id, a)?.n ?? x.id)} (${x.progreso}/${x.exitos}) <button type="button" data-action="aprenderYa" data-id="${escH(x.id)}">Aprender ya</button>`).join(" · ")}` : ""}</p>`, !!Object.keys(e.estudios ?? {}).length)}
       ${sec("Herramientas", `<p><button type="button" data-action="choque"><i class="fa-solid fa-burst"></i> Choque de técnicas</button> <button type="button" data-action="olvidar"><i class="fa-solid fa-eraser"></i> Quitar el Verbe a este actor</button></p>`)}`;
   }
 }
@@ -4194,11 +4565,26 @@ const INCAPAZ = ["incapacitated", "paralyzed", "stunned", "unconscious", "petrif
 const noPuedeActuar = actor => INCAPAZ.some(st => actor?.statuses?.has(st));
 /** ¿Está en un combate empezado? Fuera de combate las reacciones no se agotan: la marca de midi-qol no caduca sin turnos. */
 const enCombate = actor => !!game.combat?.started && !!game.combat.combatants?.some?.(c => c.actor === actor || (c.actor?.uuid && c.actor.uuid === actor?.uuid) || (c.actorId && c.actorId === actor?.id));
+/** 3.27: la reacción Verbe va aparte de la de D&D (un velo de separación): una por ronda, se renueva al empezar tu turno. */
 function reaccionDisponible(actor) {
   if (noPuedeActuar(actor) || actor?.statuses?.has("cargado") || actor?.statuses?.has("canalizando")) return false;
   if (!enCombate(actor)) return true;
-  if (estado(actor)?.reaccionUsada) return false;
-  try { return !globalThis.MidiQOL?.hasUsedReaction?.(actor); } catch { return true; }
+  return !estado(actor)?.reaccionUsada;
+}
+/** Acciones Verbe que tiene por turno: una; desde el nivel 11, dos. */
+const maxAccionesVerbe = actor => accionesVerbePorTurno(nivelDe(actor), sumaEf(actor, ef => ef.accionesVerbe));
+/** El estado del turno para mostrarlo arriba: acciones Verbe gastadas y si le queda la reacción Verbe. */
+export function turnoVerbe(actor) {
+  const e = estado(actor) ?? {}, comb = game.combat?.started ? (game.combat.id ?? "combate") : null;
+  const t = comb && e.turnoTecnicas?.combate === comb ? e.turnoTecnicas : {};
+  const max = maxAccionesVerbe(actor), usadas = Math.min(max, Number(t.acciones) || 0);
+  return { enCombate: !!comb && enCombate(actor), max, usadas, accionLibre: usadas < max, adicionalLibre: !(Number(t.adicionales) >= 1), reaccionLibre: reaccionDisponible(actor) };
+}
+/** La línea de arriba: «Acción Verbe ◆ libre · Reacción Verbe ◆ gastada». */
+export function turnoVerbeHTML(actor) {
+  const t = turnoVerbe(actor);
+  if (!t.enCombate) return `<div class="ecos-turno-verbe fuera"><span><i class="fa-solid fa-bolt"></i> Acción Verbe</span><span><i class="fa-solid fa-forward"></i> Acción adicional Verbe</span><span><i class="fa-solid fa-shield-halved"></i> Reacción Verbe</span><small>Fuera de combate no se gastan. En combate tienes ${t.max === 1 ? "una acción Verbe" : `${t.max} acciones Verbe`} y una acción adicional Verbe por turno, y una reacción Verbe por ronda, aparte de las de D&D.</small></div>`;
+  return `<div class="ecos-turno-verbe"><span class="${t.accionLibre ? "libre" : "gastada"}" data-tooltip="No gasta tu Acción de D&D"><i class="fa-solid fa-bolt"></i> Acción Verbe: <b>${t.accionLibre ? (t.max > 1 ? `${t.max - t.usadas} libre${t.max - t.usadas === 1 ? "" : "s"}` : "libre") : "gastada"}</b></span><span class="${t.adicionalLibre ? "libre" : "gastada"}" data-tooltip="Técnicas de Acción adicional. No gasta tu Acción adicional de D&D"><i class="fa-solid fa-forward"></i> Acción adicional Verbe: <b>${t.adicionalLibre ? "libre" : "gastada"}</b></span><span class="${t.reaccionLibre ? "libre" : "gastada"}" data-tooltip="Sustitución, defensas y Choque. No gasta tu Reacción de D&D"><i class="fa-solid fa-shield-halved"></i> Reacción Verbe: <b>${t.reaccionLibre ? "libre" : "gastada"}</b></span><small>Se renuevan al empezar tu turno.</small></div>`;
 }
 
 /** Grado de un ataque: el de su técnica o conjuro; si es un arma o una criatura, la mitad de su nivel o VD. */
@@ -4300,7 +4686,7 @@ async function elegirDefensa(actor, info) {
     ? `<p><b>${escH(info.quien)}</b> usa <b>${escH(info.con)}</b>: un área que pide salvación de Destreza.</p>`
     : `<p><b>${escH(info.quien)}</b> te ataca con <b>${escH(info.con)}</b>: <b>${info.total}</b> contra tu CA ${info.ca}${info.critico ? " (crítico)" : ""}. Va a impactar.</p>`;
   const html = `<div class="ecos-verbe-form">${cab}
-    <p class="ecos-nota">Tienes ${Number(e.valor) || 0} de Verbe y tu reacción libre. Grado del ataque: ${info.grado}; el tuyo: ${gradoMax(actor)}.</p>
+    <p class="ecos-nota">Tienes ${Number(e.valor) || 0} de Verbe y tu <b>reacción Verbe</b> libre (defenderte la gasta; tu Reacción de D&D no se toca). Grado del ataque: ${info.grado}; el tuyo: ${gradoMax(actor)}.</p>
     <ul class="ecos-verbe-lista">${opciones.map(o => `<li><b>${escH(o.nombre)}</b> · ${o.costo} Verbe${o.extra ? ` (incluye ${o.extra} por ser un ataque más grande que tú)` : ""}${o.refleja ? " · gratis por Sustitución refleja" : ""}: ${escH(o.texto)}${o.aviso ? ` <i>(${escH(o.aviso)})</i>` : ""}.</li>`).join("")}</ul></div>`;
   let dlg = null;
   const r = await DialogV2.wait({
@@ -4332,8 +4718,7 @@ async function usarDefensaInterno(actor, id, info = {}) {
     });
     if (propios.length) await actor.createEmbeddedDocuments("ActiveEffect", propios);
     await guardar(actor, { valor: valor0, ...(enCombate(actor) ? { reaccionUsada: true } : {}) });
-    if (enCombate(actor)) try { await globalThis.MidiQOL?.setReactionUsed?.(actor); } catch { /* sin midi */ }
-    aLaMesa(actor, `✦ ${escH(op.nombre)}`, `<p>${escH(actor.name)} reacciona con <b>${escH(op.nombre)}</b> (${op.costo} Verbe): ${escH(op.texto)}</p><p class="ecos-nota">${propios.length ? "El bono se aplica a este ataque." : "Esta reacción no se automatiza: el DM resuelve su efecto sobre el ataque."}</p>`);
+    aLaMesa(actor, `✦ ${escH(op.nombre)}`, `<p>${escH(actor.name)} reacciona con <b>${escH(op.nombre)}</b> (${op.costo} Verbe): ${escH(op.texto)}</p><p class="ecos-nota">${propios.length ? "El bono se aplica a este ataque." : "Esta reacción no se automatiza: el DM resuelve su efecto sobre el ataque."}</p>${enCombate(actor) ? `<p class="ecos-gasto-verbe">✦ Se gastó la <b>reacción Verbe</b>. Su Reacción de D&D sigue libre.</p>` : ""}`);
     if (valor0 < 0) await sobreesfuerzo(actor, op.g, valor0);
     return true;
   }
@@ -4350,6 +4735,7 @@ async function usarDefensaInterno(actor, id, info = {}) {
   if (def.hasta === "turno") especial = ["turnStart"];
   if (def.velocidad0) changes.push({ key: "system.attributes.movement.walk", mode: 5, value: "0" });
   if (def.tipo === "desventaja" && def.hasta === "turno") changes.push({ key: "flags.midi-qol.grants.disadvantage.attack.all", mode: 5, value: "1" });
+  if (info.nativo && !info.area && def.hasta !== "turno") changes.length = 0; // 3.27: la tirada ya está hecha; lo dice el chat
   if (changes.length) {
     efectos.push({ name: op.nombre, img: "systems/dnd5e/icons/svg/abilities/dexterity.svg", changes,
       duration: { rounds: 1, seconds: 6 }, transfer: false,
@@ -4363,9 +4749,9 @@ async function usarDefensaInterno(actor, id, info = {}) {
     for (const ef of creados) await ef.delete();
     throw error;
   }
-  if (enCombate(actor)) try { await globalThis.MidiQOL?.setReactionUsed?.(actor); } catch { /* sin midi */ }
   const que = info.area ? "sale del área a un objeto fuera de ella" : ({ falla: "se cambia por un objeto: el ataque golpea eso", ca: "levanta la guardia", desventaja: "se corre justo a tiempo" }[def.tipo] ?? "se defiende");
-  aLaMesa(actor, `✦ ${escH(op.nombre)}`, `<p>${escH(actor.name)} ${que} (${op.costo} Verbe${op.refleja ? ", gratis por Sustitución refleja" : ""}).</p>`);
+  const nativo = info.nativo ? ({ falla: " <b>El ataque no le hace nada: no apliques su daño.</b>", ca: ` Su CA sube +${def.ca} contra este ataque${Number.isFinite(Number(info.total)) ? `: ${Number(info.total) >= Number(info.ca) + Number(def.ca) ? `${info.total} sigue impactando` : `${info.total} ya no alcanza (CA ${Number(info.ca) + Number(def.ca)}), no apliques el daño`}` : ""}.`, desventaja: " El atacante repite el d20 y se queda con el menor." }[def.tipo] ?? "") : "";
+  aLaMesa(actor, `✦ ${escH(op.nombre)}`, `<p>${escH(actor.name)} ${que} (${op.costo} Verbe${op.refleja ? ", gratis por Sustitución refleja" : ""}).${nativo}</p>${enCombate(actor) ? `<p class="ecos-gasto-verbe">✦ Se gastó la <b>reacción Verbe</b>. Su Reacción de D&D sigue libre.</p>` : ""}`);
   if (valor < 0) await sobreesfuerzo(actor, op.g, valor);
   return true;
 }
@@ -4444,6 +4830,7 @@ export function cuestaVerbe(actor, meta, grado) {
 }
 
 function opcionesChoque(actor) {
+  if (!reaccionDisponible(actor)) return []; // 3.27: el choque gasta la reacción Verbe
   return itemsTecnica(actor).filter(i=>tecnicaChocable(i)).flatMap(item=>{
     const meta=item.getFlag(MOD,F),lista=[];
     for(let grado=meta.g;grado<=gradoUsable(actor,meta);grado++){
@@ -4464,7 +4851,8 @@ async function pagarContraTecnica(actor,id,grado) {
     // Los efectos de objetivo no se aplican: la energía se emplea en interceptar.
     if(config.ecosVerbe.despues<0)await sobreesfuerzo(actor,grado,config.ecosVerbe.despues);
     if(op.item.system?.uses?.max && grado>=6)await op.item.update({'system.uses.spent':(Number(op.item.system.uses.spent)||0)+1});
-    await aLaMesa(actor,'Contratécnica',`<p>${escH(actor.name)} enfrenta ${escH(op.item.name)} a grado ${grado} y paga ${config.ecosVerbe.costo} Verbe. No consume reacción ni concede un ataque adicional.</p>`);
+    if(enCombate(actor))await guardar(actor,{reaccionUsada:true});
+    await aLaMesa(actor,'Contratécnica',`<p>${escH(actor.name)} enfrenta ${escH(op.item.name)} a grado ${grado} y paga ${config.ecosVerbe.costo} Verbe. No concede un ataque adicional.</p>${enCombate(actor)?'<p class="ecos-gasto-verbe">✦ Se gastó la <b>reacción Verbe</b> (choque). Su Reacción de D&D sigue libre.</p>':''}`);
     return {id,grado,nonce:config.ecosVerbe.nonce,nombre:op.item.name,nat:op.item.getFlag(MOD,F).infusion||op.item.getFlag(MOD,F).nat,costo:config.ecosVerbe.costo};
   } finally {consumosChoque.delete(config);if(consumoPendiente(actor)?.nonce===config.ecosVerbe?.nonce)consumosPendientes.delete(claveActor(actor));}
 }
@@ -4473,7 +4861,7 @@ async function elegirContraTecnica(actor,info) {
   if(info.hasta&&Date.now()>info.hasta)return null;
   const opciones=opcionesChoque(actor);
   const seleccion=await foundry.applications.api.DialogV2.wait({window:{title:`Choque de técnicas · ${actor.name}`,resizable:true},position:{width:640},
-    content:`<div class="ecos-verbe-form"><p><b>${escH(info.quien)}</b> dirige ${escH(info.con)} (grado ${info.grado}) contra ti. Las defensas anteriores ya se resolvieron.</p><p>El choque está disponible aunque hayas usado tu reacción. Tu técnica paga su Verbe y usos diarios; solo intercepta este lanzamiento contra ti.</p>${opciones.length?`<label>Contratécnica y grado<select name="contra">${opciones.map(o=>`<option value="${escH(o.id)}|${o.grado}">${escH(o.item.name)} · grado ${o.grado} · ${o.costo} Verbe</option>`).join('')}</select></label>`:'<p>No tienes una técnica ofensiva válida y utilizable para enfrentarla.</p>'}</div>`,
+    content:`<div class="ecos-verbe-form"><p><b>${escH(info.quien)}</b> dirige ${escH(info.con)} (grado ${info.grado}) contra ti. Las defensas anteriores ya se resolvieron.</p><p>El choque gasta tu <b>reacción Verbe</b> (no la de D&D). Tu técnica paga su Verbe y usos diarios; solo intercepta este lanzamiento contra ti.</p>${opciones.length?`<label>Contratécnica y grado<select name="contra">${opciones.map(o=>`<option value="${escH(o.id)}|${o.grado}">${escH(o.item.name)} · grado ${o.grado} · ${o.costo} Verbe</option>`).join('')}</select></label>`:'<p>No tienes una técnica ofensiva válida y utilizable para enfrentarla.</p>'}</div>`,
     buttons:[...(opciones.length?[{action:'chocar',label:'Enfrentar técnicas',callback:(ev,b)=>b.form.elements.contra.value}]:[]),{action:'recibir',label:'Recibir la técnica',default:true}],render:(ev,d)=>{if(info.hasta)setTimeout(()=>{try{(d??ev?.target)?.close?.();}catch{}},Math.max(0,info.hasta-Date.now()));},rejectClose:false});
   if(!seleccion||seleccion==='recibir'||(info.hasta&&Date.now()>info.hasta))return null;
   const[id,g]=String(seleccion).split('|');return pagarContraTecnica(actor,id,Number(g));
@@ -4489,7 +4877,7 @@ async function choqueAutomatico(wf) {
   const trabajo=(async()=>{
     const vistos=new Set();
     for(const tok of [...(wf.targets??[])]){
-      const actor=tok?.actor;if(!actor||actor===wf.actor||!despierto(actor)||vistos.has(actor.uuid??actor.id)||noPuedeActuar(actor)||actor.statuses?.has("canalizando"))continue;
+      const actor=tok?.actor;if(!actor||actor===wf.actor||!despierto(actor)||vistos.has(actor.uuid??actor.id)||noPuedeActuar(actor)||actor.statuses?.has("canalizando")||!reaccionDisponible(actor))continue;
       vistos.add(actor.uuid??actor.id);
       const respuesta=await preguntarDefensa(actor,{choque:true,quien:wf.actor.name,con:wf.item.name,grado:gradoAtaque(wf)});
       if(!respuesta)continue;
@@ -4651,6 +5039,10 @@ Hooks.once("init", () => {
   // Ediciones del DM sobre el catálogo del módulo: solo las diferencias, para que una actualización no las borre.
   game.settings.register(MOD, "capaVSangre", { scope: "world", config: false, type: String, default: "" });
   game.settings.register(MOD, AJ.ediciones, { scope: "world", config: false, type: Object, default: { tecnicas: {}, dotes: {} } });
+  game.settings.register(MOD, "verbeAprenderDias", {
+    name: "Verbe · aprender por días", hint: "3.27: pagar los Trazos es el primer paso; después hay días de práctica con una tirada diaria de Control del Verbe (CD 10 + grado, tantos días buenos como grado + 1). Apagado: se aprende al pagar, como antes. El DM puede dar una técnica por aprendida o poner a un personaje «al instante» (creación de personajes de más nivel).",
+    scope: "world", config: true, type: Boolean, default: true
+  });
   game.settings.register(MOD, "verbeChoques", {
     name: "Choques del Verbe", hint: "Potencia: el elemento favorable aporta 2 grados; si empatan, Control. Clásico: el ciclo elemental decide antes que el grado.",
     scope: "world", config: true, type: String, default: "potencia",
@@ -4686,6 +5078,7 @@ Hooks.once("ready", async () => {
     D = await cargarDatos();
     if (!D) return console.warn(`${MOD} | capa V: no encuentro sus datos`);
     aplicarNombresMundo(D, nombresDelMundo());
+    prepararDatos327(D);
     BASE = { tecnicas: D.tecnicas, dotes: D.dotes };
     aplicarEdicionesMundo();
     if (soyGM()) setTimeout(() => revisarSangres().catch(err => console.warn(`${MOD} | sangre`, err)), 3000);
@@ -4702,6 +5095,7 @@ Hooks.once("ready", async () => {
       ? documento.setFlag(MOD, "metal", !!metal) : false };
   game.socket.on(`module.${MOD}`, d => { if (d?.capaV && !socketDefensa(d)) manejar(d); });
   if (soyGM()) asegurarNotaPanteon(D).catch(err=>console.error(`${MOD} | panteón DM`,err));
+  if (soyGM()) asegurarDiarioFamilias().catch(err => console.error(`${MOD} | familias`, err));
   asegurarGuia().catch(err => console.error(`${MOD} | capa V: guía`, err));
   // Las hojas que ya despertaron reciben los rasgos que les falten (los dones de nacimiento, por ejemplo).
   if (soyGM()) {
@@ -4858,6 +5252,26 @@ Hooks.on("updateCombat", (combat, cambios) => {
   if (!activo() || !soyGM() || !combat.started || !("turn" in cambios || "round" in cambios)) return;
   inicioDeTurno(combat).catch(err => console.error(`${MOD} | capa V`, err));
 });
+/**
+ * 3.27: Sustitución y las defensas también contra ataques normales sin midi-qol (dnd5e 6). Después de la tirada de
+ * ataque, a cada objetivo despierto al que el ataque alcanzaría se le ofrece su defensa (gasta la reacción Verbe) y el
+ * chat dice cómo queda el ataque. Las técnicas que ya pasaron por el enfrentamiento previo no preguntan dos veces.
+ */
+async function defensaNativa(rolls, activity) {
+  const roll = rolls?.[0], atacante = activity?.actor;
+  if (!roll || !atacante || game.modules.get("midi-qol")?.active) return;
+  const meta = activity.item?.getFlag?.(MOD, F);
+  if (meta?.id && tecnicaChocable(activity.item, activity)) return;
+  const grado = gradoAtaque({ actor: atacante, item: activity.item, activity });
+  for (const tok of [...(game.user.targets ?? [])]) {
+    const actor = tok.actor;
+    if (!actor || actor === atacante || !despierto(actor)) continue;
+    const ca = sistema.ca(actor), critico = !!roll.isCritical, impacta = critico || (!roll.isFumble && Number(roll.total) >= ca);
+    if (!impacta || !defensasDisponibles(actor, { grado, area: false }).length) continue;
+    await preguntarDefensa(actor, { quien: atacante.name, con: activity.item?.name ?? "un ataque", grado, total: roll.total, ca, critico, nativo: true });
+  }
+}
+Hooks.on("dnd5e.rollAttackV2", (rolls, datos) => { if (activo()) defensaNativa(rolls, datos?.subject).catch(err => console.error(`${MOD} | defensa`, err)); });
 
 /** Para las pruebas fuera de Foundry. */
 export const _prueba = { crearClones, pedirClones, subirCarga, golpeCanalizando, revolver, resolverEntreno, iniciarEntrenoNaturaleza, aplicarDesventaja, defenderAtaque, despuesDeUsar, ponerDespertar, ponerOjo, alQuitarEfecto, inicioDeTurno, manejar, crearAprobada, asegurarRasgos, choqueAutomatico, choqueNativo, elegirContraTecnica, pagarContraTecnica, opcionesChoque, excluirBlanco, enfrentamientoAutomatico };

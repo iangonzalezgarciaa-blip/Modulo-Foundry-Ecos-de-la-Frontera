@@ -28,7 +28,7 @@ for(const level of [1,5,11,16,18,20]) {
     if(!t || V.conoce(a,t.id))return;
     if(visitadas.has(t.id))throw Error('Requisito circular');visitadas.add(t.id);
     const previa=D.tecnicas.find(p=>p.n===t.req);if(previa)await aprenderCamino(previa,visitadas);
-    if(await V.aprender(a,t,{aprobado:true})!==true)throw Error(`No se pudo comprar ${t.id}`);
+    if(await V.aprender(a,t,{aprobado:true,instantaneo:true})!==true)throw Error(`No se pudo comprar ${t.id}`);
     nombres.push(`${t.n} (${t.g})`);
   };
   const tope=V.gradoUsable(a,{rama:'forma',g:0});

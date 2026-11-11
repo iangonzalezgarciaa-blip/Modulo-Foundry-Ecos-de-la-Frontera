@@ -60,7 +60,7 @@ test('la guía para todos nombra cada acción y no tiene restos', () => {
 test('3.14: lo que ya es de D&D se resuelve como en el Manual y lo de Ecos usa la pericia', () => {
   const por = id => ACCIONES_PLANAS.find(a => a.id === id);
   assert.equal(por('presa').cd, 'str'); assert.equal(por('presa').base, 'Presa (Golpe sin armas)');
-  assert.match(por('apartar').texto, /Apartas 1,5 m/); assert.doesNotMatch(por('apartar').texto, /3 m/);
+  assert.match(por('apartar').texto, /Apartas 5 ft/); assert.doesNotMatch(por('apartar').texto, /10 ft|\d m\b/, '3.27: en pies');
   assert.deepEqual(por('fintar').cdPericia, ['dec']); assert.deepEqual(por('birlar').cdPericia, ['slt']);
   assert.deepEqual(por('desarmar').cdPericia, ['ath', 'acr']);
   const rasgos = datosRasgosComunes();

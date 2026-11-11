@@ -10,7 +10,7 @@ async function comprarCamino(a,t,vistos=new Set()){
  if(!t||V.conoce(a,t.id))return true;if(vistos.has(t.id))return false;vistos.add(t.id);
  const previa=t.previa?porId(t.previa):D.tecnicas.find(p=>p.n===t.req);
  if(previa&&!await comprarCamino(a,previa,vistos))return false;
- return await V.aprender(a,t,{aprobado:true})===true;
+ return await V.aprender(a,t,{aprobado:true,instantaneo:true})===true;
 }
 async function preparar(nivel,linaje){
  resetEnvironment();V.usarDatos(D,'activo');
