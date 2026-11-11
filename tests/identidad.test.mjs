@@ -11,6 +11,8 @@ test('las 778 técnicas anteriores conservan sus reglas estructuradas e identifi
  const corregidas=JSON.parse(fs.readFileSync(new URL('../tools/nimerios/correcciones-3.5.0.json',import.meta.url)));
  // 3.30 (pedido del autor): las que hacen daño pierden un 30 % de dados y dejan una ruptura; se registran con su motivo.
  Object.assign(corregidas,Object.fromEntries(D.tecnicas.filter(t=>t.rupturaAuto&&!corregidas[t.id]).map(t=>[t.id,[`3.30: re-nivelado táctico (dados ×0,7 y ${t.rupturaAuto.tipo})`]])));
+ // 3.32: las que reciben un efecto propio (se pone en quien la usa) también quedan registradas.
+ Object.assign(corregidas,Object.fromEntries(D.tecnicas.filter(t=>!corregidas[t.id]&&t.item.effects?.some(e=>e.flags?.['ecos-frontera']?.verbe?.propio)).map(t=>[t.id,['3.32: efecto propio automático']])));
  assert.equal(Object.keys(anterior).length,778);
  for(const[id,huella]of Object.entries(anterior)){const t=D.tecnicas.find(t=>t.id===id);assert.ok(t,id);
   if(corregidas[id]){assert.ok(corregidas[id].length,id);assert.deepEqual(problemasTecnica(t).filter(p=>p.nivel==='error'),[],id);continue;}

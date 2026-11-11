@@ -1,4 +1,4 @@
-# Cobertura declarada del catálogo 3.31.0
+# Cobertura declarada del catálogo 3.32.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
@@ -10,7 +10,7 @@ El catálogo reúne **936 técnicas y 470 dotes**.
 |---|---:|---:|
 | Forma | 205 | 46 |
 | Velo | 58 | 24 |
-| Cuerpo | 70 | 25 |
+| Cuerpo | 70 | 24 |
 | Mirada | 59 | 30 |
 | Sello | 76 | 41 |
 | Pacto | 62 | 32 |
@@ -336,7 +336,7 @@ El catálogo reúne **936 técnicas y 470 dotes**.
 | `velo-hacia-dentro` | Mirar hacia dentro | 4 | velo | save | 0 |
 | `velo-ciudad` | Ciudad falsa | 6 | velo | utility | 0 |
 | `velo-reino` | Reino del sueño | 7 | velo | save | 2 |
-| `cuerpo-guardia` | Guardia de hierro | 0 | cuerpo | utility | 0 |
+| `cuerpo-guardia` | Guardia de hierro | 0 | cuerpo | utility | 1 |
 | `cuerpo-codazo` | Codazo | 1 | cuerpo | attack | 2 |
 | `cuerpo-salto` | Salto del Verbe | 1 | cuerpo | utility | 0 |
 | `cuerpo-presa` | Presa de acero | 2 | cuerpo | save | 2 |

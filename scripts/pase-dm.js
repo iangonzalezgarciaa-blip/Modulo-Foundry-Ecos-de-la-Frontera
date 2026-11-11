@@ -6,6 +6,7 @@
  * recibe la respuesta en privado. Así el DM decide en la ficción antes que las reglas.
  */
 import { sistema } from "./sistema/index.js";
+import { soloSobreSi, recuperarControl } from "./mesa-propio.js";
 
 const MOD = "ecos-frontera", AJ = "paseDM", AJ_DM = "paseDMPropio", AJ_MIG = "paseDMMigrado";
 export const MODOS_PASE = { todas: "Toda acción con objetivo (armas, conjuros, técnicas y acciones de cualquiera)", acciones: "Solo acciones de cualquiera y técnicas del Verbe", no: "Nunca (las acciones siguen solas)" };
@@ -127,6 +128,8 @@ async function responder(d, { local = false } = {}) {
     buttons: [{ action: "si", label: "Dar el pase", icon: "fa-solid fa-check", default: true, callback: (ev, btn) => new foundry.applications.ux.FormDataExtended(btn.form).object },
       { action: "no", label: "No le afecta", icon: "fa-solid fa-xmark", callback: (ev, btn) => ({ ...new foundry.applications.ux.FormDataExtended(btn.form).object, ninguno: true }) }]
   });
+  // 3.32: si el diálogo se tragó el soltar del ratón, el DM no debe quedarse sin poder mover fichas.
+  recuperarControl({ avisar: false }).catch(() => null);
   const afectan = !r || r.ninguno ? [] : d.objetivos.filter((t, i) => r[`o${i}`]).map(t => t.uuid);
   const respuesta = { pase: "respuesta", id: d.id, para: d.de, afectan, nota: r?.nota ?? "" };
   if (local) return respuesta;
@@ -155,7 +158,8 @@ if (globalThis.Hooks) {
     }
   });
   const argumentos = (activity, yaTienePase) => {
-    const objetivos = objetivosDe(activity?.actor);
+    // 3.32: lo que es solo sobre ti (Guardia de hierro, un modo, un buff) no toca al marcado: no hay pase que pedir.
+    const objetivos = soloSobreSi(activity) ? [] : objetivosDe(activity?.actor);
     return { objetivos, o: { esGM: game.user.isGM, modo: modo(), modoDM: modoDM(), flags: activity?.item?.flags, objetivos, yaTienePase,
       hayDM: !!game.users.activeGM, actorPJ: esPJ(activity?.actor) } };
   };

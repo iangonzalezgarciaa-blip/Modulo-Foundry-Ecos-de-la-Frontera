@@ -21,6 +21,8 @@
  * Las reglas solo valen para los PJ; el resto del mundo muere normal.
  */
 
+import "./mesa-propio.js";
+import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
 import { CALENDARIO, eventosDelDia, faseLunar, diaCampana, sumarDias, mesPrimerAno } from "./calendario.js";
 import "./verbe.js";
@@ -4463,7 +4465,9 @@ function renderPanelEstados() {
     }
     PANEL_ESTADOS.innerHTML = `<div class="ecos-panel-nombre">${escH(actor.name)}</div>` + efs.map(e => {
       const dur = e.duration?.label && !/^(none|ninguna?|—)$/i.test(e.duration.label) ? e.duration.label : "";
-      const ayuda = [e.name, dur, textoPlano(e.description)].filter(Boolean).join(" · ");
+      // 3.32: los estados del sistema (Derribado, Ensangrentado, Agotamiento…) dicen qué significan y qué hacer.
+      const explicado = explicarEfecto(e.statuses ?? [], { agotamiento: sistema.agotamiento(actor) });
+      const ayuda = [explicado ? "" : e.name, dur, explicado ?? textoPlano(e.description)].filter(Boolean).join(" · ");
       return `<div class="ecos-estado" data-tooltip="${escH(ayuda)}" data-tooltip-direction="LEFT">
         <img src="${escH(e.img || "icons/svg/aura.svg")}" alt=""><span>${escH(e.name)}${dur ? `<small>${escH(dur)}</small>` : ""}</span></div>`;
     }).join("");
@@ -4472,6 +4476,17 @@ function renderPanelEstados() {
   }
 }
 const renderPanelLuego = foundry.utils.debounce(renderPanelEstados, 150);
+/* 3.32: en el HUD del token (clic derecho), cada estado dice qué significa al pasar el ratón. */
+Hooks.on("renderTokenHUD", (hud, html) => {
+  try {
+    const raiz = html instanceof HTMLElement ? html : html?.[0];
+    const actor = hud?.object?.actor ?? hud?.actor;
+    for (const el of raiz?.querySelectorAll?.("[data-status-id]") ?? []) {
+      const t = explicarEstado(el.dataset.statusId, { agotamiento: actor ? sistema.agotamiento(actor) : 0 });
+      if (t) { el.dataset.tooltip = t; el.dataset.tooltipDirection = "LEFT"; el.removeAttribute("title"); }
+    }
+  } catch (err) { console.warn(`${MOD} | estados en el HUD`, err); }
+});
 for (const h of ["controlToken", "createActiveEffect", "updateActiveEffect", "deleteActiveEffect", "updateActor", "updateWorldTime", "canvasReady", "collapseSidebar", "updateCombat",
   "renderSidebar", "changeSidebarTab"]) {
   Hooks.on(h, () => renderPanelLuego());
@@ -5008,7 +5023,9 @@ Hooks.on("renderChatMessageHTML", (message, html) => {
   const actor = game.actors.get(actorId);
   caja.querySelectorAll("[data-ecos-accion]").forEach(b => {
     const accion = b.dataset.ecosAccion;
-    const permitido = b.dataset.soloDm ? game.user.isGM : (["repetir", "jornada", "vigilia"].includes(accion) ? !!actor?.isOwner : true);
+    // 3.32: Estabilizar lo aprieta otro (un aliado o el DM), nunca el dueño del herido.
+    const permitido = b.dataset.soloDm ? game.user.isGM : accion === "estabilizar" ? (game.user.isGM || !actor?.isOwner)
+      : (["repetir", "jornada", "vigilia"].includes(accion) ? !!actor?.isOwner : true);
     if (!permitido) return b.remove();
     b.addEventListener("click", ev => {
       ev.preventDefault();
@@ -7290,7 +7307,9 @@ function cfgDesc() {
 function reglaDescanso(actor) {
   if (!actor || !["character", "npc"].includes(actor.type)) return false;
   if (cfgDesc().regla === "apagado") return false;
-  return actor.getFlag?.(MOD, "descansos") === true;
+  // 3.32: los PJ usan siempre los descansos de la casa (descansar nunca devuelve PG solo); el DM puede apagarlo en su hoja.
+  const f = actor.getFlag?.(MOD, "descansos");
+  return f === true || (f !== false && actor.type === "character");
 }
 
 const nivelDG = actor => ((actor?.type === "npc")
@@ -7616,8 +7635,8 @@ function abrirGastoDG(actor, datos = {}) {
 /** Da (true) o quita (false o null) los descansos de la casa a una hoja. */
 async function marcarDescanso(actor, valor) {
   if (!game.user.isGM || !actor) return;
-  if (valor) await actor.setFlag(MOD, "descansos", true);
-  else await actor.unsetFlag(MOD, "descansos");
+  // 3.32: apagarlo queda guardado (false): si no, un PJ volvería a la regla de la casa, que es lo de siempre.
+  await actor.setFlag(MOD, "descansos", !!valor);
   ajustesDescansos?.rendered && ajustesDescansos.render();
 }
 
@@ -7749,6 +7768,7 @@ const FUNCIONES_HOJA = [
 function funcionEncendida(actor, k) {
   if (!actor) return false;
   if (k === "verbe") return !!verbeApi()?.despierto?.(actor);
+  if (k === "descansos") return reglaDescanso(actor);
   return actor.getFlag?.(MOD, k) === true;
 }
 
@@ -7761,7 +7781,8 @@ async function ponerFuncion(actor, k, valor) {
     return funcionEncendida(actor, "verbe") ? v.abrir(actor) : v.despertar(actor);
   }
   if (!FUNCIONES_HOJA.some(f => f.k === k)) return;
-  if (valor) await actor.setFlag(MOD, k, true);
+  if (k === "descansos") await actor.setFlag(MOD, k, !!valor); // 3.32: en los PJ viene encendida; apagarla queda guardado
+  else if (valor) await actor.setFlag(MOD, k, true);
   else await actor.unsetFlag(MOD, k);
   if (k === "pj") {
     try {
@@ -9127,7 +9148,8 @@ const OPS_PANEL = [
     ["mercadillo", "Mercadillo", "fa-store", "Abre el Mercadillo de Arcegris."],
     ["pantalla", "Pantalla del DM", "fa-table-columns", "Abre o cierra la Pantalla del DM (pestaña «Ecos · DM»)."],
     ["plantillas", "Quitar plantillas", "fa-eraser", "Lista las plantillas de área de la escena (en Foundry 14 son regiones) y quita las marcadas o todas. También está la goma en la barra de Tokens."],
-    ["choqueVerbe", "Choque de técnicas", "fa-burst", "Resuelve a mano un choque entre dos técnicas (elemento, grado y Control)."]
+    ["choqueVerbe", "Choque de técnicas", "fa-burst", "Resuelve a mano un choque entre dos técnicas (elemento, grado y Control)."],
+    ["recuperar", "Recuperar el control", "fa-hand-pointer", "Si de pronto no puedes seleccionar ni mover fichas (un diálogo se quedó con el ratón), esto lo arregla sin F5."]
   ]]
 ];
 
@@ -9466,6 +9488,7 @@ async function ejecutarPanel(op) {
     case "santuario": await game.settings.set(MOD, "santuario", !game.settings.get(MOD, "santuario")); ui.controls?.render?.({ reset: true }); break;
     case "plantillas": await quitarPlantillas(); break;
     case "choqueVerbe": await api?.verbe?.choque?.(); break;
+    case "recuperar": await api?.recuperarControl?.(); break;
     case "estado": game.journal.get("G0rD0J3JkpOkXM00")?.pages.find(p => p.getFlag(MOD, "estado"))?.sheet?.render(true); break;
     case "tirada":
       if (!game.MonksTokenBar?.requestRoll) return ui.notifications.warn("Hace falta Monk's TokenBar activo.");
@@ -9652,7 +9675,7 @@ const CONFIG_MODULOS = [
       return n ? 1 : 0;
     },
     texto: "los enemigos derrotados dejan su mancha (sangre; quemadura en elementales, demonios y constructos; baba verde en limos y plantas; gris en no muertos) y su cuerpo queda medio transparente para todos, para poder saquearlo." },
-  { id: "healthEstimate", v: 3, ajustes: { "core.estimations": ESTIMACIONES, "core.deathStateName": "Muerto", "core.showDescription": 0, "core.NPCsJustDie": true,
+  { id: "healthEstimate", v: 4, ajustes: { "core.estimations": ESTIMACIONES, "core.deathStateName": "Caído", "core.showDescription": 0, "core.NPCsJustDie": true,
     "core.menuSettings.fontSize": 11, "core.unknownEntity": "Alguien" },
     texto: "al pasar el ratón sobre un token se ve, en letra más chica, lo que se nota a simple vista («Sin un rasguño», «Rasguñado», «Golpeado», «Sangra», «Tambalea», «En el suelo»), con textos propios para no muertos, constructos, plantas, limos y enjambres; los PJ a 0 PG salen como «Acechado por la Muerte». No dice los PG." },
   { id: "torch", v: 1, ajustes: { gameLightSources: `${RUTA}/data/torch-es.json` },

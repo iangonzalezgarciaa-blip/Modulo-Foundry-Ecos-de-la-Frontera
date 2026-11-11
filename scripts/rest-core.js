@@ -21,6 +21,8 @@ export function ajustarRecuperacionDG(actor, result, { largo = false, limiteRec 
     result.deltas ??= { hitPoints: 0, hitDice: 0 };
     // 1 · Los PG no vuelven solos (lo curado con Dados de Golpe en un Descanso Corto ya está en la hoja).
     if ("system.attributes.hp.value" in ud) delete ud["system.attributes.hp.value"];
+    // 3.32: dnd5e 5–6 puede traerlos anidados; tampoco vuelven por ahí.
+    if (ud.system?.attributes?.hp && "value" in ud.system.attributes.hp) delete ud.system.attributes.hp.value;
     if (largo) result.deltas.hitPoints = 0;
     // 2 · Fuera la recuperación de Dados de Golpe del sistema; dentro la de la casa.
     const clases = new Set(Array.from(actor.system.attributes?.hd?.classes ?? []).map(c => c.id));

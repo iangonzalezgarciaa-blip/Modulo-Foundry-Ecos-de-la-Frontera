@@ -1,5 +1,15 @@
 # Historial de cambios
 
+## 3.32.0 — 2026-11-11
+
+- **Lo que es solo sobre ti es tuyo** (pedido del autor): una técnica de alcance «Yo» sin área (Guardia de hierro, un modo, un refuerzo) ya no pide el pase del DM por el token marcado ni toca a nadie más; sin midi-qol, sus efectos se ponen en quien la usa aunque tenga a otro marcado. **Guardia de hierro** pone sola su +1 a la CA y velocidad 0 hasta tu próximo turno.
+- **Recuperar el control** (Menú del DM → Mesa): si el DM se queda sin poder seleccionar ni mover fichas (un diálogo se quedó con el ratón), lo arregla sin F5. El diálogo «¿Le afecta?» lo hace solo al cerrarse.
+- **Cada estado se explica al pasar el ratón** (en el panel de estados de la derecha y en el HUD del token): Derribado, Agarrado, Apresado, Aturdido, Ensangrentado, Inconsciente, Asustado, Concentrándose, Esquivando… dicen qué le pasa a esa criatura y qué puede hacer la mesa. El **Agotamiento** dice su castigo según el nivel (−1 por nivel a las tiradas d20 y −5 ft por nivel; a 6, la muerte).
+- Un PJ a 0 PG ya no aparece como «Muerto» sobre el token: dice **«Caído»** (en esta campaña a 0 PG queda Acechado por la Muerte, no muere).
+- **Estabilizar** lo aprieta otro (un aliado o el DM): el dueño del herido ya no ve el botón.
+- **El Descanso Largo ya no devuelve todos los PG**: los PJ usan siempre los descansos de la casa (se recuperan Dados de Golpe y se cura gastándolos), salvo que el DM lo apague en su hoja. También se quitan los PG aunque el sistema los traiga por otro camino.
+- El panel del Verbe se desplaza con la rueda del ratón y muestra su barra; los títulos de las ventanas de Ecos son un poco más grandes. Dos pruebas de mesa nuevas.
+
 ## 3.31.0 — 2026-11-11
 
 - **Legados de las sangres** (pedido del autor): toda habilidad hereditaria viene de un dios. Los 21 dioses del catálogo tienen un árbol: una **Marca** (desde sangre Rastro), **tres ramas de tres escalones** que abre la fuerza de la sangre (Débil desde nivel 3, Media desde 7, Plena desde 13) y un **Destino** (nivel 17). 231 dotes de legado; las concede el DM y el jugador solo ve las de su sangre si sabe su linaje. Los dioses cosechados traen un destino de regreso.

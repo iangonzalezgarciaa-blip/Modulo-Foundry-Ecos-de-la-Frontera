@@ -38,6 +38,7 @@ import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferen
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
 import { presupuestoCorto } from "./rest-core.js";
 import { sistema } from "./sistema/index.js";
+import { aplicarEnUsuario } from "./mesa-propio.js";
 import { ayudaCampoHTML, ayudaSeccionHTML, explicarOpcion, etapaJugadorHTML, familiaSugerida, RAMAS_PRIMERO } from "./verbe-ayuda.js";
 import { MONEDAS_POR_TRAZO, TRAZOS_POR_NIVEL } from "./mercader.js";
 import { VERSION_REGLAS, recuperarReserva, evaluarGasto, requisitoNatural, crearCola,
@@ -1746,6 +1747,8 @@ async function despuesDeUsar(activity, usageConfig) {
       `<p class="ecos-gasto-verbe">✦ Se gastó la <b>${nombre}</b> de ${escH(actor.name)}${tipo === "accion" && t.max > 1 ? ` (${t.usadas}/${t.max} este turno)` : ""}. ${dnd}.</p>`);
   }
   await efectosShinobi(actor,item,v);
+  // 3.32: lo que es solo sobre ti se pone en ti, aunque tengas a otro marcado (sin midi-qol; con midi lo hace midi).
+  if (!v.replica) await aplicarEnUsuario(activity).catch(err => console.warn(`${MOD} | efectos propios`, err));
   if (meta.golpe327 && !v.replica) await golpeConArma(actor, item, meta, v).catch(err => console.error(`${MOD} | golpe con arma`, err));
   if (clonDe(meta)) await pedirClones(actor, item, meta);
   else explicarUso(actor, item, meta).catch(() => null);
