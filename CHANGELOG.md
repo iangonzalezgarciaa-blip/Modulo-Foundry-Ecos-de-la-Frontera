@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.26.1 — 2026-11-10
+
+- Corrección del texto de la ventana de la sangre, comprobada en el mundo del autor: el linaje del ojo de vidrio decía «Este linaje no abre una herencia de Sangre por sí solo», cuando desde 3.26.0 su sangre también sostiene ante el daño masivo. Ahora lo dice, con lo que no hace (no desgasta la Barrera, no suma al Reloj, no tiene Eco). La herencia de la Barrera ya no cita un diario que ahora cuenta otra cosa.
+
 ## 3.26.0 — 2026-11-10
 
 - **El diario de cada sangre** (pedido del autor). Al elegir un linaje o un ojo en el panel del Verbe (al despertar a alguien o en la pestaña DM), el DM ve una ventana con el resumen de esa sangre y el botón «Abrir su diario», que lo lleva a la página del mundo que la cuenta entera. Las páginas se reconocen por una marca (`flags.ecos-frontera.linaje`), no por el nombre; la portada lleva `_indice`. Junto a «Guardar» del linaje hay un botón «Su diario». Sin lore ni nombres en el código: el texto sale del catálogo cifrado y de los diarios del DM.

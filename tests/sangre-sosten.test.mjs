@@ -23,3 +23,14 @@ test('3.26 · un portador sin Verbe despertado usa la marca de su sangre', async
   assert.equal(sostenDeSangre({ linaje: 'maethra', fuerza: 'plena' }, true, 'ala'), 'barrera', 'con linaje manda el linaje');
   assert.equal(linajePortador('ala', 'maethra'), 'ikkra'); assert.equal(linajePortador(undefined, 'maethra'), 'maethra');
 });
+
+test('3.26.1 · la ventana del linaje del ojo de vidrio dice que su sangre sostiene, sin Barrera ni Eco', async () => {
+  const { resetEnvironment } = await import('./helpers/foundry.mjs');
+  const { readCatalog } = await import('../tools/catalog.mjs');
+  const V = await import('../scripts/verbe.js');
+  resetEnvironment(); V.usarDatos(readCatalog(), 'activo'); game.user.isGM = true;
+  const ikkra = V.describir('linaje', 'ikkra');
+  assert.match(ikkra, /Su sangre también sostiene/); assert.match(ikkra, /No desgasta la Barrera/);
+  assert.doesNotMatch(ikkra, /no abre una herencia/);
+  assert.doesNotMatch(V.describir('linaje', 'thalos'), /Su sangre también sostiene/);
+});

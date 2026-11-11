@@ -29,7 +29,7 @@ import { cargaDe, bonoCarga, cdInterrupcion, textoCarga } from "./verbe-canaliza
 import { clonDe, limitesClones, repartoClones } from "./verbe-clones.js";
 import { iconoTecnica, iconoDote, esGenerico } from "./verbe-iconos.js";
 import { ventanaLinaje, linajeDeEleccion, pasosOjo } from "./linaje-diario.js";
-import { linajePortador } from "./sangre-sosten.js";
+import { linajePortador, LINAJE_ALA } from "./sangre-sosten.js";
 import { DADOS_VERBE, dadoNivel, modoReserva, reservaBase, nivelesSinTirar } from "./verbe-reserva.js";
 import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
@@ -3070,7 +3070,7 @@ export function describir(tipo, v, actor = null) {
       ${l.jerarquia ? `<p><b>Jerarquía:</b> ${l.id==="maethra"?"La mayor de los Primigenios":({primordial:"Primigenio",menor:"Dios menor",sueno:"Sueño divinizado"})[l.jerarquia]}. ${escH(D.panteon?.find(d=>d.id===l.id)?.texto)}${l.propuesto?" <b>Ampliación propuesta: pendiente del lore.</b>":""}</p>`:""}
       ${l.jerarquia==="primordial"?tablaSangreHTML(l):""}
       <p>${escH(h?.rasgo ?? (typeof l.rasgo === "string" ? l.rasgo : "Sus facultades dependen de los dones indicados en su ficha y de la historia."))}</p>
-      <p>${l.nats?.length ? `Naturalezas concedidas: ${l.nats.map(nombreNat).join(", ")}. ` : ""}${l.maxMult ? `Reserva ×${l.maxMult}. ` : ""}${l.recMult ? `Recuperación ×${l.recMult} (también respeta el presupuesto de los cortos). ` : ""}${l.req ? `Abre Sangre con fuerza distinta de «Sin sangre» y permite técnicas que piden ${escH(l.req)}.` : "Este linaje no abre una herencia de Sangre por sí solo."}</p>
+      <p>${l.nats?.length ? `Naturalezas concedidas: ${l.nats.map(nombreNat).join(", ")}. ` : ""}${l.maxMult ? `Reserva ×${l.maxMult}. ` : ""}${l.recMult ? `Recuperación ×${l.recMult} (también respeta el presupuesto de los cortos). ` : ""}${l.req ? `Abre Sangre con fuerza distinta de «Sin sangre» y permite técnicas que piden ${escH(l.req)}.` : l.id === LINAJE_ALA ? "<b>Su sangre también sostiene:</b> con cualquier fuerza distinta de «Sin sangre», el daño masivo no lo mata; queda Acechado por la Muerte con una Secuela −2. No desgasta la Barrera, no suma al Reloj y no tiene Eco." : "Este linaje no abre una herencia de Sangre por sí solo."}</p>
       ${h?.despertar ? `<p><b>Despertar:</b> ${escH(h.despertar)}</p>` : ""}`;
   }
   if (tipo === "nat") {

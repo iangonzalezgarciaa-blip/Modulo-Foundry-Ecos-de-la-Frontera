@@ -1,6 +1,6 @@
 {
   "name": "ecos-frontera",
-  "version": "3.26.0",
+  "version": "3.26.1",
   "private": true,
   "type": "module",
   "description": "Herramientas de validación del módulo de Foundry VTT",
