@@ -328,16 +328,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       31,
-      31,
-      28
+      30,
+      27
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 157.5,
     "gasto": 9,
-    "corto": 3,
-    "largo": 6
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -348,16 +348,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       31,
-      31,
-      28
+      30,
+      27
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 157.5,
     "gasto": 9,
-    "corto": 3,
-    "largo": 6
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -368,16 +368,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       35,
-      35,
-      32
+      34,
+      31
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 157.5,
     "gasto": 9,
-    "corto": 3,
-    "largo": 6
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -408,16 +408,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       28,
-      25,
-      19
+      24,
+      18
     ],
     "acciones": 9,
     "contratecnicas": 9,
     "sustituciones": 0,
     "mediaDados": 157.5,
     "gasto": 18,
-    "corto": 3,
-    "largo": 8
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -428,16 +428,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       28,
-      25,
-      19
+      24,
+      18
     ],
     "acciones": 9,
     "contratecnicas": 9,
     "sustituciones": 0,
     "mediaDados": 157.5,
     "gasto": 18,
-    "corto": 3,
-    "largo": 8
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -448,16 +448,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       32,
-      29,
-      23
+      28,
+      22
     ],
     "acciones": 9,
     "contratecnicas": 9,
     "sustituciones": 0,
     "mediaDados": 157.5,
     "gasto": 18,
-    "corto": 3,
-    "largo": 9
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -477,7 +477,7 @@
     "mediaDados": 157.5,
     "gasto": 18,
     "corto": 3,
-    "largo": 12
+    "largo": 7
   },
   {
     "nivel": 5,
@@ -488,16 +488,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       22,
-      13,
-      1
+      12,
+      0
     ],
     "acciones": 0,
     "contratecnicas": 18,
     "sustituciones": 9,
     "mediaDados": 0,
     "gasto": 36,
-    "corto": 3,
-    "largo": 8
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -508,16 +508,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       22,
-      13,
-      1
+      12,
+      0
     ],
     "acciones": 0,
     "contratecnicas": 18,
     "sustituciones": 9,
     "mediaDados": 0,
     "gasto": 36,
-    "corto": 3,
-    "largo": 8
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -528,16 +528,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       26,
-      17,
-      5
+      16,
+      4
     ],
     "acciones": 0,
     "contratecnicas": 18,
     "sustituciones": 9,
     "mediaDados": 0,
     "gasto": 36,
-    "corto": 3,
-    "largo": 9
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -557,7 +557,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 3,
-    "largo": 12
+    "largo": 7
   },
   {
     "nivel": 5,
@@ -568,16 +568,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       28,
-      25,
-      19
+      24,
+      18
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 0,
     "gasto": 18,
-    "corto": 3,
-    "largo": 8
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -588,16 +588,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       28,
-      25,
-      19
+      24,
+      18
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 0,
     "gasto": 18,
-    "corto": 3,
-    "largo": 8
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -608,16 +608,16 @@
     "tecnicaAlta": "Sol cautivo",
     "encuentros": [
       32,
-      29,
-      23
+      28,
+      22
     ],
     "acciones": 9,
     "contratecnicas": 0,
     "sustituciones": 0,
     "mediaDados": 0,
     "gasto": 18,
-    "corto": 3,
-    "largo": 9
+    "corto": 2,
+    "largo": 5
   },
   {
     "nivel": 5,
@@ -637,7 +637,7 @@
     "mediaDados": 0,
     "gasto": 18,
     "corto": 3,
-    "largo": 12
+    "largo": 7
   },
   {
     "nivel": 11,
@@ -657,7 +657,7 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 4,
-    "largo": 23
+    "largo": 13
   },
   {
     "nivel": 11,
@@ -677,7 +677,7 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 4,
-    "largo": 23
+    "largo": 13
   },
   {
     "nivel": 11,
@@ -697,7 +697,7 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 4,
-    "largo": 26
+    "largo": 15
   },
   {
     "nivel": 11,
@@ -717,7 +717,7 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 4,
-    "largo": 37
+    "largo": 22
   },
   {
     "nivel": 11,
@@ -737,7 +737,7 @@
     "mediaDados": 157.5,
     "gasto": 18,
     "corto": 4,
-    "largo": 14
+    "largo": 13
   },
   {
     "nivel": 11,
@@ -757,7 +757,7 @@
     "mediaDados": 157.5,
     "gasto": 18,
     "corto": 4,
-    "largo": 14
+    "largo": 13
   },
   {
     "nivel": 11,
@@ -817,7 +817,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 4,
-    "largo": 23
+    "largo": 13
   },
   {
     "nivel": 11,
@@ -837,7 +837,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 4,
-    "largo": 23
+    "largo": 13
   },
   {
     "nivel": 11,
@@ -857,7 +857,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 4,
-    "largo": 26
+    "largo": 15
   },
   {
     "nivel": 11,
@@ -877,7 +877,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 4,
-    "largo": 32
+    "largo": 22
   },
   {
     "nivel": 11,
@@ -897,7 +897,7 @@
     "mediaDados": 0,
     "gasto": 18,
     "corto": 4,
-    "largo": 14
+    "largo": 13
   },
   {
     "nivel": 11,
@@ -917,7 +917,7 @@
     "mediaDados": 0,
     "gasto": 18,
     "corto": 4,
-    "largo": 14
+    "largo": 13
   },
   {
     "nivel": 11,
@@ -977,7 +977,7 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 5,
-    "largo": 29
+    "largo": 17
   },
   {
     "nivel": 16,
@@ -997,7 +997,7 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 5,
-    "largo": 29
+    "largo": 17
   },
   {
     "nivel": 16,
@@ -1017,7 +1017,7 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 5,
-    "largo": 34
+    "largo": 20
   },
   {
     "nivel": 16,
@@ -1037,7 +1037,7 @@
     "mediaDados": 220.5,
     "gasto": 45,
     "corto": 5,
-    "largo": 40
+    "largo": 31
   },
   {
     "nivel": 16,
@@ -1137,7 +1137,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 5,
-    "largo": 29
+    "largo": 17
   },
   {
     "nivel": 16,
@@ -1157,7 +1157,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 5,
-    "largo": 29
+    "largo": 17
   },
   {
     "nivel": 16,
@@ -1177,7 +1177,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 5,
-    "largo": 31
+    "largo": 20
   },
   {
     "nivel": 16,
@@ -1297,7 +1297,7 @@
     "mediaDados": 252,
     "gasto": 45,
     "corto": 6,
-    "largo": 35
+    "largo": 21
   },
   {
     "nivel": 18,
@@ -1317,7 +1317,7 @@
     "mediaDados": 252,
     "gasto": 45,
     "corto": 6,
-    "largo": 35
+    "largo": 21
   },
   {
     "nivel": 18,
@@ -1337,7 +1337,7 @@
     "mediaDados": 252,
     "gasto": 45,
     "corto": 6,
-    "largo": 39
+    "largo": 25
   },
   {
     "nivel": 18,
@@ -1457,7 +1457,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 6,
-    "largo": 30
+    "largo": 21
   },
   {
     "nivel": 18,
@@ -1477,7 +1477,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 6,
-    "largo": 30
+    "largo": 21
   },
   {
     "nivel": 18,
@@ -1497,7 +1497,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 6,
-    "largo": 30
+    "largo": 25
   },
   {
     "nivel": 18,
@@ -1617,7 +1617,7 @@
     "mediaDados": 252,
     "gasto": 45,
     "corto": 6,
-    "largo": 39
+    "largo": 25
   },
   {
     "nivel": 20,
@@ -1637,7 +1637,7 @@
     "mediaDados": 252,
     "gasto": 45,
     "corto": 6,
-    "largo": 39
+    "largo": 25
   },
   {
     "nivel": 20,
@@ -1657,7 +1657,7 @@
     "mediaDados": 252,
     "gasto": 45,
     "corto": 6,
-    "largo": 39
+    "largo": 31
   },
   {
     "nivel": 20,
@@ -1777,7 +1777,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 6,
-    "largo": 30
+    "largo": 25
   },
   {
     "nivel": 20,
@@ -1797,7 +1797,7 @@
     "mediaDados": 0,
     "gasto": 36,
     "corto": 6,
-    "largo": 30
+    "largo": 25
   },
   {
     "nivel": 20,

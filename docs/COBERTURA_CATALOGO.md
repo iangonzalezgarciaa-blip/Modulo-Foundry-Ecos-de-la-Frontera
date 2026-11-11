@@ -1,25 +1,25 @@
-# Cobertura declarada del catálogo 3.27.2
+# Cobertura declarada del catálogo 3.28.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **912 técnicas y 222 dotes**.
+El catálogo reúne **936 técnicas y 237 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
-| Forma | 200 | 46 |
-| Velo | 56 | 24 |
-| Cuerpo | 68 | 25 |
+| Forma | 205 | 46 |
+| Velo | 58 | 24 |
+| Cuerpo | 70 | 25 |
 | Mirada | 59 | 30 |
-| Sello | 74 | 41 |
-| Pacto | 60 | 32 |
-| Pulso | 51 | 30 |
-| Hilo | 68 | 16 |
-| Quietud | 52 | 28 |
-| Rastro | 53 | 45 |
-| Sangre | 86 | 31 |
-| Umbral | 36 | 28 |
+| Sello | 76 | 41 |
+| Pacto | 62 | 32 |
+| Pulso | 53 | 30 |
+| Hilo | 70 | 16 |
+| Quietud | 54 | 28 |
+| Rastro | 55 | 45 |
+| Sangre | 87 | 31 |
+| Umbral | 38 | 28 |
 | Vasija | 49 | 18 |
 
 ## Técnicas
@@ -938,6 +938,30 @@ El catálogo reúne **912 técnicas y 222 dotes**.
 | `forma-pura-ariete` | Ariete de Verbe | 4 | forma | save | 1 |
 | `forma-pura-baluarte` | Baluarte | 5 | forma | utility | 1 |
 | `forma-pura-cometa` | Cometa de Verbe | 5 | forma | save | 0 |
+| `forma-agua-lluvia-ablanda` | Lluvia que ablanda | 1 | forma | save | 1 |
+| `forma-fuego-descascara` | Fuego que descascara | 2 | forma | attack | 1 |
+| `forma-tierra-golpe-cantero` | Golpe de cantero | 1 | forma | attack | 1 |
+| `forma-viento-filo-correas` | Filo para las correas | 1 | forma | attack | 1 |
+| `forma-rayo-espasmo` | Espasmo | 2 | forma | save | 1 |
+| `cuerpo-juntura` | Puño en la juntura | 1 | cuerpo | attack | 1 |
+| `cuerpo-rodilla-aliento` | Rodilla al aliento | 2 | cuerpo | save | 1 |
+| `hilo-correas` | Hilos en las correas | 1 | hilo | save | 1 |
+| `hilo-red-cortes` | Red de cortes finos | 2 | hilo | save | 1 |
+| `sello-marca-grieta` | Marca de la grieta | 1 | sello | save | 1 |
+| `sello-destempla` | Sello que destempla | 3 | sello | save | 1 |
+| `velo-duda` | Susurro de duda | 1 | velo | save | 1 |
+| `velo-espejo-miedo` | Espejo del miedo | 2 | velo | save | 1 |
+| `pulso-contrario` | Pulso contrario | 1 | pulso | attack | 1 |
+| `pulso-latido-roto` | Latido roto | 3 | pulso | save | 1 |
+| `umbral-flanco` | Paso al flanco | 1 | umbral | attack | 1 |
+| `umbral-puerta-guardia` | Puerta en la guardia | 2 | umbral | save | 1 |
+| `rastro-pulso-blanco` | Leer el pulso del blanco | 1 | rastro | save | 1 |
+| `rastro-tiro-juntura` | Tiro a la juntura | 2 | rastro | attack | 1 |
+| `pacto-mordida-manada` | Mordida de la manada | 1 | pacto | attack | 1 |
+| `pacto-aullido` | Aullido que quiebra | 2 | pacto | save | 1 |
+| `quietud-toque-vacio` | Toque en el vacío | 1 | quietud | attack | 1 |
+| `quietud-respiracion-ajena` | Respiración ajena | 3 | quietud | save | 1 |
+| `sangre-corroe` | Sangre que corroe | 2 | sangre | save | 1 |
 
 ## Dotes
 
@@ -1167,6 +1191,21 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `clon-economico` | Clones económicos | 3 | Clon de sombra o una técnica de clones | Texto/mesa |
 | `clon-multiple` | Clones múltiples | 4 | Clones económicos | Texto/mesa |
 | `clon-legion` | Legión | 6 | Clones múltiples y Clon de sombra | Texto/mesa |
+| `muerde-elemento` | Elemento que muerde | 2 | rama Forma | Texto/mesa |
+| `golpe-al-quiebre` | Golpe al quiebre | 2 | rama Cuerpo | Texto/mesa |
+| `filo-que-abre` | Filo que abre | 2 | rama Hilo | Texto/mesa |
+| `sello-de-la-grieta` | Sello de la grieta | 2 | rama Sello | Texto/mesa |
+| `miedo-que-agrieta` | Miedo que agrieta | 2 | rama Velo | Texto/mesa |
+| `latido-que-rompe` | Latido que rompe | 2 | rama Pulso (Experto) | Texto/mesa |
+| `paso-por-la-herida` | Paso por la herida | 2 | rama Umbral | Texto/mesa |
+| `huella-abierta` | Huella abierta | 2 | rama Rastro | Texto/mesa |
+| `mordida-que-rompe` | Mordida que rompe | 2 | rama Pacto | Texto/mesa |
+| `golpe-en-el-vacio` | Golpe en el vacío | 2 | rama Quietud | Texto/mesa |
+| `sangre-que-hiende` | Sangre que hiende | 2 | rama Sangre | Texto/mesa |
+| `peso-del-huesped` | Peso del huésped | 2 | rama Vasija | Texto/mesa |
+| `cadena-de-ruptura` | Cadena de ruptura | 3 | nivel 7 | Texto/mesa |
+| `rompeguardias` | Rompeguardias | 3 | nivel 3 | Texto/mesa |
+| `ver-la-grieta` | Ver la grieta | 2 | rama Mirada | Texto/mesa |
 
 ## Automatización y alcance actual
 

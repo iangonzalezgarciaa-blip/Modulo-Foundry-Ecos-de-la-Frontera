@@ -74,9 +74,9 @@ test('la creación señala daño y geometría fuera de presupuesto', () => {
   assert.ok(r.errores.some(e => e.includes('daño')));
 });
 test('el catálogo conserva las 401 técnicas base, añade el repertorio y codifica sin pérdida', () => {
-  assert.equal(D.tecnicas.length, 401 + D.shinobi.nuevas + (D.divinidad?.nuevas??0) + (D.vida?.nuevas??0) + (D.entrenamiento?.nuevas??0) + (D.contra?.nuevas??0) + (D.cargadas?.nuevas??0) + (D.clones?.tecnicas??0) + (D.formaPura?.nuevas??0));
-  assert.equal(D.tecnicas.filter(t=>!t.item.flags['ecos-frontera'].verbe.shinobi && !t.divina && !t.vida && !t.entrenamiento && !t.contra && !t.cargadaNueva && !t.clonNuevo && !t.formaPura).length,401);
-  assert.equal(D.dotes.length, D.progresion.dotesBase+D.progresion.dotesNuevas+(D.clones?.dotes??0));
+  assert.equal(D.tecnicas.length, 401 + D.shinobi.nuevas + (D.divinidad?.nuevas??0) + (D.vida?.nuevas??0) + (D.entrenamiento?.nuevas??0) + (D.contra?.nuevas??0) + (D.cargadas?.nuevas??0) + (D.clones?.tecnicas??0) + (D.ruptura?.tecnicas??0) + (D.formaPura?.nuevas??0));
+  assert.equal(D.tecnicas.filter(t=>!t.item.flags['ecos-frontera'].verbe.shinobi && !t.divina && !t.vida && !t.entrenamiento && !t.contra && !t.cargadaNueva && !t.clonNuevo && !t.formaPura && !t.ruptura).length,401);
+  assert.equal(D.dotes.length, D.progresion.dotesBase+D.progresion.dotesNuevas+(D.clones?.dotes??0)+(D.ruptura?.dotes??0));
   assert.deepEqual(decodeCatalog(encodeCatalog(D)), D);
   assert.deepEqual(validateCatalog(D), []);
 });

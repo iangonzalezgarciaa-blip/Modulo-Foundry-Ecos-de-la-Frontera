@@ -30,6 +30,7 @@ import { clonDe, limitesClones, repartoClones } from "./verbe-clones.js";
 import { iconoTecnica, iconoDote, esGenerico } from "./verbe-iconos.js";
 import { ventanaLinaje, linajeDeEleccion, pasosOjo } from "./linaje-diario.js";
 import { linajePortador, LINAJE_ALA } from "./sangre-sosten.js";
+import { ESTADOS_RUPTURA, DEFENSAS, defensaDe, ponerDefensa, bonoDefensa, defensaSugerida } from "./ruptura.js";
 import { DADOS_VERBE, dadoNivel, modoReserva, reservaBase, nivelesSinTirar } from "./verbe-reserva.js";
 import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, MODOS_SEGUNDA, modoSegunda, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
@@ -104,7 +105,9 @@ export const ESTADOS = {
     texto: "Prepara una técnica cargada: velocidad 0, sin reacciones ni choques. Si recibe daño, salvación de Constitución (CD 10 o la mitad del daño, la mayor) o la pierde; también si queda incapacitado o lo mueven a la fuerza." },
   helado: { name: "Helado", img: "systems/dnd5e/icons/svg/statuses/restrained.svg", dura: 60,
     changes: [{ key: "system.attributes.movement.walk", mode: 2, value: "-3" }],
-    texto: "−10 ft de velocidad cada vez; con velocidad 0, queda Apresado por el hielo." }
+    texto: "−10 ft de velocidad cada vez; con velocidad 0, queda Apresado por el hielo." },
+  // 3.28: la ruptura (Brecha, Grieta, Quebrado). Las técnicas y las acciones de cualquiera las imponen.
+  ...ESTADOS_RUPTURA
 };
 const TIPO_NAT = { fuego: "fire", agua: "bludgeoning", viento: "slashing", tierra: "bludgeoning", rayo: "lightning", escarcha: "cold",
   raiz: "piercing", magma: "fire", vapor: "fire", ceniza: "fire", tormenta: "lightning", hierro: "piercing", corriente: "lightning",
@@ -167,10 +170,10 @@ async function cargarDatos() {
 function prepararDatos327(datos) {
   if (!datos || datos.prep327) return datos;
   marcarFamilias(datos); textosAPies(datos);
-  // La recuperación ahora es más lenta (un cuarto + CON): las dotes de reserva dicen su proporción nueva.
+  // La recuperación es lenta (15 % + CON por cada dos niveles, 3.28): las dotes de reserva dicen su proporción nueva.
   const dote = id => datos.dotes?.find(d => d.id === id);
-  if (dote("hijo-santuario")) dote("hijo-santuario").texto = "El Descanso Largo en el Santuario te devuelve la mitad más: tres octavos de tu Verbe en vez de un cuarto (más tu Constitución).";
-  if (dote("sueno-reparador")) dote("sueno-reparador").texto = String(dote("sueno-reparador").texto).replace("A la intemperie recuperas un tercio de tu Verbe en vez de un cuarto.", "A la intemperie recuperas un sexto de tu Verbe en vez de un octavo.");
+  if (dote("hijo-santuario")) dote("hijo-santuario").texto = "El Descanso Largo en el Santuario te devuelve la mitad más: el 22 % de tu Verbe en vez del 15 % (más tu Constitución).";
+  if (dote("sueno-reparador")) dote("sueno-reparador").texto = String(dote("sueno-reparador").texto).replace("A la intemperie recuperas un tercio de tu Verbe en vez de un cuarto.", "A la intemperie, Respiro y Aliento recuperan hasta dos tercios de tu recuperación larga en vez de la mitad.");
   // Técnicas de golpe: con tu arma, o el próximo golpe (lo que pide la técnica, leído de su texto).
   for (const t of datos.tecnicas ?? []) {
     const g = golpeDeTexto(t.texto);
@@ -1472,7 +1475,7 @@ async function asegurarRasgos(actor) {
   }
   await asegurarAEDotes(actor);
   const lin = linajeDe(actor);
-  const html = `<p>El Verbe corre por ti. Tu reserva sube con el nivel y con tu Constitución, y se recupera despacio: tarda varios días en llenarse (un cuarto más tu Constitución por Descanso Largo en el Santuario, un octavo en una noche a la intemperie). Las noches, Respiro y Aliento comparten un presupuesto limitado entre largos.</p>
+  const html = `<p>El Verbe corre por ti. Tu reserva sube con el nivel y con tu Constitución, y se recupera despacio: tarda varios días en llenarse (el 15 % más tu Constitución por cada dos niveles en un Descanso Largo en el Santuario; a la intemperie, la mitad de eso). Las noches, Respiro y Aliento comparten un presupuesto limitado entre largos.</p>
     <p><b>Característica:</b> ${CARS[e.car]} · <b>Naturaleza:</b> ${[...natsDe(actor)].map(n => NATS[n] ?? n).join(", ") || "por elegir"} · <b>Rama principal:</b> ${e.principal ? nombreRama(e.principal) : "por elegir"}${e.linajeVisible && lin ? ` · <b>Linaje:</b> ${escH(lin.alias ?? lin.nombre)} (${FUERZA[e.fuerza]?.nombre})` : ""}</p>
     <p>Las técnicas están en la pestaña de conjuros, en «Técnicas del Verbe». Lo demás, en el panel (botón «Verbe» en la cabecera de la hoja).</p>`;
   const it = actor.items.find(i => i.getFlag(MOD, F)?.rasgo);
@@ -1903,10 +1906,10 @@ export function antesDelDano(config) {
 
 /** La recuperación larga es la referencia común para Respiro y Aliento. */
 export function recuperacionLargaVerbe(actor) {
-  // 3.27: la reserva tarda varios días en llenarse. Base: un cuarto de la reserva más la Constitución (su modificador por
+  // 3.28: la reserva tarda varios días en llenarse. Base: el 15 % de la reserva más la Constitución (su modificador por
   // cada 4 niveles). Las dotes que antes subían «la mitad» a otra fracción suben en la misma proporción desde el cuarto.
   const fracDote = efectosDotes(actor).reduce((t, ef) => Math.max(t, Number(ef.rec?.largo) || 0), 0.5);
-  const frac = 0.25 * (fracDote / 0.5);
+  const frac = 0.15 * (fracDote / 0.5);
   const base = recuperacionLargaCon(maxVerbe(actor), modDe(actor, "con"), nivelDe(actor), frac) + (tieneDote(actor, "aliento-soldado") ? competencia(actor) : 0)+sumaEf(actor,ef=>ef.recLargoPlano);
   return Math.floor(base * (Number(herenciaDe(actor)?.recMult) || 1));
 }
@@ -3376,6 +3379,19 @@ function resumenDivino(actor) {
   return `<p><b>Dones de tu sangre · umbral de nivel ${d.etapa}:</b> +${extra} de reserva máxima (no rellena energía), +${d.ac} CA pasiva. Durante Despertar: +${d.despertarAC} CA adicional${d.resistencias.length?", resistencia al necrótico y veneno":""}. Tus técnicas se aprenden con Trazos; los hitos los concede el DM.</p>`;
 }
 
+/** 3.28: la defensa de un PNJ en la pestaña DM, con lo que significa cada una para la mesa. */
+function defensaDMHTML(a) {
+  const d = defensaDe(a), vd = Number(a.system?.details?.cr ?? 0), n = d?.n ?? bonoDefensa(vd);
+  const sug = defensaSugerida({ tipo: a.system?.details?.type?.value, vd, ca: Number(a.system?.attributes?.ac?.value) || 10, calculo: a.system?.attributes?.ac?.calc ?? "" });
+  const elegido = d?.tipo ?? (a.getFlag(MOD, "defensa")?.tipo === "ninguna" ? "ninguna" : "");
+  const op = [["coraza", "Coraza: CA altísima"], ["fortaleza", "Fortaleza: salvaciones altísimas"], ["piel", "Cuerpo sordo: resiste los golpes de armas"], ["ninguna", "Ninguna"]];
+  return `<p>En la campaña, D&D pega y el Verbe ablanda. Cada criatura de VD ½ o más lleva <b>una</b> defensa altísima; las de menos VD son salvajes, sin ella (igual de letales).</p>
+    <ul>${Object.entries(DEFENSAS).map(([k, x]) => `<li><b>${escH(x.nombre)}</b>: ${escH(x.texto)}</li>`).join("")}</ul>
+    <p>Ahora: <b>${d ? `${escH(DEFENSAS[d.tipo].nombre)}${d.tipo === "piel" ? "" : ` +${d.n}`}` : "ninguna"}</b>.${sug ? ` Para su tipo y su CA, el módulo sugiere <b>${escH(DEFENSAS[sug].nombre)}</b>.` : " Con VD menor que ½ no lleva."} La tabla: +4 (VD ½–4), +5 (5–10), +6 (11–16), +7 (17 o más).</p>
+    <p><select name="defensa">${opciones(op, elegido || sug || "ninguna")}</select> <label>bono <input type="number" name="defensaN" min="0" max="12" value="${n}" style="width:4em"></label> <button type="button" data-action="defensa">Guardar defensa</button></p>
+    <p class="ecos-nota">Los jugadores no ven el número: ven que «la coraza se agrieta» cuando le ponen Brecha. Brecha (−2 CA), Grieta (−2 salvaciones) y Quebrado (sin defensa ni resistencias un turno) las ponen técnicas del Verbe y las acciones «Romper la guardia» y «Buscar la grieta».</p>`;
+}
+
 export function describir(tipo, v, actor = null) {
   if (!v) return "<p class=\"ecos-nota\">Cambia la opción de arriba para ver qué es. No se elige hasta que pulses el botón.</p>";
   if (tipo === "fuerza") {
@@ -3421,7 +3437,7 @@ export function describir(tipo, v, actor = null) {
 }
 
 const AYUDA = {
-  verbe: "Tu reserva. Cada técnica gasta Verbe al usarla. Crece con tu nivel y tu Constitución (su modificador por nivel). Tarda varios días en llenarse: cada Descanso Largo en el Santuario devuelve un cuarto de la reserva más tu modificador de Constitución por cada 4 niveles. Respiro, Aliento y noches a la intemperie comparten un presupuesto breve de hasta la mitad de esa recuperación larga, renovado solo por un largo (Sueño reparador lo eleva hasta dos tercios). Sube sola con tu nivel.",
+  verbe: "Tu reserva. Cada técnica gasta Verbe al usarla. Crece con tu nivel y tu Constitución (su modificador por nivel). Tarda varios días en llenarse: cada Descanso Largo en el Santuario devuelve el 15 % de la reserva más tu modificador de Constitución por cada dos niveles (sin dotes, de 3 a 7 días). Respiro, Aliento y noches a la intemperie comparten un presupuesto breve de hasta la mitad de esa recuperación larga, renovado solo por un largo (Sueño reparador lo eleva hasta dos tercios). Sube sola con tu nivel.",
   trazos: "Tus puntos para crecer. Con ellos aprendes técnicas, subes rangos, compras dotes y cultivas. Ganas 4 por nivel, y a veces más por hitos de la historia o Monedas Antiguas. Lo que compras es para siempre.",
   car: "La característica con la que usas el Verbe. Da la CD de tus técnicas (8 + competencia + modificador) y su bonificador de ataque. La cantidad de Verbe (reserva y recuperación) va siempre con la Constitución.",
   grado: "Potencia de una técnica, de 0 a 11. Es distinto de tu nivel de personaje y de tu rango en una rama. Tu grado máximo sube con tu nivel: grado 1 al nivel 1, 2 al 3, 3 al 5, 6 al 11, 8 al 16, 9 al 18, 10 al 19 y 11 al 20. En cada rama, además, llegas solo hasta lo que deja tu rango.",
@@ -3456,7 +3472,7 @@ ${h2("primeros-pasos", "Primeros pasos")}
 <li>Si te equivocaste al comprar, pídeselo al DM: puede deshacerlo y devolverte los Trazos.</li></ol>
 ${h2("verbe-y-descansos", "Verbe y descansos")}
 <ul><li>Tu reserva sube con tu nivel y suma tu modificador de <b>Constitución por cada nivel</b>, como los PG (3.27).</li>
-<li>Tarda <b>varios días</b> en llenarse: en un Descanso Largo en el Santuario recuperas <b>un cuarto</b> de la reserva más tu modificador de Constitución por cada 4 niveles; en una noche a la intemperie, hasta <b>un octavo</b>. Noches, Aliento y Respiro comparten un presupuesto breve que solo se renueva con un largo.</li>
+<li>Tarda <b>varios días</b> en llenarse: en un Descanso Largo en el Santuario recuperas el <b>15 %</b> de la reserva más tu modificador de <b>Constitución por cada dos niveles</b> (con CON +0, de 5 a 7 días; con CON +3, unos 3); en una noche a la intemperie, hasta <b>la mitad de eso</b>. Noches, Aliento y Respiro comparten un presupuesto breve que solo se renueva con un largo.</li>
 <li>Una <b>Moneda Antigua</b> devuelve 2 × tu competencia de Verbe, o se vuelve 1 Trazo (como mucho 2 por nivel).</li></ul>
 ${tablaG(["Nivel", ...[1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 20].map(String)], [["Reserva base", ...[1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 20].map(n => D.verbeMax[n] ?? D.verbeMax[String(n)])]])}
 ${h2("trazos", "Trazos")}
@@ -3772,6 +3788,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       tirarNat(ev) { ev?.preventDefault?.(); correr(this, tirarNaturaleza(this.actor)); },
       pedirTiradaNat() { correr(this, pedirTiradaNaturaleza(this.actor)); },
       segundaModo() { correr(this, guardar(this.actor, { segundaModo: valorDe(this, "segundaModo") === "fija" ? "fija" : "dado" })); },
+      async defensa() { const sel = this.element.querySelector('select[name="defensa"]'), n = this.element.querySelector('input[name="defensaN"]'); await ponerDefensa(this.actor, sel?.value ?? "ninguna", Number(n?.value) || null); this.render(); },
       alInstante() { const e = estado(this.actor); correr(this, guardar(this.actor, { aprenderAlInstante: !e.aprenderAlInstante, historial: hist(e, e.aprenderAlInstante ? "Vuelve a aprender por días" : "Aprende al instante (creación de personaje)") })); },
       probar(ev, t) {
         ev?.preventDefault?.();
@@ -4552,6 +4569,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
           · escuela: <select name="escuela"><option value="">Ninguna</option>${opciones(D.escuelas.map(s => [s.nombre, `${s.nombre} (${s.rama})`]), e.escuela ?? "")}</select> <button type="button" data-action="escuela">Guardar</button></p>`)}
       ${sec("Aprender al instante (creación de personaje)", `<p>Ahora aprende <b>${e.aprenderAlInstante ? "al instante, al pagar" : aprenderPorDias(a) ? "por días de práctica" : "al instante (el ajuste del mundo está apagado)"}</b>. Para armar una ficha de más nivel, ponlo al instante, compra lo que necesite y vuelve a ponerlo por días.</p>
         <p><button type="button" data-action="alInstante">${e.aprenderAlInstante ? "Volver a aprender por días" : "Aprender al instante"}</button>${Object.keys(e.estudios ?? {}).length ? ` · Estudiando: ${Object.values(e.estudios).map(x => `${escH(tecnicaPorId(x.id, a)?.n ?? x.id)} (${x.progreso}/${x.exitos}) <button type="button" data-action="aprenderYa" data-id="${escH(x.id)}">Aprender ya</button>`).join(" · ")}` : ""}</p>`, !!Object.keys(e.estudios ?? {}).length)}
+      ${a.type === "npc" ? sec("Defensa de la campaña (Coraza, Fortaleza o Cuerpo sordo)", defensaDMHTML(a)) : ""}
       ${sec("Herramientas", `<p><button type="button" data-action="choque"><i class="fa-solid fa-burst"></i> Choque de técnicas</button> <button type="button" data-action="olvidar"><i class="fa-solid fa-eraser"></i> Quitar el Verbe a este actor</button></p>`)}`;
   }
 }

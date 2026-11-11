@@ -1,6 +1,6 @@
 {
-  "tecnicas": 912,
-  "dotes": 222,
+  "tecnicas": 936,
+  "dotes": 237,
   "nuevas": 64,
   "dotesDetalle": [
     {
@@ -3095,6 +3095,227 @@
       "requisitos": {
         "nivel": 1,
         "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "muerde-elemento",
+      "nombre": "Elemento que muerde",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "forma": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "golpe-al-quiebre",
+      "nombre": "Golpe al quiebre",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "cuerpo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "filo-que-abre",
+      "nombre": "Filo que abre",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "hilo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sello-de-la-grieta",
+      "nombre": "Sello de la grieta",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "sello": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "miedo-que-agrieta",
+      "nombre": "Miedo que agrieta",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "velo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "latido-que-rompe",
+      "nombre": "Latido que rompe",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "pulso": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "paso-por-la-herida",
+      "nombre": "Paso por la herida",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "umbral": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "huella-abierta",
+      "nombre": "Huella abierta",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "rastro": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "mordida-que-rompe",
+      "nombre": "Mordida que rompe",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "pacto": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "golpe-en-el-vacio",
+      "nombre": "Golpe en el vacío",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "quietud": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "sangre-que-hiende",
+      "nombre": "Sangre que hiende",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "sangre": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "peso-del-huesped",
+      "nombre": "Peso del huésped",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "vasija": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "cadena-de-ruptura",
+      "nombre": "Cadena de ruptura",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 7,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "rompeguardias",
+      "nombre": "Rompeguardias",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 3,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "ver-la-grieta",
+      "nombre": "Ver la grieta",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "mirada": 1
+        },
         "dotes": [],
         "tecnicas": [],
         "dm": false

@@ -12,7 +12,7 @@
 import { cambio } from "./compat.js";
 
 const MOD = "ecos-frontera";
-export const VERSION_ACCIONES = 4;
+export const VERSION_ACCIONES = 5;
 const DESPREVENIDO = "ecosDesprevenido";
 const S = "systems/dnd5e/icons/svg/";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -51,6 +51,9 @@ export const ACCIONES = [
       texto: "Apartas 5 ft a una criatura a 5 ft, de hasta una categoría de tamaño más que tú. Va en lugar de uno de tus ataques. Sirve para tirarla por un borde, a un fuego o fuera de una puerta." },
     { id: "lanzar", nombre: "Lanzar a quien sujetas", act: "action", tipo: "save", salv: ["str"], cd: "str", estado: "prone", dano: [1, 6, "bludgeoning"], alcance: 5, pf2e: null,
       texto: "Arrojas a quien tienes Agarrado hasta 10 ft (15 ft con Fuerza 18 o más). Si falla, cae Derribado y recibe 1d6 contundente. La presa termina." },
+    { id: "rompe-guardia", nombre: "Romper la guardia", act: "action", tipo: "save", salv: ["str", "con"], cdPericia: ["ath"], alcance: 5, pf2e: null,
+      efecto: { nombre: "Brecha", img: "systems/dnd5e/icons/svg/statuses/bleeding.svg", statuses: ["ecosBrecha"], cambios: [["system.attributes.ac.bonus", "add", "-2"]], segundos: 60 },
+      texto: "Golpeas donde la coraza, el escudo o la guardia ya cedieron: un borde de quitina, una correa, la mano del escudo. Va en lugar de uno de tus ataques. Si falla, recibe una Brecha (−2 a la CA durante 1 minuto; hasta 3 se acumulan). D&D pega; esto abre." },
     { id: "abrirse-paso", nombre: "Abrirse paso", act: "special", tipo: "save", salv: ["str"], cdPericia: ["ath"], alcance: 5, pf2e: null,
       texto: "Una vez por turno, durante tu movimiento, intentas cruzar el espacio de un enemigo. Si falla, pasas (cuenta como terreno difícil). Si es dos tamaños más pequeño que tú, además cae Derribado." },
     { id: "escapar", nombre: "Escapar o forzar", act: "action", tipo: "check", pericias: ["ath", "acr"], pf2e: "Escape / Force Open", base: "Escapar de una presa",
@@ -96,6 +99,9 @@ export const ACCIONES = [
       texto: "Un minuto fuera de combate (o una acción en combate) para explicar un plan. Con Investigación CD 15, tú y tantos aliados que te escucharon como tu INT (mínimo 1) tienen «Según el plan»: una vez, +1d4 a una tirada que siga el plan. Si el plan se rompe, se pierde. Un fallo por 5 o más: el plan tiene un agujero que el DM conoce." },
     { id: "plan", nombre: "Según el plan", act: "special", tipo: "utility", efecto: { nombre: "Según el plan", img: `${S}abilities/intelligence.svg`, horas: 1 }, pf2e: null,
       texto: "Pon este efecto en quienes escucharon el plan (marca sus tokens). Cada uno, una vez, suma 1d4 a una tirada que siga el plan y luego se lo quita." },
+    { id: "grieta", nombre: "Buscar la grieta", act: "action", tipo: "save", salv: ["wis", "int"], cdPericia: ["inv", "nat", "arc", "med"], alcance: 30, pf2e: null,
+      efecto: { nombre: "Grieta", img: "systems/dnd5e/icons/svg/statuses/cursed.svg", statuses: ["ecosGrieta"], cambios: [["system.bonuses.abilities.save", "add", "-2"]], segundos: 60 },
+      texto: "Lo estudias mientras pelea: dónde respira, qué protege, qué lo asusta. Usa Investigación, Naturaleza, Arcanos o Medicina, el mejor. Si falla, le encontraste la grieta: Grieta, −2 a todas sus salvaciones durante 1 minuto (hasta 3 se acumulan)." },
     { id: "terreno", nombre: "Aprovechar el terreno", act: "action", tipo: "check", pericias: ["inv", "sur"], cdFija: 12, pf2e: null,
       texto: "Buscas algo que usar: una lámpara que colgar, una cuesta, un tablón suelto, una cuerda. Con CD 12, el DM te dice qué hay y te da una de dos: +2 a tu próximo ataque, o que tu próxima Presa, Empujón o Zancadilla se salve con desventaja." }
   ] },
@@ -149,7 +155,7 @@ export const formulaCdPericia = ps => ps.length === 1 ? `8 + @skills.${ps[0]}.to
 function efectoDe(grupo, a) {
   const e = a.efecto ?? (a.estado ? { nombre: { grappled: "Agarrado", prone: "Derribado" }[a.estado] ?? a.estado, statuses: [a.estado], img: `${S}statuses/${a.estado}.svg` } : null);
   if (!e) return null;
-  const duracion = e.horas ? { seconds: e.horas * 3600 } : e.turnos ? { turns: e.turnos } : { rounds: 1, seconds: 6 };
+  const duracion = e.horas ? { seconds: e.horas * 3600 } : e.segundos ? { seconds: e.segundos, rounds: Math.max(1, Math.round(e.segundos / 6)) } : e.turnos ? { turns: e.turnos } : { rounds: 1, seconds: 6 };
   return { _id: idEstable(`ecos-accion-efecto-${grupo}-${a.id}`), name: e.nombre, img: e.img ?? `${S}abilities/${({ str: "strength", dex: "dexterity", con: "constitution", int: "intelligence", wis: "wisdom", cha: "charisma" })[grupo]}.svg`,
     statuses: e.statuses ?? [], changes: (e.cambios ?? []).map(([k, t, v]) => cambio(k, t, v)), duration: duracion, transfer: false, disabled: false,
     description: `<p>${esc(a.texto)}</p>`, flags: { [MOD]: { accionComunEfecto: a.id } } };

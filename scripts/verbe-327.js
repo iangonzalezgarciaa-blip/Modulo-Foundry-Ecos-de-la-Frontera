@@ -128,11 +128,12 @@ export function naturalezaPorDado(lista, tirada) {
 /** Lo que la Constitución suma a la reserva: su modificador por nivel, como los PG (sin bajar de 0 en total). */
 export const reservaPorCon = (modCon, nivel) => Math.trunc(Number(modCon) || 0) * Math.max(1, Math.trunc(Number(nivel) || 1));
 /**
- * Recuperación en un Descanso Largo: una cuarta parte de la reserva más el modificador de Constitución por cada
- * 4 niveles (mínimo 1 tramo). Con CON +0 tarda 4 días en llenarse; con más Constitución, menos. Nunca menos de 1.
+ * Recuperación en un Descanso Largo (3.28, pedido del autor: la Constitución pesa más y llenarse tarda varios días):
+ * el 15 % de la reserva más el modificador de Constitución por cada dos niveles (la mitad del nivel, hacia arriba).
+ * Con CON +0 tarda de 5 a 7 días en llenarse; con CON +3, unos 3. Nunca menos de 1.
  */
-export function recuperacionLargaCon(max, modCon, nivel, frac = 0.25) {
-  const tramos = Math.max(1, Math.ceil((Math.max(1, Number(nivel) || 1)) / 4));
+export function recuperacionLargaCon(max, modCon, nivel, frac = 0.15) {
+  const tramos = Math.max(1, Math.ceil((Math.max(1, Number(nivel) || 1)) / 2));
   return Math.max(1, Math.floor(Math.max(0, Number(max) || 0) * frac) + Math.trunc(Number(modCon) || 0) * tramos);
 }
 /** Cuántos descansos largos tarda en llenarse desde 0. */

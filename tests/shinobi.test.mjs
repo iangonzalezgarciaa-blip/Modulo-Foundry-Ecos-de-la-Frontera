@@ -16,7 +16,7 @@ async function usar(a,id,extra={}){
 }
 test('repertorio: conserva 401, añade 353 y más del 90% queda fuera de Forma',()=>{
   const nuevos=D.tecnicas.filter(t=>t.item.flags['ecos-frontera'].verbe.shinobi);
-  assert.equal(D.tecnicas.length,754+(D.divinidad?.nuevas??0)+(D.vida?.nuevas??0)+(D.entrenamiento?.nuevas??0)+(D.contra?.nuevas??0)+(D.cargadas?.nuevas??0)+(D.clones?.tecnicas??0)+(D.formaPura?.nuevas??0));assert.equal(nuevos.length,353);
+  assert.equal(D.tecnicas.length,754+(D.divinidad?.nuevas??0)+(D.vida?.nuevas??0)+(D.entrenamiento?.nuevas??0)+(D.contra?.nuevas??0)+(D.cargadas?.nuevas??0)+(D.clones?.tecnicas??0)+(D.formaPura?.nuevas??0)+(D.ruptura?.tecnicas??0));assert.equal(nuevos.length,353);
   assert.ok(nuevos.filter(t=>t.rama!=='forma').length/nuevos.length>.9);
   assert.deepEqual(validateCatalog(D),[]);
 });

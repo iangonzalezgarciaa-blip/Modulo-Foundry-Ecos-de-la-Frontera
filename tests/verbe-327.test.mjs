@@ -28,8 +28,11 @@ test('3.27 · naturaleza por dado, reserva con Constitución y la acción Verbe'
   assert.equal(naturalezaPorDado(['Fuego', 'Agua', 'Tierra', 'Viento', 'Rayo'], 5), 'Rayo');
   assert.equal(naturalezaPorDado(['Fuego', 'Agua'], 9), 'Agua', 'una tirada fuera de rango no rompe');
   assert.equal(reservaPorCon(2, 5), 10); assert.equal(reservaPorCon(-1, 3), -3);
-  assert.equal(recuperacionLargaCon(44, 2, 5), 15, 'el ejemplo de la guía: CON +2 a nivel 5, 15 de 44');
-  assert.equal(diasParaLlenar(44, 15), 3); assert.equal(diasParaLlenar(10, 0), Infinity);
+  assert.equal(recuperacionLargaCon(44, 2, 5), 12, '3.28: el ejemplo de la guía: CON +2 a nivel 5, 12 de 44');
+  assert.equal(diasParaLlenar(44, 12), 4); assert.equal(diasParaLlenar(10, 0), Infinity);
+  assert.ok(diasParaLlenar(34, recuperacionLargaCon(34, 0, 5)) >= 5, 'sin Constitución, varios días');
+  assert.ok(diasParaLlenar(14, recuperacionLargaCon(14, 3, 2)) <= 3, 'con CON +3 se llena antes');
+  assert.equal(recuperacionLargaCon(5, -1, 1), 1, 'nunca menos de 1');
   assert.equal(gastoVerbe('A'), 'accion'); assert.equal(gastoVerbe('bonus'), 'adicional'); assert.equal(gastoVerbe('R'), 'reaccion'); assert.equal(gastoVerbe('1 min'), null);
   const c = { id: 'c1', ronda: 2, turno: 1 };
   assert.deepEqual(economiaVerbe({ turnoVerbe: { combate: 'c1', ronda: 2, turno: 1, accion: true, reaccion: true } }, c), { accion: true, reaccion: true, enCombate: true });
