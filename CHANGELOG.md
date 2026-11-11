@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 3.37.0 — 2026-11-11
+
+- **Almacén de reliquias del Abismo** (pedido del autor; Menú del DM → Mesa): crea en la pestaña **Objetos** la carpeta «Reliquias del Abismo (solo DM)» con las 78 reliquias: **1 · Manual del DM** (sus tres etapas y cómo se despierta cada una), **2 · Por etapa** (una copia Dormida, Despierta y Resonante de cada una) y **3 · Para entregar** (empieza Dormida y el DM la sube de etapa con un botón en su hoja; el texto se actualiza). Se arrastran a las hojas; las imágenes las pones tú y el almacén no las pisa.
+- **Conjuros:** «Aprender conjuros» también en los **PNJ** (eligen su lista y llegan a la mitad de su nivel de lanzador). Con **Mayús** salen **todos** los conjuros de D&D y de PF2e, sin filtro de lista. Botón nuevo **Quitar conjuros** para sacar los que elijas.
+- **Conjuros de PF2e nivelados a D&D:** al importarlos (y los que ya están en las hojas) se cambian las acciones y términos de PF2e por los de D&D: Alzar un escudo, Bloquear con escudo, Golpe, Zancada, Paso, bonificadores por circunstancia, Dureza, prueba plana, rango de conjuro… y queda una nota «Nivelado a D&D» con lo que significa lo demás (Mantener, persistente, desprevenido).
+- **Subir de nivel guiado:** botón en la cabecera de la hoja del PJ que muestra qué gana en el próximo nivel de su clase (rasgos, puntos de golpe, mejoras) y abre el asistente de avance de D&D; si tiene el Verbe, lleva al panel para gastar los Trazos nuevos.
+
 ## 3.36.0 — 2026-11-11
 
 - **Acción estándar** (pedido del autor): un botón en la cabecera de cada hoja (PJ y PNJ) abre un menú como el del Verbe con todo lo que esa ficha puede hacer en su turno, en español y explicado: las **acciones de cualquiera** (Atacar, Magia, Correr, Desengancharse, Esquivar, Ayudar, Esconderse, Buscar, Estudiar, Influir, Usar un objeto, Preparar) y lo de su hoja separado en **Acción, Acción adicional y Reacción** (armas, conjuros preparados, rasgos de clase). Se arma solo con la hoja: al subir de nivel o sumar algo, cambia.

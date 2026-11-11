@@ -25,6 +25,8 @@ import "./mesa-propio.js";
 import "./turno-tracker.js";
 import "./verbe-334.js";
 import "./accion-estandar.js";
+import "./reliquias-almacen.js";
+import "./subir-nivel.js";
 import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
@@ -9159,6 +9161,7 @@ const OPS_PANEL = [
     ["pantalla", "Pantalla del DM", "fa-table-columns", "Abre o cierra la Pantalla del DM (pestaña «Ecos · DM»)."],
     ["plantillas", "Quitar plantillas", "fa-eraser", "Lista las plantillas de área de la escena (en Foundry 14 son regiones) y quita las marcadas o todas. También está la goma en la barra de Tokens."],
     ["choqueVerbe", "Choque de técnicas", "fa-burst", "Resuelve a mano un choque entre dos técnicas (elemento, grado y Control)."],
+    ["almacenReliquias", "Almacén de reliquias", "fa-gem", "Crea o pone al día en la pestaña Objetos todas las reliquias del Abismo: manual del DM con sus etapas, una copia por etapa y una para entregar que sube de etapa con un botón."],
     ["danoIndirecto", "Daño de caída e indirecto", "fa-person-falling-burst", "Caídas (1d6 cada 10 ft), derrumbes, brasas, lava, ácido, descargas, frío o gas: se aplica directo a los tokens seleccionados o marcados, con su salvación."],
     ["recuperar", "Recuperar el control", "fa-hand-pointer", "Si de pronto no puedes seleccionar ni mover fichas (un diálogo se quedó con el ratón), esto lo arregla sin F5."]
   ]]
@@ -9501,6 +9504,7 @@ async function ejecutarPanel(op) {
     case "choqueVerbe": await api?.verbe?.choque?.(); break;
     case "recuperar": await api?.recuperarControl?.(); break;
     case "danoIndirecto": await api?.danoIndirecto?.(); break;
+    case "almacenReliquias": await api?.almacenReliquias?.(); break;
     case "estado": game.journal.get("G0rD0J3JkpOkXM00")?.pages.find(p => p.getFlag(MOD, "estado"))?.sheet?.render(true); break;
     case "tirada":
       if (!game.MonksTokenBar?.requestRoll) return ui.notifications.warn("Hace falta Monk's TokenBar activo.");

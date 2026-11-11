@@ -63,7 +63,7 @@ export function paginasListas(listas, pack = PACK_CONJUROS) {
 }
 
 /* ---------- 4.2e · La biblioteca: índice por nivel, escuela y tipo ---------- */
-export const VERSION_IMPORTADOR = 2; // 2: biblioteca (4.2e)
+export const VERSION_IMPORTADOR = 3; // 2: biblioteca (4.2e) · 3: textos nivelados a D&D (3.37)
 const ESCUELA = { abj: "Abjuración", con: "Conjuración", div: "Adivinación", enc: "Encantamiento", evo: "Evocación", ill: "Ilusión", nec: "Nigromancia", trs: "Transmutación" };
 const TIPO = { attack: "Ataque", save: "Salvación", damage: "Daño", heal: "Curación", utility: "Utilidad" };
 const RAREZA = { common: "común", uncommon: "poco común", rare: "raro", unique: "único" };
@@ -135,6 +135,33 @@ const soyDM = () => !!game.user?.isGM && (game.users?.activeGM ? game.users.acti
 const ajuste = () => { try { return game.settings.get(MOD, "conjurosPF2e") ?? {}; } catch { return {}; } };
 
 /** Lleva los conjuros de `Data/ecos-pf2e/conjuros-dnd5e.json` al compendio del mundo. Solo el DM principal. */
+/**
+ * 3.37 · Nivela a D&D lo que queda de PF2e en el texto de un conjuro (pedido del autor: «algunos tienen aún acciones de
+ * PF2e como Raise Shield»). Cambia las acciones y términos de PF2e por su equivalente en D&D y deja una nota. Puro.
+ */
+export const MARCA_NIVELADO = "data-ecos-nivelado";
+export function nivelarTextoPF2e(html) {
+  let t = String(html ?? "");
+  if (t.includes(MARCA_NIVELADO)) return t;
+  const usados = new Set();
+  const R = (re, a, nota) => { if (re.test(t)) { t = t.replace(re, a); if (nota) usados.add(nota); } re.lastIndex = 0; };
+  R(/(?:la acci[oó]n )?Alzar un escudo/gi, "levantar la guardia (acción adicional)", "Levantar la guardia: +2 a la CA hasta el inicio de tu próximo turno, como con un escudo.");
+  R(/Bloque(?:ar|o) con (?:el )?escudo/gi, "bloquear con tu reacción", "Bloquear: con tu reacción, cuando un golpe te impacta, el escudo absorbe el daño que diga el conjuro.");
+  R(/Dureza (\d+)/g, "que absorbe $1 de daño por golpe");
+  R(/bonificador (?:por circunstancia|de estatus|de objeto)/gi, "bonificador");
+  R(/penalizador (?:por circunstancia|de estatus|de objeto)/gi, "penalizador");
+  R(/\bun Golpe\b/g, "un ataque con arma"); R(/\bGolpes\b/g, "ataques con arma"); R(/\bGolpe\b(?! sin armas)/g, "ataque con arma");
+  R(/\bZancada\b/g, "movimiento"); R(/\b(?:dar )?un Paso\b/g, "moverse 1,5 m sin provocar ataques de oportunidad");
+  R(/prueba plana(?: CD| de CD)? (\d+)/gi, "tirada de 1d20 sin modificadores (con $1 o más)"); R(/prueba plana/gi, "tirada de 1d20 sin modificadores");
+  R(/rango de conjuro/gi, "nivel de conjuro");
+  R(/acci[oó]n gratuita/gi, "acción gratuita (no gasta acciones)");
+  if (/desprevenid/i.test(t)) usados.add("Desprevenido: los ataques contra él tienen ventaja.");
+  if (/\bMantener\b/.test(t)) usados.add("Mantener: con tu acción adicional, como concentrarse en D&D.");
+  if (/persistente/i.test(t)) usados.add("Daño persistente: al inicio de su turno lo vuelve a recibir; termina con una acción y una tirada de 1d20 con 15 o más.");
+  if (/ataque m[uú]ltiple/i.test(t)) usados.add("En D&D no hay penalizador por ataque múltiple: ignóralo.");
+  const notas = [...usados];
+  return `${t}<p ${MARCA_NIVELADO}><i>Nivelado a D&D (Ecos 3.37)${notas.length ? `: ${notas.join(" ")}` : "."}</i></p>`;
+}
 export async function importarConjuros({ forzar = false, avisar = true } = {}) {
   if (!soyDM()) return { ok: false, motivo: "Solo el DM." };
   let datos;
@@ -161,7 +188,7 @@ export async function importarConjuros({ forzar = false, avisar = true } = {}) {
   const nuestros = new Set(datos.conjuros.map(c => c._id));
   const borrar = lista(indice).map(e => e._id).filter(id => nuestros.has(id));
   for (let i = 0; i < borrar.length; i += 200) await Item.implementation.deleteDocuments(borrar.slice(i, i + 200), { pack: pack.collection });
-  const docs = datos.conjuros.map(c => ({ ...c, folder: carpetas[c.system.level] ?? null }));
+  const docs = datos.conjuros.map(c => ({ ...c, system: { ...c.system, description: { ...(c.system.description ?? {}), value: nivelarTextoPF2e(c.system.description?.value) } }, folder: carpetas[c.system.level] ?? null }));
   for (let i = 0; i < docs.length; i += 100) await Item.implementation.createDocuments(docs.slice(i, i + 100), { pack: pack.collection, keepId: true });
   // Listas de clase y glosario.
   const packL = game.packs.get(PACK_LISTAS) ?? await CC.createCompendium({ type: "JournalEntry", label: "Listas de conjuros de PF2e (Ecos)", name: "ecos-listas-pf2e" });
@@ -210,18 +237,29 @@ async function elegirClase(actor) {
 }
 
 /** La lupa: abre el buscador de dnd5e con la lista de la clase y añade lo que se elija. */
-export async function abrirLupa(actor, nivel = null) {
+/** 3.37 · Nivel de conjuro más alto de un PNJ por su nivel de lanzador (o su VD). Puro. */
+export const nivelMaximoPNJ = (nivelLanzador, vd = 0) => Math.max(0, Math.min(9, Math.ceil((Number(nivelLanzador) || Math.max(1, Math.ceil(Number(vd) || 0))) / 2)));
+/** 3.37 · Un PNJ (sin clase) elige de qué lista aprende, y si se ve su lista o todo. */
+async function elegirListaPNJ(actor) {
+  const r = await foundry.applications.api.DialogV2.wait({ window: { title: `¿Qué conjuros aprende ${actor.name}?` },
+    content: `<p>Este PNJ no tiene clase: elige la lista que usa. Su nivel más alto sale de su nivel de lanzador (o su VD).</p><select name="lista">${Object.entries(NOMBRE_CLASE).map(([k, n]) => `<option value="${k}">${n}</option>`).join("")}</select>`,
+    buttons: [{ action: "ok", label: "Buscar", default: true, callback: (_e, b) => b.form.elements.lista.value }, { action: "no", label: "Cancelar" }], rejectClose: false });
+  if (!r || r === "no") return null;
+  return [r, { name: NOMBRE_CLASE[r], system: { levels: Number(actor.system?.attributes?.spell?.level) || 1 }, pnj: true }];
+}
+export async function abrirLupa(actor, nivel = null, { todos = false } = {}) {
   const Browser = globalThis.dnd5e?.applications?.CompendiumBrowser;
   if (!actor?.isOwner || !Browser) return;
-  const elegida = await elegirClase(actor);
-  if (!elegida) return ui.notifications.warn("Esta hoja no tiene una clase que lance conjuros.");
+  const elegida = (await elegirClase(actor)) ?? (actor.type === "npc" ? await elegirListaPNJ(actor) : null);
+  if (!elegida) return actor.type === "npc" ? null : ui.notifications.warn("Esta hoja no tiene una clase que lance conjuros.");
   const [clase, cls] = elegida;
-  const maxNivel = nivelMaximoClase(actor, cls);
+  const maxNivel = cls.pnj ? nivelMaximoPNJ(actor.system?.attributes?.spell?.level, actor.system?.details?.cr) : nivelMaximoClase(actor, cls);
   const nv = nivel == null || nivel === "" ? null : Math.min(Number(nivel), maxNivel);
   if (nv != null && Number(nivel) > maxNivel) return ui.notifications.warn(`Todavía no lanzas conjuros de nivel ${nivel} con tu ${cls.name}.`);
   const mago = clase === "wizard", nivelClase = Number(cls.system?.levels) || 1;
   const quedan = mago ? gratisMago(nivelClase, contarGratisMago(actor.items)) : null;
-  const lista_ = globalThis.dnd5e.registry.spellLists.forType("class", clase) ? { [`class:${clase}`]: 1 } : undefined;
+  // 3.37: «todos» quita el filtro de lista: salen todos los conjuros de D&D y de PF2e de esos niveles.
+  const lista_ = !todos && globalThis.dnd5e.registry.spellLists.forType("class", clase) ? { [`class:${clase}`]: 1 } : undefined;
   const filters = { locked: { documentClass: "Item", exclusive: true, types: new Set(["spell"]), additional: {
     level: nv != null ? { min: nv, max: nv } : { min: 0, max: maxNivel }, ...(lista_ ? { spelllist: lista_ } : {}) } } };
   const hint = mago ? `Libro de ${esc(actor.name)}: te quedan ${quedan} conjuros gratis de nivel 1 o más (6 al nivel 1 y 2 por nivel). Los trucos no cuentan. Los demás se copian al libro por 50 po y 2 horas por nivel.`
@@ -285,19 +323,38 @@ export function guiaConjurosHTML() {
 }
 
 function botonAprender(actor) {
+  const caja = document.createElement("span");
+  caja.className = "ecos-aprender-conjuros-caja";
   const b = document.createElement("button");
   Object.assign(b, { type: "button", className: "ecos-aprender-conjuros", innerHTML: '<i class="fa-solid fa-book-medical" inert></i> Aprender conjuros' });
-  b.dataset.tooltip = "Buscar conjuros de D&D y de PF2e de tu lista de clase y sumarlos a la hoja";
-  b.addEventListener("click", ev => { ev.preventDefault(); ev.stopPropagation(); abrirLupa(actor, null).catch(err => console.error(`${MOD} | lupa`, err)); });
-  return b;
+  b.dataset.tooltip = "Buscar conjuros de D&D y de PF2e de tu lista de clase y sumarlos a la hoja. Con Mayús: todos los conjuros, sin filtro de lista.";
+  b.addEventListener("click", ev => { ev.preventDefault(); ev.stopPropagation(); abrirLupa(actor, null, { todos: ev.shiftKey }).catch(err => console.error(`${MOD} | lupa`, err)); });
+  const q = document.createElement("button");
+  Object.assign(q, { type: "button", className: "ecos-quitar-conjuros", innerHTML: '<i class="fa-solid fa-book-skull" inert></i> Quitar conjuros' });
+  q.dataset.tooltip = "Quitar de la hoja los conjuros que elijas (los de D&D y los de PF2e).";
+  q.addEventListener("click", ev => { ev.preventDefault(); ev.stopPropagation(); quitarConjuros(actor).catch(err => console.error(`${MOD} | quitar conjuros`, err)); });
+  caja.append(b, q);
+  return caja;
+}
+/** 3.37: quitar conjuros de la hoja eligiéndolos de una lista. */
+export async function quitarConjuros(actor) {
+  const sp = lista(actor.items).filter(i => i.type === "spell").sort((a, b) => (a.system.level - b.system.level) || a.name.localeCompare(b.name, "es"));
+  if (!sp.length) return ui.notifications.info("No tiene conjuros.");
+  const r = await foundry.applications.api.DialogV2.wait({ window: { title: `Quitar conjuros · ${actor.name}` }, position: { width: 420 },
+    content: `<p>Marca los que quieres quitar de la hoja.</p><div style="max-height:420px;overflow:auto">${sp.map(i => `<label class="ecos-check"><input type="checkbox" name="${i.id}"> ${i.system.level ? `Nivel ${i.system.level}` : "Truco"} · ${esc(i.name)}${i.flags?.[MOD]?.pf2e ? " <small>(PF2e)</small>" : ""}</label>`).join("")}</div>`,
+    buttons: [{ action: "ok", label: "Quitar los marcados", icon: "fa-solid fa-trash", callback: (_e, b) => sp.filter(i => b.form.elements[i.id]?.checked).map(i => i.id) }, { action: "no", label: "Cancelar", default: true }], rejectClose: false });
+  if (!Array.isArray(r) || !r.length) return;
+  await actor.deleteEmbeddedDocuments("Item", r);
+  ui.notifications.info(`${actor.name}: ${r.length} conjuro${r.length === 1 ? "" : "s"} quitado${r.length === 1 ? "" : "s"}.`);
 }
 
 function decorarLibro(app, html) {
   try {
     const actor = app?.document ?? app?.actor;
-    if (!(actor instanceof Actor) || actor.type !== "character" || !actor.isOwner) return;
+    // 3.37: también en los PNJ (magos que aprenden conjuros nuevos): eligen su lista al abrir.
+    if (!(actor instanceof Actor) || !["character", "npc"].includes(actor.type) || !actor.isOwner) return;
     try { if (game.settings.get(MOD, "lupaConjuros") === false) return; } catch { /* sigue */ }
-    if (!Object.keys(actor.spellcastingClasses ?? {}).length) return;
+    if (actor.type === "character" && !Object.keys(actor.spellcastingClasses ?? {}).length) return;
     const raiz = app.element instanceof HTMLElement ? app.element : html;
     for (const sec of raiz.querySelectorAll?.('.items-section[data-type="spell"]') ?? []) {
       const cab = sec.querySelector(".items-header");
@@ -314,8 +371,8 @@ function decorarLibro(app, html) {
       const primera = raiz.querySelector?.('.items-section[data-type="spell"]');
       const tab = raiz.querySelector?.('.tab[data-tab="spells"]');
       const caja = document.createElement("div");
-      caja.className = "ecos-aprender-conjuros-caja";
-      caja.style.cssText = "display:flex;justify-content:flex-end;margin:4px 0";
+      caja.className = "ecos-aprender-conjuros-fila";
+      caja.style.cssText = "display:flex;justify-content:flex-end;gap:4px;margin:4px 0";
       caja.append(botonAprender(actor));
       if (primera?.parentElement) primera.parentElement.insertBefore(caja, primera);
       else tab?.prepend(caja);
@@ -336,6 +393,14 @@ if (globalThis.Hooks) {
     (game.modules.get(MOD).api ??= {}).conjuros = { importar: importarConjuros, lupa: abrirLupa, guia: guiaConjurosHTML };
     if (soyDM() && game.system.id === "dnd5e" && game.settings.get(MOD, "lupaConjuros") !== false)
       import("./acciones-comunes.js").then(m => m.paginaReglas("guiaConjuros", "15 · Conjuros: cómo sumarlos a tu hoja", guiaConjurosHTML())).catch(err => console.error(`${MOD} | guía de conjuros`, err));
+    // 3.37: los conjuros de PF2e que ya están en las hojas también se nivelan a D&D.
+    if (soyDM()) setTimeout(async () => {
+      for (const a of game.actors ?? []) {
+        const cambios = lista(a.items).filter(i => i.type === "spell" && i.flags?.[MOD]?.pf2e && !String(i.system?.description?.value ?? "").includes(MARCA_NIVELADO))
+          .map(i => ({ _id: i.id, "system.description.value": nivelarTextoPF2e(i.system.description.value) }));
+        if (cambios.length) await a.updateEmbeddedDocuments("Item", cambios).catch(err => console.warn(`${MOD} | nivelar conjuros`, err));
+      }
+    }, 20000);
     if (soyDM() && game.system.id === "dnd5e") setTimeout(() => importarConjuros().then(r => { if (r?.ok === false && !/No está/.test(r.motivo)) console.warn(`${MOD} |`, r.motivo); }).catch(err => console.error(`${MOD} | conjuros de PF2e`, err)), 12000);
   });
   Hooks.on("renderActorSheetV2", decorarLibro);
