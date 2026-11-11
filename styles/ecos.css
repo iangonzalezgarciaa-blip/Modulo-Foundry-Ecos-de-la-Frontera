@@ -752,3 +752,11 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-verbe-bloque .ecos-verbe-barra { flex: 1; }
 .ecos-verbe-bloque .ecos-verbe-moneda { flex: none; width: auto; line-height: 1.4; padding: 0 6px; font-size: 12px; }
 .ecos-forzarse { border-left: 3px solid #c0392b; padding-left: 6px; }
+
+/* 3.36 · Menú «Acción estándar». */
+.ecos-accion-estandar-app .window-content { overflow-y: auto; }
+.ecos-accion-estandar .ae-sec > summary { font-size: 1.12em; font-weight: 600; cursor: pointer; margin-top: 6px; }
+.ecos-accion-estandar .ae-lista { list-style: none; margin: 4px 0; padding: 0; display: grid; gap: 3px; }
+.ecos-accion-estandar .ae-lista button { width: auto; display: inline-flex; align-items: center; gap: 6px; line-height: 1.6; padding: 0 8px; }
+.ecos-accion-estandar .ae-lista img { width: 20px; height: 20px; border: 0; }
+.ecos-accion-estandar .ae-lista small { opacity: .8; }

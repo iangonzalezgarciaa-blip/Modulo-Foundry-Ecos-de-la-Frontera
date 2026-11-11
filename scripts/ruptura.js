@@ -324,11 +324,17 @@ const autorEfecto = efecto => {
 };
 
 /** No más de 3 Brechas ni 3 Grietas: la cuarta no entra (se renueva la más vieja). Y las dotes de quien lo puso. */
+/** Las dotes de «Ablandar y sinergias» (categoría ruptura del catálogo). */
+export const DOTES_RUPTURA = new Set(["muerde-elemento", "golpe-al-quiebre", "filo-que-abre", "sello-de-la-grieta", "miedo-que-agrieta", "latido-que-rompe", "paso-por-la-herida",
+  "huella-abierta", "mordida-que-rompe", "golpe-en-el-vacio", "sangre-que-hiende", "peso-del-huesped", "cadena-de-ruptura", "rompeguardias", "ver-la-grieta"]);
 async function topeAlCrear(efecto) {
   if (!game.user.isGM || game.users.activeGM?.isSelf === false) return;
   const actor = efecto.parent;
   if (!(actor instanceof Actor)) return;
   const autor = autorEfecto(efecto), dotes = autor && autor !== actor ? dotesDe(autor) : [];
+  // 3.36: lo que deja una acción de cualquiera dura un turno; con una dote de ruptura del Verbe, 1 minuto.
+  if (efecto.getFlag?.(MOD, "accionComunEfecto") && dotes.some(id => DOTES_RUPTURA.has(id)) && (Number(efecto.duration?.seconds) || 0) < 60)
+    await efecto.update({ "duration.seconds": 60, "duration.rounds": 10 });
   if (dotes.length) {
     const { cambio, nuevos } = ajustePorDotes([...(efecto.statuses ?? [])], dotes);
     if (cambio) await efecto.update(cambio);

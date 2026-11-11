@@ -32,11 +32,11 @@ test('3.28 · los efectos: Coraza suma a la CA, Fortaleza a las salvaciones, Cue
 
 test('3.28 · dos acciones de cualquiera nuevas abren defensas: Romper la guardia (Brecha) y Buscar la grieta (Grieta)', () => {
   const rg = ACCIONES_PLANAS.find(a => a.id === 'rompe-guardia'), gr = ACCIONES_PLANAS.find(a => a.id === 'grieta');
-  assert.equal(rg.grupo, 'str'); assert.deepEqual(rg.efecto.statuses, ['ecosBrecha']); assert.equal(rg.efecto.segundos, 60);
+  assert.equal(rg.grupo, 'str'); assert.deepEqual(rg.efecto.statuses, ['ecosBrecha']); assert.equal(rg.efecto.segundos, 6, '3.36: un turno; con dote de ruptura, 1 minuto');
   assert.equal(gr.grupo, 'int'); assert.deepEqual(gr.efecto.statuses, ['ecosGrieta']);
   const fue = datosRasgosComunes().find(r => r.system.identifier === 'ecos-acciones-str');
   const ef = fue.effects.find(e => e.statuses.includes('ecosBrecha'));
-  assert.equal(ef.duration.seconds, 60); assert.equal(ef.changes[0].key, 'system.attributes.ac.bonus');
+  assert.equal(ef.duration.seconds, 6); assert.equal(ef.changes[0].key, 'system.attributes.ac.bonus');
 });
 
 test('3.28 · la defensa a pedido: salvaciones con objetivo, el texto de la amenaza y la comparación con la CD', () => {

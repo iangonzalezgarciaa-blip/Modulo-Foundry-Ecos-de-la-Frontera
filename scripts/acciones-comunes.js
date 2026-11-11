@@ -12,7 +12,7 @@
 import { cambio } from "./compat.js";
 
 const MOD = "ecos-frontera";
-export const VERSION_ACCIONES = 5;
+export const VERSION_ACCIONES = 6;
 const DESPREVENIDO = "ecosDesprevenido";
 const S = "systems/dnd5e/icons/svg/";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -52,8 +52,8 @@ export const ACCIONES = [
     { id: "lanzar", nombre: "Lanzar a quien sujetas", act: "action", tipo: "save", salv: ["str"], cd: "str", estado: "prone", dano: [1, 6, "bludgeoning"], alcance: 5, pf2e: null,
       texto: "Arrojas a quien tienes Agarrado hasta 10 ft (15 ft con Fuerza 18 o más). Si falla, cae Derribado y recibe 1d6 contundente. La presa termina." },
     { id: "rompe-guardia", nombre: "Romper la guardia", act: "action", tipo: "save", salv: ["str", "con"], cdPericia: ["ath"], alcance: 5, pf2e: null,
-      efecto: { nombre: "Brecha", img: "systems/dnd5e/icons/svg/statuses/bleeding.svg", statuses: ["ecosBrecha"], cambios: [["system.attributes.ac.bonus", "add", "-2"]], segundos: 60 },
-      texto: "Golpeas donde la coraza, el escudo o la guardia ya cedieron: un borde de quitina, una correa, la mano del escudo. Va en lugar de uno de tus ataques. Si falla, recibe una Brecha (−2 a la CA durante 1 minuto; hasta 3 se acumulan). D&D pega; esto abre." },
+      efecto: { nombre: "Brecha", img: "systems/dnd5e/icons/svg/statuses/bleeding.svg", statuses: ["ecosBrecha"], cambios: [["system.attributes.ac.bonus", "add", "-2"]], segundos: 6 },
+      texto: "Golpeas donde la coraza, el escudo o la guardia ya cedieron: un borde de quitina, una correa, la mano del escudo. Va en lugar de uno de tus ataques. Si falla, recibe una Brecha (−2 a la CA hasta el final de tu próximo turno; con una dote de ruptura del Verbe, 1 minuto; hasta 3 se acumulan). D&D pega; esto abre." },
     { id: "abrirse-paso", nombre: "Abrirse paso", act: "special", tipo: "save", salv: ["str"], cdPericia: ["ath"], alcance: 5, pf2e: null,
       texto: "Una vez por turno, durante tu movimiento, intentas cruzar el espacio de un enemigo. Si falla, pasas (cuenta como terreno difícil). Si es dos tamaños más pequeño que tú, además cae Derribado." },
     { id: "escapar", nombre: "Escapar o forzar", act: "action", tipo: "check", pericias: ["ath", "acr"], pf2e: "Escape / Force Open", base: "Escapar de una presa",
@@ -100,8 +100,8 @@ export const ACCIONES = [
     { id: "plan", nombre: "Según el plan", act: "special", tipo: "utility", efecto: { nombre: "Según el plan", img: `${S}abilities/intelligence.svg`, horas: 1 }, pf2e: null,
       texto: "Pon este efecto en quienes escucharon el plan (marca sus tokens). Cada uno, una vez, suma 1d4 a una tirada que siga el plan y luego se lo quita." },
     { id: "grieta", nombre: "Buscar la grieta", act: "action", tipo: "save", salv: ["wis", "int"], cdPericia: ["inv", "nat", "arc", "med"], alcance: 30, pf2e: null,
-      efecto: { nombre: "Grieta", img: "systems/dnd5e/icons/svg/statuses/cursed.svg", statuses: ["ecosGrieta"], cambios: [["system.bonuses.abilities.save", "add", "-2"]], segundos: 60 },
-      texto: "Lo estudias mientras pelea: dónde respira, qué protege, qué lo asusta. Usa Investigación, Naturaleza, Arcanos o Medicina, el mejor. Si falla, le encontraste la grieta: Grieta, −2 a todas sus salvaciones durante 1 minuto (hasta 3 se acumulan)." },
+      efecto: { nombre: "Grieta", img: "systems/dnd5e/icons/svg/statuses/cursed.svg", statuses: ["ecosGrieta"], cambios: [["system.bonuses.abilities.save", "add", "-2"]], segundos: 6 },
+      texto: "Lo estudias mientras pelea: dónde respira, qué protege, qué lo asusta. Usa Investigación, Naturaleza, Arcanos o Medicina, el mejor. Si falla, le encontraste la grieta: Grieta, −2 a todas sus salvaciones hasta el final de tu próximo turno (con una dote de ruptura del Verbe, 1 minuto; hasta 3 se acumulan)." },
     { id: "terreno", nombre: "Aprovechar el terreno", act: "action", tipo: "check", pericias: ["inv", "sur"], cdFija: 12, pf2e: null,
       texto: "Buscas algo que usar: una lámpara que colgar, una cuesta, un tablón suelto, una cuerda. Con CD 12, el DM te dice qué hay y te da una de dos: +2 a tu próximo ataque, o que tu próxima Presa, Empujón o Zancadilla se salve con desventaja." }
   ] },
@@ -161,17 +161,45 @@ function efectoDe(grupo, a) {
     description: `<p>${esc(a.texto)}</p>`, flags: { [MOD]: { accionComunEfecto: a.id } } };
 }
 
-function actividadDe(grupo, a) {
+/**
+ * 3.36 · Las clases no pierden (pedido del autor): si la hoja ya tiene algo que hace lo mismo que una acción de
+ * cualquiera (Maniobras, Maestro del escudo, Acción astuta, Luchador…), esa acción le sale mejor: +2 a su CD. Puro.
+ */
+export const BONO_CLASE = {
+  derribar: /trip attack|ataque derribador|mano abierta|open hand|maestr[oa] del escudo|shield master/i,
+  zancadilla: /trip attack|ataque derribador|mano abierta|open hand|acci[oó]n astuta|cunning action/i,
+  apartar: /pushing attack|ataque de empuje|maestr[oa] del escudo|shield master|mano abierta|open hand|pendenciero|tavern brawler/i,
+  presa: /grappler|luchador|presa experta|pendenciero|tavern brawler|atleta/i,
+  lanzar: /grappler|luchador|presa experta|pendenciero|tavern brawler/i,
+  "abrirse-paso": /atleta|athlete|furia|rage|carga|charger/i,
+  desarmar: /disarming attack|ataque desarmador|desarm/i,
+  fintar: /feinting attack|ataque fintado|finta|elegancia/i,
+  birlar: /acci[oó]n astuta|cunning action|manos r[aá]pidas|fast hands/i,
+  polvo: /acci[oó]n astuta|cunning action|juego sucio/i,
+  leer: /perspica|insightful|observador|observant|ojo del t[aá]ctico|cazador|hunter/i,
+  grieta: /perspica|observador|observant|cazador|hunter|favored enemy|enemigo predilecto/i,
+  "rompe-guardia": /maniobra|maneuver|superioridad|superiority|golpe brutal|brutal strike|rompe/i
+};
+export function bonosDeClase(items) {
+  const nombres = (items ?? []).filter(i => !i?.flags?.[MOD]?.accionComun && ["feat", "subclass", "class"].includes(i?.type)).map(i => i.name ?? "");
+  const out = {};
+  for (const [id, re] of Object.entries(BONO_CLASE)) { const n = nombres.find(x => re.test(x)); if (n) out[id] = { cd: 2, motivo: n }; }
+  return out;
+}
+const huellaBonos = b => Object.entries(b ?? {}).map(([k, v]) => `${k}+${v.cd}`).sort().join(",");
+function actividadDe(grupo, a, bonos = {}) {
   const _id = idEstable(`ecos-accion-${grupo}-${a.id}`);
   const ef = efectoDe(grupo, a);
+  const bono = bonos[a.id];
   const base = { _id, sort: 0, name: a.nombre, type: a.tipo === "heal" ? "heal" : a.tipo,
     activation: { type: a.act, value: a.act === "special" ? null : 1, condition: "", override: true },
-    description: { chatFlavor: a.texto },
+    description: { chatFlavor: a.texto + (bono ? ` Tu clase ya lo hace (${bono.motivo}): +${bono.cd} a la CD.` : "") },
     range: a.alcance ? { override: true, units: "ft", value: String(a.alcance), special: "" } : { override: false },
     target: a.tipo === "utility" && !a.alcance ? { override: false } : { override: true, affects: { count: "1", type: "creature", choice: false, special: "" }, prompt: false },
     effects: ef ? [{ _id: ef._id, onSave: false }] : [] };
   if (a.tipo === "save") Object.assign(base, {
-    save: { ability: a.salv, dc: a.cdPericia ? { calculation: "", formula: formulaCdPericia(a.cdPericia) } : { calculation: a.cd, formula: "" } },
+    save: { ability: a.salv, dc: bono ? { calculation: "", formula: `${a.cdPericia ? formulaCdPericia(a.cdPericia) : `8 + @prof + @abilities.${a.cd}.mod`} + ${bono.cd}` }
+      : a.cdPericia ? { calculation: "", formula: formulaCdPericia(a.cdPericia) } : { calculation: a.cd, formula: "" } },
     damage: { onSave: "none", parts: a.dano ? [{ number: a.dano[0], denomination: a.dano[1], bonus: "", types: [a.dano[2]], custom: { enabled: false, formula: "" }, scaling: { mode: "", number: null, formula: "" } }] : [] } });
   if (a.tipo === "check") Object.assign(base, { check: { ability: a.car ?? (a.pericias?.length ? "" : grupo), associated: a.pericias ?? [], dc: { calculation: "", formula: a.cdFija ? String(a.cdFija) : "" } } });
   if (a.tipo === "utility") Object.assign(base, { roll: { formula: "", name: "", prompt: false, visible: false } });
@@ -186,13 +214,13 @@ export function descripcionGrupoHTML(g) {
 }
 
 /** Los seis rasgos («Acciones de Fuerza»…) como datos de objeto de dnd5e. */
-export function datosRasgosComunes() {
+export function datosRasgosComunes(bonos = {}) {
   return ACCIONES.map(g => {
     const activities = {}, effects = [];
-    g.acciones.forEach((a, i) => { const { actividad, efecto } = actividadDe(g.car, a); actividad.sort = (i + 1) * 100; activities[actividad._id] = actividad; if (efecto) effects.push(efecto); });
+    g.acciones.forEach((a, i) => { const { actividad, efecto } = actividadDe(g.car, a, bonos); actividad.sort = (i + 1) * 100; activities[actividad._id] = actividad; if (efecto) effects.push(efecto); });
     return { name: NOMBRE_ITEM[g.car], type: "feat", img: `${S}abilities/${({ str: "strength", dex: "dexterity", con: "constitution", int: "intelligence", wis: "wisdom", cha: "charisma" })[g.car]}.svg`,
       system: { description: { value: descripcionGrupoHTML(g), chat: "" }, type: { value: "", subtype: "" }, identifier: `ecos-acciones-${g.car}`, activities, source: { custom: "Ecos · Acciones de cualquiera" } },
-      effects, flags: { [MOD]: { accionComun: { id: g.car, v: VERSION_ACCIONES } } } };
+      effects, flags: { [MOD]: { accionComun: { id: g.car, v: VERSION_ACCIONES, bonos: huellaBonos(Object.fromEntries(Object.entries(bonos).filter(([k]) => g.acciones.some(a => a.id === k)))) } } } };
   });
 }
 
@@ -228,12 +256,13 @@ export function datosGolpe(dado = null) {
 export function planAcciones(items, datosTirada) {
   const propios = new Map((items ?? []).filter(i => i?.flags?.[MOD]?.accionComun).map(i => [i.flags[MOD].accionComun.id, i]));
   const crear = [], actualizar = [];
-  const deseados = datosRasgosComunes();
+  const deseados = datosRasgosComunes(bonosDeClase(items));
   if (!tieneGolpePropio(items)) deseados.unshift(datosGolpe(dadoDeClase(datosTirada)));
   for (const d of deseados) {
     const id = d.flags[MOD].accionComun.id, ya = propios.get(id);
     if (!ya) crear.push(d);
-    else if ((ya.flags[MOD].accionComun.v ?? 0) < VERSION_ACCIONES || (id === "golpe" && (ya.flags[MOD].accionComun.dado ?? null) !== (d.flags[MOD].accionComun.dado ?? null)))
+    else if ((ya.flags[MOD].accionComun.v ?? 0) < VERSION_ACCIONES || (id === "golpe" && (ya.flags[MOD].accionComun.dado ?? null) !== (d.flags[MOD].accionComun.dado ?? null))
+      || (id !== "golpe" && (ya.flags[MOD].accionComun.bonos ?? "") !== (d.flags[MOD].accionComun.bonos ?? "")))
       actualizar.push({ _id: ya._id ?? ya.id, ...d });
   }
   return { crear, actualizar };
@@ -341,6 +370,11 @@ if (globalThis.Hooks) {
     if (!soyDM()) return;
     try { await asegurarGuiaAcciones(); for (const a of game.actors ?? []) if (a.type === "character") await asegurarAccionesComunes(a); }
     catch (err) { console.error(`${MOD} | acciones de cualquiera`, err); }
+  });
+  // 3.36: al subir de nivel o sumar un rasgo, las acciones de cualquiera se rehacen si cambia algún bono de clase.
+  Hooks.on("createItem", (item, _o, userId) => {
+    if (!["feat", "class", "subclass"].includes(item.type) || item.flags?.[MOD]?.accionComun || !(item.parent instanceof Actor) || game.user.id !== userId && !game.user.isGM) return;
+    asegurarAccionesComunes(item.parent).catch(err => console.error(`${MOD} | acciones de cualquiera`, err));
   });
   Hooks.on("createActor", actor => { asegurarAccionesComunes(actor).catch(err => console.error(`${MOD} | acciones de cualquiera`, err)); });
   Hooks.on("createCombatant", c => { if (c.actor) asegurarAccionesComunes(c.actor).catch(err => console.error(`${MOD} | acciones de cualquiera`, err)); });

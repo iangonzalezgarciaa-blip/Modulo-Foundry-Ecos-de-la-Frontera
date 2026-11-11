@@ -65,6 +65,7 @@ function estiloCaja() {
   s.id = "ecos-musica-css";
   s.textContent = `#ecos-musica{position:fixed;z-index:70;box-sizing:border-box;padding:0;background:#111;border:0;outline:1px solid #444;border-radius:6px;overflow:hidden;box-shadow:0 2px 8px #0008}
 #ecos-musica .em-barra{height:${BARRA}px;display:flex;align-items:center;gap:3px;padding:0 4px 0 6px;color:#ddd;font-size:12px;cursor:move;user-select:none}
+#ecos-musica .em-vol{flex:0 1 70px;width:70px;min-width:40px;height:14px;margin:0 2px;cursor:pointer}
 #ecos-musica .em-barra span{flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #ecos-musica .em-barra button{flex:0 0 auto;width:auto;min-width:0;height:20px;line-height:18px;padding:0 5px;margin:0;font-size:12px;cursor:pointer}
 #ecos-musica iframe{position:absolute;left:0;top:${BARRA}px;width:100%!important;height:calc(100% - ${BARRA}px)!important;border:0;display:block}
@@ -105,7 +106,7 @@ function caja() {
   estiloCaja();
   c = document.createElement("div");
   c.id = "ecos-musica";
-  c.innerHTML = `<div class="em-barra" title="Arrastra para mover · doble clic: grande o chico"><span>♪ Música</span><button type="button" data-caja="menos" title="Achicar">−</button><button type="button" data-caja="mas" title="Agrandar">+</button><button type="button" data-caja="esquina" title="Volver abajo a la izquierda, tamaño chico">⟲</button><button type="button" data-cerrar title="Solo en tu equipo; la música sigue para los demás">Silenciar</button></div><div id="ecos-musica-yt"></div><div class="em-esquina" title="Arrastra para cambiar el tamaño"></div>`;
+  c.innerHTML = `<div class="em-barra" title="Arrastra para mover · doble clic: grande o chico"><span>♪ Música</span><input type="range" class="em-vol" min="0" max="100" step="5" value="${game.user.isGM ? volumenMesa() : volumenLocal()}" title="${game.user.isGM ? "Volumen para todos (la mesa)" : "Tu volumen"}"><button type="button" data-caja="menos" title="Achicar">−</button><button type="button" data-caja="mas" title="Agrandar">+</button><button type="button" data-caja="esquina" title="Volver abajo a la izquierda, tamaño chico">⟲</button><button type="button" data-cerrar title="Solo en tu equipo; la música sigue para los demás">Silenciar</button></div><div id="ecos-musica-yt"></div><div class="em-esquina" title="Arrastra para cambiar el tamaño"></div>`;
   pintarCaja(c, ajustarCaja(cajaGuardada(), innerWidth, innerHeight));
   const barra = c.querySelector(".em-barra");
   barra.addEventListener("pointerdown", e => arrastrar(e, c, "mover"));
@@ -115,6 +116,15 @@ function caja() {
     const k = b.dataset.caja === "esquina" ? ajustarCaja(null, innerWidth, innerHeight) : pasoCaja(cajaActual, b.dataset.caja === "mas" ? 1 : -1, innerWidth, innerHeight);
     pintarCaja(c, k); guardarCaja(k);
   }));
+  // 3.36 (pedido del autor): el volumen va en la barra y no desaparece al pasar el ratón; el del DM vale para todos.
+  const vol = c.querySelector(".em-vol");
+  vol.addEventListener("pointerdown", e => e.stopPropagation());
+  vol.addEventListener("dblclick", e => e.stopPropagation());
+  vol.addEventListener("input", () => { reproductor?.setVolume?.(game.user.isGM ? Math.round(Number(vol.value) * volumenLocal() / 100) : Math.round(volumenMesa() * Number(vol.value) / 100)); });
+  vol.addEventListener("change", () => {
+    if (game.user.isGM) { const e = estadoMusica(); guardar({ ...e, volumen: Number(vol.value) }).catch(() => null); }
+    else game.settings.set(MOD, VOL, Number(vol.value)).catch(() => null);
+  });
   const boton = c.querySelector("[data-cerrar]");
   boton.addEventListener("click", () => {
     if (!reproductor) return;
@@ -124,12 +134,17 @@ function caja() {
   document.body.append(c);
   return c;
 }
+const volumenLocal = () => { try { return Number(game.settings.get(MOD, VOL)); } catch { return 50; } };
+const volumenMesa = () => { const v = Number(estadoMusica().volumen); return Number.isFinite(v) ? v : 100; };
+/** El volumen que suena: el de la mesa (lo pone el DM para todos) por el tuyo. Puro. */
+export const volumenEfectivo = (mesa, propio) => Math.round(Math.max(0, Math.min(100, Number(mesa) || 0)) * Math.max(0, Math.min(100, Number(propio) || 0)) / 100);
 async function aplicar() {
   const { actual } = estadoMusica();
   if (!actual?.id) { reproductor?.stopVideo?.(); document.getElementById("ecos-musica")?.remove(); reproductor = null; ultimo = null; return; }
   caja();
   const YT = await api();
-  const volumen = (() => { try { return Number(game.settings.get(MOD, VOL)); } catch { return 50; } })();
+  const volumen = volumenEfectivo(volumenMesa(), volumenLocal());
+  const sl = document.querySelector("#ecos-musica .em-vol"); if (sl && document.activeElement !== sl) sl.value = String(game.user.isGM ? volumenMesa() : volumenLocal());
   const seg = segundoActual(actual);
   if (!reproductor) {
     reproductor = await new Promise(res => {
@@ -170,7 +185,7 @@ export function musicaHTML() {
 Hooks.once("init", () => {
   game.settings.register(MOD, AJ, { scope: "world", config: false, type: Object, default: { cola: [], actual: null } });
   game.settings.register(MOD, CAJA, { scope: "client", config: false, type: Object, default: null });
-  game.settings.register(MOD, VOL, { name: "Volumen de la música de YouTube", hint: "Solo en tu equipo. La música la elige el DM.", scope: "client", config: true, type: Number, range: { min: 0, max: 100, step: 5 }, default: 50, onChange: v => reproductor?.setVolume?.(Number(v)) });
+  game.settings.register(MOD, VOL, { name: "Volumen de la música de YouTube", hint: "Solo en tu equipo. La música la elige el DM.", scope: "client", config: true, type: Number, range: { min: 0, max: 100, step: 5 }, default: 50, onChange: v => reproductor?.setVolume?.(volumenEfectivo(volumenMesa(), Number(v))) });
 });
 Hooks.once("ready", () => { if (estadoMusica().actual) aplicar().catch(err => console.warn(`${MOD} | música`, err)); });
 const alCambiar = s => { if (s.key === `${MOD}.${AJ}`) aplicar().catch(err => console.warn(`${MOD} | música`, err)); };

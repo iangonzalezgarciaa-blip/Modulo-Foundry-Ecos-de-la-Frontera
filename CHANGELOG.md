@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 3.36.0 — 2026-11-11
+
+- **Acción estándar** (pedido del autor): un botón en la cabecera de cada hoja (PJ y PNJ) abre un menú como el del Verbe con todo lo que esa ficha puede hacer en su turno, en español y explicado: las **acciones de cualquiera** (Atacar, Magia, Correr, Desengancharse, Esquivar, Ayudar, Esconderse, Buscar, Estudiar, Influir, Usar un objeto, Preparar) y lo de su hoja separado en **Acción, Acción adicional y Reacción** (armas, conjuros preparados, rasgos de clase). Se arma solo con la hoja: al subir de nivel o sumar algo, cambia.
+- **Daño de caída e indirecto** (Menú del DM → Mesa): caídas (1d6 cada 10 ft, hasta 20d6, y Derribado), derrumbes, brasas, lava, ácido, agua o metal cargado, contra una pared, frío extremo, gas o una fórmula libre. Se aplica directo a los tokens seleccionados o marcados, con su salvación.
+- **Las clases no pierden:** si la hoja ya tiene algo que hace lo mismo que una acción de cualquiera (Maniobras, Maestro del escudo, Acción astuta, Luchador, Mano abierta…), esa acción le sale mejor: **+2 a su CD**, y la acción lo dice. Se rehace sola al sumar un rasgo.
+- **Las acciones de cualquiera duran un turno:** Romper la guardia (Brecha) y Buscar la grieta (Grieta) duran hasta el final de tu próximo turno; con una dote de ruptura del Verbe, 1 minuto.
+- **Música de YouTube:** el volumen va en la barra del reproductor y ya no desaparece al pasar el ratón. El del DM es el **volumen de la mesa**: baja o sube la música de todos (cada uno conserva el suyo encima).
+
 ## 3.35.0 — 2026-11-11
 
 - **A 0 PG (Acechado por la Muerte)** (regla del autor): ya no queda Incapacitado. Pierde sus **reacciones** (de D&D y del Verbe) y no puede atacar, lanzar conjuros ni usar técnicas, pero sí hace **acciones básicas para sobrevivir**: Esquivar, Desengancharse, arrastrarse (cada pie cuesta el doble), esconderse, tomar una poción, ayudar. No se le ofrece levantarse: se arrastra.
