@@ -57,18 +57,24 @@ export function rebalancear(D) {
       duration: { seconds: d.dura, rounds: Math.max(1, Math.round(d.dura / 6)) }, description: `<p>${d.name}: ${d.texto}.</p>`,
       flags: { 'ecos-frontera': { verbe: { estado: id, rupturaAuto: true } } } });
     a.effects = (a.effects ?? []).filter(e => e._id !== eid).concat([{ _id: eid, onSave: false }]);
-    if (t.dmg) t.dmg = String(t.dmg).replace(/^(\d+)d/, (m0, k) => `${reducir(antes[0] || Number(k))}d`);
+    // El resumen de daño, desde el original: cada parte con sus dados nuevos.
+    const dmgAntes = previo?.dmgAntes ?? t.dmg;
+    if (dmgAntes) { let x = String(dmgAntes); a.damage.parts.forEach((p, i) => { if (antes[i]) x = x.replace(new RegExp(`(?<!§)\\b${antes[i]}d${p.denomination}\\b`), `§${p.number}d${p.denomination}`); }); t.dmg = x.replaceAll('§', ''); }
     const cuando = a.type === 'save' ? 'si falla la salvación' : a.type === 'attack' ? 'si impacta' : 'al recibir el daño';
     // El texto dice los dados nuevos (los de antes se reemplazan una vez) y cómo ablanda.
     const ajustar = txt => {
       let x = String(txt ?? '').split(MARCA)[0];
-      a.damage.parts.forEach((p, i) => { if (antes[i] && antes[i] !== p.number) x = x.replace(new RegExp(`\\b${antes[i]}d${p.denomination}\\b`), `${p.number}d${p.denomination}`); });
-      return x + `${MARCA}${cuando}, ${d.texto}.`;
+      if (!x) return x;
+      a.damage.parts.forEach((p, i) => { if (antes[i] && antes[i] !== p.number) x = x.replace(new RegExp(`(?<!§)\\b${antes[i]}d${p.denomination}\\b`), `§${p.number}d${p.denomination}`); });
+      return x.replaceAll('§', '') + `${MARCA}${cuando}, ${d.texto}.`;
     };
-    t.texto = ajustar(t.texto);
-    if (t.textoJ) t.textoJ = ajustar(t.textoJ);
+    // Siempre desde el texto original (guardado la primera vez), para que repetir no vuelva a recortar.
+    const textoAntes = previo?.textoAntes ?? String(t.texto ?? '').split(MARCA)[0];
+    const textoJAntes = previo?.textoJAntes ?? (t.textoJ ? String(t.textoJ).split(MARCA)[0] : null);
+    t.texto = ajustar(textoAntes);
+    if (textoJAntes) t.textoJ = ajustar(textoJAntes);
     t.item.system.description.value = fichaLecturaHTML(t);
-    t.rupturaAuto = { tipo: id, antes, factor: FACTOR };
+    t.rupturaAuto = { tipo: id, antes, factor: FACTOR, textoAntes, ...(textoJAntes ? { textoJAntes } : {}), ...(dmgAntes ? { dmgAntes } : {}) };
     n += 1;
   }
   D.rebalance = { version: 1, tecnicas: n, factor: FACTOR };
