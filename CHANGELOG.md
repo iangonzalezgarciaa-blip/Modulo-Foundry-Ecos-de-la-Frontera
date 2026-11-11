@@ -1,5 +1,14 @@
 # Historial de cambios
 
+## 3.38.0 — 2026-11-11
+
+- **Tutorial** (pedido del autor) en el panel del Verbe → Ayuda rápida: qué es el **Control del Verbe**, qué es un **choque de técnicas** y cómo se gana, la acción Verbe frente a la de D&D, **forzarse**, Brecha/Grieta/Quebrado, cómo **escapar** y dónde leer más.
+- En **Aprender técnicas** cada técnica dice **⚔ Choca** o **No choca**.
+- **Dotes de elemento** (Corazón de fuego, de agua…): no aparecen hasta descubrir ese elemento; un aviso dice cuántas hay esperando.
+- **Toda dote que nombra el Control explica qué es** (Práctica de Control, Maestría del Control…).
+- **Auditoría de dotes:** las que el módulo ya aplica solas lo dicen en su ficha («Automática»). **Reserva profunda** es automática: suma tu nivel a tu Verbe máximo cada vez que subes.
+- **Fama y proezas:** Menú del DM → Mesa → «Proeza (fama)». Cada proeza suma fama (sin testigos, la mitad); al cruzar un umbral (Rumor, Conocido en el valle, Nombre en la región, Leyenda) te llega un susurro con las facciones que se enteran. Ganar un choque de técnicas a la vista suma 1 sola (una vez por día de juego).
+
 ## 3.37.0 — 2026-11-11
 
 - **Almacén de reliquias del Abismo** (pedido del autor; Menú del DM → Mesa): crea en la pestaña **Objetos** la carpeta «Reliquias del Abismo (solo DM)» con las 78 reliquias: **1 · Manual del DM** (sus tres etapas y cómo se despierta cada una), **2 · Por etapa** (una copia Dormida, Despierta y Resonante de cada una) y **3 · Para entregar** (empieza Dormida y el DM la sube de etapa con un botón en su hoja; el texto se actualiza). Se arrastran a las hojas; las imágenes las pones tú y el almacén no las pisa.

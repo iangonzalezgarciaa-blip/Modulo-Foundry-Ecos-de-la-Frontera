@@ -3,6 +3,7 @@
  * por rama, mejorable por grado (más distancia, la CD sube con el grado). Idempotente.
  */
 import { readCatalog, writeCatalog, validateCatalog } from './catalog.mjs';
+import fs from 'node:fs';
 import { construirShinobi } from './build-shinobi.mjs';
 import { NIVEL_GRADO, etapaGrado } from '../scripts/verbe-progression.js';
 const D = readCatalog();
@@ -49,6 +50,13 @@ if (sombra) {
   sombra.texto = sombra.texto.replace(viejo, nuevo);
   sombra.item.system.description.value = sombra.item.system.description.value.replace(viejo, nuevo);
 }
+// 3.38: toda dote que habla del Control dice qué es (pedido del autor: «no se explica qué es el control»).
+const QUE_ES_CONTROL = ' (El Control del Verbe es una habilidad de tu hoja: se tira con Sabiduría para aprender técnicas, chocar, sostener una carga o un Velo.)';
+for (const d of D.dotes) if (/\bControl\b/.test(d.texto) && !d.texto.includes('El Control del Verbe es')) d.texto += QUE_ES_CONTROL;
+// 3.38: auditoría de dotes: las que el código ya aplica solas (tieneDote en los scripts) lo dicen en su ficha.
+const codigo = fs.readdirSync(new URL('../scripts/', import.meta.url)).filter(f => f.endsWith('.js')).map(f => fs.readFileSync(new URL(`../scripts/${f}`, import.meta.url), 'utf8')).join('\n');
+const enCodigo = new Set([...codigo.matchAll(/tieneDote\([^,()]+,\s*["']([a-z0-9-]+)["']\)/g)].map(m => m[1]));
+for (const d of D.dotes) if (enCodigo.has(d.id) && /^Beneficio de mesa salvo/.test(d.automatizacion ?? '')) d.automatizacion = 'Automática: el módulo la aplica sola (al calcular, al usar o al subir de nivel).';
 D.reglas334 = { escapes: ESCAPES.length, dotes: 1 };
 const errores = validateCatalog(D); if (errores.length) throw Error(errores.join('\n'));
 writeCatalog(D);

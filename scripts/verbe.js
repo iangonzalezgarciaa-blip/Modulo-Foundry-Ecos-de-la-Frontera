@@ -1391,6 +1391,16 @@ export async function abrirFamilia(id) {
   return p.parent.sheet.render(true, { pageId: p.id });
 }
 
+/** 3.38 · Tutorial del panel: lo que alguien nuevo pregunta al ver la interfaz por primera vez. */
+const TUTORIAL = [
+  ["¿Qué es el Control del Verbe?", "<p>El <b>Control</b> es una habilidad nueva de tu hoja (aparece junto a las de D&D como «Control del Verbe»). Mide qué tan bien dominas tu energía: se tira con <b>Sabiduría</b> (como Percepción) más tu competencia si eres competente en Control. Se tira para aprender técnicas (cada día de práctica), para resistir un choque, para no perder una técnica que cargas y para cosas finas (frenar un golpe, sostener una forma). Dotes como <b>Práctica de control</b> te hacen competente o lo suben; tu rango en una rama no lo cambia.</p>"],
+  ["¿Qué es un choque de técnicas?", "<p>Cuando una técnica que cuesta Verbe va contra ti y tú tienes otra técnica que la pueda enfrentar, puedes <b>chocarla</b> con tu <b>reacción Verbe</b>: las dos se encuentran en el aire. Gana la de más grado; el elemento que vence al otro suma; con empate, tu Control decide. Quien gana sale con <b>Ímpetu</b> (+2 a atacar) y quien pierde, con <b>Brecha</b> (−2 CA). Un choque grande estalla y deja el terreno marcado; quien pierde por mucho se lleva el contragolpe.</p><p>En <b>Aprender técnicas</b> cada técnica dice <b>⚔ Choca</b> o <b>No choca</b>.</p>"],
+  ["Mi acción de D&D y mi acción Verbe", "<p>Son aparte: en tu turno tienes tu Acción, tu Acción adicional y tu Reacción de D&D, y <b>además</b> tu Acción Verbe, tu Adicional Verbe y tu Reacción Verbe. Las técnicas gastan las del Verbe; atacar con tu espada gasta la de D&D. La barra del turno (bajo la iniciativa) muestra las seis.</p>"],
+  ["¿Qué pasa si me quedo sin Verbe?", "<p>Puedes <b>forzarte</b>: usar la técnica igual y quedar en negativo. Antes te pregunta y te dice qué arriesgas (una salvación de Constitución o 1 nivel de Agotamiento). Mientras estés en negativo te recuperas más lento. Con Agotamiento 4 ya no puedes forzarte.</p>"],
+  ["Brecha, Grieta y Quebrado", "<p>Las criaturas de este mundo tienen defensas altísimas (Coraza, Fortaleza o Cuerpo sordo). D&D pega fuerte; el Verbe <b>ablanda</b>: <b>Brecha</b> −2 a la CA, <b>Grieta</b> −2 a sus salvaciones, <b>Quebrado</b> sin defensa ni resistencias un turno. Se acumulan hasta 3.</p>"],
+  ["¿Cómo escapo?", "<p>Cada rama tiene una técnica de <b>escape</b>: te mueves sin provocar ataques y los enemigos tiran Percepción (o Arcanos) para no perderte. También sirven Desengancharse (tu Acción de D&D) y la Sustitución (tu Reacción Verbe).</p>"],
+  ["¿Dónde leo más?", "<p>En los diarios: <b>Reglas de la casa</b> (el Verbe, Ablandar, las acciones de cualquiera) y la página del jugador nuevo. El DM te dice cuál abrir.</p>"]
+];
 /** El nombre del legado de un dios (alias del linaje), sin nombres reales. */
 const nombreLegado = dios => { const l = D?.linajes?.find(x => x.id === dios); return D?.categoriasDote?.find(c => c.id === l?.legado)?.nombre ?? l?.alias ?? l?.nombre ?? dios; };
 export async function dialogoDespertar(actor) {
@@ -4156,6 +4166,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const a=this.actor,e=estado(a),v=Number(e.valor)||0,largo=recuperacionLargaVerbe(a),limite=presupuestoBreveVerbe(a),breve=presupuestoBreveVerbe(a,e.recCortos);
     const santuario=cambiosRecuperacion(a,largo),fracNoche=efectosDotes(a).reduce((t,ef)=>Math.max(t,Number(ef.rec?.intemperie)||0),.25)/2,noche=recuperacionBreve(a,Math.floor(maxVerbe(a)*fracNoche*(Number(herenciaDe(a)?.recMult)||1)));
     const pregunta=(q,html)=>`<details><summary>${q}</summary>${html}</details>`;
+    // 3.38 (pedido del autor): un tutorial para quien mira la interfaz por primera vez.
+    const tutorial=`<section class="ev-tutorial"><h3>Tutorial</h3>${TUTORIAL.map(([q,h])=>pregunta(q,h)).join("")}</section>`;
     return `<div class="ev-titulo-pagina"><div><span class="ev-kicker">EMPIEZA POR LO QUE QUIERES HACER</span><h2>Lo necesario para jugar</h2><p>No necesitas memorizar el catálogo. Abre una pregunta cuando aparezca esa situación.</p></div></div>
       <section class="ev-bienvenida"><h3>Para tu primera escena</h3><ol><li>Abre <b>Inicio</b> y completa las elecciones que te falten.</li><li>Aprende una técnica con <b>Trazos</b>. Puedes guardar los puntos restantes.</li><li>En <b>Mis técnicas</b>, lee qué hace, marca el objetivo si hace falta y pulsa <b>Usar técnica</b>.</li><li>Comprueba el coste en <b>Verbe</b>, confirma el uso y resuelve la tirada o el efecto con el DM.</li></ol><div class="ev-acciones"><button type="button" data-action="pestana" data-p="resumen">Ir a Inicio</button><button type="button" data-action="pestana" data-p="jugar">Ir a Mis técnicas</button><button type="button" data-action="pestana" data-p="tienda">Aprender una técnica</button></div></section>
       <div class="ev-contraste-recursos"><div><b>Verbe = energía para actuar</b><span>Se gasta al usar una técnica. Descansar puede recuperarlo.</span></div><div><b>Trazos = puntos para aprender</b><span>Pagas una vez por compra. Una técnica aprendida queda en tu repertorio.</span></div></div>
@@ -4173,7 +4185,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       ${pregunta('¿Qué hago con una reliquia?',`<ol><li>El DM entrega y autoriza una copia de la reliquia.</li><li>Revisa su nivel mínimo y equípala. Las reliquias de nivel mínimo 9 o más también exigen sintonía.</li><li>Ábrela en el inventario y usa su actividad. Normalmente gasta un cargo, no Verbe.</li><li>Si es un ritual, el DM debe preparar un permiso para esa activación.</li></ol><p>Las copias de una familia comparten su límite; las mayores también comparten un único uso por Largo. Un consumible no vuelve por descansar. La clasificación de Made in Abyss no es un grado de técnica del Verbe.</p><p><b>Objetos que habilitan técnicas:</b> algunos poderes piden una reliquia concreta como requisito. Recibir ese objeto no enseña sus técnicas: se aprenden con Trazos y se usan con Verbe. Revisa la ficha para distinguirlos de los objetos con actividad propia del compendio.</p>`)}
       ${pregunta('¿Por qué sigo herido después de recuperar vida?',`<p>Recuperar puntos de vida no borra automáticamente Malherido ni Herida No Tratada. Necesitas el tratamiento y el reposo que indiquen sus reglas.</p><p>Si estás Acechado por la Muerte, no puedes tomar acciones, acciones adicionales ni reacciones. Pide ayuda y sigue las indicaciones del estado. El Santuario mejora el descanso; una noche fuera no equivale a un Largo en Santuario.</p>`)}
       ${pregunta('¿Qué significan las palabras y abreviaturas de la hoja?',glosarioHTML())}
-      </div><p class="ev-nota">La referencia completa queda disponible para excepciones o consultas del DM.</p><button type="button" data-action="guia" data-s="">Abrir referencia completa</button>`;
+      </div>${tutorial}<p class="ev-nota">La referencia completa queda disponible para excepciones o consultas del DM.</p><button type="button" data-action="guia" data-s="">Abrir referencia completa</button>`;
   }
 
   /** Bloque solo para el DM (2.5b): la sangre del personaje en lenguaje simple, qué puede aprender y dónde leer más. */
@@ -4382,6 +4394,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
   }
 
   #filaTec(t, r, sabe) {
+    const chocaTec = x => { try { return tecnicaChocable({ getFlag: (m, k) => x.item?.flags?.[m]?.[k], flags: x.item?.flags, system: x.item?.system, name: x.n, type: x.item?.type, actor: this.actor }); } catch { return false; } };
     const est = r.estudio ? estudioDe(this.actor, t.id) : null;
     const hoy = diaMundo();
     const btn = est ? `<span class="ecos-verbe-estudio"><b>Estudiando:</b> ${est.progreso}/${est.exitos} días buenos · CD ${est.cd}</span>
@@ -4395,7 +4408,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const meta = itemsDe(this.actor, t.id)[0]?.getFlag(MOD, F) ?? { ...t.item.flags[MOD][F], infusion: estado(this.actor)?.infusiones?.[t.id] ?? null };
     const costo = previsualizarUso(this.actor, meta).costo;
     return `<details class="ecos-verbe-tec ${sabe ? "sabe" : est ? "puede estudia" : r.ok ? "puede" : "no"}" data-id="${t.id}" data-tipo="tec"><summary>
-      <span class="gr">Grado ${t.g}</span><span class="nom"><b>${escH(t.n)}</b><small>${escH((t.alias??[]).slice(0,2).join(" · "))}</small><small>${escH([tiempo, t.alc ? alcanceL(t.alc, t.area) : null, t.area].filter(Boolean).join(" · "))}</small><small class="ev-efecto-breve">${escH(avanceTexto(textoDe(t)))}</small><small>Abre la ficha para leer todas sus condiciones.</small></span>
+      <span class="gr">Grado ${t.g}</span><span class="nom"><b>${escH(t.n)}</b><small>${escH((t.alias??[]).slice(0,2).join(" · "))}</small><small>${escH([tiempo, t.alc ? alcanceL(t.alc, t.area) : null, t.area].filter(Boolean).join(" · "))}</small><small class="ev-efecto-breve">${escH(avanceTexto(textoDe(t)))}</small><small>${chocaTec(t) ? '<span class="ev-choca" data-tooltip="Si otra técnica la enfrenta, se puede abrir un choque de técnicas (Ayuda rápida → Tutorial: choques).">⚔ Choca</span>' : '<span class="ev-nochoca" data-tooltip="No abre choques de técnicas: no cuesta Verbe o no se dirige contra otra técnica.">No choca</span>'} · Abre la ficha para leer todas sus condiciones.</small></span>
       <span class="vb"><b>${costo} Verbe</b><small>por uso base</small></span><span class="acc">${btn}${!sabe && r.ok && !r.probar ? `<small>Te quedarían ${trazos(this.actor).libres - t.trazos} Trazos</small>` : ""}</span></summary><div class="ecos-verbe-ficha-cont"></div></details>`;
   }
 
@@ -4444,9 +4457,12 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const a = this.actor;
     const f = this.filtroDote ??= { texto: "", solo: false };
     const porCat = new Map();
-    const eSangre = estado(a) ?? {};
+    const eSangre = estado(a) ?? {}, natsConocidas = natsDe(a);
+    let ocultasElemento = 0;
     for (const d of D.dotes) {
-      if (d.legado && !dm() && (!d.requisitos?.linajes?.includes(eSangre.linaje) || !eSangre.linajeVisible)) continue; // 3.31: solo el legado de su sangre, y solo si la conoce
+      if (d.legado && !dm() && (!d.requisitos?.linajes?.includes(eSangre.linaje) || !eSangre.linajeVisible)) continue;
+      // 3.38: las dotes de un elemento no aparecen hasta descubrir ese elemento (el DM las ve igual).
+      if (d.requisitos?.naturaleza && !natsConocidas.has(d.requisitos.naturaleza) && !dm() && !(estado(a)?.dotes ?? []).includes(d.id)) { ocultasElemento++; continue; } // 3.31: solo el legado de su sangre, y solo si la conoce
       if (f.texto && !`${d.nombre} ${dotTexto(d)}`.toLowerCase().includes(f.texto.toLowerCase())) continue;
       const tiene = tieneDote(a, d.id);
       const r = cumpleReqDote(a, d);
@@ -4473,7 +4489,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
             <span class="acc">${btn}</span></summary><div class="ecos-verbe-ficha-cont"></div></details>`;
         }).join("")}</details>`;
     }).join("");
-    return `${intro("Mejoras permanentes del Verbe.", "Abre una categoría según el beneficio que buscas o usa el buscador. Cada dote se paga una vez con Trazos y queda como rasgo en tu hoja; las que piden un maestro requieren al DM.", "", "dotes")}
+    return `${intro("Mejoras permanentes del Verbe.", "Abre una categoría según el beneficio que buscas o usa el buscador. Cada dote se paga una vez con Trazos y queda como rasgo en tu hoja; las que piden un maestro requieren al DM.", "", "dotes")}${ocultasElemento ? `<p class="ecos-nota">Hay ${ocultasElemento} dotes de elemento más: aparecen cuando descubras tu naturaleza (fuego, agua, viento, tierra o rayo).</p>` : ""}
       <div class="ev-instruccion"><span><b>Sendas:</b> Disciplina (nivel 3) → Especialista (nivel 7) → Maestría (nivel 11) → Leyenda (nivel 18). Son dotes que se compran por orden; Maestro es un rango distinto. Grado 10 pide Ascensión mítica y 11 Ascensión trascendente; el DM concede sus pruebas de historia.</span></div>
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar una mejora</span><input type="search" data-filtro-dote="texto" placeholder="Nombre o beneficio…" value="${escH(f.texto)}"></label>
         <label><input type="checkbox" data-filtro-dote="solo" ${f.solo ? "checked" : ""}> Solo las que puedo comprar ahora</label></div>
