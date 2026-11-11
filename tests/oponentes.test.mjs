@@ -97,3 +97,10 @@ test('3.25: el recuadro de la música se mueve y cambia de tamaño sin salirse d
   const enchica = ajustarCaja({ x: 10, y: 10, w: 300, h: 300 }, 150, 150);
   assert.deepEqual(enchica, { x: 0, y: 0, w: MIN_ANCHO, h: MIN_ALTO }, 'en una ventana más chica que el mínimo, se queda en el mínimo arriba a la izquierda');
 });
+
+test('3.26: la guía de conjuros explica dónde está el botón y cuánto cuesta cada cosa', async () => {
+  const { guiaConjurosHTML } = await import('../scripts/conjuros.js');
+  const h = guiaConjurosHTML();
+  assert.match(h, /Aprender conjuros/); assert.match(h, /lupa/); assert.match(h, /50 po y 2 horas por nivel/);
+  assert.match(h, /6 conjuros de nivel 1 gratis/); assert.match(h, /poco comunes cuestan ×1,5/); assert.match(h, /Si no ves la lupa/);
+});

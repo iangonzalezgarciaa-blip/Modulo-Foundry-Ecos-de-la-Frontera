@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 3.26.0 — 2026-11-10
+
+- **El diario de cada sangre** (pedido del autor). Al elegir un linaje o un ojo en el panel del Verbe (al despertar a alguien o en la pestaña DM), el DM ve una ventana con el resumen de esa sangre y el botón «Abrir su diario», que lo lleva a la página del mundo que la cuenta entera. Las páginas se reconocen por una marca (`flags.ecos-frontera.linaje`), no por el nombre; la portada lleva `_indice`. Junto a «Guardar» del linaje hay un botón «Su diario». Sin lore ni nombres en el código: el texto sale del catálogo cifrado y de los diarios del DM.
+- **Dos sangres sostienen ante el daño masivo.** La del linaje de la Barrera, como desde 3.12 (y suma al Reloj, con Eco), y desde ahora la del linaje del ojo de vidrio, que no toca la Barrera: ni Reloj ni Eco. Un portador que todavía no despertó el Verbe puede llevar la marca `portadorSangre` («ala» o «barrera»); el diálogo de Despertar propone el linaje que corresponde.
+- **El pase del DM** (pedido del autor). Cuando un jugador usa una acción del módulo (las «Acciones de …» de cualquiera y las técnicas del Verbe) sobre otra criatura, primero le llega solo al DM la pregunta «¿Esta acción le afecta a esta criatura?», con una casilla por objetivo y una nota opcional. Con el pase, la acción sigue normal sobre las aprobadas; sin pase, no se gasta nada y el jugador recibe la respuesta en privado. Ajuste «El pase del DM»: acciones del módulo (por defecto), toda acción con objetivo, o nunca.
+- **Aprender conjuros.** En el libro de conjuros de la hoja hay un botón «Aprender conjuros», además de la lupa por nivel, que abre el buscador con la lista de clase (conjuros de D&D y de PF2e ya convertidos) y suma lo elegido. Para los jugadores, la página «15 · Conjuros: cómo sumarlos a tu hoja» en Reglas de la casa.
+- **PF2e en pausa** por decisión del autor: de PF2e solo quedan los conjuros convertidos para D&D. El adaptador (5.2c en adelante) y el traspaso del lore al mundo PF2e se detienen.
+
 ## 3.25.0 — 2026-11-10
 
 - Música de YouTube, a pedido del autor: cada uno controla el recuadro del reproductor en su equipo. Se mueve arrastrando su barra; cambia de tamaño arrastrando la esquina de abajo a la derecha, o con los botones − y + (un 25 % por clic); con doble clic en la barra pasa de chico a grande y vuelve; ⟲ lo devuelve abajo a la izquierda en tamaño chico. Recuerda dónde lo dejaste al recargar, no se sale de la ventana y el video nunca queda menor que 200 × 200, el mínimo que pide YouTube (por eso no se puede ocultar del todo: para no oírlo está «Silenciar»).

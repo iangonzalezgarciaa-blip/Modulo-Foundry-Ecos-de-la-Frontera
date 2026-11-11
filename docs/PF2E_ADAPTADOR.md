@@ -1,5 +1,7 @@
 # Compatibilidad con PF2e: diseño del adaptador (tarea 5.2b)
 
+> **En pausa desde el 10-nov-2026 (3.26.0), por decisión del autor.** El foco es D&D. De PF2e solo se mantienen los conjuros convertidos a D&D (`world.ecos-conjuros-pf2e`, la lupa y «Aprender conjuros»). La capa `scripts/sistema` queda como está; lo que falta de 5.2c, 5.2d y 5.2e no se hace hasta nuevo aviso.
+
 *Escrito el 4-nov-2026 sobre la versión 3.11.0, a partir del inventario de `docs/PF2E_ACOPLAMIENTO.md` (5.2a) y de las respuestas del autor del 3-nov-2026. El 4-nov-2026 el autor aprobó las propuestas A a H, con los matices de E, F y G (al final). Con eso se puede empezar 5.2c.*
 
 ## Lo que decidió el autor

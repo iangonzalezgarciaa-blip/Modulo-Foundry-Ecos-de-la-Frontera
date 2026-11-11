@@ -28,6 +28,8 @@ import { tramoReserva, tramoFuerza, tramoVida, queVe } from "./verbe-lectura.js"
 import { cargaDe, bonoCarga, cdInterrupcion, textoCarga } from "./verbe-canalizar.js";
 import { clonDe, limitesClones, repartoClones } from "./verbe-clones.js";
 import { iconoTecnica, iconoDote, esGenerico } from "./verbe-iconos.js";
+import { ventanaLinaje, linajeDeEleccion, pasosOjo } from "./linaje-diario.js";
+import { linajePortador } from "./sangre-sosten.js";
 import { DADOS_VERBE, dadoNivel, modoReserva, reservaBase, nivelesSinTirar } from "./verbe-reserva.js";
 import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
@@ -1228,6 +1230,18 @@ const opciones = (pares, sel) => pares.map(([k, v]) => `<option value="${escH(k)
 const nombreLinaje = l => (!l ? "" : dm() ? `${l.alias ?? l.nombre} · ${l.real ?? l.nombre}` : (l.alias ?? l.nombre));
 const paresLinaje = () => [["ninguno", "Sin linaje"], ...D.linajes.map(l => [l.id, `${nombreLinaje(l)}${l.herencia ? ` · ${l.herencia}` : ""}`])];
 const ramasLibres = () => D.ramas.filter(r => !RAMAS_LINAJE.includes(r.id)).map(r => [r.id, r.nombre]);
+/** 3.26: al elegir un linaje o un ojo, el DM ve la ventana de esa sangre con el enlace a su diario. */
+function abrirSangre(campo, valor, actor = null) {
+  if (!game.user.isGM) return;
+  const id = linajeDeEleccion(campo, valor, D);
+  if (!id) return;
+  const l = D.linajes.find(x => x.id === id);
+  const ojo = campo === "mirada" ? D.miradas.find(m => m.id === valor) : (l?.mirada ? D.miradas.find(m => m.id === l.mirada) : null);
+  const pasos = ojo ? pasosOjo(nombreLinaje(l), ojo.nombre)
+    : [`En «Naturalezas y linaje», elige <b>${escH(nombreLinaje(l))}</b> y la fuerza de la sangre. Marca «el jugador lo sabe» solo cuando lo descubra. Pulsa <b>Guardar</b>.`,
+       "Sus técnicas de sangre aparecen en Aprender cuando la sangre está activa y el jugador la conoce; sus etapas llegan con la historia."];
+  return ventanaLinaje(id, { D, resumen: describir("linaje", id, actor), pasos, actor });
+}
 const otraNat = n => { const o = Object.keys(NATS).filter(x => x !== n); return o[Math.floor(Math.random() * o.length)]; };
 
 export async function dialogoDespertar(actor) {
@@ -1235,7 +1249,7 @@ export async function dialogoDespertar(actor) {
   const { DialogV2 } = foundry.applications.api;
   const oculta = Object.keys(NATS)[Math.floor(Math.random() * 5)];
   const portador = actor.getFlag(MOD, "portador") === true;
-  const linPortador = D.linajes.find(l => l.portador)?.id ?? "ninguno";
+  const linPortador = linajePortador(actor.getFlag(MOD, "portadorSangre"), D.linajes.find(l => l.portador)?.id ?? "ninguno");
   const html = `<div class="ecos-verbe-form">
     <p>Despierta a <b>${escH(actor.name)}</b>. Desde ahí su hoja muestra la barra, la habilidad Control y el panel.</p>
     <label>Característica <select name="car">${opciones(Object.entries(CARS), caracteristicaSugerida(actor))}</select></label>
@@ -1257,6 +1271,7 @@ export async function dialogoDespertar(actor) {
     window: { title: `Despertar · ${actor.name}`, icon: "fa-solid fa-droplet", resizable: true },
     position: { width: 680, height: "auto" },
     content: html,
+    render: (ev, dialogo) => (dialogo?.element ?? ev?.target?.element)?.querySelector?.('select[name="linaje"]')?.addEventListener("change", e => abrirSangre("linaje", e.target.value, actor)),
     buttons: [{ action: "ok", label: "Despertar", default: true, callback: (ev, btn) => new foundry.applications.ux.FormDataExtended(btn.form).object },
       { action: "no", label: "Cancelar" }],
     rejectClose: false
@@ -3495,6 +3510,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         correr(this, guardar(this.actor, { [t.dataset.campo]: [...new Set([...(e[t.dataset.campo] ?? []), v])], historial: hist(e, `El DM da: ${t.dataset.texto} ${v}`) })
           .then(() => asegurarRasgos(this.actor)).then(() => refrescar(this.actor)));
       },
+      diarioLinaje() { abrirSangre("linaje", valorDe(this, "linaje"), this.actor); },
       linaje() {
         const c = conflictoSangre(this.actor, { linaje: valorDe(this, "linaje") });
         if (c) return rechazar(c, "warn");
@@ -3609,6 +3625,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       COMO_JUGADOR = game.user.isGM && this.comoJugador;
       try { caja.innerHTML = describir(sel.dataset.desc, sel.value, this.actor); } finally { COMO_JUGADOR = false; }
     }));
+    if (game.user.isGM) for (const nombre of ["linaje", "mirada"]) content.querySelectorAll(`select[name="${nombre}"]`)
+      .forEach(sel => sel.addEventListener("change", () => { if (!this.comoJugador) abrirSangre(nombre, sel.value, this.actor); }));
   }
 
   #cabecera() {
@@ -4155,7 +4173,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         <p>Dar una naturaleza: <select name="natsExtra">${opciones(Object.entries(NATS).filter(([k]) => !natsDe(a).has(k)), "")}</select> <button type="button" data-action="lista" data-campo="natsExtra" data-texto="naturaleza">Dar</button>
           · combinación: <select name="combos">${opciones(Object.entries(D.combos).filter(([k]) => !combosDe(a).has(k)).map(([k, v]) => [k, `${v.nombre} (${v.de.map(n => NATS[n]).join(" + ")})`]), "")}</select> <button type="button" data-action="lista" data-campo="combos" data-texto="combinación">Dar</button></p>
         <p>Linaje: <select name="linaje" data-desc="linaje">${opciones(paresLinaje(), e.linaje)}</select> <select name="fuerza" data-desc="fuerza">${opciones(Object.entries(FUERZA).map(([k, v]) => [k, v.nombre]), e.fuerza)}</select>
-          <label><input type="checkbox" name="linajeVisible" ${e.linajeVisible ? "checked" : ""}> el jugador lo sabe</label> <button type="button" data-action="linaje">Guardar</button></p>
+          <label><input type="checkbox" name="linajeVisible" ${e.linajeVisible ? "checked" : ""}> el jugador lo sabe</label> <button type="button" data-action="linaje">Guardar</button> <button type="button" data-action="diarioLinaje" title="Ver la sangre elegida y abrir su diario"><i class="fa-solid fa-book-open"></i> Su diario</button></p>
         <div class="ecos-verbe-desc" data-de="linaje">${describir("linaje", e.linaje, a)}</div><div class="ecos-verbe-desc" data-de="fuerza">${describir("fuerza", e.fuerza, a)}</div>
         <p class="ecos-nota">El linaje lo eliges siempre tú: el jugador nunca lo elige. Si no lo sabe, en su panel dice «Desconocido», igual que para quien no tiene ninguno.</p>`)}
       ${sec("Ramas, ojos, pactos y escuela", `${cerradas.length ? `<p>Abrir una rama: <select name="abiertas">${opciones(cerradas, "")}</select> <button type="button" data-action="lista" data-campo="abiertas" data-texto="rama">Abrir</button></p>` : ""}

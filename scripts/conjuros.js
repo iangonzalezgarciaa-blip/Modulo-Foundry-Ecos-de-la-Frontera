@@ -263,6 +263,35 @@ async function anadirConjuros(actor, clase, uuids, { mago, quedan }) {
     content: `<section class="ecos-conjuros"><h3>${esc(actor.name)} suma conjuros</h3><p>${nombres}.</p>${copias.length ? `<p>Copiados al libro: ${coste.po} po y ${coste.horas} horas.</p>` : ""}</section>` });
 }
 
+/** La guía para los jugadores (3.26): cómo sumar conjuros de D&D y de PF2e a la hoja. Pura. */
+export function guiaConjurosHTML() {
+  return `<section class="mcp-journal"><h1>Conjuros: cómo sumarlos a tu hoja</h1>
+<p><em>Para las clases que lanzan conjuros (mago, hechicero, bardo, brujo, clérigo, druida, paladín, explorador). Los conjuros de Pathfinder 2e ya están convertidos a D&D: aparecen junto a los del Manual y se usan igual.</em></p>
+<h2>Paso a paso</h2>
+<ol><li>Abre tu hoja y ve a la pestaña <b>Conjuros</b>.</li>
+<li>Pulsa <b>Aprender conjuros</b>, arriba, o la <b>lupa</b> <i class="fa-solid fa-magnifying-glass"></i> que hay junto al nombre de cada nivel (la lupa busca solo ese nivel).</li>
+<li>Si tienes más de una clase que lanza conjuros, elige de qué lista buscas.</li>
+<li>Se abre el buscador con tu lista de clase y solo los niveles que ya puedes lanzar. Los de PF2e están mezclados con los del Manual; puedes filtrar por nombre, escuela o nivel.</li>
+<li>Marca los que quieras y confirma. Aparecen en tu hoja y en el chat (lo ven tú y el DM).</li>
+<li>Prepáralos como diga tu clase: el círculo junto a cada conjuro marca si está preparado.</li></ol>
+<h2>Cuánto cuesta</h2>
+<ul><li><b>Mago</b> (Manual 2024): 6 conjuros de nivel 1 gratis al empezar y 2 gratis por cada nivel que subes. Los trucos no cuentan. Los demás se copian al libro por <b>50 po y 2 horas por nivel</b> del conjuro. Los de PF2e poco comunes cuestan ×1,5; los raros, ×2; los únicos, ×3. El panel te dice cuántos gratis te quedan.</li>
+<li><b>Las demás clases:</b> sumarlos a tu lista no cuesta nada. Preparas o conoces los que diga tu clase, como en el Manual.</li></ul>
+<h2>Si no ves la lupa</h2>
+<ul><li>Tu hoja no tiene una clase que lance conjuros (un pícaro o un pugilista no la tienen).</li>
+<li>O el DM apagó «Lupa de conjuros en las hojas» en la configuración del módulo.</li>
+<li>Los conjuros de PF2e los carga el DM al abrir el mundo. Si el buscador solo muestra los del Manual, avísale.</li></ul>
+<p><em>El DM tiene la última palabra sobre qué conjuros existen en Nimerios y cómo se aprenden en la historia.</em></p></section>`;
+}
+
+function botonAprender(actor) {
+  const b = document.createElement("button");
+  Object.assign(b, { type: "button", className: "ecos-aprender-conjuros", innerHTML: '<i class="fa-solid fa-book-medical" inert></i> Aprender conjuros' });
+  b.dataset.tooltip = "Buscar conjuros de D&D y de PF2e de tu lista de clase y sumarlos a la hoja";
+  b.addEventListener("click", ev => { ev.preventDefault(); ev.stopPropagation(); abrirLupa(actor, null).catch(err => console.error(`${MOD} | lupa`, err)); });
+  return b;
+}
+
 function decorarLibro(app, html) {
   try {
     const actor = app?.document ?? app?.actor;
@@ -280,6 +309,17 @@ function decorarLibro(app, html) {
       b.addEventListener("click", ev => { ev.preventDefault(); ev.stopPropagation(); abrirLupa(actor, sec.dataset.level).catch(err => console.error(`${MOD} | lupa`, err)); });
       cab.querySelector(".item-name")?.after(b);
     }
+    // 3.26: un botón grande arriba del libro, que sirve aunque todavía no haya ningún nivel con conjuros.
+    if (!raiz.querySelector?.(".ecos-aprender-conjuros")) {
+      const primera = raiz.querySelector?.('.items-section[data-type="spell"]');
+      const tab = raiz.querySelector?.('.tab[data-tab="spells"]');
+      const caja = document.createElement("div");
+      caja.className = "ecos-aprender-conjuros-caja";
+      caja.style.cssText = "display:flex;justify-content:flex-end;margin:4px 0";
+      caja.append(botonAprender(actor));
+      if (primera?.parentElement) primera.parentElement.insertBefore(caja, primera);
+      else tab?.prepend(caja);
+    }
   } catch (err) { console.warn(`${MOD} | lupa de conjuros`, err); }
 }
 
@@ -293,7 +333,9 @@ if (globalThis.Hooks) {
   });
   Hooks.once("setup", () => registrarListas(ajuste().listas));
   Hooks.once("ready", () => {
-    (game.modules.get(MOD).api ??= {}).conjuros = { importar: importarConjuros, lupa: abrirLupa };
+    (game.modules.get(MOD).api ??= {}).conjuros = { importar: importarConjuros, lupa: abrirLupa, guia: guiaConjurosHTML };
+    if (soyDM() && game.system.id === "dnd5e" && game.settings.get(MOD, "lupaConjuros") !== false)
+      import("./acciones-comunes.js").then(m => m.paginaReglas("guiaConjuros", "15 · Conjuros: cómo sumarlos a tu hoja", guiaConjurosHTML())).catch(err => console.error(`${MOD} | guía de conjuros`, err));
     if (soyDM() && game.system.id === "dnd5e") setTimeout(() => importarConjuros().then(r => { if (r?.ok === false && !/No está/.test(r.motivo)) console.warn(`${MOD} |`, r.motivo); }).catch(err => console.error(`${MOD} | conjuros de PF2e`, err)), 12000);
   });
   Hooks.on("renderActorSheetV2", decorarLibro);

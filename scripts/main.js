@@ -27,6 +27,7 @@ import "./verbe.js";
 import "./mesa.js";
 import "./azar.js";
 import "./acciones-comunes.js";
+import "./pase-dm.js";
 import "./tecnica-arma.js";
 import "./mercader.js";
 import "./combate-tactico.js";
@@ -41,6 +42,7 @@ import { tipoCuracionVerbe, tratarHeridaConPulso } from "./verbe-medicina.js";
 import { infoTirada, opcionesModo, modoDeMensaje, modoActual, modoNormal, modosNuevos, objetivosMensaje, cambio, quitar, puenteRitmoViaje } from "./compat.js";
 import { sistema } from "./sistema/index.js";
 import { etiquetasGenericas, esGenerico, planNombres } from "./nombres-tokens.js";
+import { sostenDeSangre } from "./sangre-sosten.js";
 
 const MOD = "ecos-frontera";
 const RUTA = `modules/${MOD}`;
@@ -108,11 +110,9 @@ const nivelPJ = actor => ((actor?.type === "npc")
  * 3.12: «la sangre que responde» es la Sangre Antigua de Maethra (pedido del autor). Si la hoja ya tiene linaje del Verbe,
  * manda el linaje: Maethra con la sangre activa. Si todavía no tiene linaje, vale la marca antigua de las hojas que la tenían.
  */
-export const esResistente = actor => {
-  const v = actor?.getFlag(MOD, "verbe");
-  if (v?.linaje) return v.linaje === "maethra" && !!v.fuerza && v.fuerza !== "ninguna";
-  return actor?.getFlag(MOD, "portador") === true;
-};
+export const sangreQueSostiene = actor => sostenDeSangre(actor?.getFlag(MOD, "verbe"), actor?.getFlag(MOD, "portador"), actor?.getFlag(MOD, "portadorSangre"));
+/** 3.26: también sostiene el linaje del ojo de vidrio, sin tocar la Barrera (ver sangre-sosten.js). */
+export const esResistente = actor => !!sangreQueSostiene(actor);
 
 const efectoStatus = (actor, id) => actor.effects.find(e => e.statuses.has(id));
 const efectoMalherido = actor => efectoStatus(actor, "malherido");
@@ -412,11 +412,11 @@ async function procesarActualizacion(actor, changes, options) {
     L.push(`<b>${actor.name}</b> cae a 0 PG${golpe?.brutal ? " por un golpe brutal" : ""}. No pierde el conocimiento: queda <b>Acechado por la Muerte</b>.`);
     L.push(EXPLICA_ACECHADO);
     efecto(actor, "caer");
-    if (esResistente(actor) && llevaCristalMudo(actor)) {
+    if ((sangreQueSostiene(actor) === "barrera") && llevaCristalMudo(actor)) {
       await susurrarDM("Un portador cae (con cristal mudo)", [
         `${actor.name} cayó a 0 PG, pero lleva <b>cristal mudo</b> encima: la sangre no responde y no hay Eco (Mundo 6 · 2). Ni lo sabe.`
       ]);
-    } else if (esResistente(actor)) {
+    } else if (sangreQueSostiene(actor) === "barrera") {
       await susurrarDM("Un portador cae", [
         `${actor.name} cayó a 0 PG. Su sangre puede responder con el <b>Eco</b> (Tramas · 3): medio segundo de tiempo detenido, aparece hasta 9 m más allá y vuelve con 1 PG.`,
         "Cuesta el precio de volver y +1 al Reloj de la Barrera. Úsalo solo si la escena lo pide."
@@ -522,7 +522,8 @@ async function procesarActualizacion(actor, changes, options) {
 async function laSangreSostiene(actor, golpe, L) {
   const sobra = golpe.aCero ? golpe.alHP : (golpe.alHP - golpe.hpAntes);
   const s = await secuelaTirada(actor, 2);
-  const reloj = await sumarReloj(1);
+  const ala = sangreQueSostiene(actor) === "ala";
+  const reloj = ala ? null : await sumarReloj(1);
   const veces = (actor.getFlag(MOD, "manifestaciones") ?? 0) + 1;
   await actor.setFlag(MOD, "manifestaciones", veces);
 
@@ -530,6 +531,15 @@ async function laSangreSostiene(actor, golpe, L) {
   L.push(`No lo está. Sigue respirando, <b>Acechado por la Muerte</b>. Pero el cuerpo no sale entero: <b>Secuela −2 ${ABREV[s.stat]}</b> (1d6 = ${s.tirada}; queda en ${s.valor}).`);
   L.push(EXPLICA_ACECHADO);
 
+  efecto(actor, "sangre");
+  if (ala) {
+    await susurrarDM("El ala lo sostuvo", [
+      `${actor.name} sobrevivió a daño masivo (${sobra} de sobra contra ${sistema.pg(actor).maxEfectivo} PG máximos). Lo sostuvo su sangre de vidrio. Es la vez número ${veces}.`,
+      "Esta sangre no toca la Barrera: el Reloj no sube y no hay Eco. Esa noche sueña el terreno visto desde arriba, como lo vería un ala.",
+      "Los testigos lo vieron: alguien va a decir \"deberías estar muerto\"."
+    ]);
+    return;
+  }
   const notas = [
     `${actor.name} sobrevivió a daño masivo (${sobra} de sobra contra ${sistema.pg(actor).maxEfectivo} PG máximos). La Sangre lo sostuvo. Es la vez número ${veces}.`,
     `Reloj de la Barrera +1 → <b>${reloj}/10</b>. Esta noche los instrumentos de Miria se disparan y ${actor.name} sueña con geometría y escaleras que bajan.`,
@@ -537,7 +547,6 @@ async function laSangreSostiene(actor, golpe, L) {
   ];
   if (veces === 1) notas.push("Es la <b>primera manifestación</b>: buen momento para el Eco (Tramas · 3) como escena.");
   notas.push("Si no querías que contara para el Reloj, bájalo en Configuración → Ecos de la frontera.");
-  efecto(actor, "sangre");
   await susurrarDM("La Sangre lo sostuvo", notas, {
     extra: cajaBotones([boton("eco", "Disparar Eco", "fa-hourglass-half", { soloDM: true })]),
     flags: { [MOD]: { ref: { actorId: actor.id } } }
@@ -10100,7 +10109,7 @@ async function migrar() {
 Hooks.once("ready", () => {
   RELOJ_PREVIO = game.settings.get(MOD, "relojBarrera");
   game.socket.on(`module.${MOD}`, d => {
-    if (d?.ctl) return; // control del jugador: lo atiende mesa-control.js
+    if (d?.ctl || d?.pase) return; // control del jugador (mesa-control.js) y pase del DM (pase-dm.js)
     if (!manejarSoulSocket(d)) manejarSocket(d);
   });
   try {
