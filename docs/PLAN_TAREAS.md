@@ -327,3 +327,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 11-nov-2026 | Mejora | Claude | Re-nivelado táctico: 218 técnicas con −30 % de dados y su ruptura por lógica de elementos. Release v3.30.0 | 3.30.0 |
 | 11-nov-2026 | Mejora | Claude | Legados de las 21 sangres con árboles y destinos; familias fundidas en su dios; Despertador y Maestro del Verbe; cada desplegable y cada etapa explicados; la rama antes que las técnicas. Release v3.31.0 | 3.31.0 |
 | 11-nov-2026 | Mejora | Claude | Lo propio es tuyo (sin pase ni efecto en el marcado), Recuperar el control, estados explicados, «Caído» a 0 PG, Estabilizar para otros, Descanso Largo sin PG gratis, scroll del panel y títulos más grandes. Release v3.32.0 | 3.32.0 |
+| 11-nov-2026 | Mejora | Claude | Turno a la vista: movimiento restante y acciones (D&D y Verbe), ataques de oportunidad con menú de desenganche, levantarse, Correr, Esquivar e iniciativa con ventaja. Release v3.33.0 | 3.33.0 |

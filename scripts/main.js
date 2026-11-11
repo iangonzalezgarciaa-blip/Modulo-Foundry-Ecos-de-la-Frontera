@@ -22,6 +22,7 @@
  */
 
 import "./mesa-propio.js";
+import "./turno-tracker.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
 import { CALENDARIO, eventosDelDia, faseLunar, diaCampana, sumarDias, mesPrimerAno } from "./calendario.js";
@@ -10143,7 +10144,7 @@ async function migrar() {
 Hooks.once("ready", () => {
   RELOJ_PREVIO = game.settings.get(MOD, "relojBarrera");
   game.socket.on(`module.${MOD}`, d => {
-    if (d?.ctl || d?.pase || d?.defensa || d?.choqueCons) return; // control del jugador (mesa-control.js), pase del DM (pase-dm.js) y defensa a pedido (defensa-pedida.js)
+    if (d?.ctl || d?.pase || d?.defensa || d?.choqueCons || d?.turno) return; // control del jugador (mesa-control.js), pase del DM (pase-dm.js) y defensa a pedido (defensa-pedida.js)
     if (!manejarSoulSocket(d)) manejarSocket(d);
   });
   try {

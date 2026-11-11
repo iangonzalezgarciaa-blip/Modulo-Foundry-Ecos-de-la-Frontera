@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.32.0
+# Preparar la primera prueba real · 3.33.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -306,73 +306,79 @@ Pon Derribado y Agotamiento 2 a un token y pasa el ratón por sus iconos en el p
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 50. 3.26 · El diario de cada sangre
+### 50. 3.33 · El turno a la vista
+
+Empieza un combate con un PJ y un enemigo. Bajo el carrusel sale la barra del turno: mueve el token 10 ft y mira que el movimiento baje; usa un ataque y mira que la Acción quede gastada; como DM prueba «Devolver movimiento». Pon al PJ adyacente al enemigo y aléjalo: sale el aviso de ataque de oportunidad con Desengancharme, Moverme igual y No me muevo. Empieza un turno Derribado: pregunta si te levantas. Al entrar al combate, el jugador elige ventaja, normal o desventaja para su iniciativa.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 51. 3.26 · El diario de cada sangre
 
 Abre el panel del Verbe de un PJ, pestaña DM, «Naturalezas y linaje»: cambia el linaje en la lista. Debe abrirse la ventana «Sangre · …» con el resumen y el botón «Abrir su diario», que lleva a su página de «Mundo 11 · Las sangres de los dioses». Lo mismo al elegir un ojo en «Despertar un ojo» y al despertar a alguien. El botón «Su diario» la vuelve a abrir.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 51. 3.26 · El pase del DM
+### 52. 3.26 · El pase del DM
 
 Con un jugador conectado, que marque a un PNJ (T) y use una «Acción de Carisma» (Fintar) o una técnica. Al DM le llega «¿Le afecta?»: desmarca o da el pase. Con pase, la acción sigue normal; sin pase, no se gasta nada y el jugador recibe en privado «no le afecta». Con el DM usando la acción, o sin objetivo, no pregunta.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 52. 3.26 · Aprender conjuros
+### 53. 3.26 · Aprender conjuros
 
 En la hoja de un PJ con clase que lanza conjuros, pestaña Conjuros: arriba aparece «Aprender conjuros». Abre el buscador con su lista (D&D y PF2e mezclados) y suma lo elegido. En «Reglas de la casa» aparece «15 · Conjuros: cómo sumarlos a tu hoja».
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 53. 3.9 · Música de YouTube
+### 54. 3.9 · Música de YouTube
 
 En Mesa Ecos → Control, pega un enlace de YouTube y pulsa Reproducir: un jugador debe oírlo y ver el recuadro abajo a la izquierda. Pausa y Seguir: los dos en el mismo punto. El jugador recarga: retoma donde iba. Añade dos a la cola: al terminar uno suena el siguiente. El volumen y «Silenciar» del jugador solo cambian lo suyo. El recuadro se mueve desde su barra y cambia de tamaño desde la esquina o con − y +; al recargar vuelve donde lo dejaste.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 54. 3.10 · Foundry 14 y dnd5e 6 sin midi-qol
+### 55. 3.10 · Foundry 14 y dnd5e 6 sin midi-qol
 
 Con un PJ despierto, usa una técnica de ataque marcando un enemigo: debe salir la ventana Normal / Ventaja / Desventaja y tirar el ataque; luego el daño desde la tarjeta. Usa una de salvación con área: debe pedirte colocar la región. Saca un 1 natural con un PJ: debe ofrecer la Moneda Antigua. En combate, una tirada de d20 debe proponer la tabla del d20.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 55. 3.10 · Mis técnicas: filtros, favoritas y paso a paso
+### 56. 3.10 · Mis técnicas: filtros, favoritas y paso a paso
 
 Abre el panel del Verbe → Mis técnicas. Pulsa los filtros por tipo (Ataque, Salvación…): la lista cambia y el número coincide. Marca una estrella: esa técnica sube arriba y sigue marcada al reabrir. Despliega «Así se resuelve, paso a paso»: debe mostrar el bono de ataque o la CD y el daño de la ficha.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 56. 3.10 · Repetir canción
+### 57. 3.10 · Repetir canción
 
 En Mesa Ecos → Control, pon un video corto y pulsa «Repetir: no» para que diga «sí». Al terminar, debe volver a empezar para todos a la vez. Desactívalo: al terminar debe pasar al siguiente de la cola.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 57. 3.11 · Compendios del Verbe
+### 58. 3.11 · Compendios del Verbe
 
 Recarga el mundo como DM. En «Reglas de la casa» debe aparecer «11 · Compendio del Verbe» con ramas, naturalezas y dotes, y un diario «Ecos · Compendio del Verbe (solo DM)». Un jugador sin personaje despertado no ve ninguno de los dos; uno con personaje despertado ve solo el primero. Haz una prueba de habilidad: la consola no debe mostrar errores de adv-reminder.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 58. 3.12 · Acciones de cualquiera, el 20 y el 1, armas y mercader
+### 59. 3.12 · Acciones de cualquiera, el 20 y el 1, armas y mercader
 
 Abre la hoja de un PJ: debe tener Golpe sin armas y «Acciones de Fuerza… de Carisma». Usa Presa con un enemigo marcado: salva FUE o DES y, si falla, queda Agarrado. Saca un 20 en un ataque: el daño se duplica (crítico del Manual, desde 3.14) y además sale la tabla del 20. Usa una técnica de Cuerpo: pregunta «¿Con qué atacas?». Con espada y escudo, una técnica con Gestos avisa de las manos. En Mesa Ecos → Control, sortea el mercader extraño y compra algo con Monedas Antiguas. En el panel del Verbe, «Cambiar Monedas» da 1 Trazo por Moneda, como mucho 2 en cada nivel.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 59. 3.13 · Combate táctico y diarios ordenados
+### 60. 3.13 · Combate táctico y diarios ordenados
 
 Recarga el mundo como DM. En «Reglas de la casa» debe aparecer «14 · Combate táctico», y los diarios «Ecos · …» del DM que estaban sueltos deben estar en «Mesa, tramas y personajes [DM]», numerados. En Mesa Ecos → Control, «Combate táctico» debe estar encendido. Pon a un PJ y un aliado en lados opuestos de un enemigo: el ataque cuerpo a cuerpo del PJ suma +2 «Desprevenido». Usa Fintar: si el enemigo falla, queda Desprevenido. Marca a un PNJ como secuaz y hazle 1 de daño: cae a 0 PG. Marca a un líder enemigo y déjalo a 0 PG: el DM recibe en privado las salvaciones de moral. Usa Evaluar al enemigo con un blanco marcado: llega un susurro con lo que ganaste.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 60. 3.14 · D&D primero
+### 61. 3.14 · D&D primero
 
 Saca un 20 natural en un ataque: los dados de daño se tiran dos veces (crítico del Manual) y además sale la tabla del 20. En la hoja de un pícaro o bardo con Pericia en Engaño, usa Fintar: la CD de la tarjeta es 8 + su Engaño, mayor que la de un guerrero con el mismo Carisma. Presa sigue con 8 + FUE + competencia. Ponte detrás de una mesa y usa Ponerse a cubierto: queda cobertura de tres cuartos (+5), no media. En «12 · Lo que cualquiera puede intentar», cada fila dice si es regla base del Manual o de Ecos.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 61. 3.15 · Conjuros de PF2e, la lupa y Resonancia
+### 62. 3.15 · Conjuros de PF2e, la lupa y Resonancia
 
 Recarga el mundo como DM y espera un minuto: aparece el compendio «Conjuros de PF2e (Ecos)» con carpetas por nivel, y «Listas de conjuros de PF2e (Ecos)» con el glosario. En la hoja de un mago, en el libro de conjuros, pulsa la lupa de Nivel 1: el buscador muestra conjuros de D&D y de PF2e de la lista de mago. Elige uno: si te quedan gratis, entra sin coste; si no, pide copiarlo por 50 po y 2 horas por nivel. Despierta el Verbe de una hoja: recibe la dote «Resonancia del Verbe». Con naturaleza Fuego, la CD de un conjuro de fuego sube 1 en la hoja y su ataque suma +1. Con naturaleza Agua, Curar heridas cura 1 PG más por dado.
 

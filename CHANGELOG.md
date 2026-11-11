@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 3.33.0 — 2026-11-11
+
+- **El turno a la vista** (pedido del autor): bajo el carrusel de iniciativa sale una barra con el turno de quien actúa. Muestra el **movimiento que le queda** (se descuenta solo al mover el token; arrastrarse Derribado cuesta el doble) y sus acciones: **Acción, Acción adicional y Reacción** de D&D (se marcan solas al usar algo de la hoja) y **Acción, Adicional y Reacción del Verbe**. Botones **Correr**, **Desengancharse** y **Esquivar** (gastan la Acción y ponen su efecto). El DM tiene **Devolver movimiento**, **+5 ft** y **Reiniciar** para corregir un movimiento equivocado. Al pasar el turno se borra y empieza de nuevo; la reacción se recupera al empezar tu turno.
+- **Antes de mover:** si te alejas de un enemigo que te tiene al alcance, sale el aviso de **ataque de oportunidad** con un menú explicado: Desengancharme (Acción, o Adicional si tu clase puede: Acción astuta, Escape ágil, Paso del viento), Moverme igual (el chat avisa del ataque) o No me muevo. Si el movimiento es más largo que lo que te queda, ofrece **Correr**.
+- **Derribado al empezar el turno:** el dueño elige si se levanta (cuesta la mitad de su movimiento) o se queda arrastrándose.
+- **Iniciativa:** al entrar a un combate, cada jugador elige si su iniciativa va con ventaja, normal o desventaja; tirada desde la hoja, la ventana de dnd5e siempre sale.
+- Ajustes nuevos para apagar cada cosa: Turno a la vista, Avisos antes de mover (y para el DM), Preguntar si se levanta, Preguntar ventaja en la iniciativa. Estado nuevo: Desenganchado.
+
 ## 3.32.0 — 2026-11-11
 
 - **Lo que es solo sobre ti es tuyo** (pedido del autor): una técnica de alcance «Yo» sin área (Guardia de hierro, un modo, un refuerzo) ya no pide el pase del DM por el token marcado ni toca a nadie más; sin midi-qol, sus efectos se ponen en quien la usa aunque tenga a otro marcado. **Guardia de hierro** pone sola su +1 a la CA y velocidad 0 hasta tu próximo turno.

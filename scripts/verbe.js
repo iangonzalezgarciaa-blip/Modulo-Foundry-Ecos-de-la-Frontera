@@ -39,6 +39,7 @@ import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-traini
 import { presupuestoCorto } from "./rest-core.js";
 import { sistema } from "./sistema/index.js";
 import { aplicarEnUsuario } from "./mesa-propio.js";
+import { ESTADO_DESENGANCHE } from "./turno-tracker.js";
 import { ayudaCampoHTML, ayudaSeccionHTML, explicarOpcion, etapaJugadorHTML, familiaSugerida, RAMAS_PRIMERO } from "./verbe-ayuda.js";
 import { MONEDAS_POR_TRAZO, TRAZOS_POR_NIVEL } from "./mercader.js";
 import { VERSION_REGLAS, recuperarReserva, evaluarGasto, requisitoNatural, crearCola,
@@ -112,7 +113,8 @@ export const ESTADOS = {
   // 3.28: la ruptura (Brecha, Grieta, Quebrado). Las técnicas y las acciones de cualquiera las imponen.
   ...ESTADOS_RUPTURA,
   // 3.29: el contragolpe de un choque puede reventar la mano.
-  ...ESTADO_MANO_ROTA
+  ...ESTADO_MANO_ROTA,
+  ...ESTADO_DESENGANCHE
 };
 const TIPO_NAT = { fuego: "fire", agua: "bludgeoning", viento: "slashing", tierra: "bludgeoning", rayo: "lightning", escarcha: "cold",
   raiz: "piercing", magma: "fire", vapor: "fire", ceniza: "fire", tormenta: "lightning", hierro: "piercing", corriente: "lightning",
@@ -5132,7 +5134,7 @@ Hooks.once("ready", async () => {
     return console.error(`${MOD} | capa V: no pude leer sus datos`, err);
   }
   const api = (game.modules.get(MOD).api ??= {});
-  api.verbe = { ofertasActor, corregirGastoSimple, gastarMoneda, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), usoRapido, despierto, estado, maxVerbe, trazos, refrescar, aprender,
+  api.verbe = { turnoVerbe, ofertasActor, corregirGastoSimple, gastarMoneda, usarDote, reorientarCultivo, concederShinobi, concederArtefacto, almacenarVerbe, transferirVerbe, editorCatalogo: abrirEditorCatalogo, publicarTecnicaUniversal, despertar: a => dialogoDespertar(a), abrir: a => abrirPanel(a), usoRapido, despierto, estado, maxVerbe, trazos, refrescar, aprender,
     tecnica: id => tecnicaPorId(id), datos: () => D, aprobar, despertarOjo, costoUso, requisitos, choque: dialogoChoque, olvidar,
     deshacer, rehacer, ajustar, darTrazos, recuperar: recuperarVerbe, devolverVerbe, disiparClon, canalizar, liberarCanalizada, interrumpirCanal, rangoDe, tieneDote, lecturaDe, leerObjetivos, variarReservaNpc, asegurarTiradasVerbe, cambiarModoReserva, sangreDe, conflictoSangre, activarFamilia, cambiarEtapa, estadoDescubrimiento, pedirDescubrimiento, pruebaEntreno, terminarEntrenoYa, guia: abrirGuia, asegurarGuia, asegurarCompendios, modo: () => MODO, ajusteClima, gradoCriatura, extraContraFuerte,
     marcarMetal: (documento, metal = true) => game.user.isGM && ["Item", "Actor"].includes(documento?.documentName)
