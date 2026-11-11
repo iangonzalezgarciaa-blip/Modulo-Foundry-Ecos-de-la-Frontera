@@ -1,5 +1,16 @@
 # Historial de cambios
 
+## 3.39.0 — 2026-11-11
+
+- **Clones que entrenan** (decisión del autor): lo que entrena un clon le cuenta a su creador al disiparse o deshacerse. La ventana de recuerdos del DM pregunta las horas (sugiere el tiempo que existió): **8 h = 1 día**; las horas sueltas se guardan. **Tope por día de juego: su competencia del Verbe** (lo que pase se pierde). Si estaba entrenando una naturaleza, se le acorta; si no, los días quedan guardados en su panel y se gastan solos en su próxima técnica o cultivo.
+- **Arreglo · barra del turno desde los jugadores:** marcar Acción/Adicional/Reacción, Correr, Desengancharse, levantarse y el movimiento libre de Sustitución no llegaban al DM cuando los hacía un jugador (el cambio viajaba como función y se perdía). Ahora viaja como dato y se aplica para todos.
+- **Arreglo · salvación extra a 0 PG:** la oferta de gastar la acción en otra salvación con ventaja no salía nunca (el gancho de D&D entrega el actor en otro lugar). Ya sale.
+- **Arreglo · canalizar y moverte:** si canalizas, primero sale el aviso de soltar la técnica (antes podía salir el de ataque de oportunidad y saltárselo).
+- **Arreglo · exportar el Diagnóstico** con la función de Foundry 13/14 (la antigua ya no existe).
+- **Nivelado de legados** (pedido del autor: «nivela a mis designios»; D&D pega, el Verbe ablanda, morir cuesta): ocho dotes de legado que rompían la economía de acciones o la regla de la muerte quedan al nivel de las demás. *Turno extra* → un paso fuera del tiempo (moverte y Esquivar, Desengancharte o Ayudar); *desventaja una vez por turno* (dos legados) y *repetir una tirada una vez por turno* → tantas veces como tu competencia por Descanso Largo; *volver de 0 PG una vez por combate* → una vez por Descanso Corto; *resistencia permanente a contundente, cortante y perforante* → ese daño baja en tu competencia; *no provocas ataques de oportunidad al alejarte* → solo de quien atacaste este turno; *inmune a encantamientos* → ventaja contra Hechizado.
+- **Daño cuesta al menos 1 Verbe también en el catálogo:** los 18 trucos de daño de grado 0 dicen 1 (el panel ya cobraba 1 desde 3.34).
+- **Auditoría:** 949 técnicas contra el presupuesto de daño por grado (ninguna por encima), 471 dotes (ningún bono plano de +3 o más a ataque, CA, CD o salvaciones), código revisado con lint (sin variables sin definir) y 3 pruebas de mesa nuevas en el Diagnóstico (70).
+
 ## 3.38.0 — 2026-11-11
 
 - **Tutorial** (pedido del autor) en el panel del Verbe → Ayuda rápida: qué es el **Control del Verbe**, qué es un **choque de técnicas** y cómo se gana, la acción Verbe frente a la de D&D, **forzarse**, Brecha/Grieta/Quebrado, cómo **escapar** y dónde leer más.

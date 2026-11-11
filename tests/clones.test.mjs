@@ -44,3 +44,22 @@ test('4.7: cada técnica genérica recibe un icono claro de dnd5e y las dotes un
   assert.match(iconoDote({ cat: 'defensa' }), /checked-shield/);
   assert.equal(esGenerico('systems/dnd5e/icons/svg/damage/fire.svg'), false);
 });
+
+test("3.39 · el entrenamiento de los clones cuenta días con tope diario", async () => {
+  const { creditoEntrenamiento, usarBancoClones, HORAS_DIA_ENTRENO } = await import("../scripts/verbe-clones.js");
+  assert.equal(HORAS_DIA_ENTRENO, 8);
+  assert.deepEqual(creditoEntrenamiento({ horas: 8, tope: 2 }), { dias: 1, recortados: 0, sobranHoras: 0, hoy: 1, tope: 2 });
+  // Horas sueltas se guardan y completan un día después.
+  assert.equal(creditoEntrenamiento({ horas: 5, tope: 2 }).dias, 0);
+  assert.equal(creditoEntrenamiento({ horas: 5, tope: 2 }).sobranHoras, 5);
+  assert.equal(creditoEntrenamiento({ horas: 3, horasPrevias: 5, tope: 2 }).dias, 1);
+  // Tope diario: competencia del Verbe; lo que pasa se pierde.
+  const r = creditoEntrenamiento({ horas: 40, yaHoy: 1, tope: 3 });
+  assert.equal(r.dias, 2); assert.equal(r.recortados, 3); assert.equal(r.hoy, 3);
+  assert.equal(creditoEntrenamiento({ horas: 16, yaHoy: 3, tope: 3 }).dias, 0);
+  assert.equal(creditoEntrenamiento({ horas: -4, tope: 2 }).dias, 0);
+  // El banco cubre días enteros de un entrenamiento.
+  assert.deepEqual(usarBancoClones(3, 2), { usa: 2, queda: 1, faltan: 0 });
+  assert.deepEqual(usarBancoClones(1, 2.5), { usa: 1, queda: 0, faltan: 1.5 });
+  assert.equal(usarBancoClones(0, 4).usa, 0);
+});

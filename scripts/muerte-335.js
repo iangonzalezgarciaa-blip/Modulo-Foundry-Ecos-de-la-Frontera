@@ -35,7 +35,7 @@ const duenoJugador = a => game.users.find(u => u.active && !u.isGM && a?.testUse
 export async function salvacionConAccion(actor) {
   if (!acechado(actor)) return;
   const combat = game.combat?.started ? game.combat : null, c = combat?.combatants?.find?.(x => x.actor === actor || x.actorId === actor.id);
-  if (c) { const { cambiarTurno } = await import("./turno-tracker.js"); await cambiarTurno(c.id, t => ({ ...t, accion: true })); }
+  if (c) { const { cambiarTurno } = await import("./turno-tracker.js"); await cambiarTurno(c.id, { op: "gastar", clave: "accion" }); }
   const antes = actor.system?.attributes?.exhaustion ?? 0;
   const r = await actor.rollDeathSave({ advantage: true }, { configure: false });
   const roll = Array.isArray(r) ? r[0] : r;
@@ -95,8 +95,10 @@ if (globalThis.Hooks) {
     return false;
   });
   // Después de la salvación de muerte automática, ofrecer la de la acción a su dueño.
-  Hooks.on("dnd5e.rollDeathSave", (actor, rolls, details) => {
-    if (!leer("accionMuerte", true) || !game.combat?.started || details?.ecosAccion) return;
+  // dnd5e llama a este gancho con (rolls, details) y el actor en details.subject (3.39: antes no lo encontraba y nunca ofrecía).
+  Hooks.on("dnd5e.rollDeathSave", (rolls, details) => {
+    const actor = details?.subject;
+    if (!actor || !leer("accionMuerte", true) || !game.combat?.started) return;
     const c = game.combat.combatant;
     if (!c || (c.actor !== actor && c.actorId !== actor?.id)) return;
     const roll = rolls?.[0];

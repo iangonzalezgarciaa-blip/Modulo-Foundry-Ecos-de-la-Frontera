@@ -33,8 +33,12 @@ Decisiones del autor: D2 (clones de sombra y elementales, caros, con recuerdos y
 | Clones múltiples | nivel 9, Maestro en Forma, Clones económicos | Una copia más. |
 | Legión | nivel 13, Legendario en Forma, Clones múltiples y Clon de sombra | Con clones de sombra, hasta 4 × tu competencia copias. |
 
-## Pendiente de decidir (no implementado)
+## Entrenamiento de los clones (3.39, decidido el 11-nov-2026)
 
-- Si el entrenamiento que hace un clon acredita días de entrenamiento a su creador (propuesta: con un tope diario).
+- Al disiparse o deshacerse, la ventana de recuerdos del DM pregunta **cuántas horas pasó entrenando** (sugiere el tiempo de mundo que existió).
+- Cada **8 horas** cuentan como **1 día de entrenamiento** para su creador. Las horas sueltas se guardan y completan un día la próxima vez.
+- **Tope diario:** en un mismo día de juego, los clones le acreditan como mucho tantos días como su **competencia del Verbe**. Lo que pase del tope se pierde.
+- Si el creador estaba entrenando una naturaleza, se le acorta ese entrenamiento. Si no, los días quedan **guardados** y se gastan solos en su próxima técnica (aprendida o creada) o en su próximo cultivo; el chat dice cuántos cubrieron.
+- El panel del creador muestra los días guardados.
 
 Sin probar en Foundry real.

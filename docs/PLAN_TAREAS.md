@@ -190,7 +190,7 @@
 
 - [x] **3.5b · Clones: crear el clon** (hecha: ventana de copias y Verbe, fichas «Clon de…» con 1 PG) (M · Dep.: 3.5a). Mecánica de aparición y coste.
 
-- [x] **3.5c · Clones: recuerdos al disiparse** (hecha: tarjeta del DM con lo vivido; el crédito de entrenamiento queda pendiente de decidir) (M · Dep.: 3.5b). D2: sin XP. Al disiparse se genera una «tarjeta de recuerdos» para el usuario con lo que el clon vio, oyó, sintió y aprendió; el DM la redacta o aprueba. Propuesta, no decidida: el entrenamiento hecho por el clon acredita días de entrenamiento con un tope diario.
+- [x] **3.5c · Clones: recuerdos al disiparse** (hecha: tarjeta del DM con lo vivido; desde 3.39, el entrenamiento del clon acredita días a su creador con tope diario) (M · Dep.: 3.5b). D2: sin XP. Al disiparse se genera una «tarjeta de recuerdos» para el usuario con lo que el clon vio, oyó, sintió y aprendió; el DM la redacta o aprueba. Decidido el 11-nov-2026 y hecho en 3.39: el entrenamiento hecho por el clon acredita días (8 h = 1 día) con un tope diario igual a la competencia del Verbe.
 
 - [x] **3.5d · Clones: dotes de abaratamiento y clones masivos** (hecha: Clones económicos → Clones múltiples → Legión; técnica Legión de sombras) (M · Dep.: 3.5c). Cadena de dotes que baja el coste hasta el nivel del Tajū Kage Bunshin.
 
@@ -333,3 +333,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 11-nov-2026 | Mejora | Claude | Acción estándar en cada hoja, daño de caída e indirecto, +2 de CD por clase, acciones de cualquiera de un turno y volumen de YouTube para todos. Release v3.36.0 | 3.36.0 |
 | 11-nov-2026 | Mejora | Claude | Almacén de reliquias por etapas en Objetos, aprender y quitar conjuros (también PNJ), conjuros PF2e nivelados a D&D y subir de nivel guiado. Release v3.37.0 | 3.37.0 |
 | 11-nov-2026 | Mejora | Claude | Tutorial del Verbe, Choca/No choca, dotes de elemento ocultas, Control explicado, auditoría de dotes automáticas y fama con proezas. Release v3.38.0 | 3.38.0 |
+| 11-nov-2026 | Mejora | Claude | Clones que entrenan, arreglos de la barra del turno y de la salvación a 0 PG, nivelado de legados y auditoría. Release v3.39.0 | 3.39.0 |

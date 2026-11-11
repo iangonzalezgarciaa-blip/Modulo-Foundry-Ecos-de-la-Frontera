@@ -41,3 +41,24 @@ export function repartoClones({ copias, verbe }, { disponible, limites }) {
   if (n * v > disponible) return { ok: false, motivo: `Repartir ${n} × ${v} pide ${n * v} de Verbe y tienes ${disponible}.` };
   return { ok: true, copias: n, verbe: v, total: n * v };
 }
+
+/**
+ * 3.39 · Entrenamiento de los clones (decisión del autor, 11-nov-2026): lo que un clon entrena le cuenta a su creador
+ * al disiparse o deshacerse. 8 horas de entrenamiento = 1 día. Las horas sueltas se guardan para la próxima vez.
+ * Tope: en un mismo día de juego, los clones le acreditan como mucho tantos días como su competencia del Verbe;
+ * lo que pase del tope se pierde (el cuerpo de origen no da para más).
+ */
+export const HORAS_DIA_ENTRENO = 8;
+export function creditoEntrenamiento({ horas = 0, horasPrevias = 0, yaHoy = 0, tope = 2 } = {}) {
+  const h = Math.max(0, Math.floor(Number(horas) || 0)), previas = Math.max(0, Number(horasPrevias) || 0);
+  const total = h + previas, dias = Math.floor(total / HORAS_DIA_ENTRENO);
+  const libre = Math.max(0, Math.trunc(Number(tope) || 0) - Math.max(0, Number(yaHoy) || 0));
+  const dados = Math.min(dias, libre);
+  return { dias: dados, recortados: dias - dados, sobranHoras: total - dias * HORAS_DIA_ENTRENO, hoy: (Number(yaHoy) || 0) + dados, tope: Math.trunc(Number(tope) || 0) };
+}
+/** Gasta días del banco de los clones en un entrenamiento que pide `dias`. Devuelve cuántos cubre y lo que queda. Puro. */
+export function usarBancoClones(banco, dias) {
+  const b = Math.max(0, Number(banco) || 0), d = Math.max(0, Number(dias) || 0);
+  const usa = Math.min(b, Math.floor(d));
+  return { usa, queda: b - usa, faltan: d - usa };
+}

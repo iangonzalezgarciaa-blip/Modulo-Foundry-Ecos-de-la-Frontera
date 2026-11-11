@@ -63,14 +63,33 @@ const datosTurno = (combat, cid) => {
 /** El dueño jugador de un actor (o el DM). */
 const duenoDe = actor => game.users.find(u => u.active && !u.isGM && actor?.testUserPermission?.(u, "OWNER")) ?? game.users.activeGM;
 
-/** Escribe el turno de un combatiente (solo el DM activo; los demás se lo piden). */
+/**
+ * 3.39: un cambio del turno que viaja por el socket (una función no viaja: los jugadores no marcaban nada).
+ * {op:"alternar", clave} · {op:"gastar", clave, extra} · {op:"mover", pies, levantado} · {op:"devolver"} · {op:"mas", pies} · {op:"reiniciar"}. Puro.
+ */
+export function aplicarCambio(t, cambio, vacio = turnoVacio()) {
+  const x = { ...vacio, ...(t ?? {}), hist: [...(t?.hist ?? [])] };
+  if (typeof cambio === "function") return cambio(x);
+  switch (cambio?.op) {
+    case "alternar": return ACCIONES_DND[cambio.clave] ? { ...x, [cambio.clave]: !x[cambio.clave] } : x;
+    case "gastar": return ACCIONES_DND[cambio.clave] ? { ...x, [cambio.clave]: true, extra: (Number(x.extra) || 0) + (Number(cambio.extra) || 0) } : x;
+    case "mover": { const p = Math.max(0, Number(cambio.pies) || 0); return { ...x, usado: (Number(x.usado) || 0) + p, hist: [...x.hist, p].slice(-10), ...(cambio.levantado ? { levantado: true } : {}) }; }
+    case "devolver": { const u = x.hist.pop() ?? 0; return { ...x, usado: Math.max(0, (Number(x.usado) || 0) - u) }; }
+    case "mas": return { ...x, extra: (Number(x.extra) || 0) + (Number(cambio.pies) || 0) };
+    case "reiniciar": return { ...vacio };
+    default: return cambio && typeof cambio === "object" ? { ...x, ...cambio } : x;
+  }
+}
+/** Escribe el turno de un combatiente (solo el DM activo; los demás se lo piden con un cambio que viaja). */
 export async function cambiarTurno(cid, cambio) {
   const combat = combateActivo();
   if (!combat || !cid) return;
-  if (!gmActivo()) return game.socket.emit(`module.${MOD}`, { turno: "cambiar", combatId: combat.id, cid, cambio });
-  const actual = datosTurno(combat, cid) ?? turnoVacio(combat.round, combat.turn);
-  const nuevo = typeof cambio === "function" ? cambio(foundry.utils.deepClone(actual)) : { ...actual, ...cambio };
-  await combat.setFlag(MOD, "turnoDnD", { [cid]: nuevo });
+  if (!gmActivo()) {
+    if (typeof cambio === "function") return console.warn(`${MOD} | cambiarTurno: un jugador no puede mandar una función`);
+    return game.socket.emit(`module.${MOD}`, { turno: "cambiar", combatId: combat.id, cid, cambio });
+  }
+  const vacio = turnoVacio(combat.round, combat.turn);
+  await combat.setFlag(MOD, "turnoDnD", { [cid]: aplicarCambio(datosTurno(combat, cid) ?? vacio, cambio, vacio) });
 }
 
 /* ---------- La barra del turno ---------- */
@@ -111,14 +130,14 @@ async function clicBarra(ev) {
   const combat = combateActivo(), c = combat?.combatant, actor = c?.actor;
   if (!b || !actor || !(game.user.isGM || actor.isOwner)) return;
   const pipK = b.dataset.pip, acc = b.dataset.turno;
-  if (pipK && pipK in ACCIONES_DND) return cambiarTurno(c.id, t => ({ ...t, [pipK]: !t[pipK] }));
+  if (pipK && pipK in ACCIONES_DND) return cambiarTurno(c.id, { op: "alternar", clave: pipK });
   if (acc === "correr") return accionEstandar(actor, "correr");
   if (acc === "desenganche") return accionEstandar(actor, "desenganche");
   if (acc === "esquivar") return accionEstandar(actor, "esquivar");
   if (!game.user.isGM) return;
-  if (acc === "devolver") return cambiarTurno(c.id, t => { const u = t.hist.pop() ?? 0; return { ...t, usado: Math.max(0, t.usado - u) }; });
-  if (acc === "mas5") return cambiarTurno(c.id, t => ({ ...t, extra: (Number(t.extra) || 0) + 5 }));
-  if (acc === "reiniciar") return cambiarTurno(c.id, () => turnoVacio(combat.round, combat.turn));
+  if (acc === "devolver") return cambiarTurno(c.id, { op: "devolver" });
+  if (acc === "mas5") return cambiarTurno(c.id, { op: "mas", pies: 5 });
+  if (acc === "reiniciar") return cambiarTurno(c.id, { op: "reiniciar" });
 }
 
 /** Correr, Desengancharse o Esquivar desde la barra o el menú: marca la acción y pone su efecto. */
@@ -127,7 +146,7 @@ export async function accionEstandar(actor, cual, { adicional = false } = {}) {
   const gasto = adicional ? "adicional" : "accion";
   const t = c ? (datosTurno(combat, c.id) ?? turnoVacio(combat.round, combat.turn)) : null;
   if (t?.[gasto]) { ui.notifications.warn(`${actor.name} ya gastó su ${ACCIONES_DND[gasto]} este turno.`); return false; }
-  if (c) await cambiarTurno(c.id, x => ({ ...x, [gasto]: true, ...(cual === "correr" ? { extra: (Number(x.extra) || 0) + velocidadDe(actor) } : {}) }));
+  if (c) await cambiarTurno(c.id, { op: "gastar", clave: gasto, extra: cual === "correr" ? velocidadDe(actor) : 0 });
   if (cual === "desenganche") await actor.toggleStatusEffect?.(DESENGANCHE, { active: true });
   if (cual === "esquivar") { try { await actor.toggleStatusEffect?.("dodging", { active: true }); } catch { /* sin ese estado */ } }
   const txt = { correr: `corre: suma ${velocidadDe(actor)} ft de movimiento este turno`, desenganche: "se desengancha: este turno su movimiento no provoca ataques de oportunidad",
@@ -186,6 +205,8 @@ function revisarMovimiento(doc, destino, opciones = {}) {
   if (!(actor.isOwner) || (game.user.isGM && !leer("avisosMovimientoDM", false) && !actor.hasPlayerOwner)) return;
   const antes = rectDe(doc), despues = rectDe(doc, destino);
   if (antes.x === despues.x && antes.y === despues.y) return;
+  // 3.39: si canaliza, primero decide si suelta la técnica (lo pregunta el aviso de canalización).
+  if (actor.effects?.some?.(x => x.getFlag?.(MOD, "verbe")?.canalizar && !x.disabled)) return;
   const desenganchado = actor.statuses?.has?.(DESENGANCHE);
   const g = { gridPx: canvas.grid.size, gridPies: canvas.scene?.grid?.distance ?? 5 };
   const oportunidad = desenganchado ? [] : provocaOportunidad(antes, despues, enemigosDe(doc), g);
@@ -209,7 +230,7 @@ async function contarMovimiento(doc, pies) {
   const combat = combateActivo(), c = combatienteDe(combat, doc);
   if (!c || combat.combatant?.id !== c.id || !pies) return;
   const costo = costoTramo(pies, { derribado: derribado(doc.actor) });
-  await cambiarTurno(c.id, t => ({ ...t, usado: (Number(t.usado) || 0) + costo, hist: [...(t.hist ?? []), costo].slice(-10) }));
+  await cambiarTurno(c.id, { op: "mover", pies: costo });
 }
 
 /* ---------- Al empezar el turno ---------- */
@@ -235,7 +256,7 @@ async function preguntarLevantarse(actor, cid) {
     yes: { label: "Me levanto", icon: "fa-solid fa-person" }, no: { label: "Me quedo en el suelo" }, rejectClose: false });
   if (!r) return;
   await actor.toggleStatusEffect("prone", { active: false });
-  await cambiarTurno(cid, t => ({ ...t, usado: (Number(t.usado) || 0) + mitad, hist: [...(t.hist ?? []), mitad], levantado: true }));
+  await cambiarTurno(cid, { op: "mover", pies: mitad, levantado: true });
 }
 
 /* ---------- La iniciativa: ventaja, normal o desventaja ---------- */
@@ -311,7 +332,7 @@ if (globalThis.Hooks) {
     if (!act || act.item?.flags?.[MOD]?.verbe) return;
     const k = tipoActivacion(act.activation?.type ?? act.item?.system?.activation?.type);
     const c = combat.combatants.find(x => x.actor === act.actor || x.actorId === act.actor?.id);
-    if (k && c) cambiarTurno(c.id, t => ({ ...t, [k]: true })).catch(() => null);
+    if (k && c) cambiarTurno(c.id, { op: "gastar", clave: k }).catch(() => null);
   });
   // Iniciativa: preguntar al jugador al entrar al combate y aplicarlo al tirar.
   Hooks.on("createCombatant", (combatant, opciones, userId) => {

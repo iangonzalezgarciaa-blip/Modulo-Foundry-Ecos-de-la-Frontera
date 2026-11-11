@@ -26,7 +26,7 @@ import { compendioJugadoresHTML, compendioDMHTML } from "./verbe-compendio.js";
 import { aplicarNombresMundo, nombresDelMundo } from "./nombres-mundo.js";
 import { tramoReserva, tramoFuerza, tramoVida, queVe } from "./verbe-lectura.js";
 import { cargaDe, bonoCarga, cdInterrupcion, textoCarga } from "./verbe-canalizar.js";
-import { clonDe, limitesClones, repartoClones } from "./verbe-clones.js";
+import { clonDe, limitesClones, repartoClones, creditoEntrenamiento, usarBancoClones, HORAS_DIA_ENTRENO } from "./verbe-clones.js";
 import { iconoTecnica, iconoDote, esGenerico } from "./verbe-iconos.js";
 import { ventanaLinaje, linajeDeEleccion, pasosOjo } from "./linaje-diario.js";
 import { linajePortador, LINAJE_ALA } from "./sangre-sosten.js";
@@ -450,7 +450,7 @@ async function crearClones(creador, d) {
     x.name = `Clon de ${creador.name}${ok.copias > 1 ? ` ${i + 1}` : ""}`;
     for (const [k, v] of Object.entries({ ...sistema.datosPg(c.pg, { max: c.pg, temp: 0 }), ...(c.ca ? sistema.datosCaFija(c.ca) : {}) })) foundry.utils.setProperty(x, k, v);
     const v = foundry.utils.deepClone(x.flags?.[MOD]?.[F] ?? {});
-    Object.assign(v, { valor: ok.verbe, compras: [], historial: [`Clon de ${creador.name}`], clon: { de: creador.uuid, deNombre: creador.name, tecnica: d.tecnica, verbe: ok.verbe, nonce, creado: Date.now(), registro: [] } });
+    Object.assign(v, { valor: ok.verbe, compras: [], historial: [`Clon de ${creador.name}`], clon: { de: creador.uuid, deNombre: creador.name, tecnica: d.tecnica, verbe: ok.verbe, nonce, creado: Date.now(), creadoMundo: Number(game.time?.worldTime) || 0, registro: [] } });
     foundry.utils.setProperty(x, `flags.${MOD}.${F}`, v);
     foundry.utils.setProperty(x, `flags.${MOD}.pj`, false);
     if (x.prototypeToken) { x.prototypeToken.name = x.name; x.prototypeToken.actorLink = true; delete x.prototypeToken.actorId; }
@@ -471,6 +471,14 @@ async function crearClones(creador, d) {
   aLaMesa(creador, "✦ Clones", `<p>${escH(creador.name)} crea <b>${ok.copias}</b> clon${ok.copias > 1 ? "es" : ""} con <b>${ok.verbe} Verbe</b> cada uno (${ok.total} en total). Cada uno tiene ${c.pg} PG. Si los destruyen, ese Verbe se pierde.</p>`);
   return creados;
 }
+/** 3.39: usa los días que entrenaron sus clones para cubrir un entrenamiento. */
+async function gastarBancoClones(actor, dias) {
+  const ent = estado(actor)?.entrenoClon;
+  if (!ent?.banco) return null;
+  const r = usarBancoClones(ent.banco, dias);
+  if (r.usa) await guardar(actor, { entrenoClon: { ...ent, banco: r.queda } });
+  return r;
+}
 /** Disipar (o destruir) un clon: si lo disipa su creador le vuelve el Verbe que le quede; siempre deja recuerdos. */
 export async function disiparClon(clon, { destruido = false } = {}) {
   if (!soyGM() || !esClon(clon)) return false;
@@ -481,14 +489,33 @@ export async function disiparClon(clon, { destruido = false } = {}) {
     const ec = estado(creador); await guardar(creador, { valor: Math.min(maxVerbe(creador), (Number(ec.valor) || 0) + resto), historial: hist(ec, `Disipa un clon: recupera ${resto} Verbe`) });
   }
   const vivido = (info.registro ?? []).join(" · ");
-  let recuerdos = vivido;
+  // 3.39: lo que entrenó cuenta para su creador (8 h = 1 día, tope diario = competencia del Verbe).
+  const ahora = Number(game.time?.worldTime) || 0, sugeridas = info.creadoMundo != null ? Math.max(0, Math.floor((ahora - Number(info.creadoMundo)) / 3600)) : 0;
+  const ecInicial = creador ? estado(creador) : null, dia = Math.floor(ahora / 86400), ent = ecInicial?.entrenoClon ?? {};
+  const yaHoy = ent.dia === dia ? Number(ent.hoy) || 0 : 0, tope = creador ? competencia(creador) : 0;
+  let recuerdos = vivido, horas = 0;
   try {
     const r = await foundry.applications.api.DialogV2.wait({ window: { title: `Recuerdos de ${clon.name}` },
-      content: `<div class="ecos-dialogo"><p>${destruido ? "Lo destruyeron: su Verbe se pierde." : `Su creador lo disipa: recupera ${resto} Verbe.`} Escribe o aprueba lo que su creador recuerda (lo que vio, oyó, sintió y aprendió). No da experiencia.</p><textarea name="r" rows="6" maxlength="2000">${escH(vivido)}</textarea></div>`,
-      rejectClose: false, buttons: [{ action: "ok", label: "Enviar recuerdos", default: true, callback: (_e, b) => b.form.elements.r.value }, { action: "no", label: "Sin recuerdos" }] });
-    recuerdos = typeof r === "string" && r !== "no" ? r : (r === "no" ? "" : vivido);
+      content: `<div class="ecos-dialogo"><p>${destruido ? "Lo destruyeron: su Verbe se pierde." : `Su creador lo disipa: recupera ${resto} Verbe.`} Escribe o aprueba lo que su creador recuerda (lo que vio, oyó, sintió y aprendió). No da experiencia.</p><textarea name="r" rows="6" maxlength="2000">${escH(vivido)}</textarea>
+        ${creador ? `<label>Horas que pasó entrenando <input type="number" name="horas" min="0" max="240" step="1" value="${sugeridas}"></label><p class="ecos-nota">Cada ${HORAS_DIA_ENTRENO} h cuentan como 1 día de entrenamiento para ${escH(creador.name)}. Hoy sus clones ya le dieron ${yaHoy} de ${tope} días (tope diario: su competencia del Verbe). Si estaba entrenando una naturaleza, se le acorta; si no, quedan guardados para su próxima técnica o cultivo. Pon 0 si no entrenó.</p>` : ""}</div>`,
+      rejectClose: false, buttons: [{ action: "ok", label: "Enviar recuerdos", default: true, callback: (_e, b) => ({ r: b.form.elements.r.value, horas: b.form.elements.horas?.value ?? 0 }) }, { action: "no", label: "Sin recuerdos" }] });
+    if (r && typeof r === "object") { recuerdos = r.r; horas = Number(r.horas) || 0; }
+    else recuerdos = r === "no" ? "" : vivido;
   } catch { /* sin ventana */ }
-  if (creador) aLaMesa(creador, `✦ Recuerdos del clon`, `<p>${escH(clon.name)} ${destruido ? "se deshace al recibir el golpe" : "se disipa"}${!destruido && resto ? ` y devuelve ${resto} Verbe` : ""}.${recuerdos ? ` ${escH(creador.name)} recuerda: <i>${escH(recuerdos)}</i>` : ""}</p><p class="ecos-nota">Los recuerdos no dan experiencia.</p>`, { soloDueno: true });
+  let notaEntreno = "";
+  if (creador && horas > 0) {
+    const ec = estado(creador), cr = creditoEntrenamiento({ horas, horasPrevias: ent.horas, yaHoy, tope });
+    const cambios = { entrenoClon: { dia, hoy: cr.hoy, horas: cr.sobranHoras, banco: Number(ent.banco) || 0 } };
+    if (cr.dias) {
+      if (ec.entrenoNat) { cambios.entrenoNat = { ...ec.entrenoNat, hasta: Math.max(ahora, Number(ec.entrenoNat.hasta) - cr.dias * 86400) }; notaEntreno = ` Sus clones entrenaron por él: el entrenamiento de su naturaleza se acorta <b>${cr.dias} día${cr.dias === 1 ? "" : "s"}</b>.`; }
+      else { cambios.entrenoClon.banco += cr.dias; notaEntreno = ` Sus clones entrenaron por él: <b>+${cr.dias} día${cr.dias === 1 ? "" : "s"}</b> de entrenamiento guardados (${cambios.entrenoClon.banco} en total) para su próxima técnica o cultivo.`; }
+      cambios.historial = hist(ec, `Sus clones le acreditan ${cr.dias} día(s) de entrenamiento`);
+    }
+    if (cr.recortados) notaEntreno += ` ${cr.recortados} día${cr.recortados === 1 ? "" : "s"} más se pierden: hoy ya llegó al tope (${cr.tope}).`;
+    else if (!cr.dias) notaEntreno = ` Entrenó ${horas} h: se guardan hasta completar un día (${cr.sobranHoras} de ${HORAS_DIA_ENTRENO} h).`;
+    await guardar(creador, cambios);
+  }
+  if (creador) aLaMesa(creador, `✦ Recuerdos del clon`, `<p>${escH(clon.name)} ${destruido ? "se deshace al recibir el golpe" : "se disipa"}${!destruido && resto ? ` y devuelve ${resto} Verbe` : ""}.${recuerdos ? ` ${escH(creador.name)} recuerda: <i>${escH(recuerdos)}</i>` : ""}${notaEntreno}</p><p class="ecos-nota">Los recuerdos no dan experiencia.</p>`, { soloDueno: true });
   for (const sc of game.scenes ?? []) { const ids = (sc.tokens ?? []).filter(t => t.actorId === clon.id).map(t => t.id); if (ids.length) await sc.deleteEmbeddedDocuments("Token", ids); }
   await clon.delete();
   return true;
@@ -2455,7 +2482,8 @@ async function cultivarInterno(actor, tecId, mejora, infusionFija = null) {
   await guardar(actor, { cultivos: { [tecId]: cul }, gastados: (Number(e.gastados) || 0) + costo, historial: hist(e, texto),
     compras: compra(e, "cultivo", { tecId, nivel: cul.nivel, mejora, gratis }, costo, texto) });
   await refrescar(actor);
-  aLaMesa(actor, "Cultivo", `<p>${escH(actor.name)} cultiva <b>${escH(tec?.n ?? tecId)}</b>: ${NIVEL_CULTIVO[cul.nivel]}${costo ? `. El DM debe haber resuelto ${dias} día${dias === 1 ? "" : "s"} de entrenamiento; el panel no adelanta el calendario` : ""}.</p>`, { soloDueno: true });
+  const banco = costo ? await gastarBancoClones(actor, dias) : null;
+  aLaMesa(actor, "Cultivo", `<p>${escH(actor.name)} cultiva <b>${escH(tec?.n ?? tecId)}</b>: ${NIVEL_CULTIVO[cul.nivel]}${costo ? `. El DM debe haber resuelto ${dias} día${dias === 1 ? "" : "s"} de entrenamiento; el panel no adelanta el calendario` : ""}.${banco?.usa ? ` ${banco.usa} de esos días ya los entrenaron sus clones (le quedan ${banco.queda} guardados).` : ""}</p>`, { soloDueno: true });
 }
 
 export async function infundir(actor, tecId, nat) {
@@ -2649,7 +2677,8 @@ async function crearAprobadaInterno(actor, d) {
   }
   if (tec.modo === "evolucion") await guardar(actor, { cultivos: { [tec.id]: { nivel: 1, mejoras: [], pendiente: 1 } } });
   const dias = Math.max(0.5, tec.g) * (tec.modo === "variante" ? 0.5 : 1);
-  aLaMesa(actor, "✦ Técnica nueva", `<p>${escH(actor.name)} aprende <b>${escH(tec.n)}</b> (grado ${tec.g}). El DM confirma ${dias} día${dias === 1 ? "" : "s"} de entrenamiento${tec.modo ? "" : ` y ${Math.max(1, tec.g) * 25} o de materiales`} resueltos en la mesa. El panel no descuenta ese oro ni adelanta el calendario.${tec.modo === "evolucion" ? " Nace Pulida: elige su mejora en Cultivo." : ""}</p>`, { soloDueno: true });
+  const banco = await gastarBancoClones(actor, dias);
+  aLaMesa(actor, "✦ Técnica nueva", `<p>${escH(actor.name)} aprende <b>${escH(tec.n)}</b> (grado ${tec.g}). El DM confirma ${dias} día${dias === 1 ? "" : "s"} de entrenamiento${tec.modo ? "" : ` y ${Math.max(1, tec.g) * 25} o de materiales`} resueltos en la mesa. El panel no descuenta ese oro ni adelanta el calendario.${banco?.usa ? ` ${banco.usa} de esos días ya los entrenaron sus clones (le quedan ${banco.queda} guardados).` : ""}${tec.modo === "evolucion" ? " Nace Pulida: elige su mejora en Cultivo." : ""}</p>`, { soloDueno: true });
   return true;
 }
 
@@ -4155,6 +4184,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       <div class="ev-instruccion"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span><b>Si afecta a otro, marca su token antes de usarla.</b> El alcance y las condiciones de cada técnica siguen contando.</span></div>
       ${esClon(a) ? `<p class="ev-aviso">Eres <b>un clon de ${escH(estado(a).clon.deNombre)}</b>: ${sistema.pg(a).valor} PG y ${estado(a).valor} Verbe. Si te destruyen, ese Verbe se pierde. <button type="button" data-action="disiparClon">Disiparme (vuelve mi Verbe)</button></p>` : ""}
       ${(() => { const mios = (game.actors ?? []).filter(x => esClon(x) && estado(x).clon.de === a.uuid); return mios.length ? `<p class="ev-aviso">Tienes ${mios.length} clon${mios.length > 1 ? "es" : ""}: ${mios.map(x => `${escH(x.name)} (${estado(x).valor} Verbe) <button type="button" data-action="disiparClon" data-uuid="${x.uuid}">Disipar</button>`).join(" · ")}</p>` : ""; })()}
+      ${(() => { const ec = estado(a)?.entrenoClon; return ec?.banco || ec?.horas ? `<p class="ecos-nota">Entrenamiento de tus clones: <b>${Number(ec.banco) || 0} día${Number(ec.banco) === 1 ? "" : "s"}</b> guardados${ec.horas ? ` y ${ec.horas} h sueltas` : ""}. Se gastan solos en tu próxima técnica o cultivo.</p>` : ""; })()}
       ${efectoCanal(a) ? `<p class="ev-aviso"><b>Canalizando ${escH(itemsDe(a, efectoCanal(a).getFlag(MOD, F).canalizar.id)[0]?.name ?? "")}</b> · carga ${efectoCanal(a).getFlag(MOD, F).canalizar.carga}/${efectoCanal(a).getFlag(MOD, F).canalizar.max}. Velocidad 0, sin reacciones ni choques. <button type="button" data-action="interrumpirCanal">Dejar de canalizar</button></p>` : ""}
       ${queVe(itemsTecnica(a).map(i => i.getFlag(MOD, F)?.id)).size ? `<p><button type="button" data-action="leerObjetivos" data-tooltip="Marca tokens y lee su Verbe por tramos (lleno, a medias, poco; más débil o más fuerte), nunca cifras"><i class="fa-solid fa-eye"></i> Leer el Verbe de los marcados</button></p>` : ""}
       <div class="ecos-verbe-filtros"><label class="ev-busqueda"><span>Buscar en mis técnicas</span><input type="search" data-filtro-uso="texto" placeholder="Nombre o efecto…" value="${escH(f.texto)}"></label><label><input type="checkbox" data-filtro-uso="solo" ${f.solo ? "checked" : ""}> Ocultar las bloqueadas por recursos o estado</label></div>

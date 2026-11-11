@@ -79,7 +79,7 @@ export async function moverLibre(actor, maxPies, motivo) {
   const combat = game.combat?.started ? game.combat : null, c = combat?.combatant;
   if (c && c.tokenId === token.id) {
     const { cambiarTurno } = await import("./turno-tracker.js");
-    await cambiarTurno(c.id, t => ({ ...t, extra: (Number(t.extra) || 0) + pies }));
+    await cambiarTurno(c.id, { op: "mas", pies });
   }
   return true;
 }

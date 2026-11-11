@@ -772,22 +772,6 @@ async function dialogoDescansoLargo(actor, config) {
   if (actor.getFlag(MOD, "trabajoPesado")) await actor.unsetFlag(MOD, "trabajoPesado");
 }
 
-async function salvacionIntemperie(actor, dc) {
-  const roll = await tiradaConSoul(actor, m => sistema.tirarSalvacion(actor, "con", { target: dc }, { configure: false }, m), "salvación de Constitución a la intemperie");
-  if (!roll) return;
-  const exh = sistema.agotamiento(actor);
-  if (roll.total >= dc) {
-    return publicar(actor, "🌲 Noche a la intemperie", [
-      `Salvación de Constitución ${roll.total} contra CD ${dc}: <b>aguanta</b>. Las heridas no mejoran, pero tampoco empeoran.`
-    ], { extra: guia(actor, ["intemperie", "malherido", "heridant", "agotamiento", "secuela"]) });
-  }
-  const nuevo = Math.min(exh + 1, sistema.agotamientoMax());
-  await actor.update(sistema.datosAgotamiento(nuevo));
-  return publicar(actor, "🌲 Noche a la intemperie", [
-    `Salvación de Constitución ${roll.total} contra CD ${dc}: <b>falla</b>. Las heridas empeoran: <b>+1 Agotamiento</b> (${exh} → ${nuevo}).`
-  ], { extra: guia(actor, ["intemperie", "malherido", "heridant", "agotamiento", "secuela"]) });
-}
-
 /** Después de un Descanso Largo en Santuario (lo procesa el DM). */
 async function despuesDescanso(actor, { cuenta }) {
   const L = [];
