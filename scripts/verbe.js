@@ -30,6 +30,7 @@ import { clonDe, limitesClones, repartoClones } from "./verbe-clones.js";
 import { iconoTecnica, iconoDote, esGenerico } from "./verbe-iconos.js";
 import { ventanaLinaje, linajeDeEleccion, pasosOjo } from "./linaje-diario.js";
 import { linajePortador, LINAJE_ALA } from "./sangre-sosten.js";
+import { ESTADO_MANO_ROTA, consecuenciasDelChoque } from "./choque-consecuencias.js";
 import { ESTADOS_RUPTURA, DEFENSAS, defensaDe, ponerDefensa, bonoDefensa, defensaSugerida } from "./ruptura.js";
 import { DADOS_VERBE, dadoNivel, modoReserva, reservaBase, nivelesSinTirar } from "./verbe-reserva.js";
 import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_NATURALEZA, MODOS_SEGUNDA, modoSegunda, modoNaturaleza, siguienteDescubrimiento, requisitoDescubrir, diasRestantes } from "./verbe-etapas.js";
@@ -107,7 +108,9 @@ export const ESTADOS = {
     changes: [{ key: "system.attributes.movement.walk", mode: 2, value: "-3" }],
     texto: "−10 ft de velocidad cada vez; con velocidad 0, queda Apresado por el hielo." },
   // 3.28: la ruptura (Brecha, Grieta, Quebrado). Las técnicas y las acciones de cualquiera las imponen.
-  ...ESTADOS_RUPTURA
+  ...ESTADOS_RUPTURA,
+  // 3.29: el contragolpe de un choque puede reventar la mano.
+  ...ESTADO_MANO_ROTA
 };
 const TIPO_NAT = { fuego: "fire", agua: "bludgeoning", viento: "slashing", tierra: "bludgeoning", rayo: "lightning", escarcha: "cold",
   raiz: "piercing", magma: "fire", vapor: "fire", ceniza: "fire", tormenta: "lightning", hierro: "piercing", corriente: "lightning",
@@ -3137,6 +3140,7 @@ export async function resolverChoque(A, B, {automatico=false} = {}) {
     L.push(resultado.dados ? `Sin ventaja elemental deciden los dados: Control ${ta} + grado ${A.g} contra Control ${tb} + grado ${B.g}.` : `Potencia efectiva igualada: Control ${ta} contra ${tb}.`);
   }
   L.push(gana ? `<b>Gana ${escH(gana > 0 ? A.nombre : B.nombre)}</b>: la otra se deshace y la ganadora sigue.` : "<b>Empate</b>: las dos se anulan.");
+  consecuenciasDelChoque(A, B, gana, ciclo).catch(err => console.error(`${MOD} | lo que deja el choque`, err));
   if(automatico) await aLaMesa(A.actor,"Choque de técnicas",`<p>${L.slice(0,-1).join("<br>")}</p><p>${gana>0?"La atacante supera la intercepción y continúa contra este objetivo.":gana<0?"La contratécnica intercepta el lanzamiento contra su defensor.":"Empate: las técnicas se anulan contra este objetivo."} El choque no concede un ataque adicional.</p>`);
   else await susurrarDM("Choque", `<p>${L.join("<br>")}</p>`);
   return gana;

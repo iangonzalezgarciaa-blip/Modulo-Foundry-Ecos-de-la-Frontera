@@ -30,6 +30,7 @@ import "./acciones-comunes.js";
 import "./pase-dm.js";
 import "./ruptura.js";
 import "./defensa-pedida.js";
+import "./choque-consecuencias.js";
 import "./tecnica-arma.js";
 import "./mercader.js";
 import "./combate-tactico.js";
@@ -10119,7 +10120,7 @@ async function migrar() {
 Hooks.once("ready", () => {
   RELOJ_PREVIO = game.settings.get(MOD, "relojBarrera");
   game.socket.on(`module.${MOD}`, d => {
-    if (d?.ctl || d?.pase || d?.defensa) return; // control del jugador (mesa-control.js), pase del DM (pase-dm.js) y defensa a pedido (defensa-pedida.js)
+    if (d?.ctl || d?.pase || d?.defensa || d?.choqueCons) return; // control del jugador (mesa-control.js), pase del DM (pase-dm.js) y defensa a pedido (defensa-pedida.js)
     if (!manejarSoulSocket(d)) manejarSocket(d);
   });
   try {

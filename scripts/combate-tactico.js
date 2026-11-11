@@ -163,12 +163,13 @@ export function hechosEvaluar(datos, total, cd) {
 /* ---------- 9 · Terreno vivo ---------- */
 /** Elementos del terreno: palabra clave en el nombre de la región → salvación, CD y resultado. */
 export const TERRENO = [
-  { clave: /l[aá]mpara|candelabro|antorcha|brasero/i, nombre: "Lámpara o fuego", salv: "dex", dano: [2, 6, "fire"], estados: ["ardiendo"], texto: "Cae o se vuelca: quien está dentro salva DES o recibe 2d6 fuego y queda Ardiendo." },
+  { clave: /l[aá]mpara|candelabro|antorcha|brasero|brasas|llamas|incendio/i, nombre: "Lámpara o fuego", salv: "dex", dano: [2, 6, "fire"], estados: ["ardiendo"], texto: "Cae o se vuelca: quien está dentro salva DES o recibe 2d6 fuego y queda Ardiendo." },
   { clave: /aceite|grasa|hielo|barro/i, nombre: "Suelo resbaladizo", salv: "dex", estados: ["prone"], texto: "Quien está dentro salva DES o cae Derribado." },
   { clave: /cornisa|borde|precipicio|barandilla/i, nombre: "Borde", salv: "str", dano: [2, 6, "bludgeoning"], estados: ["prone"], texto: "Lo empujas por el borde: salva FUE o cae, recibe 2d6 contundente y queda Derribado abajo." },
-  { clave: /escombro|techo|viga|estanter[ií]a|derrumbe/i, nombre: "Derrumbe", salv: "dex", dano: [3, 6, "bludgeoning"], estados: ["restrained"], texto: "Lo tiras encima: quien está dentro salva DES o recibe 3d6 contundente y queda Apresado bajo los escombros." },
+  { clave: /escombro|techo|viga|estanter[ií]a|derrumbe|cr[aá]ter/i, nombre: "Derrumbe", salv: "dex", dano: [3, 6, "bludgeoning"], estados: ["restrained"], texto: "Lo tiras encima: quien está dentro salva DES o recibe 3d6 contundente y queda Apresado bajo los escombros." },
   { clave: /cuerda|red|cadena|telar/i, nombre: "Cuerdas", salv: "dex", estados: ["restrained"], texto: "Lo enredas: quien está dentro salva DES o queda Apresado." },
   { clave: /humo|polvo|harina|ceniza/i, nombre: "Humo o polvo", salv: "con", estados: ["blinded"], texto: "Lo levantas: quien está dentro salva CON o queda Cegado hasta el final de su próximo turno." },
+  { clave: /chispas|cargad|metal electrizado/i, nombre: "Chispas", salv: "con", dano: [2, 6, "lightning"], estados: ["cargado"], texto: "Lo empujas al suelo cargado: quien está dentro salva CON o recibe 2d6 relámpago y queda Cargado." },
   { clave: /agua|charco|r[ií]o|cubo/i, nombre: "Agua", salv: null, estados: ["empapado"], texto: "Lo empapas: queda Empapado (resiste el fuego, le hace más daño el rayo). Sin salvación." }
 ];
 /** Qué elemento es una región por su nombre «Terreno vivo: …» (null si no es una). */

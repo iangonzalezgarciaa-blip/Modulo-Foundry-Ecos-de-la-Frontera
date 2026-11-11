@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.29.0 — 2026-11-11
+
+- **Lo que deja un choque de técnicas** (pedido del autor). Si los grados de las dos técnicas suman 3 o más, el choque **estalla** en el punto del impacto: 5 ft de radio por cada 3 grados (hasta 30 ft), daño del elemento que gana (o de fuerza), y cada token dentro salva DES para la mitad. El lugar queda dibujado como región **«Terreno vivo: …»** (brasas, charco, escombros, polvo, chispas o cráter), que «Aprovechar el terreno» reconoce y deja usar contra otros. Quien pierde por 3 o más (contando el elemento) se lleva el **contragolpe**: daño de fuerza y Desequilibrado; por 5 o más, **Mano rota** (sin Gestos hasta un Descanso Largo o curación mágica). Dos técnicas enormes empatadas rebotan en las dos manos. Ajuste «Lo que deja un choque de técnicas».
+- «Aprovechar el terreno» reconoce brasas, llamas, chispas y cráteres.
+
 ## 3.28.0 — 2026-11-11
 
 Pedidos del autor: D&D es el cañón de golpe y el Verbe ablanda; las criaturas de VD ½ o más son durísimas.
