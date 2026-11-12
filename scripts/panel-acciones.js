@@ -26,7 +26,7 @@ function html(actor) {
   const pip = k => `<button type="button" class="ecos-pa-pip ${t?.[k] ? "gastada" : ""}" data-pip="${k}" ${c ? "" : "disabled"} title="${ACCIONES_DND[k]}${t?.[k] ? " (gastada: clic para devolverla)" : ""}">${ACCIONES_DND[k]}</button>`;
   const mov = t ? `${movimientoRestante(t, velocidad(actor))} / ${velocidad(actor) + (Number(t.extra) || 0)} ft` : `${velocidad(actor)} ft`;
   const plegado = leerLS("panelPlegado", false);
-  return `<header data-arrastre><img src="${esc(actor.img)}" alt=""><b>${esc(actor.name)}</b><button type="button" data-plegar title="${plegado ? "Desplegar" : "Plegar"}">${plegado ? "+" : "–"}</button></header>
+  return `<header data-arrastre><img src="${esc(actor.img)}" alt=""><b>${esc(actor.name)}</b>${actor.isOwner ? `<button type="button" data-festejo title="Tu frase del 20 y del 1 natural (festejo a pantalla completa)"><i class="fa-solid fa-star"></i></button>` : ""}<button type="button" data-plegar title="${plegado ? "Desplegar" : "Plegar"}">${plegado ? "+" : "–"}</button></header>
     ${plegado ? "" : `<div class="ecos-pa-turno">${["accion", "adicional", "reaccion"].map(pip).join("")}<span class="ecos-pa-mov" title="Movimiento que queda"><i class="fa-solid fa-shoe-prints"></i> ${mov}</span></div>
     ${c ? "" : `<p class="ecos-pa-nota">Fuera de combate: las acciones se cuentan solo en un combate.</p>`}
     <div class="ecos-pa-acciones">${ACCIONES_BASICAS.map(a => `<button type="button" data-accion="${a.id}" title="${esc(a.n)} · ${a.tipo === "reaction" ? "Reacción" : "Acción"}\n${esc(a.que)}"><i class="fa-solid ${ICONO[a.id] ?? "fa-circle"}"></i><span>${esc(a.n)}</span></button>`).join("")}</div>`}`;
@@ -44,6 +44,7 @@ function pintar() {
 }
 async function alClic(ev) {
   const actor = actorActual(); if (!actor) return;
+  if (ev.target.closest("[data-festejo]")) return game.modules.get(MOD)?.api?.festejo?.frase?.(actor);
   const pl = ev.target.closest("[data-plegar]"); if (pl) { guardarLS("panelPlegado", !leerLS("panelPlegado", false)); return pintar(); }
   const p = ev.target.closest("[data-pip]");
   if (p) { const combat = combateActivo(), c = combat?.combatants?.find?.(x => x.actor === actor || x.actorId === actor.id); if (c) await cambiarTurno(c.id, { op: "alternar", clave: p.dataset.pip }); return; }

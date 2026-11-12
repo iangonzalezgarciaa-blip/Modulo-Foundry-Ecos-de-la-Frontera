@@ -812,3 +812,54 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-reaccion-aviso ul { margin: 4px 0; padding-left: 16px; }
 .ecos-reaccion-aviso li { margin-bottom: 6px; }
 .ecos-reaccion-aviso button { margin-top: 3px; width: auto; padding: 1px 8px; line-height: 1.6; }
+
+/* 3.47 · Festejo del 20 natural: corte a pantalla completa (destello, banda en diagonal, retrato y grito) */
+#ecos-festejo { position: fixed; inset: 0; z-index: 10000; overflow: hidden; cursor: pointer; pointer-events: auto;
+  --c1: #f6d365; --c2: #b8860b; --c3: #3a2a05; font-family: "Modesto Condensed", "Signika", sans-serif; }
+#ecos-festejo .ef-velo { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 25%, rgba(0, 0, 0, 0.8) 100%), rgba(0, 0, 0, 0.35); animation: ef-aparece 0.2s ease-out both; }
+#ecos-festejo .ef-flash { position: absolute; inset: 0; background: #fff; mix-blend-mode: screen; animation: ef-flash 0.4s ease-out both; pointer-events: none; }
+#ecos-festejo .ef-banda { position: absolute; left: -15%; right: -15%; top: 50%; height: 34vh; transform: translateY(-50%) skewY(-7deg); overflow: hidden;
+  background: linear-gradient(90deg, var(--c3) 0%, var(--c2) 30%, var(--c1) 62%, var(--c2) 85%, var(--c3) 100%);
+  box-shadow: 0 0 50px var(--c2), inset 0 3px 0 rgba(255, 255, 255, 0.55), inset 0 -3px 0 rgba(255, 255, 255, 0.55); animation: ef-banda 0.3s cubic-bezier(0.2, 0.9, 0.2, 1) both; }
+#ecos-festejo .ef-lineas { position: absolute; inset: 0; opacity: 0.85;
+  background: repeating-linear-gradient(90deg, transparent 0 60px, rgba(255, 255, 255, 0.45) 60px 63px, transparent 63px 170px),
+    repeating-linear-gradient(90deg, transparent 0 17px, rgba(255, 255, 255, 0.14) 17px 18px);
+  background-size: 340px 100%, 90px 100%; animation: ef-lineas 0.28s linear infinite; }
+#ecos-festejo .ef-retrato { position: absolute; right: 5vw; top: 50%; width: 34vw; height: 62vh; overflow: hidden; padding: 6px 7px; box-sizing: border-box; background: linear-gradient(160deg, #fff, var(--c1) 30%, var(--c2));
+  clip-path: polygon(14% 0, 100% 0, 86% 100%, 0 100%); filter: drop-shadow(0 0 18px var(--c1));
+  animation: ef-retrato 0.5s 0.08s cubic-bezier(0.15, 0.9, 0.25, 1.15) both; }
+#ecos-festejo .ef-retrato::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 55%, rgba(255, 255, 255, 0.35) 60%, transparent 66%); animation: ef-brillo 0.9s 0.45s ease-out both; }
+#ecos-festejo .ef-foto { width: 100%; height: 100%; overflow: hidden; background: var(--c3); clip-path: polygon(13.5% 0, 100% 0, 86.5% 100%, 0 100%); }
+#ecos-festejo .ef-retrato img { width: 100%; height: 100%; object-fit: cover; object-position: top center; border: 0; animation: ef-zoom 2.8s ease-out both; }
+#ecos-festejo .ef-texto { position: absolute; left: 6vw; top: 50%; transform: translateY(-50%); max-width: 62vw; z-index: 2; }
+#ecos-festejo .ef-grito { font-size: clamp(48px, 9vw, 160px); font-weight: 900; font-style: italic; line-height: 0.95; letter-spacing: 0.01em; text-transform: uppercase; white-space: nowrap;
+  color: transparent; background: linear-gradient(180deg, #fff 0%, var(--c1) 48%, var(--c2) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-stroke: 2px var(--c3);
+  filter: drop-shadow(0 0 14px var(--c2)) drop-shadow(5px 7px 0 rgba(0, 0, 0, 0.65)); animation: ef-golpe 0.4s 0.22s cubic-bezier(0.2, 1.5, 0.4, 1) both; }
+#ecos-festejo .ef-nombre { display: inline-block; margin-top: 0.35em; padding: 0.12em 1.2em 0.12em 0.6em; font-size: clamp(16px, 2.3vw, 36px); font-weight: 700; color: #fff;
+  text-shadow: 0 2px 4px #000; background: linear-gradient(90deg, rgba(0, 0, 0, 0.75), transparent); border-left: 5px solid var(--c1); animation: ef-desliza 0.35s 0.48s ease-out both; }
+#ecos-festejo .ef-nombre span { color: var(--c1); }
+#ecos-festejo .ef-chispas { position: absolute; left: 32%; top: 50%; z-index: 1; pointer-events: none; }
+#ecos-festejo .ef-chispas i { position: absolute; width: 14px; height: 3px; border-radius: 2px; background: var(--c1); box-shadow: 0 0 10px var(--c1), 0 0 3px #fff;
+  transform: rotate(var(--r)); animation: ef-chispa var(--t) 0.3s ease-out both; }
+#ecos-festejo.ef-sale { animation: ef-desaparece 0.32s ease-in both; }
+#ecos-festejo.ef-sale .ef-banda { animation: ef-banda-sale 0.32s ease-in both; }
+#ecos-festejo.ef-uno .ef-retrato img { filter: grayscale(1) contrast(1.25) brightness(0.8); }
+#ecos-festejo.ef-uno .ef-grito { animation: ef-cae 0.55s 0.2s cubic-bezier(0.6, 0, 0.8, 0.4) both; }
+#ecos-festejo.ef-uno .ef-velo { background: radial-gradient(ellipse at center, rgba(120, 0, 0, 0.15) 20%, rgba(20, 0, 0, 0.88) 100%); }
+#ecos-festejo.ef-uno .ef-lineas { animation-duration: 1.4s; opacity: 0.5; }
+body.ecos-festejo-temblor #board, body.ecos-festejo-temblor #ecos-festejo { animation: ef-temblor 0.5s linear both; }
+@keyframes ef-aparece { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ef-desaparece { to { opacity: 0; } }
+@keyframes ef-flash { 0% { opacity: 0; } 15% { opacity: 0.9; } 100% { opacity: 0; } }
+@keyframes ef-banda { from { transform: translateY(-50%) skewY(-7deg) translateX(-110%); } to { transform: translateY(-50%) skewY(-7deg) translateX(0); } }
+@keyframes ef-banda-sale { to { transform: translateY(-50%) skewY(-7deg) translateX(110%); } }
+@keyframes ef-lineas { from { background-position: 0 0, 0 0; } to { background-position: -340px 0, -90px 0; } }
+@keyframes ef-retrato { from { transform: translate(70vw, -50%); } to { transform: translate(0, -50%); } }
+@keyframes ef-zoom { from { transform: scale(1.3); } to { transform: scale(1.08); } }
+@keyframes ef-brillo { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
+@keyframes ef-golpe { 0% { opacity: 0; transform: scale(2.6) rotate(-4deg); } 70% { opacity: 1; transform: scale(0.94) rotate(0); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes ef-cae { 0% { opacity: 0; transform: translateY(-60vh) rotate(-8deg); } 75% { opacity: 1; transform: translateY(4px) rotate(3deg); } 100% { opacity: 1; transform: translateY(0) rotate(2deg) skewX(-6deg); } }
+@keyframes ef-desliza { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes ef-chispa { from { opacity: 1; transform: translate(0, 0) rotate(var(--r)) scaleX(1.4); } to { opacity: 0; transform: translate(var(--x), var(--y)) rotate(var(--r)) scaleX(0.3); } }
+@keyframes ef-temblor { 0%, 100% { translate: 0 0; } 15% { translate: -9px 5px; } 30% { translate: 8px -6px; } 45% { translate: -6px 4px; } 60% { translate: 5px -3px; } 80% { translate: -2px 2px; } }
+@media (prefers-reduced-motion: reduce) { #ecos-festejo, #ecos-festejo * { animation-duration: 0.01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; } }

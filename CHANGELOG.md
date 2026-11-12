@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.47.0 — 2026-11-12
+
+- **Festejo del 20 natural** (en lugar de Yugen Criticals, que no corre en Foundry 14.370): corte a pantalla completa al estilo de los RPG tácticos japoneses, con destello, banda en diagonal con líneas de velocidad, el retrato del personaje y el grito («¡CRÍTICO!», «¡20 NATURAL!», «¡SE LEVANTA!» en la salvación de muerte; «¡PIFIA!» en rojo con un 1). Color según la naturaleza del Verbe. Lo ven todos los que ven la tirada, espera a los dados 3D y un clic lo salta. Frase propia por personaje (estrella en el panel de acciones). Menú del DM → Mesa → «Festejo del 20»: probar, lanzar a todos a mano y poner frases. Ajustes: apagarlo, solo PJ o también PNJ, el 1, solo ataques, sonido; el temblor se apaga por jugador.
+
 ## 3.46.0 — 2026-11-12
 
 - **Ventaja y desventaja por estados** (dnd5e no las aplica): atacar a quien está Derribado (a 1,5 m o lejos), Esquivando, Cegado, Apresado, Aturdido, Paralizado, Inconsciente, Petrificado o Invisible; y los estados de quien ataca (Cegado, Derribado, Apresado, Invisible, Escondido). A distancia: enemigo a 1,5 m o más allá del alcance normal. El motivo sale en la tirada y se puede cambiar a mano. Las salvaciones de FUE y DES que fallan solas lo avisan. Ajuste «Ventaja y desventaja por estados».

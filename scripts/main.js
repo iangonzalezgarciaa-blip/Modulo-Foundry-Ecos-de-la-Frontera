@@ -38,6 +38,7 @@ import "./balance-encuentro.js";
 import "./panel-acciones.js";
 import "./ventaja-estados.js";
 import "./reacciones-verbe.js";
+import "./festejo-20.js";
 import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
@@ -9184,6 +9185,7 @@ const OPS_PANEL = [
     ["relojesFaccion", "Relojes de facción", "fa-clock", "El reloj de cada facción del mundo: avanzan solos con la fama de los PJ o con los días (cada avance con Deshacer) y aquí los mueves a mano. Qué pasa cuando cada uno se llena."],
     ["siluetas", "Tokens a silueta", "fa-user-secret", "Elige qué criaturas y PNJ con imagen del sistema o de un módulo de arte vuelven a la silueta (también en las escenas). Guarda la imagen anterior: «Deshacer todas» la devuelve."],
     ["balance", "Balance del encuentro", "fa-scale-balanced", "Elige el grupo: te dice si lo que hay en la escena es trivial, bajo, moderado, alto o letal, y qué sumar para un combate interesante (táctico), trivial o alto, con criaturas de tu mundo y un botón para colocarlas (y deshacer). También sale solo al arrastrar una criatura hostil."],
+    ["festejo", "Festejo del 20", "fa-star", "Con un 20 natural sale a pantalla completa el retrato de quien tiró con un grito, para todos. Aquí lo pruebas, lo lanzas a mano a todos o pones la frase de un personaje."],
     ["viaje", "Viaje por zonas", "fa-route", "Zona, días y ritmo: tira encuentros y hallazgos por día, avanza el reloj (anuncio del día, suceso, clima y relojes) y deja un resumen con «Deshacer» y un botón para armar cada encuentro."],
     ["sucesoDia", "Suceso de la estación", "fa-calendar-day", "Tabla de la estación (Mundo 14): tirar, elegir a mano, deshacer o volver al anterior; apaga el automático."],
     ["capasAbismo", "Capas del Abismo", "fa-stairs", "En qué capa está la escena, cruzar umbrales hacia afuera con su cobro (salvación, Agotamiento, daño y estados automáticos) y la llamada del amanecer. Explica la mecánica paso a paso."],
@@ -9540,6 +9542,7 @@ async function ejecutarPanel(op) {
     case "siluetas": await api?.siluetas?.(); break;
     case "viaje": await api?.viaje?.(); break;
     case "balance": await api?.balance?.(); break;
+    case "festejo": await api?.festejo?.abrir?.(); break;
     case "traducirFichas": await api?.abrirTraducir?.(); break;
     case "estado": game.journal.get("G0rD0J3JkpOkXM00")?.pages.find(p => p.getFlag(MOD, "estado"))?.sheet?.render(true); break;
     case "tirada":
