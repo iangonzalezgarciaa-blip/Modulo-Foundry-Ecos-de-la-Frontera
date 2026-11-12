@@ -1,5 +1,14 @@
 # Historial de cambios
 
+## 3.64.0 — 2026-11-12
+
+- **Dado de control (regla nueva del autor).** A todo costo de Verbe se le suma un dado que baja con la etapa: Aprendiz +1d4, Practicante +1d3, Iniciado +1d2, Pleno +1d2−1. El dado nunca impide usar la técnica (si no alcanza, se lleva lo que quede hasta el límite). La ficha dice «cuesta 2 + 1d4» y el recibo de la tarjeta, cuánto salió. Ajuste «Verbe: dado de control»; el DM corrige el gasto desde el recibo.
+- **Dotes: dones y dotes entrenadas.** Auditadas las 472: 259 dones (de nacimiento, de sangre, de la naturaleza, legados) y 213 entrenadas (técnicas y entrenamientos). Las entrenadas se pagan con Trazos y se entrenan: 2 h, 4 h, 8 h, 2, 3 o 4 días según sus Trazos, una tirada por bloque (Control del Verbe, Sabiduría por instinto o, con guía, la característica elegida); un 20 natural la da al instante; un 1 pierde un bloque. «Dejar» devuelve los Trazos; el DM: «Dar por aprendida» y ↔ para cambiar una dote de don a entrenada. Informe en docs/DOTES_DONES_Y_ENTRENADAS.md. Ajuste «Verbe: dotes entrenadas».
+- **Pestaña «Entrenando»** en el panel del Verbe: técnicas en estudio, dotes en entrenamiento, naturaleza, tu etapa y qué te falta para la siguiente, y **Entrenar o meditar** para ganar Trazos (CD 15; 5 días buenos = 1 Trazo, 4 con compañero, 3 con sensei; hasta 2 por nivel).
+- **Filtros**: Mis técnicas por activación (Acción Verbe, Adicional Verbe, Reacción Verbe, Fuera de combate); Aprender: «Solo las que estoy entrenando»; Dotes: por tipo y «Entrenando ahora».
+- **Guardia de Verbe**: +1 a la CA y +1 a todas las salvaciones hasta tu próximo turno.
+- **Plan de estudios del sensei** (Reglas de la casa → 19): fases 0 a 4, qué enseña, qué se hace en la hoja, Trazos, días, CD y la prueba de cada etapa (Practicante CD 13, Iniciado CD 15, Pleno CD 18).
+
 ## 3.63.0 — 2026-11-12
 
 - **Armas legendarias con etapas.** Las 17 armas legendarias del Verbe (Fauces de la Marea, Segadora del Vado, Trueno en Láminas, Gemelas de la Tormenta, Abanico de los Cinco Vientos…) son ahora objetos de D&D de verdad en Objetos → Reliquias del Abismo → «3 · Armas legendarias», con su manual en «1 · Manual del DM». Llegan sin identificar y funcionan como un arma (escudo u objeto) común; Dormida +1 con sintonía; Despierta +2 y su poder como actividad de la hoja con sus usos; Resonante +3 y el poder completo. Siguen contando como artefacto equipado para las técnicas del Verbe. «Estudiar», «Subir etapa», «Bajar» e «Historia secreta» igual que las reliquias.

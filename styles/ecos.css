@@ -1157,3 +1157,9 @@ a.ecos-estado-link:hover { color: #b8862b; text-decoration-style: solid; }
 .ecos-reliquia-oculta { border-left: 3px solid #6b5a8a; padding-left: 8px; }
 .window-header .ecos-estudiar-reliquia { color: #c9b8ff; }
 .window-header .ecos-historia-reliquia { color: #d9a441; }
+
+/* 3.64 · Dones y dotes entrenadas, pestaña Entrenando */
+.ecos-verbe-panel h3.ev-tipo-dote { margin: 14px 0 4px; border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent); }
+.ecos-verbe-panel h3.ev-tipo-dote small { display: block; font-weight: normal; font-size: 11px; opacity: .75; }
+.ecos-verbe-panel button.ev-mini { padding: 0 6px; min-width: 0; line-height: 1.4; font-size: 11px; }
+.ecos-verbe-panel .ev-chips-act { margin-top: 4px; }
