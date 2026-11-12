@@ -1,10 +1,10 @@
-# Cobertura declarada del catálogo 3.67.0
+# Cobertura declarada del catálogo 3.68.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **949 técnicas y 474 dotes**.
+El catálogo reúne **949 técnicas y 510 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
@@ -1223,6 +1223,42 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `tacto-archivero` | Tacto del archivero | 1 | rama Rastro | Texto/mesa |
 | `control-instinto` | Control por instinto | 2 | — | Texto/mesa |
 | `control-presencia` | Control por presencia | 2 | Práctica de Control | Texto/mesa |
+| `estilo-forma` | Forma certera | 2 | rama Forma, Entrenado | Texto/mesa |
+| `estilo-forma-2` | Forma que estalla | 3 | Forma certera; nivel 5; rama Forma, Experto | Texto/mesa |
+| `oficio-forma` | Elemento en la mano | 2 | rama Forma, Entrenado | Texto/mesa |
+| `estilo-velo` | La duda que queda | 2 | rama Velo, Entrenado | Texto/mesa |
+| `estilo-velo-2` | Velo que no suelta | 3 | La duda que queda; nivel 5; rama Velo, Experto | Texto/mesa |
+| `oficio-velo` | Rostro prestado | 2 | rama Velo, Entrenado | Texto/mesa |
+| `estilo-cuerpo` | Golpe y paso | 2 | rama Cuerpo, Entrenado | Texto/mesa |
+| `estilo-cuerpo-2` | Golpe salvaje | 3 | Golpe y paso; nivel 5; rama Cuerpo, Experto | Texto/mesa |
+| `oficio-cuerpo` | Cuerpo de atleta | 2 | rama Cuerpo, Entrenado | ae |
+| `estilo-mirada` | Leer el golpe | 2 | rama Mirada, Entrenado | Texto/mesa |
+| `estilo-mirada-2` | Ojo que anticipa | 3 | Leer el golpe; nivel 5; rama Mirada, Experto | Texto/mesa |
+| `oficio-mirada` | Ver lo oculto | 2 | rama Mirada, Entrenado | Texto/mesa |
+| `estilo-sello` | Barrera atenta | 2 | rama Sello, Entrenado | Texto/mesa |
+| `estilo-sello-2` | Sello que corta | 3 | Barrera atenta; nivel 5; rama Sello, Experto | Texto/mesa |
+| `oficio-sello` | Inscriptor | 2 | rama Sello, Entrenado | Texto/mesa |
+| `estilo-pacto` | Codo a codo | 2 | rama Pacto, Entrenado | Texto/mesa |
+| `estilo-pacto-2` | Llamada firme | 3 | Codo a codo; nivel 5; rama Pacto, Experto | Texto/mesa |
+| `oficio-pacto` | Mensajero del pacto | 2 | rama Pacto, Entrenado | Texto/mesa |
+| `estilo-pulso` | Manos que cierran | 2 | rama Pulso, Entrenado | Texto/mesa |
+| `estilo-pulso-2` | Pulso que hiere | 3 | Manos que cierran; nivel 5; rama Pulso, Experto | Texto/mesa |
+| `oficio-pulso` | Sanador | 2 | rama Pulso, Entrenado | ae |
+| `estilo-hilo` | Mano de lanzador | 2 | rama Hilo, Entrenado | Texto/mesa |
+| `estilo-hilo-2` | Puntería del hilo | 3 | Mano de lanzador; nivel 5; rama Hilo, Experto | Texto/mesa |
+| `oficio-hilo` | Mecánico de marionetas | 2 | rama Hilo, Entrenado | Texto/mesa |
+| `estilo-quietud` | Centinela del mundo | 2 | rama Quietud, Entrenado | Texto/mesa |
+| `estilo-quietud-2` | Contragolpe | 3 | Centinela del mundo; nivel 5; rama Quietud, Experto | Texto/mesa |
+| `oficio-quietud` | Lengua de lo salvaje | 2 | rama Quietud, Entrenado | ae |
+| `estilo-rastro` | Presa marcada | 2 | rama Rastro, Entrenado | Texto/mesa |
+| `estilo-rastro-2` | El punto débil | 3 | Presa marcada; nivel 5; rama Rastro, Experto | Texto/mesa |
+| `oficio-rastro` | Rastreador | 2 | rama Rastro, Entrenado | ae |
+| `estilo-umbral` | Paso que golpea | 2 | rama Umbral, Entrenado | Texto/mesa |
+| `estilo-umbral-2` | Cambio de lugar | 3 | Paso que golpea; nivel 5; rama Umbral, Experto | Texto/mesa |
+| `oficio-umbral` | Viajero de umbrales | 2 | rama Umbral, Entrenado | Texto/mesa |
+| `estilo-vasija` | Furia de la bestia | 2 | rama Vasija, Entrenado | Texto/mesa |
+| `estilo-vasija-2` | Aguante de la bestia | 3 | Furia de la bestia; nivel 5; rama Vasija, Experto | Texto/mesa |
+| `oficio-vasija` | Sentidos de la bestia | 2 | rama Vasija, Entrenado | Texto/mesa |
 | `legado-maethra-marca` | Hija del primer sueño | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
 | `legado-maethra-1-1` | Raíz que sostiene | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
 | `legado-maethra-1-2` | Bosque en la sangre | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |

@@ -1,6 +1,6 @@
 {
   "tecnicas": 949,
-  "dotes": 474,
+  "dotes": 510,
   "nuevas": 64,
   "dotesDetalle": [
     {
@@ -3389,6 +3389,572 @@
         "dotes": [
           "practica-control"
         ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-forma",
+      "nombre": "Forma certera",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "forma": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-forma-2",
+      "nombre": "Forma que estalla",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "forma": 2
+        },
+        "dotes": [
+          "estilo-forma"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-forma",
+      "nombre": "Elemento en la mano",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "forma": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-velo",
+      "nombre": "La duda que queda",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "velo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-velo-2",
+      "nombre": "Velo que no suelta",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "velo": 2
+        },
+        "dotes": [
+          "estilo-velo"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-velo",
+      "nombre": "Rostro prestado",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "velo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-cuerpo",
+      "nombre": "Golpe y paso",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "cuerpo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-cuerpo-2",
+      "nombre": "Golpe salvaje",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "cuerpo": 2
+        },
+        "dotes": [
+          "estilo-cuerpo"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-cuerpo",
+      "nombre": "Cuerpo de atleta",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "cuerpo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "estilo-mirada",
+      "nombre": "Leer el golpe",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "mirada": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-mirada-2",
+      "nombre": "Ojo que anticipa",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "mirada": 2
+        },
+        "dotes": [
+          "estilo-mirada"
+        ],
+        "tecnicas": [
+          "mirada-aster-leer"
+        ],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-mirada",
+      "nombre": "Ver lo oculto",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "mirada": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-sello",
+      "nombre": "Barrera atenta",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "sello": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-sello-2",
+      "nombre": "Sello que corta",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "sello": 2
+        },
+        "dotes": [
+          "estilo-sello"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-sello",
+      "nombre": "Inscriptor",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "sello": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-pacto",
+      "nombre": "Codo a codo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "pacto": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-pacto-2",
+      "nombre": "Llamada firme",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "pacto": 2
+        },
+        "dotes": [
+          "estilo-pacto"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-pacto",
+      "nombre": "Mensajero del pacto",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "pacto": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-pulso",
+      "nombre": "Manos que cierran",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "pulso": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-pulso-2",
+      "nombre": "Pulso que hiere",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "pulso": 2
+        },
+        "dotes": [
+          "estilo-pulso"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-pulso",
+      "nombre": "Sanador",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "pulso": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "estilo-hilo",
+      "nombre": "Mano de lanzador",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "hilo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-hilo-2",
+      "nombre": "Puntería del hilo",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "hilo": 2
+        },
+        "dotes": [
+          "estilo-hilo"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-hilo",
+      "nombre": "Mecánico de marionetas",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "hilo": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-quietud",
+      "nombre": "Centinela del mundo",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "quietud": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-quietud-2",
+      "nombre": "Contragolpe",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "quietud": 2
+        },
+        "dotes": [
+          "estilo-quietud"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-quietud",
+      "nombre": "Lengua de lo salvaje",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "quietud": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "estilo-rastro",
+      "nombre": "Presa marcada",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "rastro": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-rastro-2",
+      "nombre": "El punto débil",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "rastro": 2
+        },
+        "dotes": [
+          "estilo-rastro"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-rastro",
+      "nombre": "Rastreador",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "rastro": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficios registrados; confirma en mesa las condiciones descritas."
+    },
+    {
+      "id": "estilo-umbral",
+      "nombre": "Paso que golpea",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "umbral": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-umbral-2",
+      "nombre": "Cambio de lugar",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "umbral": 2
+        },
+        "dotes": [
+          "estilo-umbral"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-umbral",
+      "nombre": "Viajero de umbrales",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "umbral": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-vasija",
+      "nombre": "Furia de la bestia",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "vasija": 1
+        },
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "estilo-vasija-2",
+      "nombre": "Aguante de la bestia",
+      "trazos": 3,
+      "requisitos": {
+        "nivel": 5,
+        "ramas": {
+          "vasija": 2
+        },
+        "dotes": [
+          "estilo-vasija"
+        ],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "oficio-vasija",
+      "nombre": "Sentidos de la bestia",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "vasija": 1
+        },
+        "dotes": [],
         "tecnicas": [],
         "dm": false
       },

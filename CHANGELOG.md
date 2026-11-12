@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 3.68.0 — 2026-11-12
+
+- **Estilos de rama (pedido del autor: cada rama excelente en un estilo de combate y en utilidad, con dotes que se ramifican):** nueva categoría de dotes entrenadas con 36 dotes, tres por rama (salvo Sangre, que la da el linaje): un **Estilo** (rango Entrenado), un **Estilo mayor** (pide el Estilo, nivel 5 y rango Experto) y un **Oficio** para fuera de la pelea. Todas copian algo que ya existe en D&D y lo dicen («Equivale a … de D&D»): por ejemplo Quietud → Centinela y Réplica; Hilo → Estilo de armas arrojadizas y Tirador experto; Rastro → Marca del cazador y Crítico mejorado; Pulso → Discípulo de la vida y Sanador; Cuerpo → Móvil, Atacante salvaje y Atleta.
+- Los oficios con competencia (Atletismo, Medicina, Naturaleza, Supervivencia) la ponen solos en la hoja; quitar la dote la retira.
+- El plan de estudios del sensei incluye los pasos de estilo (2.6 y 3.6).
+
 ## 3.67.0 — 2026-11-12
 
 - **Fichas de técnica (pedido del autor):** cada una dice, en orden, **Qué es** (rama, grado y para qué sirve), **Aspecto** (cómo se ve: su rama, su elemento y sus gestos), **Qué hace** y **Cómo se usa**, con la Tirada, el Área y el Daño o la Curación al final. Fuera las frases de relleno («Afecta solo al objetivo…», «Lo de D&D es el golpe…») y las abreviaturas sueltas: «SAB.» ahora dice «El objetivo hace una salvación de Sabiduría».

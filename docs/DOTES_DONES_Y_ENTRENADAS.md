@@ -2,7 +2,7 @@
 
 Regla del autor (12-nov-2026): las dotes que son **dones** (de nacimiento, de la sangre, de la naturaleza o concedidos por el DM) se tienen al comprarlas; las que son **técnicas o entrenamientos** pasan a **dotes entrenadas**: después de pagar los Trazos se entrenan en bloques de horas o en días, con una tirada por bloque (Control del Verbe, Sabiduría por instinto o, con guía, la característica que elija). Un 20 natural la aprende al instante; un 1 pierde un bloque.
 
-**260 dones · 214 entrenadas** (de 474). Los 231 dones de los legados de sangre no se listan uno a uno: todos son dones.
+**260 dones · 250 entrenadas** (de 510). Los 231 dones de los legados de sangre no se listan uno a uno: todos son dones.
 
 ## Tiempo de entrenamiento según los Trazos
 
@@ -110,6 +110,42 @@ Regla del autor (12-nov-2026): las dotes que son **dones** (de nacimiento, de la
 | Sustitución refleja | Defensa | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
 | Despertador | Enseñar y despertar | 6 | Entrenada · 4 días buenos · CD 16 |
 | Maestro del Verbe | Enseñar y despertar | 6 | Entrenada · 4 días buenos · CD 16 |
+| Aguante de la bestia | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Barrera atenta | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Cambio de lugar | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Centinela del mundo | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Codo a codo | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Contragolpe | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Cuerpo de atleta | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| El punto débil | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Elemento en la mano | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Forma certera | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Forma que estalla | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Furia de la bestia | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Golpe salvaje | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Golpe y paso | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Inscriptor | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| La duda que queda | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Leer el golpe | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Lengua de lo salvaje | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Llamada firme | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Mano de lanzador | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Manos que cierran | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Mecánico de marionetas | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Mensajero del pacto | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Ojo que anticipa | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Paso que golpea | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Presa marcada | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Pulso que hiere | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Puntería del hilo | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Rastreador | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Rostro prestado | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Sanador | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Sello que corta | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Sentidos de la bestia | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Velo que no suelta | Estilos de rama | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
+| Ver lo oculto | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
+| Viajero de umbrales | Estilos de rama | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
 | Aguantar el dolor | Mente y sentidos | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
 | Doble fondo | Mente y sentidos | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
 | Firma oculta | Mente y sentidos | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |

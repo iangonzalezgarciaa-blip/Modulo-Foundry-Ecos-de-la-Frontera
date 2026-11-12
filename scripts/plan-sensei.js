@@ -49,6 +49,7 @@ ${tabla([
   fila("2.3", "Una segunda rama que complemente la primera.", "Mejorar → Especialidades → abrir la segunda rama (hasta dos en Practicante).", "Trazos del rango."),
   fila("2.4", "Mantener y romper.", "Dotes entrenadas: <b>Control sereno</b> (ventaja para mantener o romper un Velo) y <b>Concentración de hierro</b>.", "2 Trazos cada una · 4 h (CD 12)."),
   fila("2.5", "Técnicas de grado 2 y 3 de su elemento.", "Aprender técnicas → grado 2–3.", "2–3 Trazos · 3–4 días buenos (CD 12–13)."),
+  fila("2.6", "Su estilo: cómo pelea su rama y para qué sirve fuera de la pelea.", "Mejorar → Dotes entrenadas → <b>Estilos de rama</b>: el Estilo de su rama y su Oficio (piden rango Entrenado).", "2 Trazos cada una · 4 h (CD 12)."),
   fila("Prueba", "Paso a Iniciado.", "Nivel 7, naturaleza descubierta, Entrenado en dos ramas y un hito de historia. Un mes y Control CD 15.", "DM → «Abrir la siguiente etapa».")
 ])}
 <h2>Fase 3 · Iniciado (el primer año)</h2>
@@ -58,6 +59,7 @@ ${tabla([
   fila("3.3", "Chocar técnicas.", "Dotes entrenadas <b>Choque perfecto</b> y <b>Leer el flujo</b>.", "2 Trazos cada una · 4 h (CD 12)."),
   fila("3.4", "Experto en su rama.", "Mejorar → Especialidades → rango <b>Experto</b> (nivel 5+).", "3 Trazos."),
   fila("3.5", "La senda de su rama.", "Dote entrenada <b>Disciplina de [su rama]</b> (primer paso de la senda).", "2 Trazos · 4 h (CD 12)."),
+  fila("3.6", "El estilo mayor.", "Estilos de rama → el segundo paso de su Estilo (pide el Estilo, nivel 5 y rango Experto).", "3 Trazos · 2 bloques de 4 h (CD 13)."),
   fila("Prueba", "Paso a Pleno.", "Nivel 13, Experto en una rama, Disciplina de su rama y un maestro Pleno (o un hito enorme). Tres meses y Control CD 18.", "DM → «Abrir la siguiente etapa».")
 ])}
 <h2>Fase 4 · Pleno: de alumno a maestro</h2>
