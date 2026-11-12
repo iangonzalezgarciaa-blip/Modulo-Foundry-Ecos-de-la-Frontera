@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 3.46.0 — 2026-11-12
+
+- **Ventaja y desventaja por estados** (dnd5e no las aplica): atacar a quien está Derribado (a 1,5 m o lejos), Esquivando, Cegado, Apresado, Aturdido, Paralizado, Inconsciente, Petrificado o Invisible; y los estados de quien ataca (Cegado, Derribado, Apresado, Invisible, Escondido). A distancia: enemigo a 1,5 m o más allá del alcance normal. El motivo sale en la tirada y se puede cambiar a mano. Las salvaciones de FUE y DES que fallan solas lo avisan. Ajuste «Ventaja y desventaja por estados».
+- **Ayudar y Esconderse funcionan**: Ayudar deja «Ayudado» en el aliado marcado (ventaja en su próxima tirada, se gasta al usarla, con Deshacer); Esconderse tira Sigilo y deja Escondido con 15 o más (se pierde al atacar).
+- **Reacciones del Verbe a la vista**: en combate, cuando alguien ataca, a quien puede reaccionar con una técnica del Verbe a su alcance le llega un aviso con la distancia, el costo y el botón Usar; su retrato brilla en el carrusel 30 s. Solo lo ven su dueño y el DM. Ajuste «Avisar reacciones del Verbe en alcance».
+- **Botón «Acciones disponibles»** en la barra izquierda, bajo el del Verbe: muestra u oculta el panel de acciones; Mayús+clic abre la ventana completa de Acción estándar.
+- **Reliquias**: cada una trae su aspecto, qué es (lo ve el jugador) y un hito propio para llegar a Resonante (solo en el manual del DM).
+
 ## 3.45.0 — 2026-11-11
 
 - **Panel de acciones a la izquierda** (pedido del autor): sigue a la ficha seleccionada y cambia al seleccionar otro token. Muestra el turno igual que la barra de iniciativa (Acción, Adicional y Reacción —clic para devolverla— y el movimiento que queda) y las acciones estándar de D&D con su explicación al pasar el ratón: Atacar, Magia, Correr, Desengancharse, **Esquivar**, Ayudar, Esconderse, Buscar, Estudiar, Influir, Usar un objeto, Preparar y Ataque de oportunidad. Se actualiza solo, se arrastra desde su cabecera, se pliega y recuerda dónde lo dejaste. Se apaga en la configuración del módulo.

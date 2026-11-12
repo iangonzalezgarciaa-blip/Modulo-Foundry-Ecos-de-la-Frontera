@@ -20,20 +20,22 @@ export function despertarReliquia(r) {
   const cd = 10 + gradoNum(r?.grado) * 2;
   return {
     2: `De Dormida a Despierta: que su portador la use en tres escenas de peligro real; o un ritual de una noche en un Santuario con 1 Moneda Antigua; o que alguien con el Verbe despierto la sostenga durante un Descanso Largo y supere Control del Verbe CD ${cd}.`,
-    3: `De Despierta a Resonante: un hito ligado a su origen (lo marca su relato o el DM) y un portador con el Verbe en etapa Practicante o más que la lleve un mes de juego; o tocar con ella un Eco del Vorrh y sobrevivir.`
+    3: r?.hito
+      ? `De Despierta a Resonante: ${r.hito} Además, un portador con el Verbe en etapa Practicante o más que la lleve un mes de juego; o, en lugar de todo eso, tocar con ella un Eco del Vorrh y sobrevivir.`
+      : `De Despierta a Resonante: un hito ligado a su origen (lo marca su relato o el DM) y un portador con el Verbe en etapa Practicante o más que la lleve un mes de juego; o tocar con ella un Eco del Vorrh y sobrevivir.`
   };
 }
-/** Lo que ve el jugador en la copia para entregar: aspecto, lo que se cuenta y lo que hace en su etapa. Sin cómo se despierta. Puro. */
+/** Lo que ve el jugador en la copia para entregar: aspecto, qué es, lo que se cuenta y lo que hace en su etapa. Sin cómo se despierta. Puro. */
 export function textoEtapa(r, n) {
   const e = ETAPAS_RELIQUIA.find(x => x.n === Number(n)) ?? ETAPAS_RELIQUIA[0];
-  return `<div class="ecos-reliquia-etapa">${r.aspecto ? `<p><b>Aspecto.</b> ${esc(r.aspecto)}</p>` : ""}${r.relatoNimerios?.publico ? `<p><b>Lo que se cuenta.</b> ${esc(r.relatoNimerios.publico)}</p>` : ""}
+  return `<div class="ecos-reliquia-etapa">${r.aspecto ? `<p><b>Aspecto.</b> ${esc(r.aspecto)}</p>` : ""}${r.que ? `<p><b>Qué es.</b> ${esc(r.que)}</p>` : ""}${r.relatoNimerios?.publico ? `<p><b>Lo que se cuenta.</b> ${esc(r.relatoNimerios.publico)}</p>` : ""}
     <p><b>Etapa ${e.n} · ${e.nombre}.</b> ${esc(e.efecto)}</p><p><b>Qué hace.</b> ${esc(r.texto)}</p>${e.n < 3 ? "<p><i>Hay algo más en ella. Todavía no responde del todo.</i></p>" : ""}</div>`;
 }
 /** El manual del DM: qué es, aspecto, qué hace en cada etapa y cómo se despierta (oculto al jugador). Puro. */
 export function manualReliquia(r) {
   const d = despertarReliquia(r);
   return `<div class="ecos-reliquia-manual"><h2>${esc(r.nombre)}</h2><p><i>Manual del DM · grado ${esc(r.grado)} · nivel ${esc(r.nivel)} · solo tú lo ves</i></p>
-    <h3>Qué es</h3><p>${esc(r.canon ?? "")}</p>${r.aspecto ? `<h3>Aspecto</h3><p>${esc(r.aspecto)}</p>` : ""}
+    <h3>Qué es</h3><p>${esc(r.que ?? r.canon ?? "")}</p>${r.que && r.canon ? `<p><small>Origen: ${esc(r.canon)}</small></p>` : ""}${r.aspecto ? `<h3>Aspecto</h3><p>${esc(r.aspecto)}</p>` : ""}
     <h3>Qué hace</h3><p>${esc(r.texto)}</p>
     ${ETAPAS_RELIQUIA.map(e => `<h3>Etapa ${e.n} · ${e.nombre}</h3><p>${esc(e.efecto)}</p>${d[e.n] ? `<p><b>Cómo se despierta (oculto al jugador):</b> ${esc(d[e.n])}</p>` : "<p><b>Así se encuentra.</b></p>"}`).join("")}
     ${r.relatoNimerios?.publico ? `<h3>Lo que se cuenta</h3><p>${esc(r.relatoNimerios.publico)}</p>` : ""}${r.relatoNimerios?.dm ? `<h3>Gancho para el DM</h3><p>${esc(r.relatoNimerios.dm)}</p>` : ""}

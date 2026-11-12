@@ -36,6 +36,8 @@ import "./token-vista.js";
 import "./viajes.js";
 import "./balance-encuentro.js";
 import "./panel-acciones.js";
+import "./ventaja-estados.js";
+import "./reacciones-verbe.js";
 import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
@@ -4804,6 +4806,22 @@ Hooks.on("getSceneControlButtons", controls => {
       game.modules.get(MOD)?.api?.verbe?.usoRapido?.(actor);
     }
   };
+  // 3.46 (pedido del autor): «Acciones disponibles» bajo el botón del Verbe. Muestra u oculta el panel de acciones de la ficha
+  // seleccionada (turno, movimiento y acciones estándar); con Mayús abre la ventana completa de Acción estándar.
+  tokens.tools.ecosAcciones = {
+    name: "ecosAcciones",
+    title: "Acciones disponibles: tu turno (Acción, Adicional, Reacción y movimiento) y las acciones estándar de la ficha seleccionada. Mayús+clic: todas las de su hoja",
+    icon: "fa-solid fa-hand-fist",
+    button: true,
+    visible: true,
+    order: 97.5,
+    onChange: (event, active) => {
+      if (active === false) return;
+      const api = game.modules.get(MOD)?.api;
+      if (event?.shiftKey) { const actor = canvas.tokens?.controlled?.[0]?.actor ?? game.user.character; return api?.accionEstandar?.(actor); }
+      api?.panelAcciones?.alternar?.();
+    }
+  };
   tokens.tools.ecosMenu = {
     name: "ecosMenu",
     title: "Ecos: jornada de trabajo, mercadillo, calendario y todos los botones de la barra, explicados (Mayús+M)",
@@ -8718,6 +8736,7 @@ const MEGA_HERRAMIENTAS = {
   ecosPanel: "Menú del DM: todo Ecos, las hojas, toda la barra izquierda y los ajustes, cada botón explicado.",
   ecosPlantillas: "Quitar plantillas: lista las plantillas de área de la escena (en Foundry 14 son regiones) y quita las marcadas o todas.",
   ecosVerbe: "Verbe: tus técnicas en una ventana, con lo que gasta cada una (acción o reacción Verbe), alcance y duración.",
+  ecosAcciones: "Acciones disponibles: muestra u oculta el panel con tu turno y las acciones estándar de la ficha seleccionada (Mayús+clic: todas las de su hoja).",
   ecosSantuario: "Santuario SÍ/NO: decide si el Descanso Largo es completo.",
   ecosRelojes: "Relojes del valle: todos los de Tramas · 9 en una ventana, con + y −.",
   ecosClima: "El clima: elígelo a mano (cielo, viento, temperatura) o al azar, ponlo en la escena o márcala bajo techo. La tarjeta del chat dice qué cambia en el juego.",

@@ -5,6 +5,7 @@
  * el DM puede marcar a mano. Se arrastra desde su cabecera y se pliega; recuerda dónde lo dejaste en este navegador.
  */
 import { ACCIONES_BASICAS } from "./accion-estandar.js";
+import { ayudar, esconderse } from "./ventaja-estados.js";
 import { ACCIONES_DND, accionEstandar, cambiarTurno, combateActivo, datosTurno, turnoVacio, movimientoRestante } from "./turno-tracker.js";
 const MOD = "ecos-frontera";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -51,6 +52,9 @@ async function alClic(ev) {
   if (!a) return;
   if (["atacar", "magia", "objeto"].includes(a.id)) return game.modules.get(MOD)?.api?.accionEstandar?.(actor) ?? ui.notifications.info("Usa el arma, el conjuro o el objeto desde la hoja.");
   if (a.auto) return accionEstandar(actor, a.auto, { adicional: ev.shiftKey });
+  // 3.46: Ayudar pone «Ayudado» en el aliado marcado; Esconderse tira Sigilo y deja Escondido si llega a 15.
+  if (a.id === "ayudar") return ayudar(actor, { gastar: true });
+  if (a.id === "esconderse") return esconderse(actor, { gastar: true });
   // El resto: gasta la acción (o la reacción) y lo anuncia; la prueba la pide el DM.
   const combat = combateActivo(), c = combat?.combatants?.find?.(x => x.actor === actor || x.actorId === actor.id), clave = a.tipo === "reaction" ? "reaccion" : (ev.shiftKey ? "adicional" : "accion");
   const t = c ? (datosTurno(combat, c.id) ?? turnoVacio()) : null;
@@ -68,6 +72,15 @@ function alArrastrar(ev) {
 const repintar = globalThis.foundry?.utils?.debounce ? globalThis.foundry.utils.debounce(pintar, 80) : pintar;
 if (globalThis.Hooks) {
   Hooks.once("init", () => game.settings.register(MOD, "panelAcciones", { name: "Panel de acciones a la izquierda", hint: "Muestra el turno (Acción, Adicional, Reacción y movimiento) y las acciones estándar de la ficha seleccionada; se arrastra desde su cabecera.", scope: "client", config: true, type: Boolean, default: true, onChange: () => pintar() }));
-  Hooks.once("ready", () => pintar());
+  Hooks.once("ready", () => {
+    pintar();
+    // 3.46: el botón «Acciones disponibles» de la barra izquierda lo muestra u oculta (y lo despliega si estaba plegado).
+    const api = game.modules.get(MOD)?.api;
+    if (api) api.panelAcciones = { alternar: async () => {
+      const ver = !game.settings.get(MOD, "panelAcciones");
+      if (ver) guardarLS("panelPlegado", false);
+      await game.settings.set(MOD, "panelAcciones", ver);
+    }, pintar };
+  });
   for (const h of ["controlToken", "updateCombat", "updateCombatant", "deleteCombat", "createCombat", "updateActor", "canvasReady"]) Hooks.on(h, () => repintar());
 }

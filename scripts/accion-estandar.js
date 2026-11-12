@@ -15,8 +15,8 @@ export const ACCIONES_BASICAS = [
   { id: "correr", n: "Correr", tipo: "action", que: "Sumas tu velocidad otra vez este turno.", auto: "correr" },
   { id: "desenganche", n: "Desengancharse", tipo: "action", que: "Este turno tu movimiento no provoca ataques de oportunidad.", auto: "desenganche" },
   { id: "esquivar", n: "Esquivar", tipo: "action", que: "Hasta tu próximo turno, los ataques contra ti tienen desventaja y tienes ventaja en salvaciones de Destreza.", auto: "esquivar" },
-  { id: "ayudar", n: "Ayudar", tipo: "action", que: "Un aliado tiene ventaja en su próxima prueba o en su próximo ataque contra un enemigo a 1,5 m de ti.", comun: "Ayudar" },
-  { id: "esconderse", n: "Esconderse", tipo: "action", que: "Prueba de Sigilo (CD 15) si nadie te ve: quedas Escondido.", comun: "Esconderse" },
+  { id: "ayudar", n: "Ayudar", tipo: "action", que: "Marca (T) a un aliado: tiene ventaja en su próxima prueba o en su próximo ataque (antes de tu próximo turno). Queda «Ayudado» en su hoja.", comun: "Ayudar" },
+  { id: "esconderse", n: "Esconderse", tipo: "action", que: "Prueba de Sigilo (CD 15) si nadie te ve: quedas Escondido (ventaja en tu próximo ataque; atacar te delata).", comun: "Esconderse" },
   { id: "buscar", n: "Buscar", tipo: "action", que: "Prueba de Percepción, Perspicacia, Medicina o Supervivencia para notar algo o a alguien.", comun: "Buscar" },
   { id: "estudiar", n: "Estudiar", tipo: "action", que: "Prueba de Arcanos, Historia, Naturaleza, Religión o Investigación para recordar o descifrar algo.", comun: "Evaluar al enemigo" },
   { id: "influir", n: "Influir", tipo: "action", que: "Convencer, engañar o intimidar a alguien (Persuasión, Engaño, Intimidación, Interpretación o Trato con animales)." },
@@ -99,6 +99,7 @@ export async function abrirAccionEstandar(actor) {
       }
       const a = ACCIONES_BASICAS.find(x => x.id === b.dataset.aeBasica);
       if (a?.auto) { const { accionEstandar } = await import("./turno-tracker.js"); await accionEstandar(actor, a.auto); return; }
+      if (a?.id === "esconderse") { const { esconderse } = await import("./ventaja-estados.js"); await esconderse(actor, { gastar: true }); return; }
       if (a?.comun) { const act = comunDe(actor, a.comun); if (act) return act.use(); }
       if (a?.arma) { const arma = actor.items.find(i => i.type === "weapon" && (i.system?.equipped ?? true)); if (arma) return arma.system.activities?.contents?.[0]?.use?.(); }
       await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<p class="ecos-accion-estandar"><b>${esc(actor.name)}</b> usa <b>${esc(a.n)}</b>: ${esc(a.que)}</p>` });

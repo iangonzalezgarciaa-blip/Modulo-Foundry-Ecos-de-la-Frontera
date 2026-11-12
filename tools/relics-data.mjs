@@ -1,3 +1,4 @@
+import {ASPECTO} from './relics-aspecto.mjs';
 /** Nombres documentados + adaptación propia de mesa. No copia reglas de otros suplementos. */
 const wiki='https://madeinabyss.fandom.com/wiki/';
 // nombre original, traducción de mesa, grado de la obra (no grado de técnica), nivel recomendado,
@@ -105,4 +106,5 @@ const propias=[
 ];
 export const reliquiasPropias=propias.map(([id,nombre,nivel,texto,extra={}])=>({id:'nimerios-'+id,original:null,nombre,nivel,texto,grado:'creación de Nimerios',origen:'propia',canon:'Creación original para esta campaña; no pertenece a Made in Abyss ni es canon previo del panteón.',fuentes:[],...extra}));
 export const dossiers=[{id:'aubade',nombre:'Aubade',texto:'Clasificación no oficial, no un grado de técnica ni una pieza que otorgue facultades universales.'},{id:'reg',nombre:'Reg y la silueta humanoide',texto:'Seres y figuras de la narración, no objetos equipables. El perfil del Incinerador se ofrece por separado como adaptación bajo control del DM.'}];
-export default [...reliquiasSerie,...reliquiasJuego,...reliquiasPropias];
+// 3.46: aspecto, qué es y el hito propio de cada pieza.
+export default [...reliquiasSerie,...reliquiasJuego,...reliquiasPropias].map(r=>({...r,...(ASPECTO[r.id]??{})}));
