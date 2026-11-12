@@ -9,7 +9,7 @@ destination = ROOT / 'releases' / f'ecos-frontera-{version}.zip'
 destination.parent.mkdir(exist_ok=True)
 with zipfile.ZipFile(destination, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
     files = [ROOT / 'module.json', ROOT / 'README.md']
-    for folder in ['data', 'icons', 'scripts', 'styles']:
+    for folder in ['data', 'icons', 'scripts', 'styles', 'templates']:
         files.extend(p for p in (ROOT / folder).rglob('*') if p.is_file())
     for file in sorted(files):
         info = zipfile.ZipInfo('ecos-frontera/' + file.relative_to(ROOT).as_posix(), date_time=(2026, 1, 1, 0, 0, 0))

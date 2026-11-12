@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 3.53.0 — 2026-11-12
+
+- **Dotes menores por nivel (PF2e fundido con D&D)**: pestaña **Dotes** en las hojas de PJ con un hueco en cada nivel sin Mejora de característica (clase, general, ascendencia, habilidad). Al tocar un hueco vacío se abre la lista de las dotes que puede tomar por nivel, clase, especie y requisitos (y por qué no las otras). Las hojas de nivel 2 o más reciben sus huecos pendientes; número rojo en la pestaña.
+- Herencia de nivel 1 para las especies de PF2e.
+- Revertir: × en el hueco y «Deshacer» en el chat. A mano (DM): «Sin filtros», «Asignar una dote a mano», clase/ascendencia/herencia para las dotes.
+- Aviso al subir de nivel con botón a la pestaña. En los PNJ, Rasgos → «Sumar dotes de PF2e».
+- Guía «17 · Dotes menores: cómo tomarlas» en las reglas de la casa.
+
 ## 3.52.0 — 2026-11-12
 
 - **PF2e a D&D, fase 1 (datos)**: 2 874 dotes menores (generales, de habilidad, de ascendencia y de clase de las clases con equivalente en D&D), 45 especies nuevas con 334 herencias y 5 723 objetos (venenos por etapas, alquímicos, pociones, armas, armaduras, equipo y tesoros), todo en español y nivelado a D&D; lo que D&D ya tiene se omite. Van a tres compendios del mundo con carpetas («Dotes de PF2e (Ecos)», «Especies y herencias de PF2e (Ecos)», «Objetos de PF2e (Ecos)»): se cargan solos al abrir el mundo y se rehacen con «PF2e: dotes, especies y objetos» en el Menú del DM. Detalle en docs/CONVERSION_PF2E_DOTES.md.
