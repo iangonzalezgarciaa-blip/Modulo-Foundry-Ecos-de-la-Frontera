@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.52.0 — 2026-11-12
+
+- **PF2e a D&D, fase 1 (datos)**: 2 874 dotes menores (generales, de habilidad, de ascendencia y de clase de las clases con equivalente en D&D), 45 especies nuevas con 334 herencias y 5 723 objetos (venenos por etapas, alquímicos, pociones, armas, armaduras, equipo y tesoros), todo en español y nivelado a D&D; lo que D&D ya tiene se omite. Van a tres compendios del mundo con carpetas («Dotes de PF2e (Ecos)», «Especies y herencias de PF2e (Ecos)», «Objetos de PF2e (Ecos)»): se cargan solos al abrir el mundo y se rehacen con «PF2e: dotes, especies y objetos» en el Menú del DM. Detalle en docs/CONVERSION_PF2E_DOTES.md.
+
 ## 3.51.0 — 2026-11-12
 
 - **Estilos de hoja** al estilo anime de acción: letras de impacto en el nombre y los títulos, adornos en las esquinas, cabecera y colores propios. Cada jugador elige uno de cinco para su PJ (Llama, Marea, Hoja, Sombra, Tormenta) con la paleta de la cabecera de su hoja, o «Original». Los PNJ llevan «Tinta» (ajuste del mundo para cambiarlo u «Original»). Cada usuario puede no verlos («Ver los estilos de hoja»). Solo cambia colores y fondos: la hoja y sus datos no se tocan.
