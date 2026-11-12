@@ -109,7 +109,7 @@ if (globalThis.Hooks) {
     const E = estado(); let nuevo = false;
     for (const f of datos()?.facciones ?? []) {
       if (!f.cadaDias) continue;
-      if (E[f.id]?.dia == null) { E[f.id] = { valor: E[f.id]?.valor ?? 0, dia: n }; nuevo = true; continue; } // el primer día solo empieza a contar
+      if (E[f.id]?.dia == null) { E[f.id] = { valor: E[f.id]?.valor ?? (Number(f.inicio) || 0), dia: n }; nuevo = true; continue; } // el primer día solo empieza a contar (desde su valor inicial)
       if (tocaPorDias(f.cadaDias, E[f.id].dia, n)) avanzar(f.id, 1, `pasan ${f.cadaDias} días`).catch(() => null);
     }
     if (nuevo) game.settings.set(MOD, "relojesFaccion", E).catch(() => null);

@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.48.0 — 2026-11-12
+
+- **Relojes de facción**: el primer día que un reloj con ritmo propio empieza a contar parte de su valor inicial (antes partía de 0). En el mundo, las 37 facciones ya tienen su valor inicial.
+
 ## 3.47.0 — 2026-11-12
 
 - **Festejo del 20 natural** (en lugar de Yugen Criticals, que no corre en Foundry 14.370): corte a pantalla completa al estilo de los RPG tácticos japoneses, con destello, banda en diagonal con líneas de velocidad, el retrato del personaje y el grito («¡CRÍTICO!», «¡20 NATURAL!», «¡SE LEVANTA!» en la salvación de muerte; «¡PIFIA!» en rojo con un 1). Color según la naturaleza del Verbe. Lo ven todos los que ven la tirada, espera a los dados 3D y un clic lo salta. Frase propia por personaje (estrella en el panel de acciones). Menú del DM → Mesa → «Festejo del 20»: probar, lanzar a todos a mano y poner frases. Ajustes: apagarlo, solo PJ o también PNJ, el 1, solo ataques, sonido; el temblor se apaga por jugador.

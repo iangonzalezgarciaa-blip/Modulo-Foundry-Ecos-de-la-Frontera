@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.47.0
+# Preparar la primera prueba real · 3.48.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 

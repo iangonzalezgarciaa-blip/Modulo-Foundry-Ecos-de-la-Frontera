@@ -342,3 +342,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 11-nov-2026 | Mejora | Claude | Panel de acciones a la izquierda, ventanas redimensionables con rueda, reliquias en dos carpetas y arreglos. Release v3.45.0 | 3.45.0 |
 | 12-nov-2026 | Mejora | Claude | Ventaja por estados, Ayudar/Esconderse, reacciones del Verbe en alcance, botón de acciones y reliquias con aspecto. Release v3.46.0 | 3.46.0 |
 | 12-nov-2026 | Mejora | Claude | Festejo del 20 natural a pantalla completa (propio). Release v3.47.0 | 3.47.0 |
+| 12-nov-2026 | Mejora | Claude | Relojes: el conteo por días parte del valor inicial. Release v3.48.0 | 3.48.0 |
