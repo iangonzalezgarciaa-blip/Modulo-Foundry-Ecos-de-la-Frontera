@@ -994,3 +994,20 @@ button.ecos-inspiracion { margin-top: 4px; background: linear-gradient(90deg, #f
 .ecos-sd-detalle h3 img { width: 36px; height: 36px; border: none; }
 .ecos-sd-vacio { padding: 12px; opacity: 0.8; list-style: none; }
 .ecos-dote-chat h3 { margin: 0 0 4px; }
+
+/* 3.54 · Conjuros por huecos en el libro de conjuros */
+.ecos-huecos-conjuros { margin: 4px 0 8px; padding: 6px 8px; border: 1px solid var(--dnd5e-color-gold, #9f9275); border-radius: 6px; background: rgba(255, 255, 255, 0.25); display: flex; flex-direction: column; gap: 4px; }
+.ecos-hc-cab { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+.ecos-hc-cab small { flex-basis: 100%; opacity: 0.8; }
+.ecos-hc-pend { color: #9b2d1a; font-weight: bold; font-size: 0.9em; }
+.ecos-hc-clase { display: grid; grid-template-columns: 7.5em 1fr; gap: 2px 8px; align-items: center; }
+.ecos-hc-nombre { grid-row: span 2; font-family: var(--dnd5e-font-roboto-slab, serif); font-weight: bold; }
+.ecos-hc-fila { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ecos-hc-et { flex: 0 0 9.5em; font-size: 0.85em; }
+.ecos-hc-extra { color: #9b2d1a; font-style: normal; font-weight: bold; }
+.ecos-hc-chips { display: flex; flex-wrap: wrap; gap: 3px; }
+.ecos-hc-chip { width: 24px; height: 24px; border-radius: 4px; display: grid; place-items: center; }
+.ecos-hc-chip.lleno img { width: 24px; height: 24px; border: 1px solid var(--dnd5e-color-gold, #9f9275); border-radius: 4px; }
+.ecos-hc-chip.vacio { border: 2px dashed var(--dnd5e-color-gold, #9f9275); color: var(--dnd5e-color-gold, #9f9275); font-size: 11px; }
+.ecos-hc-chip.vacio[data-ecos-hc] { cursor: pointer; animation: ecos-hueco-pulso 2.4s ease-in-out infinite; }
+.ecos-hc-chip.vacio[data-ecos-hc]:hover { background: rgba(159, 146, 117, 0.25); }

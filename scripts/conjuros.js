@@ -213,7 +213,7 @@ function registrarListas(uuids) {
 }
 
 /** Nivel más alto que la clase puede lanzar, con su progresión (como hace dnd5e al subir de nivel). */
-function nivelMaximoClase(actor, cls) {
+export function nivelMaximoClase(actor, cls) {
   try {
     const A = CONFIG.Actor.documentClass, sc = cls.spellcasting;
     const progresion = Object.fromEntries(Object.keys(CONFIG.DND5E.spellcasting).map(k => [k, 0]));
@@ -247,10 +247,12 @@ async function elegirListaPNJ(actor) {
   if (!r || r === "no") return null;
   return [r, { name: NOMBRE_CLASE[r], system: { levels: Number(actor.system?.attributes?.spell?.level) || 1 }, pnj: true }];
 }
-export async function abrirLupa(actor, nivel = null, { todos = false } = {}) {
+export async function abrirLupa(actor, nivel = null, { todos = false, clase: claseFija = null, max = null, minimo = 0, preparar = false } = {}) {
   const Browser = globalThis.dnd5e?.applications?.CompendiumBrowser;
   if (!actor?.isOwner || !Browser) return;
-  const elegida = (await elegirClase(actor)) ?? (actor.type === "npc" ? await elegirListaPNJ(actor) : null);
+  // 3.54: desde un hueco vacío la clase ya viene dada y se elige como mucho lo que falta.
+  const fija = claseFija ? Object.entries(actor.spellcastingClasses ?? {}).find(([k]) => k === claseFija) ?? null : null;
+  const elegida = fija ?? (await elegirClase(actor)) ?? (actor.type === "npc" ? await elegirListaPNJ(actor) : null);
   if (!elegida) return actor.type === "npc" ? null : ui.notifications.warn("Esta hoja no tiene una clase que lance conjuros.");
   const [clase, cls] = elegida;
   const maxNivel = cls.pnj ? nivelMaximoPNJ(actor.system?.attributes?.spell?.level, actor.system?.details?.cr) : nivelMaximoClase(actor, cls);
@@ -261,19 +263,27 @@ export async function abrirLupa(actor, nivel = null, { todos = false } = {}) {
   // 3.37: «todos» quita el filtro de lista: salen todos los conjuros de D&D y de PF2e de esos niveles.
   const lista_ = !todos && globalThis.dnd5e.registry.spellLists.forType("class", clase) ? { [`class:${clase}`]: 1 } : undefined;
   const filters = { locked: { documentClass: "Item", exclusive: true, types: new Set(["spell"]), additional: {
-    level: nv != null ? { min: nv, max: nv } : { min: 0, max: maxNivel }, ...(lista_ ? { spelllist: lista_ } : {}) } } };
+    level: nv != null ? { min: nv, max: nv } : { min: Math.min(Number(minimo) || 0, maxNivel), max: maxNivel }, ...(lista_ ? { spelllist: lista_ } : {}) } } };
   const hint = mago ? `Libro de ${esc(actor.name)}: te quedan ${quedan} conjuros gratis de nivel 1 o más (6 al nivel 1 y 2 por nivel). Los trucos no cuentan. Los demás se copian al libro por 50 po y 2 horas por nivel.`
     : `Lista de ${esc(cls.name)}: hasta nivel ${maxNivel}. Añadirlos no cuesta nada; preparas los que diga tu clase.`;
-  const sel = await Browser.select({ filters, hint, selection: { min: 1, max: null } });
+  const tope = Number(max) > 0 ? Number(max) : null;
+  const sel = await Browser.select({ filters, hint: tope ? `${hint} Puedes elegir ${tope}.` : hint, selection: { min: 1, max: tope } });
   if (!sel?.size) return;
-  await anadirConjuros(actor, clase, [...sel], { mago, quedan });
+  await anadirConjuros(actor, clase, [...sel].slice(0, tope ?? undefined), { mago, quedan, preparar: preparar && !mago });
 }
 
-async function anadirConjuros(actor, clase, uuids, { mago, quedan }) {
+async function anadirConjuros(actor, clase, uuids, { mago, quedan, preparar = false }) {
   const ya = new Set(lista(actor.items).filter(i => i.type === "spell").map(i => i.system?.identifier || i.name));
-  const docs = [];
-  for (const u of uuids) { const d = await fromUuid(u); if (d && !ya.has(d.system?.identifier || d.name)) docs.push([u, d]); }
-  if (!docs.length) return ui.notifications.info("Ya tenías esos conjuros.");
+  const docs = [], aPreparar = [];
+  for (const u of uuids) {
+    const d = await fromUuid(u); if (!d) continue;
+    if (!ya.has(d.system?.identifier || d.name)) { docs.push([u, d]); continue; }
+    // 3.54: si ya lo tenía sin preparar y viene de un hueco, se prepara.
+    const it = preparar && Number(d.system?.level) >= 1 ? lista(actor.items).find(i => i.type === "spell" && (i.system?.identifier || i.name) === (d.system?.identifier || d.name) && !Number(i.system?.prepared)) : null;
+    if (it) aPreparar.push({ _id: it.id, "system.prepared": 1 });
+  }
+  if (aPreparar.length) await actor.updateEmbeddedDocuments("Item", aPreparar);
+  if (!docs.length) return ui.notifications.info(aPreparar.length ? "Preparados los que ya tenías." : "Ya tenías esos conjuros.");
   const trucos = docs.filter(([, d]) => Number(d.system.level) === 0);
   const nivelados = docs.filter(([, d]) => Number(d.system.level) >= 1);
   let gratis = nivelados, copias = [];
@@ -295,6 +305,7 @@ async function anadirConjuros(actor, clase, uuids, { mago, quedan }) {
     ...copias.map(([u, d]) => datosParaHoja(d.toObject(), clase, "copia", u, costeCopia(d.system.level, rareza(d))))
   ];
   if (!crear.length) return;
+  if (preparar) for (const c of crear) if (Number(c.system?.level) >= 1) c.system.prepared = 1;
   await actor.createEmbeddedDocuments("Item", crear);
   const nombres = crear.map(c => esc(c.name)).join(", ");
   ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), whisper: [...game.users.filter(u => u.isGM).map(u => u.id), game.user.id],
@@ -306,7 +317,7 @@ export function guiaConjurosHTML() {
   return `<section class="mcp-journal"><h1>Conjuros: cómo sumarlos a tu hoja</h1>
 <p><em>Para las clases que lanzan conjuros (mago, hechicero, bardo, brujo, clérigo, druida, paladín, explorador). Los conjuros de Pathfinder 2e ya están convertidos a D&D: aparecen junto a los del Manual y se usan igual.</em></p>
 <h2>Paso a paso</h2>
-<ol><li>Abre tu hoja y ve a la pestaña <b>Conjuros</b>.</li>
+<ol><li>Abre tu hoja y ve a la pestaña <b>Conjuros</b>. Arriba, <b>Conjuros por nivel</b> muestra los huecos que te da tu clase (trucos y preparados, o el libro del mago): cada <i class="fa-solid fa-plus"></i> vacío abre el buscador con los que puedes aprender, y si ya tienes conjuros sin preparar te ofrece prepararlos.</li>
 <li>Pulsa <b>Aprender conjuros</b>, arriba, o la <b>lupa</b> <i class="fa-solid fa-magnifying-glass"></i> que hay junto al nombre de cada nivel (la lupa busca solo ese nivel).</li>
 <li>Si tienes más de una clase que lanza conjuros, elige de qué lista buscas.</li>
 <li>Se abre el buscador con tu lista de clase y solo los niveles que ya puedes lanzar. Los de PF2e están mezclados con los del Manual; puedes filtrar por nombre, escuela o nivel.</li>

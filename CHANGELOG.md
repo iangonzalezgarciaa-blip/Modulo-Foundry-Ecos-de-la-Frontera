@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 3.54.0 — 2026-11-12
+
+- **Conjuros por huecos**: en el libro de conjuros de los PJ, «Conjuros por nivel» muestra los huecos que da cada clase lanzadora en su nivel (Manual 2024): trucos, y conjuros preparados (o el libro gratis del mago). Usa la tabla de la clase de la hoja y, si no la trae, la del Manual.
+- Un hueco vacío abre el buscador con los conjuros de D&D y de PF2e (en español) de esa lista y de los niveles que ya lanza, y deja elegir como mucho los que faltan. Si ya tienes conjuros sin preparar, primero ofrece prepararlos; los nuevos llegan preparados.
+- Aviso al subir de nivel con el botón al libro. Revertir: «Quitar conjuros» o despreparar; el ajuste del mundo quita los huecos. A mano: «Aprender conjuros» con Mayús busca sin filtro.
+
 ## 3.53.0 — 2026-11-12
 
 - **Dotes menores por nivel (PF2e fundido con D&D)**: pestaña **Dotes** en las hojas de PJ con un hueco en cada nivel sin Mejora de característica (clase, general, ascendencia, habilidad). Al tocar un hueco vacío se abre la lista de las dotes que puede tomar por nivel, clase, especie y requisitos (y por qué no las otras). Las hojas de nivel 2 o más reciben sus huecos pendientes; número rojo en la pestaña.

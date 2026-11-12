@@ -348,3 +348,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 12-nov-2026 | Mejora | Claude | Estilos de hoja (cinco para PJ, Tinta para PNJ) y traducción solo de lo que sigue en inglés, con Deshacer. Release v3.51.0 | 3.51.0 |
 | 12-nov-2026 | Mejora | Claude | PF2e a D&D fase 1: dotes, especies, herencias y objetos nivelados. Release v3.52.0 | 3.52.0 |
 | 12-nov-2026 | Mejora | Claude | Dotes menores por nivel: pestaña con huecos, lista de elegibles, herencia, PNJ. Release v3.53.0 | 3.53.0 |
+| 12-nov-2026 | Mejora | Claude | Conjuros por huecos (trucos, preparados, libro del mago) con buscador D&D+PF2e. Release v3.54.0 | 3.54.0 |

@@ -61,6 +61,7 @@ import "./combate-tactico.js";
 import "./ordenar-diarios.js";
 import "./nombres-mundo.js";
 import "./conjuros.js";
+import "./conjuros-huecos.js";
 import "./resonancia.js";
 import { quitarPlantillas } from "./ecos-327.js";
 import { motivoPausaMoneda } from "./mesa-control.js";
