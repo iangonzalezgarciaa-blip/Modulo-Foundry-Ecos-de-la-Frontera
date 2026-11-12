@@ -8,6 +8,8 @@
  * crea las condiciones para acertar, no quien pega más.
  */
 const MOD = "ecos-frontera";
+import { ESCENARIOS } from "./escenarios-datos.js";
+const ESCENARIOS_N = Object.fromEntries(Object.entries(ESCENARIOS).map(([k, e]) => [k, e.n]));
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const XP_VD = { 0: 10, 0.125: 25, 0.25: 50, 0.5: 100, 1: 200, 2: 450, 3: 700, 4: 1100, 5: 1800, 6: 2300, 7: 2900, 8: 3900, 9: 5000, 10: 5900, 11: 7200, 12: 8400,
   13: 10000, 14: 11500, 15: 13000, 16: 15000, 17: 18000, 18: 20000, 19: 22000, 20: 25000, 21: 33000, 22: 41000, 23: 50000, 24: 62000, 25: 75000, 26: 90000, 27: 105000, 28: 120000, 29: 135000, 30: 155000 };
@@ -30,6 +32,13 @@ export function clasificar(xp, p) {
   if (xp < p.alto) return "moderado";
   if (xp <= p.alto * 1.25) return "alto";
   return "letal";
+}
+/** Qué aporta un aliado PNJ al presupuesto del grupo: como un PJ de nivel ≈ su VD (los de VD menor que 1, una fracción). Puro. */
+export function aporteAliado(cr) {
+  const c = Number(cr) || 0;
+  if (c <= 0) return { bajo: 0, moderado: 0, alto: 0 };
+  const t = PRESUPUESTO_NIVEL[Math.min(20, Math.max(1, Math.round(c)))], f = c >= 1 ? 1 : c * 2;
+  return { bajo: Math.round(t[0] * f), moderado: Math.round(t[1] * f), alto: Math.round(t[2] * f) };
 }
 /** Una criatura sola puede ser letal aunque el total no lo sea: VD 3 o más por encima del nivel más alto. Puro. */
 export const letalSola = (cr, niveles) => (niveles?.length ? Number(cr) >= Math.max(...niveles.map(Number)) + 3 : false);
@@ -90,12 +99,15 @@ export async function abrirBalance({ token = null, scene = canvas?.scene } = {})
   const actor = token?.actor ?? null, puestos = [];
   const calcular = (ids) => {
     const niveles = pjs.filter(a => ids.includes(a.id)).map(nivelDe), p = presupuestoGrupo(niveles);
+    // 3.59: los aliados PNJ del tablero también suman al grupo (como un PJ de nivel ≈ su VD).
+    const aliados = (scene.tokens ?? []).filter(t => t.actor && t.actor.type !== "character" && !t.actor.hasPlayerOwner && (t.disposition ?? 0) > 0);
+    for (const t of aliados) { const a = aporteAliado(crDe(t.actor)); p.bajo += a.bajo; p.moderado += a.moderado; p.alto += a.alto; }
     const host = hostilesEscena(scene), xp = host.reduce((s, t) => s + xpDe(crDe(t.actor)), 0), clase = clasificar(xp, p);
     const medio = niveles.length ? Math.round(niveles.reduce((s, n) => s + n, 0) / niveles.length) : 1;
     const solas = host.filter(t => letalSola(crDe(t.actor), niveles));
     const cands = candidatosPara(actor ?? host.at(-1)?.actor);
     const base = { xpActual: xp, candidatos: cands, nPJ: niveles.length || 1, nEnemigos: host.length, nivelMedio: medio };
-    return { niveles, p, host, xp, clase, solas, medio,
+    return { niveles, p, host, xp, clase, solas, medio, aliados, escenario: scene.getFlag?.(MOD, "escenario") ?? null,
       interesante: sugerir({ ...base, objetivo: Math.round((p.moderado + p.alto) / 2) }),
       alto: sugerir({ ...base, objetivo: p.alto }),
       trivial: xp < p.bajo * 0.5 ? null : { quitar: true } };
@@ -104,6 +116,8 @@ export async function abrirBalance({ token = null, scene = canvas?.scene } = {})
     : (s.falta <= 0 ? `<b>${nombre}:</b> ya llegas (o te pasas) con lo que hay.` : `<b>${nombre}:</b> no encuentro criaturas de su carpeta que encajen; súmalas a mano.`);
   const cuerpo = (c) => `<div class="ecos-balance">
     <p class="ecos-balance-clase ecos-balance-${c.clase.replace(" ", "-")}">${ETIQUETA[c.clase] ?? c.clase} · ${c.xp} XP en la escena (${c.host.length} hostiles) · grupo: bajo ${c.p.bajo} · moderado ${c.p.moderado} · alto ${c.p.alto}</p>
+    ${c.aliados.length ? `<p>Aliados PNJ en el tablero: <b>${c.aliados.map(t => esc(t.name)).join(", ")}</b> (ya suman al presupuesto del grupo).</p>` : ""}
+    ${c.escenario ? `<p><b>Escenario:</b> ${esc(ESCENARIOS_N[c.escenario] ?? c.escenario)} (consejos y sucesos en el Asistente de combate).</p>` : `<p class="ecos-nota">Esta escena no tiene etiqueta de escenario: Menú del DM → «Etiqueta de la escena».</p>`}
     ${c.clase === "letal" ? `<p class="ecos-aviso"><b>Esto es letal para este grupo.</b> Quita criaturas, divide el combate en oleadas o dales una salida (huir, negociar, un objetivo que no sea matar).</p>` : ""}
     ${c.solas.length ? `<p class="ecos-aviso"><b>Criatura letal por sí sola:</b> ${c.solas.map(t => esc(t.name)).join(", ")} (VD 3 o más por encima del nivel más alto del grupo): un solo golpe suyo puede tumbar a un PJ.</p>` : ""}
     <ul><li>${linea(c.interesante, "Interesante (recomendado)")}</li><li>${c.trivial ? "<b>Trivial:</b> para ritmo o narración, deja una o dos criaturas débiles (quita las demás) o dales una razón para no pelear a muerte." : "<b>Trivial:</b> ya lo es: sirve para ritmo, para presentar una criatura o para gastar recursos poco a poco."}</li><li>${linea(c.alto, "Alto")}</li></ul>

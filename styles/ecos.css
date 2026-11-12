@@ -1116,3 +1116,18 @@ button.ecos-inspiracion { margin-top: 4px; background: linear-gradient(90deg, #f
 @keyframes ef-entra-abajo { from { transform: translateY(70vh); } to { transform: none; } }
 @keyframes ef-risa { from { transform: rotate(-7deg); } to { transform: rotate(7deg) translateY(-4px); } }
 @keyframes ef-salta { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+
+/* 3.59 · Asistente de combate y sucesos del escenario */
+.ecos-asistente .ecos-asis-cab { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin: 4px 0; }
+.ecos-asistente .ecos-asis-cab label { display: flex; align-items: center; gap: 6px; }
+.ecos-asis-bandos { width: 100%; font-size: 0.92em; }
+.ecos-asis-bandos td, .ecos-asis-bandos th { padding: 2px 4px; }
+.ecos-asis-bandos select { width: 100%; }
+.ecos-asis-rec { margin: 4px 0; padding-left: 1.2em; }
+.ecos-asis-rec li { margin: 2px 0; }
+.ecos-suceso h3 { margin: 0 0 4px; }
+.ecos-suceso-t { font-style: italic; }
+.ecos-suceso-mec { border-left: 3px solid #b8862b; padding-left: 6px; }
+.ecos-suceso-bot { display: flex; gap: 4px; margin-top: 4px; }
+.ecos-suceso-bot button { flex: 1; line-height: 22px; font-size: 0.85em; }
+.ecos-suceso-res { font-size: 0.92em; }

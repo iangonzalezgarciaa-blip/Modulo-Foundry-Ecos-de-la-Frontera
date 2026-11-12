@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 3.59.0 — 2026-11-12
+
+- **Etiqueta de escenario por escena** (bosque, pantano, montaña, cueva, ruinas, callejones, taberna, puente, desierto, nieve, costa, barco, cementerio, mina, templo, llanura, mercado, noche, incendio): se pregunta al crear la escena, está en su configuración y en el Menú del DM.
+- **Asistente de combate** al empezar un combate: escenario, **bando de cada ficha del tablero** (aliado, neutral, hostil; con «Deshacer bandos») y si entra al combate; **balance contando a los aliados PNJ**; consejos según el balance, los números y el lugar.
+- **Escenario cambiante**: en cada turno se tira 1d20 contra el umbral (Calmo, Normal, Agitado, Caótico); si sale, un **suceso** del compendio (19 escenarios × 10 sucesos y comunes) **nivelado al grupo** (CD y dados), al DM o a todos. «Resolver» tira salvaciones, aplica daño y estados; «Deshacer» lo devuelve; «Otro suceso» saca otro.
+- El balance al arrastrar criaturas también suma a los aliados PNJ y muestra el escenario.
+
 ## 3.58.0 — 2026-11-12
 
 - **Festejo del enemigo** (pedido del autor): el 20 natural de un PNJ sale para los jugadores como **terror** —oscuridad roja que late, grietas, gotas, retrato en negativo con temblor, «¡GOLPE MORTAL!» y «Prepárense…»— con un retumbe grave, un latido y un chirrido **sintetizados** (sin archivos). Su 1 natural es **burla**: «¡FALLÓ!» y un duendecillo original que se ríe y señala, con un trombón triste sintetizado.
