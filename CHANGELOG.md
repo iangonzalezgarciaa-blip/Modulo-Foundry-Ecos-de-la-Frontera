@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.60.0 — 2026-11-12
+
+- **Estilos de hoja más oscuros y con textura** (pedido del autor: sin colores brillantes): las hojas con estilo usan el tema oscuro de dnd5e teñido con tonos apagados —Llama (brasa y carbón), Marea (azul de profundidad), Hoja (musgo), Sombra (ciruela y humo), Tormenta (pizarra y latón) y Tinta para PNJ (cuero oscuro y rojo)—, fondo con grano y nubes de textura suaves, marco fino doble y filigrana nueva en las esquinas. «Original» devuelve la hoja y su tema.
+
 ## 3.59.0 — 2026-11-12
 
 - **Etiqueta de escenario por escena** (bosque, pantano, montaña, cueva, ruinas, callejones, taberna, puente, desierto, nieve, costa, barco, cementerio, mina, templo, llanura, mercado, noche, incendio): se pregunta al crear la escena, está en su configuración y en el Menú del DM.

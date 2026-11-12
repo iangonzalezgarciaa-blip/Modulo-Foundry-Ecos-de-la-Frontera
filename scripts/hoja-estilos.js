@@ -7,14 +7,15 @@
  */
 const MOD = "ecos-frontera";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+// 3.60: tonos oscuros y apagados, con textura suave (pedido del autor).
 export const ESTILOS = {
-  llama: { n: "Llama", c: "#ff6a00", d: "Naranja y negro, líneas de foco: el que no se rinde." },
-  marea: { n: "Marea", c: "#1a7bff", d: "Azules de río y ola: calma que golpea." },
-  hoja: { n: "Hoja", c: "#2f9a45", d: "Verdes de bosque: paciencia y raíz." },
-  sombra: { n: "Sombra", c: "#8a4dff", d: "Púrpura y tinta: el que se mueve sin ser visto." },
-  tormenta: { n: "Tormenta", c: "#e6c200", d: "Acero y rayo: rápido y sin aviso." }
+  llama: { n: "Llama", c: "#c26a35", d: "Brasa y carbón: el que no se rinde." },
+  marea: { n: "Marea", c: "#4a86b8", d: "Azul de profundidad: calma que golpea." },
+  hoja: { n: "Hoja", c: "#6a9a5f", d: "Musgo y sombra de bosque: paciencia y raíz." },
+  sombra: { n: "Sombra", c: "#8a6fbb", d: "Ciruela y humo: el que se mueve sin ser visto." },
+  tormenta: { n: "Tormenta", c: "#b39a4a", d: "Pizarra y latón: rápido y sin aviso." }
 };
-export const ESTILO_PNJ = { tinta: { n: "Tinta", c: "#a31515", d: "Pergamino y tinta roja: el registro del DM." } };
+export const ESTILO_PNJ = { tinta: { n: "Tinta", c: "#a5453a", d: "Cuero oscuro y tinta roja: el registro del DM." } };
 /** El estilo que le toca a una hoja. Puro. */
 export function estiloDe({ tipo, elegido, pnj = "tinta", ver = true } = {}) {
   if (!ver) return null;
@@ -31,7 +32,15 @@ function aplicar(app) {
   if (!(actor instanceof Actor) || !el?.classList) return;
   el.classList.remove("ecos-hoja", ...CLASES);
   const est = estiloDe({ tipo: actor.type, elegido: actor.getFlag(MOD, "estiloHoja"), pnj: leer("estiloHojaPNJ", "tinta"), ver: leer("verEstilosHoja", true) });
-  if (est) el.classList.add("ecos-hoja", `ecos-hoja-${est}`);
+  // 3.60: los estilos usan el tema oscuro de dnd5e en esa hoja (y lo devuelven al quitarlos).
+  const T = "ecosTemaOriginal";
+  if (est) {
+    el.classList.add("ecos-hoja", `ecos-hoja-${est}`);
+    if (!el.dataset[T]) el.dataset[T] = el.classList.contains("theme-dark") ? "theme-dark" : el.classList.contains("theme-light") ? "theme-light" : "ninguno";
+    el.classList.remove("theme-light"); el.classList.add("themed", "theme-dark");
+  } else if (el.dataset[T]) {
+    el.classList.remove("theme-dark"); if (el.dataset[T] !== "ninguno") el.classList.add(el.dataset[T]); delete el.dataset[T];
+  }
   if (actor.type !== "character" || !actor.isOwner) return;
   const cab = el.querySelector(".window-header");
   if (!cab || cab.querySelector(".ecos-estilo-boton")) return;
@@ -57,7 +66,7 @@ export async function elegirEstilo(actor) {
 if (globalThis.Hooks) {
   Hooks.once("init", () => {
     game.settings.register(MOD, "estiloHojaPNJ", { name: "Estilo de las hojas de PNJ", hint: "Adornos y letras para las hojas de los PNJ y criaturas. «Original» las deja como vienen.", scope: "world", config: true, type: String, default: "tinta",
-      choices: { tinta: "Tinta (pergamino y rojo)", ...Object.fromEntries(Object.entries(ESTILOS).map(([k, e]) => [k, e.n])), original: "Original de D&D" },
+      choices: { tinta: "Tinta (cuero oscuro y rojo)", ...Object.fromEntries(Object.entries(ESTILOS).map(([k, e]) => [k, e.n])), original: "Original de D&D" },
       onChange: () => { for (const a of foundry.applications.instances?.values?.() ?? []) aplicar(a); } });
     game.settings.register(MOD, "verEstilosHoja", { name: "Ver los estilos de hoja", hint: "Solo para ti: apágalo para ver todas las hojas como vienen en D&D.", scope: "client", config: true, type: Boolean, default: true,
       onChange: () => { for (const a of foundry.applications.instances?.values?.() ?? []) aplicar(a); } });
