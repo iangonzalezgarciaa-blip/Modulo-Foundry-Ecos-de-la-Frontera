@@ -6,6 +6,7 @@
  * carga el DM. Sin esos datos, el botón lo dice y no cobra nada.
  */
 import { LINAJE_BARRERA } from "./sangre-sosten.js";
+import { fotografia, botonDeshacer } from "./deshacer.js";
 const MOD = "ecos-frontera";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -45,8 +46,10 @@ const esPortador = a => a?.getFlag?.(MOD, "verbe")?.linaje === LINAJE_BARRERA;
 const susurroDM = (titulo, html) => ChatMessage.create({ whisper: game.users.filter(u => u.isGM).map(u => u.id), speaker: { alias: titulo }, content: html });
 const pjsEscena = () => (canvas?.scene?.tokens ?? []).map(t => t.actor).filter(a => a?.type === "character" && a.hasPlayerOwner);
 
-async function aplicarCobro(actor, c) {
+async function aplicarCobro(actor, c, registro) {
   const partes = [];
+  registro?.cambios.push(fotografia(actor, ["system.attributes.exhaustion", "system.attributes.hp.value", "system.attributes.hp.temp"]));
+  const yaEnvenenado = actor.statuses?.has?.("poisoned");
   if (c.agot) {
     const ex = Math.min(6, (Number(actor.system?.attributes?.exhaustion) || 0) + c.agot);
     await actor.update({ "system.attributes.exhaustion": ex });
@@ -58,7 +61,11 @@ async function aplicarCobro(actor, c) {
     await actor.applyDamage([{ value: v, type: c.tipo ?? undefined }]);
     partes.push(`${v} de daño ${c.tipo ?? ""}${c.mitadDano ? " (mitad)" : ""}`);
   }
-  if (c.envenenado) { await actor.toggleStatusEffect("poisoned", { active: true }).catch(() => null); partes.push(`Envenenado ${c.envenenado}`); }
+  if (c.envenenado) {
+    await actor.toggleStatusEffect("poisoned", { active: true }).catch(() => null);
+    if (!yaEnvenenado) { const ef = actor.effects.find(x => x.statuses?.has?.("poisoned")); if (ef) registro?.borrar.push(ef.uuid); }
+    partes.push(`Envenenado ${c.envenenado}`);
+  }
   return partes;
 }
 
@@ -83,7 +90,7 @@ export async function cruzarHaciaAfuera() {
   if (!r || r === "no") return;
   const pasos = pasosResaca(r.desde, r.hasta);
   if (!pasos.length) return ui.notifications.info("Eso no es subir: no se cobra nada.");
-  const resumen = [];
+  const resumen = [], registro = { cambios: [], borrar: [] };
   for (const a of pjs) {
     if (!r[`usa-${a.id}`]) continue;
     const o = { durmio: !!r[`durmio-${a.id}`], cristal: !!r[`cristal-${a.id}`], camino: !!r[`camino-${a.id}`] }, largo = !!r[`largo-${a.id}`] || o.durmio;
@@ -102,7 +109,7 @@ export async function cruzarHaciaAfuera() {
         total = rolls?.[0]?.total ?? "—"; exito = Number(total) >= Number(d.cd);
       }
       const c = cobro(d, exito, { mitad: q.mitad });
-      const partes = c.muerte ? [] : await aplicarCobro(a, c);
+      const partes = c.muerte ? [] : await aplicarCobro(a, c, registro);
       resumen.push(`<li><b>${esc(a.name)}</b> deja ${esc(nombreCapa(n))}${q.capa !== n ? ` (cobra como la ${q.capa})` : ""}: ${c.muerte ? "<b>no vuelve</b>" : `salvación ${total} contra CD ${d.cd} → ${exito ? "la supera" : "la falla"}`}. ${partes.join(" · ")}</li>`);
       const nota = [c.nota, c.sonado ? "Se vuelve un Soñado: el personaje pasa al DM." : "", c.muerte ? (c.nota || "Muere: confírmalo tú (el módulo no lo mata solo).") : ""].filter(Boolean).join(" ");
       if (nota) await susurroDM(`Resaca · ${a.name}`, `<p><b>${esc(a.name)}</b>, al dejar ${esc(nombreCapa(n))}: ${esc(nota)}</p>`);
@@ -112,7 +119,8 @@ export async function cruzarHaciaAfuera() {
   }
   await canvas.scene?.setFlag(MOD, "capaAbismo", Number(r.hasta));
   await ChatMessage.create({ speaker: { alias: "Lo que cobra el sueño" }, whisper: game.users.filter(u => u.isGM).map(u => u.id),
-    content: `<p><b>Cruzan hacia afuera</b>: de ${esc(nombreCapa(r.desde))} a ${esc(nombreCapa(r.hasta))}.</p><ul>${resumen.join("")}</ul>` });
+    content: `<p><b>Cruzan hacia afuera</b>: de ${esc(nombreCapa(r.desde))} a ${esc(nombreCapa(r.hasta))}.</p><ul>${resumen.join("")}</ul>${registro.cambios.length ? botonDeshacer() : ""}`,
+    flags: { [MOD]: { deshacer: registro } } });
 }
 
 /** La llamada del amanecer: salvación de Sabiduría en las capas hondas; quien falla quiere bajar una más. */

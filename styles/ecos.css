@@ -760,3 +760,8 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-accion-estandar .ae-lista button { width: auto; display: inline-flex; align-items: center; gap: 6px; line-height: 1.6; padding: 0 8px; }
 .ecos-accion-estandar .ae-lista img { width: 20px; height: 20px; border: 0; }
 .ecos-accion-estandar .ae-lista small { opacity: .8; }
+
+/* 3.42 · Suceso del día */
+.ecos-suceso .ecos-tachado { text-decoration: line-through; opacity: .6; }
+.ecos-botones-fila { display: flex; flex-wrap: wrap; gap: 4px; }
+.ecos-botones-fila button { flex: 1 1 auto; font-size: var(--font-size-12, 12px); line-height: 1.6; }

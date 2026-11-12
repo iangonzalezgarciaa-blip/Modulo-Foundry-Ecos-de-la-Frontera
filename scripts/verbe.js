@@ -26,6 +26,7 @@ import { compendioJugadoresHTML, compendioDMHTML } from "./verbe-compendio.js";
 import { aplicarNombresMundo, nombresDelMundo } from "./nombres-mundo.js";
 import { tramoReserva, tramoFuerza, tramoVida, queVe } from "./verbe-lectura.js";
 import { cargaDe, bonoCarga, cdInterrupcion, textoCarga } from "./verbe-canalizar.js";
+import { botonDeshacer } from "./deshacer.js";
 import { clonDe, limitesClones, repartoClones, creditoEntrenamiento, usarBancoClones, HORAS_DIA_ENTRENO } from "./verbe-clones.js";
 import { iconoTecnica, iconoDote, esGenerico } from "./verbe-iconos.js";
 import { ventanaLinaje, linajeDeEleccion, pasosOjo } from "./linaje-diario.js";
@@ -243,8 +244,9 @@ function susurrarDM(titulo, html) {
   });
 }
 
-function aLaMesa(actor, titulo, html, { soloDueno = false } = {}) {
+function aLaMesa(actor, titulo, html, { soloDueno = false, flags = null } = {}) {
   const data = { content: `<div class="ecos-card ecos-verbe-chat"><h3>${titulo}</h3>${html}</div>`, speaker: ChatMessage.getSpeaker({ actor }) };
+  if (flags) data.flags = flags;
   if (soloDueno) data.whisper = [...new Set([...idsGM(), ...game.users.filter(u => !u.isGM && actor.testUserPermission(u, "OWNER")).map(u => u.id)])];
   return ChatMessage.create(data);
 }
@@ -502,7 +504,7 @@ export async function disiparClon(clon, { destruido = false } = {}) {
     if (r && typeof r === "object") { recuerdos = r.r; horas = Number(r.horas) || 0; }
     else recuerdos = r === "no" ? "" : vivido;
   } catch { /* sin ventana */ }
-  let notaEntreno = "";
+  let notaEntreno = "", antesClon = null;
   if (creador && horas > 0) {
     const ec = estado(creador), cr = creditoEntrenamiento({ horas, horasPrevias: ent.horas, yaHoy, tope });
     const cambios = { entrenoClon: { dia, hoy: cr.hoy, horas: cr.sobranHoras, banco: Number(ent.banco) || 0 } };
@@ -513,9 +515,10 @@ export async function disiparClon(clon, { destruido = false } = {}) {
     }
     if (cr.recortados) notaEntreno += ` ${cr.recortados} día${cr.recortados === 1 ? "" : "s"} más se pierden: hoy ya llegó al tope (${cr.tope}).`;
     else if (!cr.dias) notaEntreno = ` Entrenó ${horas} h: se guardan hasta completar un día (${cr.sobranHoras} de ${HORAS_DIA_ENTRENO} h).`;
+    antesClon = { cambios: [{ uuid: creador.uuid, antes: { [`flags.${MOD}.verbe.entrenoClon`]: ec.entrenoClon, [`flags.${MOD}.verbe.entrenoNat`]: ec.entrenoNat } }], borrar: [] };
     await guardar(creador, cambios);
   }
-  if (creador) aLaMesa(creador, `✦ Recuerdos del clon`, `<p>${escH(clon.name)} ${destruido ? "se deshace al recibir el golpe" : "se disipa"}${!destruido && resto ? ` y devuelve ${resto} Verbe` : ""}.${recuerdos ? ` ${escH(creador.name)} recuerda: <i>${escH(recuerdos)}</i>` : ""}${notaEntreno}</p><p class="ecos-nota">Los recuerdos no dan experiencia.</p>`, { soloDueno: true });
+  if (creador) aLaMesa(creador, `✦ Recuerdos del clon`, `<p>${escH(clon.name)} ${destruido ? "se deshace al recibir el golpe" : "se disipa"}${!destruido && resto ? ` y devuelve ${resto} Verbe` : ""}.${recuerdos ? ` ${escH(creador.name)} recuerda: <i>${escH(recuerdos)}</i>` : ""}${notaEntreno}</p><p class="ecos-nota">Los recuerdos no dan experiencia.</p>${antesClon ? botonDeshacer() : ""}`, { soloDueno: true, flags: antesClon ? { [MOD]: { deshacer: antesClon } } : null });
   for (const sc of game.scenes ?? []) { const ids = (sc.tokens ?? []).filter(t => t.actorId === clon.id).map(t => t.id); if (ids.length) await sc.deleteEmbeddedDocuments("Token", ids); }
   await clon.delete();
   return true;

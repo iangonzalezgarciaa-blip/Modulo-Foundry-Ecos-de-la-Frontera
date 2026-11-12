@@ -30,6 +30,7 @@ import "./subir-nivel.js";
 import "./fama.js";
 import "./capas-abismo.js";
 import "./traducir-fichas.js";
+import "./sucesos-dia.js";
 import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
@@ -5205,6 +5206,7 @@ async function anunciarDia() {
     speaker: { alias: "Arcegris" },
     flags: { [MOD]: { dia: n } }
   });
+  Hooks.callAll("ecosNuevoDia", { n, estacion: est }); // 3.42: el suceso del día (sucesos-dia.js)
   // Notas del DM: los detalles están en Tramas · 12 (fuera de los archivos públicos del módulo).
   const p18 = paginaDM("calendario-dm");
   const dm = [];
@@ -9149,6 +9151,7 @@ const OPS_PANEL = [
     ["pantalla", "Pantalla del DM", "fa-table-columns", "Abre o cierra la Pantalla del DM (pestaña «Ecos · DM»)."],
     ["plantillas", "Quitar plantillas", "fa-eraser", "Lista las plantillas de área de la escena (en Foundry 14 son regiones) y quita las marcadas o todas. También está la goma en la barra de Tokens."],
     ["choqueVerbe", "Choque de técnicas", "fa-burst", "Resuelve a mano un choque entre dos técnicas (elemento, grado y Control)."],
+    ["sucesoDia", "Suceso del día", "fa-calendar-day", "El suceso del día de la estación: tirarlo, elegirlo a mano, deshacerlo o volver al anterior, y apagar el automático."],
     ["capasAbismo", "Capas del Abismo", "fa-stairs", "En qué capa está la escena, cruzar umbrales hacia afuera con su cobro (salvación, Agotamiento, daño y estados automáticos) y la llamada del amanecer. Explica la mecánica paso a paso."],
     ["traducirFichas", "Traducir fichas al español", "fa-language", "Copia a las fichas el nombre y la descripción en español de sus clases, rasgos, conjuros, acciones y objetos desde los compendios de D&D traducidos (para fichas armadas antes de activar la traducción). Primero muestra un informe."],
     ["proeza", "Proeza (fama)", "fa-bullhorn", "Marca una proeza de los PJ: suma fama y, al cruzar un umbral, las facciones se enteran (te susurra qué hacer)."],
@@ -9498,6 +9501,7 @@ async function ejecutarPanel(op) {
     case "almacenReliquias": await api?.almacenReliquias?.(); break;
     case "proeza": await api?.proeza?.(); break;
     case "capasAbismo": await api?.capasAbismo?.(); break;
+    case "sucesoDia": await api?.sucesoDia?.(); break;
     case "traducirFichas": await api?.abrirTraducir?.(); break;
     case "estado": game.journal.get("G0rD0J3JkpOkXM00")?.pages.find(p => p.getFlag(MOD, "estado"))?.sheet?.render(true); break;
     case "tirada":

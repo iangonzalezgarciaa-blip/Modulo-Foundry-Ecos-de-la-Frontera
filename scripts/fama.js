@@ -4,6 +4,7 @@
  * se enteran y los quieren (para usarlos, comprarlos o aprender de ellos). El DM marca las proezas; el módulo suma
  * sola una pequeña cuando alguien gana un choque de técnicas a la vista.
  */
+import { botonDeshacer } from "./deshacer.js";
 const MOD = "ecos-frontera";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const NIVELES_FAMA = [
@@ -21,10 +22,13 @@ export const puntosProeza = (tipo, testigos = true) => { const p = PROEZAS[tipo]
 
 export async function sumarFama(actor, puntos, motivo = "") {
   if (!game.user.isGM || !actor || !puntos) return;
-  const antes = Number(actor.getFlag(MOD, "fama")) || 0, despues = antes + puntos;
+  if (!Number.isFinite(Number(puntos))) return;
+  const antes = Number(actor.getFlag(MOD, "fama")) || 0, despues = Math.max(0, antes + Number(puntos));
   await actor.setFlag(MOD, "fama", despues);
   const n0 = nivelFama(antes), n1 = nivelFama(despues);
-  await ChatMessage.create({ speaker: { alias: "Se corre la voz" }, content: `<p><b>${esc(actor.name)}</b>: +${puntos} de fama${motivo ? ` (${esc(motivo)})` : ""}. Ahora: <b>${n1.nombre}</b> (${despues}).</p>` });
+  // 3.42: con «Deshacer» al lado (regla del autor); el ajuste a mano está en Menú del DM → Proeza.
+  await ChatMessage.create({ speaker: { alias: "Se corre la voz" }, content: `<p><b>${esc(actor.name)}</b>: ${puntos >= 0 ? "+" : ""}${puntos} de fama${motivo ? ` (${esc(motivo)})` : ""}. Ahora: <b>${n1.nombre}</b> (${despues}).</p>${botonDeshacer()}`,
+    flags: { [MOD]: { deshacer: { cambios: [{ uuid: actor.uuid, antes: { [`flags.${MOD}.fama`]: antes || undefined } }], borrar: [] } } } });
   if (n1.min > n0.min) await ChatMessage.create({ whisper: game.users.filter(u => u.isGM).map(u => u.id), speaker: { alias: "Fama · solo DM" },
     content: `<p><b>${esc(actor.name)}</b> pasa a <b>${n1.nombre}</b>. ${esc(n1.texto)}</p><p class="ecos-nota">Buen momento para que una facción mueva ficha: alguien aparece en la posada preguntando por él.</p>` });
 }
@@ -34,10 +38,14 @@ export async function marcarProeza() {
   const r = await foundry.applications.api.DialogV2.wait({ window: { title: "Proeza", icon: "fa-solid fa-bullhorn" }, position: { width: 440 },
     content: `<div class="ecos-dialogo"><p>¿Quién hizo algo que la gente va a contar?</p>${pjs.map(a => `<label class="ecos-check"><input type="checkbox" name="pj-${a.id}"> ${esc(a.name)} <small>(${nivelFama(a.getFlag(MOD, "fama")).nombre}, ${Number(a.getFlag(MOD, "fama")) || 0})</small></label>`).join("")}
       <label>Proeza <select name="tipo">${Object.entries(PROEZAS).map(([k, [p, t]]) => `<option value="${k}">+${p} · ${t}</option>`).join("")}</select></label>
-      <label class="ecos-check"><input type="checkbox" name="testigos" checked> Hubo testigos (sin testigos vale la mitad)</label><label>Qué hizo <input name="motivo" placeholder="rompió la carga de los bandidos"></label>
+      <label class="ecos-check"><input type="checkbox" name="testigos" checked> Hubo testigos (sin testigos vale la mitad)</label><label>O pon la fama exacta a mano <input type="number" name="exacta" min="0" placeholder="(vacío: sumar la proeza)"></label><label>Qué hizo <input name="motivo" placeholder="rompió la carga de los bandidos"></label>
       <details><summary>Niveles de fama</summary><ul>${NIVELES_FAMA.map(n => `<li><b>${n.min}+ · ${n.nombre}</b>: ${esc(n.texto)}</li>`).join("")}</ul></details></div>`,
     buttons: [{ action: "ok", label: "Que se corra la voz", default: true, callback: (_e, b) => Object.fromEntries(new FormData(b.form)) }, { action: "no", label: "Cancelar" }], rejectClose: false });
   if (!r || r === "no") return;
+  if (r.exacta !== "" && r.exacta != null) {
+    for (const a of pjs) if (r[`pj-${a.id}`]) { const antes = Number(a.getFlag(MOD, "fama")) || 0; await sumarFama(a, Math.max(0, Number(r.exacta)) - antes, r.motivo || "ajuste a mano del DM"); }
+    return;
+  }
   const p = puntosProeza(r.tipo, !!r.testigos);
   for (const a of pjs) if (r[`pj-${a.id}`]) await sumarFama(a, p, r.motivo);
 }

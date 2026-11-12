@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 3.42.0 — 2026-11-11
+
+- **Suceso del día automático** (aprobado por el autor): al empezar cada día de campaña, el módulo tira la tabla de sucesos de la estación y te la susurra con botones para **Otro**, **Elegir a mano** (de cualquier estación, o escribir el tuyo), **Deshacer**, **Volver al anterior** y **Contar a la mesa** (si lo deshaces después, el mensaje público se borra). Menú del DM → Mesa → «Suceso del día» para tirarlo, elegirlo o apagar el automático. Las tablas no están en el código: las lee de un diario de tu mundo.
+- **Regla del autor: todo lo automático trae al lado un botón para revertirlo y otro para asignarlo a mano.** Nuevo botón **Deshacer** (solo el DM) en el cobro de las capas del Abismo (devuelve el Agotamiento, los PG y quita el Envenenado que puso), en los mensajes de fama y en el entrenamiento que acredita un clon. La ventana de Proeza permite poner la fama exacta a mano.
+- Prueba de mesa nueva en el Diagnóstico (72).
+
 ## 3.41.0 — 2026-11-11
 
 - **Capas del Abismo** (pedido del autor): Menú del DM → Mesa → «Capas del Abismo». Pones en qué capa está la escena (y si quieres se lo anuncia a los jugadores), y dos botones: **Cruzar hacia afuera** cobra cada umbral que dejan, de la capa más honda a la menos (una salvación por umbral y por PJ; Agotamiento, daño y Envenenado se aplican solos; lo que no es número —un recuerdo, un sentido, volverse Soñado o no volver— te llega en un susurro para que lo decidas tú), con las casillas de cada PJ: durmió en la capa (cobra como una más honda), más de un día, cristal mudo (una menos honda; de la 5 hacia adentro solo la mitad del daño; se gasta en tres umbrales), por un Camino (no paga) y portador (desventaja). **Amanecer: la llamada** tira Sabiduría en las capas hondas. La ventana explica la mecánica paso a paso y muestra la tabla completa. Los nombres, las CD y los cobros de cada capa no están en el código (el repositorio es público): los lee de un diario de tu mundo.
