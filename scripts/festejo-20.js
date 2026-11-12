@@ -1,7 +1,6 @@
 /**
- * 3.47 · Festejo del 20 natural (pedido del autor, 12-nov-2026: «me gusta la animación de Yugen, imítala»; Yugen Criticals
- * no corre en Foundry 14.370). Corte a pantalla completa al estilo de los RPG tácticos japoneses: destello, una banda en
- * diagonal con líneas de velocidad, el retrato del personaje entrando de lado y el grito que golpea la pantalla. Lo ve todo el
+ * 3.47 · Festejo del 20 natural (pedido del autor, 12-nov-2026; Yugen Criticals no corre en Foundry 14.370). 3.49: estilo
+ * anime de acción (pedido del autor): líneas de foco, trazo de tinta, panel de manga con aura y letras de impacto (Bangers, OFL). Lo ve todo el
  * que ve la tirada, a la vez. Código y diseño propios.
  *  - Tema por la naturaleza del Verbe (Fuego, Agua, Viento, Tierra, Rayo) o dorado; el 1 natural es «Pifia» (rojo oscuro).
  *  - Salvación de muerte con 20: «¡SE LEVANTA!». Frase propia por personaje (el dueño la pone desde el panel de acciones).
@@ -10,14 +9,15 @@
  */
 const MOD = "ecos-frontera";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+// 3.49: estilo anime de acción, naranja y negro por defecto; la naturaleza del Verbe tiñe el aura y las letras.
 export const TEMAS = {
-  dorado: { c1: "#f6d365", c2: "#b8860b", c3: "#3a2a05", n: "Dorado" },
-  fuego: { c1: "#ffb347", c2: "#e2361f", c3: "#3d0a02", n: "Fuego" },
-  agua: { c1: "#8fd3ff", c2: "#1f6fd1", c3: "#04203f", n: "Agua" },
-  viento: { c1: "#c8ffd9", c2: "#2fb57a", c3: "#06301f", n: "Viento" },
-  tierra: { c1: "#e8c690", c2: "#8a5a2b", c3: "#2a1906", n: "Tierra" },
-  rayo: { c1: "#fff36b", c2: "#8a4dff", c3: "#1a0b3d", n: "Rayo" },
-  pifia: { c1: "#ff8a8a", c2: "#7a0b0b", c3: "#120202", n: "Pifia" }
+  naranja: { c1: "#ffd23f", c2: "#ff6a00", c3: "#111111", n: "Naranja" },
+  fuego: { c1: "#ffcf3a", c2: "#ff2d00", c3: "#111111", n: "Fuego" },
+  agua: { c1: "#9fe3ff", c2: "#1a7bff", c3: "#111111", n: "Agua" },
+  viento: { c1: "#d8ffe6", c2: "#19c27a", c3: "#111111", n: "Viento" },
+  tierra: { c1: "#ffd9a0", c2: "#b5651d", c3: "#111111", n: "Tierra" },
+  rayo: { c1: "#fff8a0", c2: "#7a5cff", c3: "#111111", n: "Rayo" },
+  pifia: { c1: "#ff8f8f", c2: "#b3001b", c3: "#111111", n: "Pifia" }
 };
 /** Qué festejo toca para una tirada. Puro. null = nada. */
 export function festejoDe({ natural, tipo, esPJ = true, quien = "pj", conUno = true, soloAtaques = false } = {}) {
@@ -31,7 +31,7 @@ export function festejoDe({ natural, tipo, esPJ = true, quien = "pj", conUno = t
   return { natural, grito, tipo };
 }
 /** El tema: naturaleza del Verbe si la tiene; la pifia siempre es roja. Puro. */
-export const temaDe = (natural, nat) => natural === 1 ? "pifia" : (TEMAS[nat] ? nat : "dorado");
+export const temaDe = (natural, nat) => natural === 1 ? "pifia" : (TEMAS[nat] ? nat : "naranja");
 
 /* ---------------- Foundry ---------------- */
 const leer = (k, d) => { try { return game.settings.get(MOD, k); } catch { return d; } };
@@ -42,6 +42,13 @@ function imagenDe(actor, tokenDoc) {
   const pobre = s => !s || /mystery-man|\.svg$/i.test(s);
   return pobre(a) && !pobre(t) ? t : (a || t || "icons/svg/mystery-man.svg");
 }
+function manchas() {
+  // Salpicaduras de tinta alrededor del grito.
+  return Array.from({ length: 7 }, (_, i) => {
+    const t = 14 + Math.random() * 70, x = 2 + Math.random() * 58, y = 22 + Math.random() * 56;
+    return `<i style="left:${x.toFixed(1)}vw;top:${y.toFixed(1)}vh;width:${t.toFixed(0)}px;height:${(t * (0.6 + Math.random() * 0.6)).toFixed(0)}px;--d:${(0.15 + i * 0.03).toFixed(2)}s"></i>`;
+  }).join("");
+}
 function chispas(n = 18) {
   return Array.from({ length: n }, () => {
     const ang = Math.random() * Math.PI * 2, d = 25 + Math.random() * 45;
@@ -49,13 +56,15 @@ function chispas(n = 18) {
   }).join("");
 }
 async function mostrar(d) {
-  const T = TEMAS[d.tema] ?? TEMAS.dorado;
+  const T = TEMAS[d.tema] ?? TEMAS.naranja;
   const el = document.createElement("div");
   el.id = "ecos-festejo";
   el.className = `ef-tema-${d.tema} ${d.natural === 1 ? "ef-uno" : "ef-veinte"}`;
   el.style.setProperty("--c1", T.c1); el.style.setProperty("--c2", T.c2); el.style.setProperty("--c3", T.c3);
-  el.innerHTML = `<div class="ef-velo"></div><div class="ef-flash"></div>
+  el.innerHTML = `<div class="ef-velo"></div><div class="ef-rayos"></div><div class="ef-flash"></div>
+    <div class="ef-tinta">${manchas()}</div>
     <div class="ef-banda"><div class="ef-lineas"></div></div>
+    <div class="ef-aura"></div>
     <div class="ef-retrato"><div class="ef-foto"><img src="${esc(d.img)}" alt=""></div></div>
     <div class="ef-texto"><div class="ef-grito">${esc(d.grito)}</div><div class="ef-nombre">${esc(d.nombre)}${d.detalle ? ` · <span>${esc(d.detalle)}</span>` : ""}</div></div>
     <div class="ef-chispas">${chispas()}</div>`;

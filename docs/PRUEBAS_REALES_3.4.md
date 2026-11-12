@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.48.0
+# Preparar la primera prueba real · 3.49.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -342,9 +342,9 @@ En el panel del Verbe → Ayuda rápida, abre «Tutorial»: explica el Control, 
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 56. 3.47 · Festejo del 20 natural
+### 56. 3.47/3.49 · Festejo del 20 natural (estilo anime de acción)
 
-Menú del DM → Mesa → «Festejo del 20» → «Probar (solo yo)» con un token seleccionado: sale el corte a pantalla completa con su retrato y «¡CRÍTICO!»; un clic lo salta. «Lanzar un 20 a todos»: lo ven los jugadores conectados. Un jugador saca un 20 natural en un ataque: lo ven todos; en la salvación de muerte dice «¡SE LEVANTA!»; un 1 es «¡PIFIA!» en rojo. En el panel de acciones, la estrella pone la frase propia del personaje. Apaga el temblor en tus ajustes y el festejo entero en los del mundo.
+Se ve con líneas de foco, trazo de tinta, panel de manga con aura y letras de impacto, naranja y negro (o el color de la naturaleza del Verbe). Menú del DM → Mesa → «Festejo del 20» → «Probar (solo yo)» con un token seleccionado: sale el corte a pantalla completa con su retrato y «¡CRÍTICO!»; un clic lo salta. «Lanzar un 20 a todos»: lo ven los jugadores conectados. Un jugador saca un 20 natural en un ataque: lo ven todos; en la salvación de muerte dice «¡SE LEVANTA!»; un 1 es «¡PIFIA!» en rojo. En el panel de acciones, la estrella pone la frase propia del personaje. Apaga el temblor en tus ajustes y el festejo entero en los del mundo.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 

@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.49.0 — 2026-11-12
+
+- **Festejo del 20 al estilo anime de acción**: líneas de foco que vibran, trazo de tinta negra con el brillo naranja, salpicaduras, el retrato en un panel de manga (borde blanco, sombra negra, trama de puntos) con aura, y el grito en letras de impacto con contorno negro. Naranja y negro por defecto; con el Verbe despierto toma el color de su naturaleza. La Pifia va en rojo oscuro.
+- **Fuente nueva** para el grito y el nombre: Bangers (SIL Open Font License 1.1, incluida en el módulo con su licencia).
+
 ## 3.48.0 — 2026-11-12
 
 - **Relojes de facción**: el primer día que un reloj con ritmo propio empieza a contar parte de su valor inicial (antes partía de 0). En el mundo, las 37 facciones ya tienen su valor inicial.

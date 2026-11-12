@@ -21,7 +21,7 @@ test('3.47 · solo PJ por defecto; «solo ataques» deja fuera pruebas y salvaci
   assert.ok(festejoDe({ natural: 20, tipo: 'death', soloAtaques: true }));
 });
 test('3.47 · el tema sale de la naturaleza del Verbe; el 1 siempre es rojo', () => {
-  assert.equal(temaDe(20, 'fuego'), 'fuego'); assert.equal(temaDe(20, null), 'dorado'); assert.equal(temaDe(20, 'madera'), 'dorado');
+  assert.equal(temaDe(20, 'fuego'), 'fuego'); assert.equal(temaDe(20, null), 'naranja'); assert.equal(temaDe(20, 'madera'), 'naranja');
   assert.equal(temaDe(1, 'agua'), 'pifia');
   for (const t of Object.values(TEMAS)) assert.match(t.c1, /^#[0-9a-f]{6}$/i);
 });
