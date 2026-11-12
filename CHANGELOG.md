@@ -1,5 +1,14 @@
 # Historial de cambios
 
+## 3.67.0 — 2026-11-12
+
+- **Fichas de técnica (pedido del autor):** cada una dice, en orden, **Qué es** (rama, grado y para qué sirve), **Aspecto** (cómo se ve: su rama, su elemento y sus gestos), **Qué hace** y **Cómo se usa**, con la Tirada, el Área y el Daño o la Curación al final. Fuera las frases de relleno («Afecta solo al objetivo…», «Lo de D&D es el golpe…») y las abreviaturas sueltas: «SAB.» ahora dice «El objetivo hace una salvación de Sabiduría».
+- **Sello no choca:** ninguna técnica de Sello intercepta ni es interceptada en un choque (ajuste «Verbe: los sellos no chocan» para volver atrás). Las que no hacen daño **se sostienen solas** (sin Concentración); Guardar carga 25 kg, Bodega 250 kg, Marca menor llega a 15 km, Cierre, Círculo de guarda y Marca de vuelta duran 7 días, y **Sello que avisa** (8 h) marca al intruso.
+- **Velo dentro y fuera de combate:** las 59 técnicas de Velo dicen qué hacen en la pelea y fuera de ella (interrogar, infiltrarse, vaciar una sala…).
+- **Quietud reforzada:** estilo de aguante y contraataque. Raíz en el suelo sin Concentración y con ventaja en ataques de oportunidad; El mundo cura con una acción; Aliento de la tierra cura 2d6 por turno; Respirar con el mundo y Aliento compartido suman tu Sabiduría; Calma también sirve para salvaciones; y más.
+- **Hilo y sus herramientas:** cada técnica de Hilo dice qué Objeto del Verbe usa (agujas, kunai, rollo de Hilo de Verbe, marioneta, sellos de papel, pergamino de armas, tinta). Al usarla se descuentan las de gasto con «Deshacer», o avisa si no la llevas (ajuste «Hilo: herramientas del Verbe»). Nuevo objeto: **Kunai (5)**.
+- **Cada rama** dice su estilo de combate y su utilidad en su descripción.
+
 ## 3.66.0 — 2026-11-12
 
 - **Todo lo que se compra con Trazos se entrena** (regla del autor): subir un rango de rama (días buenos según el rango, CD 11 + rango) y el Control del Verbe (competencia 2 días CD 13; pericia 3 días CD 15) quedan en «Entrenando» con una tirada por día; un 20 natural lo termina. El DM: «Dar por aprendida». Ajuste «Verbe: rangos y Control se entrenan».

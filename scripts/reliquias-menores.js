@@ -34,6 +34,7 @@ const PERFIL_VERBE = [
   [/^Sellos de papel/i, { tipo: "consumable", sub: "trinket", cantidad: 5, nivel: 1 }],
   [/^Agujas/i, { tipo: "consumable", sub: "ammo", cantidad: 20, nivel: 1 }],
   [/^Estrellas arrojadizas/i, { tipo: "weapon", cantidad: 5, nivel: 1 }],
+  [/^Kunai/i, { tipo: "weapon", cantidad: 5, nivel: 1, dano: "piercing", clase: "simpleM" }],
   [/^Hilo de Verbe/i, { tipo: "loot", nivel: 1 }],
   [/^Pergamino de armas/i, { tipo: "consumable", sub: "scroll", nivel: 3 }],
   [/^Marioneta \(Mediana\)/i, { tipo: "loot", nivel: 3 }],
@@ -51,7 +52,7 @@ export function objetoVerbe(e) {
   const sistema = { description: { value: desc }, quantity: p.cantidad ?? 1, price: { value: precio, denomination: "gp" }, weight: { value: p.tipo === "loot" && /Marioneta/i.test(e.objeto) ? 30 : 0.5, units: "lb" } };
   if (p.usos) sistema.uses = { max: String(p.usos), spent: 0, recovery: [] };
   if (p.tipo === "consumable") sistema.type = { value: p.sub ?? "trinket", subtype: "" };
-  if (p.tipo === "weapon") Object.assign(sistema, { type: { value: "simpleR", baseItem: "" }, damage: { base: { number: 1, denomination: 4, bonus: "", types: ["slashing"], custom: { enabled: false, formula: "" }, scaling: { mode: "", number: null, formula: "" } } },
+  if (p.tipo === "weapon") Object.assign(sistema, { type: { value: p.clase ?? "simpleR", baseItem: "" }, damage: { base: { number: 1, denomination: 4, bonus: "", types: [p.dano ?? "slashing"], custom: { enabled: false, formula: "" }, scaling: { mode: "", number: null, formula: "" } } },
     range: { value: 20, long: 60, reach: null, units: "ft" }, properties: ["fin", "lgt", "thr"] });
   return { name: e.objeto, type: p.tipo, img: p.tipo === "weapon" ? "icons/svg/sword.svg" : "icons/svg/item-bag.svg", system: sistema, flags: { [MOD]: { objetoVerbe: { nivel: p.nivel } } } };
 }

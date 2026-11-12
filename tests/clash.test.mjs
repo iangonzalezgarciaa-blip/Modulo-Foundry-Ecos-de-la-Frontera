@@ -91,7 +91,8 @@ test('3.2: dos contratécnicas por rama no elemental (reacción defensiva y otra
     assert.ok(de.every(t => t.g >= 0 && t.g <= 5 && t.costo > 0 && !t.nat));
     assert.ok(de.some(t => reaccionDefensiva(t)), `${rama}: reacción`);
     const a = actor(); const i = agregar(a, de.find(t => !reaccionDefensiva(t)).id);
-    assert.equal(tecnicaChocable(i), true, `${rama}: choque`);
+    // 3.67 (pedido del autor): los sellos no chocan.
+    assert.equal(tecnicaChocable(i), rama !== 'sello', `${rama}: choque`);
   }
   const a = actor(); agregar(a, 'cuerpo-palma-desvia');
   assert.equal(await V.usarDefensa(a, 'cuerpo-palma-desvia', { grado: 1 }), true);

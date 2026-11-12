@@ -29,6 +29,7 @@ import "./reliquias-almacen.js";
 import "./subir-pnj.js";
 import "./reliquias-menores.js";
 import "./plan-sensei.js";
+import "./herramientas-shinobi.js";
 import "./subir-nivel.js";
 import "./fama.js";
 import "./capas-abismo.js";

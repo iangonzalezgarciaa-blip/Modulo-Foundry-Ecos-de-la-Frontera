@@ -58,7 +58,7 @@ test('informe técnico omite actores, diarios, rutas y credenciales aunque exist
  const r=diagnosticoMesa(),s=JSON.stringify(r);assert.doesNotMatch(s,/SECRETO_DEL_PERSONAJE|SECRETO_DIARIO/);assert.equal(r.core,'13.350');assert.ok(r.incidencias.some(x=>x.codigo==='mesa:revision'));
 });
 test('un jugador no registra pruebas privadas ni adopta lore',async()=>{
- game.user=game.users.get('player');assert.equal(await registrarPrueba('creacion','correcto','nota'),false);assert.equal(await adoptarMemoria('rama:forma','adoptado'),false);assert.equal(await cuadernoMemoria(),null);assert.equal(PRUEBAS_REALES.length,99);
+ game.user=game.users.get('player');assert.equal(await registrarPrueba('creacion','correcto','nota'),false);assert.equal(await adoptarMemoria('rama:forma','adoptado'),false);assert.equal(await cuadernoMemoria(),null);assert.equal(PRUEBAS_REALES.length,100);
 });
 test('174 entradas de memoria mantienen el panteón y distinguen propuestas de referencia',()=>{
  const es=D.memoriaNimerios?.entradas;assert.equal(es?.length,174);assert.equal(es.filter(e=>e.tipo==='Panteón').length,22);assert.equal(es.filter(e=>e.tipo==='Reliquias').length,78);

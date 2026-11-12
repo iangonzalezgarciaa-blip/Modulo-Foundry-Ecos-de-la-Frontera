@@ -361,3 +361,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 12-nov-2026 | Mejora | Claude | Dado de control, dotes entrenadas, pestaña Entrenando, crecer en Trazos, Guardia de Verbe y plan del sensei. Release v3.64.0 | 3.64.0 |
 | 12-nov-2026 | Mejora | Claude | Familia = linaje, naturaleza por dado, Control con INT y dotes de instinto/presencia, ramas cerradas, árbol de Control. Release v3.65.0 | 3.65.0 |
 | 12-nov-2026 | Mejora | Claude | Rangos y Control se entrenan, técnicas mundanas retiradas, Papel que estalla, Liberar el Velo, mejoras de 0 Verbe. Release v3.66.0 | 3.66.0 |
+| 12-nov-2026 | Mejora | Claude | Auditoría de técnicas (Qué es/Aspecto, Sello sin choques, Velo doble uso, Quietud, Hilo con herramientas). Release v3.67.0 | 3.67.0 |
