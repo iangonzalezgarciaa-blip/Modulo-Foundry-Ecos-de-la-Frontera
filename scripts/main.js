@@ -45,6 +45,7 @@ import "./pf2e-dotes.js";
 import "./dotes-nivel.js";
 import "./venenos.js";
 import "./taller.js";
+import "./sorpresa.js";
 import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
@@ -4830,6 +4831,16 @@ Hooks.on("getSceneControlButtons", controls => {
       api?.panelAcciones?.alternar?.();
     }
   };
+  // 3.57 (pedido del autor): Sorpresa. El DM la pone a los tokens elegidos (o marcados); sin ninguno, elige de la escena.
+  if (game.user.isGM) tokens.tools.ecosSorpresa = {
+    name: "ecosSorpresa",
+    title: "Sorpresa: quien no lo vio venir tira iniciativa con desventaja, no reacciona (ni D&D, ni Verbe, ni choques) y lo atacan con ventaja hasta el final de su primer turno",
+    icon: "fa-solid fa-eye-slash",
+    button: true,
+    visible: true,
+    order: 97.6,
+    onChange: (event, active) => { if (active === false) return; game.modules.get(MOD)?.api?.sorpresa?.(); }
+  };
   tokens.tools.ecosMenu = {
     name: "ecosMenu",
     title: "Ecos: jornada de trabajo, mercadillo, calendario y todos los botones de la barra, explicados (Mayús+M)",
@@ -8744,6 +8755,7 @@ const MEGA_HERRAMIENTAS = {
   ecosPanel: "Menú del DM: todo Ecos, las hojas, toda la barra izquierda y los ajustes, cada botón explicado.",
   ecosPlantillas: "Quitar plantillas: lista las plantillas de área de la escena (en Foundry 14 son regiones) y quita las marcadas o todas.",
   ecosVerbe: "Verbe: tus técnicas en una ventana, con lo que gasta cada una (acción o reacción Verbe), alcance y duración.",
+  ecosSorpresa: "Sorpresa (DM): a los tokens elegidos o marcados; sin reacciones y atacados con ventaja hasta el final de su primer turno.",
   ecosAcciones: "Acciones disponibles: muestra u oculta el panel con tu turno y las acciones estándar de la ficha seleccionada (Mayús+clic: todas las de su hoja).",
   ecosSantuario: "Santuario SÍ/NO: decide si el Descanso Largo es completo.",
   ecosRelojes: "Relojes del valle: todos los de Tramas · 9 en una ventana, con + y −.",

@@ -42,6 +42,7 @@ export function ventajaAtaque({ atacante = new Set(), blanco = null, distancia =
   // El blanco
   if (blanco) {
     for (const k of ["blinded", "paralyzed", "petrified", "restrained", "stunned", "unconscious"]) if (tiene(blanco, k)) ventajas.push(`el blanco está ${NOMBRE_ESTADO[k]}`);
+    if (tiene(blanco, "surprised")) ventajas.push("el blanco está Sorprendido (no lo vio venir)"); // 3.57
     if (tiene(blanco, "prone") && distancia != null) {
       if (distancia <= 5) ventajas.push("el blanco está Derribado y estás a 1,5 m");
       else desventajas.push("el blanco está Derribado y estás a más de 1,5 m");

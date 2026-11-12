@@ -4678,7 +4678,7 @@ const noPuedeActuar = actor => INCAPAZ.some(st => actor?.statuses?.has(st));
 const enCombate = actor => !!game.combat?.started && !!game.combat.combatants?.some?.(c => c.actor === actor || (c.actor?.uuid && c.actor.uuid === actor?.uuid) || (c.actorId && c.actorId === actor?.id));
 /** 3.27: la reacción Verbe va aparte de la de D&D (un velo de separación): una por ronda, se renueva al empezar tu turno. */
 function reaccionDisponible(actor) {
-  if (noPuedeActuar(actor) || actor?.statuses?.has("cargado") || actor?.statuses?.has("canalizando")) return false;
+  if (noPuedeActuar(actor) || actor?.statuses?.has("cargado") || actor?.statuses?.has("canalizando") || actor?.statuses?.has("surprised")) return false; // 3.57: Sorprendido no reacciona
   if (!enCombate(actor)) return true;
   return !estado(actor)?.reaccionUsada;
 }

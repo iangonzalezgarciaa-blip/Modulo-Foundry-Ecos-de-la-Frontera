@@ -134,12 +134,22 @@ export function renderBarra() {
     let v = null;
     try { v = game.modules.get(MOD)?.api?.verbe?.turnoVerbe?.(actor) ?? null; } catch { v = null; }
     const despierto = !!game.modules.get(MOD)?.api?.verbe?.despierto?.(actor);
-    if (!BARRA) { BARRA = document.createElement("div"); BARRA.id = "ecos-turno"; document.body.appendChild(BARRA); BARRA.addEventListener("click", clicBarra); }
+    if (!BARRA) { BARRA = document.createElement("div"); BARRA.id = "ecos-turno"; document.body.appendChild(BARRA); BARRA.addEventListener("click", clicBarra); BARRA.addEventListener("pointerdown", arrastrarBarra); }
+    // 3.57: la barra se mueve (arrastrando su título), se achica o agranda (A− / A+) y se minimiza; ⌂ la vuelve bajo el carrusel.
+    const pos = leerLS("turnoPos", null), escala = Math.min(1.6, Math.max(0.6, Number(leerLS("turnoEscala", 1)) || 1)), mini = !!leerLS("turnoMin", false);
     const dock = document.querySelector("#combat-dock");
     const abajo = dock ? Math.round(dock.getBoundingClientRect().bottom) + 6 : 8;
-    BARRA.style.top = `${abajo}px`;
+    if (pos) Object.assign(BARRA.style, { left: `${pos.x}px`, top: `${pos.y}px`, transform: `scale(${escala})`, transformOrigin: "top left" });
+    else Object.assign(BARRA.style, { left: "50%", top: `${abajo}px`, transform: `translateX(-50%) scale(${escala})`, transformOrigin: "top center" });
+    BARRA.classList.toggle("mini", mini);
+    const ctl = `<span class="ecos-turno-ctl"><button type="button" data-turnoui="menos" data-tooltip="Más chica">A−</button><button type="button" data-turnoui="mas" data-tooltip="Más grande">A+</button><button type="button" data-turnoui="min" data-tooltip="${mini ? "Mostrar todo" : "Minimizar"}">${mini ? "▢" : "–"}</button>${pos ? '<button type="button" data-turnoui="anclar" data-tooltip="Volver bajo el carrusel">⌂</button>' : ""}</span>`;
+    if (mini) {
+      const p = k => (t[k] ? "◇" : "◆");
+      BARRA.innerHTML = `<div class="ecos-turno-cab" data-tooltip="Arrastra para moverla"><b>${esc(c.name)}</b> <span class="ecos-turno-resumen">${p("accion")}Acc ${p("adicional")}Adic ${p("reaccion")}Reac · ${queda}/${total} ft</span>${ctl}</div>`;
+      return;
+    }
     const pct = total ? Math.round(100 * queda / total) : 0;
-    BARRA.innerHTML = `<div class="ecos-turno-cab"><b>Turno de ${esc(c.name)}</b>${derribado(actor) ? ' <span class="ecos-turno-aviso">Derribado: arrastrarse cuesta el doble</span>' : ""}</div>
+    BARRA.innerHTML = `<div class="ecos-turno-cab" data-tooltip="Arrastra para moverla"><b>Turno de ${esc(c.name)}</b>${derribado(actor) ? ' <span class="ecos-turno-aviso">Derribado: arrastrarse cuesta el doble</span>' : ""}${ctl}</div>
       <div class="ecos-turno-mov" data-tooltip="Se descuenta solo al mover el token. Correr (Dash) suma tu velocidad otra vez."><div style="width:${pct}%"></div><span>Movimiento: ${queda} de ${total} ft</span></div>
       <div class="ecos-turno-pips">${pip("accion", "Acción", t.accion, puede, "Atacar, lanzar un conjuro, Correr, Desengancharse, Esquivar, Ayudar, Esconderse, usar un objeto…")}${pip("adicional", "Adicional", t.adicional, puede, "Solo si algo te da una acción adicional: un conjuro, un rasgo de clase, la segunda arma…")}${pip("reaccion", actor.statuses?.has?.("acechado") ? "Sin reacción (0 PG)" : "Reacción", t.reaccion || actor.statuses?.has?.("acechado"), puede, "Una por ronda: el ataque de oportunidad, un conjuro de reacción… Se recupera al empezar tu turno. A 0 PG no hay reacciones.")}${pip("interaccion", "Objeto", t.interaccion, puede, "Una interacción con un objeto gratis por turno: abrir una puerta, sacar algo de la mochila, recoger lo que cayó. La segunda gasta tu Acción (Usar un objeto).")}</div>
       ${t.preparada ? `<div class="ecos-turno-preparada">⏳ Preparado: <b>${esc(t.preparada.que)}</b>${t.preparada.cuando ? ` cuando ${esc(t.preparada.cuando)}` : ""}</div>` : ""}
@@ -149,7 +159,26 @@ export function renderBarra() {
 }
 const renderLuego = globalThis.foundry?.utils?.debounce ? foundry.utils.debounce(renderBarra, 100) : renderBarra;
 
+const leerLS = (k, d) => { try { return JSON.parse(localStorage.getItem(`${MOD}.${k}`)) ?? d; } catch { return d; } };
+const guardarLS = (k, v) => { try { if (v === null) localStorage.removeItem(`${MOD}.${k}`); else localStorage.setItem(`${MOD}.${k}`, JSON.stringify(v)); } catch { /* sin almacenamiento */ } };
+function arrastrarBarra(ev) {
+  if (!ev.target.closest(".ecos-turno-cab") || ev.target.closest("button")) return;
+  const r = BARRA.getBoundingClientRect(), dx = ev.clientX - r.left, dy = ev.clientY - r.top;
+  const escala = Number(leerLS("turnoEscala", 1)) || 1;
+  const mover = e => Object.assign(BARRA.style, { left: `${Math.max(0, e.clientX - dx)}px`, top: `${Math.max(0, e.clientY - dy)}px`, transform: `scale(${escala})`, transformOrigin: "top left" });
+  const soltar = () => { window.removeEventListener("pointermove", mover); window.removeEventListener("pointerup", soltar); const q = BARRA.getBoundingClientRect(); guardarLS("turnoPos", { x: Math.round(q.left), y: Math.round(q.top) }); renderBarra(); };
+  window.addEventListener("pointermove", mover); window.addEventListener("pointerup", soltar);
+}
 async function clicBarra(ev) {
+  const ui_ = ev.target.closest("[data-turnoui]");
+  if (ui_) {
+    const k = ui_.dataset.turnoui, e = Number(leerLS("turnoEscala", 1)) || 1;
+    if (k === "menos") guardarLS("turnoEscala", Math.max(0.6, Math.round((e - 0.1) * 10) / 10));
+    if (k === "mas") guardarLS("turnoEscala", Math.min(1.6, Math.round((e + 0.1) * 10) / 10));
+    if (k === "min") guardarLS("turnoMin", !leerLS("turnoMin", false));
+    if (k === "anclar") guardarLS("turnoPos", null);
+    return renderBarra();
+  }
   const b = ev.target.closest("button");
   const combat = combateActivo(), c = combat?.combatant, actor = c?.actor;
   if (!b || !actor || !(game.user.isGM || actor.isOwner)) return;
@@ -192,7 +221,7 @@ function enemigosDe(doc) {
     .map(t => {
       const cid = combatienteDe(combat, t.document)?.id;
       const tt = cid ? datosTurno(combat, cid) : null;
-      return { id: t.id, nombre: t.document.name, rect: rectDe(t.document), alcance: Number(t.actor.getFlag?.(MOD, "alcance")) || 5, reaccionLibre: !tt?.reaccion };
+      return { id: t.id, nombre: t.document.name, rect: rectDe(t.document), alcance: Number(t.actor.getFlag?.(MOD, "alcance")) || 5, reaccionLibre: !tt?.reaccion && !t.actor.statuses?.has?.("surprised") };
     });
 }
 function puedeDesengancheAdicional(actor) { return (actor?.items ?? []).some(i => DESENGANCHE_ADICIONAL.test(i.name ?? "")); }
@@ -208,7 +237,10 @@ async function preguntarMovimiento(doc, destino, { oportunidad = [], falta = 0, 
     if (puedeDesengancheAdicional(actor)) botones.push({ action: "desengancheAd", label: "Desengancharme (Adicional)", icon: "fa-solid fa-wind" });
   }
   if (falta > 0) botones.push({ action: "correr", label: "Correr (Acción) y moverme", icon: "fa-solid fa-person-running" });
-  botones.push({ action: "igual", label: oportunidad.length ? "Moverme igual" : "Moverme igual (el DM decide)", icon: "fa-solid fa-shoe-prints" });
+  // 3.57: sin pies, un jugador no se mueve «igual» (el DM sí); el DM le devuelve el movimiento si corresponde.
+  const bloqueo = falta > 0 && leer("bloquearMovimiento", true) && !game.user.isGM;
+  if (!bloqueo) botones.push({ action: "igual", label: oportunidad.length ? "Moverme igual" : "Moverme igual (DM)", icon: "fa-solid fa-shoe-prints" });
+  else lineas.push(`<p class="ecos-nota">Sin pies no puedes seguir: Corre (si te queda la Acción), mueve menos, o pídele al DM «Devolver movimiento».</p>`);
   botones.push({ action: "no", label: "No me muevo", icon: "fa-solid fa-xmark", default: true });
   const r = await DialogV2.wait({ window: { title: `Antes de mover · ${doc.name}`, icon: "fa-solid fa-triangle-exclamation" }, position: { width: 460 },
     content: `<div class="ecos-dialogo ecos-antes-mover">${lineas.join("")}<details><summary>¿Qué es cada opción?</summary><ul><li><b>Desengancharte</b>: gastas tu acción (o tu adicional si tu clase puede) y este turno nadie te ataca por alejarte.</li><li><b>Correr</b>: gastas tu acción y sumas tu velocidad otra vez.</li><li><b>Moverte igual</b>: te mueves y los enemigos pueden usar su reacción contra ti.</li></ul></details></div>`,
@@ -245,6 +277,10 @@ function revisarMovimiento(doc, destino, opciones = {}, medida = null) {
     falta = costo - queda;
   }
   if (!oportunidad.length && falta <= 0) return;
+  if (falta > 0 && leer("bloquearMovimiento", true) && !game.user.isGM) {
+    const t = datosTurno(combat, c.id) ?? turnoVacio(combat.round, combat.turn);
+    if (t.accion && !oportunidad.length) { ui.notifications.warn(`${doc.name}: este movimiento cuesta ${costo} ft y te quedan ${queda} ft. Si el DM te devuelve movimiento, puedes seguir.`); return false; }
+  }
   preguntarMovimiento(doc, destino, { oportunidad, falta, queda, costo }).catch(err => console.error(`${MOD} | antes de mover`, err));
   return false;
 }
@@ -338,12 +374,36 @@ export async function preguntarIniciativas(soloPNJ = false) {
   return tirar();
 }
 
+/** 3.57 · Mientras arrastras el token, la barra muestra cuánto te quedaría (baja y sube según dónde lo lleves). */
+let PREVIA = false;
+function previaMovimiento(clon) {
+  try {
+    const combat = combateActivo(), c = combat?.combatant;
+    if (!BARRA || !c || !clon?.isPreview) return;
+    const orig = clon._original ?? canvas.tokens.get(clon.id);
+    if (!orig || orig.document.id !== c.tokenId) return;
+    const medida = canvas.grid.measurePath([orig.center, clon.center]);
+    const dist = Math.round(Number(medida?.cost ?? medida?.distance) || 0);
+    const t = datosTurno(combat, c.id) ?? turnoVacio(combat.round, combat.turn), vel = velocidadDe(c.actor), total = vel + (Number(t.extra) || 0);
+    const queda = movimientoRestante(t, vel), despues = queda - dist;
+    const barra = BARRA.querySelector(".ecos-turno-mov"); if (!barra) return;
+    barra.classList.toggle("previa", true); barra.classList.toggle("falta", despues < 0);
+    barra.querySelector("div").style.width = `${total ? Math.max(0, Math.round(100 * despues / total)) : 0}%`;
+    barra.querySelector("span").textContent = despues >= 0 ? `Movimiento: ${queda} → ${despues} de ${total} ft (este tramo ${dist} ft)` : `Este tramo cuesta ${dist} ft: te faltan ${-despues} ft`;
+    PREVIA = true;
+  } catch { /* sin medida */ }
+}
+function finPrevia() { if (PREVIA) { PREVIA = false; renderBarra(); } }
+
 /* ---------------- Ganchos ---------------- */
 if (globalThis.Hooks) {
+  Hooks.on("refreshToken", (token, flags) => { if (token?.isPreview && (flags?.refreshPosition || flags?.refresh)) previaMovimiento(token); });
+  globalThis.window?.addEventListener?.("pointerup", () => setTimeout(finPrevia, 60));
   Hooks.once("init", () => {
     const reg = (k, name, hint, def = true, scope = "world") => { try { game.settings.register(MOD, k, { name, hint, scope, config: true, type: Boolean, default: def, onChange: () => renderLuego() }); } catch { /* ya */ } };
     reg("arrastrarAgarrado", "Arrastrar a quien sujetas", "Al mover a quien tiene a alguien Agarrado, el agarrado viene con él y cada pie cuesta uno más (salvo que sea dos tamaños más chico). Con «Deshacer» en el chat.");
     reg("trackerTurno", "Turno a la vista", "Bajo el carrusel de iniciativa: el movimiento que le queda a quien actúa y sus acciones de D&D y del Verbe. El DM devuelve movimiento.");
+    reg("bloquearMovimiento", "Bloquear el movimiento sin pies", "En combate, un jugador no mueve su token más allá del movimiento que le queda: Corre (si tiene la Acción), mueve menos o pide al DM «Devolver movimiento» (en la barra del turno). El DM sí puede.");
     reg("avisosMovimiento", "Avisos antes de mover", "Ataque de oportunidad al alejarte de un enemigo (con el menú para desengancharte) y aviso si el movimiento no te alcanza.");
     reg("avisosMovimientoDM", "Avisos antes de mover · también al DM", "Que los avisos salgan también cuando el DM mueve a sus PNJ.", false);
     reg("preguntarLevantarse", "Preguntar si se levanta", "Al empezar el turno Derribado, el dueño elige si se levanta (mitad del movimiento).");

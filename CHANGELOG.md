@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 3.57.0 — 2026-11-12
+
+- **Menú de acciones con pestañas** (panel de la barra izquierda y ventana «Acción estándar»): arriba, **Acción / Adicional / Reacción / Fuera de combate** (y Legendarias en los PNJ que las tienen), con cuántas hay y tachadas si ya las gastaste. Se arma solo con la hoja de PJ o PNJ: en Acción, Atacar (armas), Magia (conjuros preparados; apagados si no hay espacio), De tu hoja y De cualquiera; en Adicional y Reacción, lo de la hoja y las acciones de cualquiera (Apuntar, Fintar, Aguantar, Ponerse a cubierto, Interponerse…); Fuera de combate: descansos, Taller, rituales y lo que lleva minutos u horas. Clic usa la actividad.
+- **Barra del turno** bajo el carrusel: se arrastra por el título, A−/A+ la achica o agranda, – la minimiza y ⌂ la vuelve a su sitio (lo recuerda cada navegador).
+- **Movimiento en vivo**: al arrastrar el token de quien actúa, la barra baja y sube con lo que costaría ese tramo (en rojo si no alcanza). **Sin pies, un jugador no se mueve**: Correr (si le queda la Acción) o «Devolver movimiento» del DM. Ajuste «Bloquear el movimiento sin pies».
+- **Sorpresa** (botón del DM en la barra izquierda): Sorprendido tira iniciativa con desventaja, no reacciona (ni D&D, ni Verbe, ni choques, ni ataques de oportunidad) y lo atacan con ventaja hasta el final de su primer turno; se va solo. «Quitar» en el chat.
+
 ## 3.56.0 — 2026-11-12
 
 - **Arreglo**: ninguna actividad gastaba la acción en el turno (dnd5e 6 guarda la actividad en otro lugar de la tarjeta del chat). Ahora conjuros, ataques y objetos marcan Acción, Adicional o Reacción.

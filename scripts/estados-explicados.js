@@ -34,7 +34,7 @@ export const ESTADOS_EXPLICADOS = {
     hacer: "Pegarle a quien se concentra corta su efecto." },
   dodging: { n: "Esquivando", que: "Usó la acción Esquivar: hasta su próximo turno los ataques contra él tienen desventaja (si los ve) y tiene ventaja en salvaciones de Destreza.", hacer: "Mejor atacar a otro o usar algo que no sea un ataque." },
   hiding: { n: "Escondido", que: "No saben dónde está. Su primer ataque tiene ventaja y se revela al atacar o hacer ruido.", hacer: "Buscar (Percepción) para encontrarlo." },
-  surprised: { n: "Sorprendido", que: "No lo vio venir: tiene desventaja en su tirada de iniciativa.", hacer: "" },
+  surprised: { n: "Sorprendido", que: "No lo vio venir: tira la iniciativa con desventaja, no puede reaccionar (ni D&D, ni Verbe, ni choques, ni ataques de oportunidad) y los ataques contra él tienen ventaja, hasta el final de su primer turno.", hacer: "Se va solo al terminar su primer turno." },
   bleeding: { n: "Sangrando", que: "Pierde PG al empezar su turno hasta que alguien lo trate (Medicina) o lo curen.", hacer: "Medicina CD 10 o cualquier curación lo detiene." },
   burning: { n: "Ardiendo", que: "Está en llamas: recibe daño de fuego al empezar su turno hasta que lo apague (una acción) o lo apaguen.", hacer: "Agua o revolcarse en el suelo." },
   flying: { n: "Volando", que: "Está en el aire. Si queda Derribado o su velocidad baja a 0, cae.", hacer: "Derribarlo lo hace caer (daño de caída)." },

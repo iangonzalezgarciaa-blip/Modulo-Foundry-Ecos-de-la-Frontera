@@ -32,6 +32,33 @@ export function agruparPorTiempo(entradas) {
   for (const k of Object.keys(g)) g[k].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
   return g;
 }
+/** 3.57 · En qué pestaña va cada actividad según su tiempo de activación. */
+export const ECONOMIA = { action: "accion", bonus: "adicional", reaction: "reaccion", legendary: "legendaria", mythic: "legendaria", lair: "legendaria",
+  minute: "fuera", hour: "fuera", day: "fuera", special: "fuera" };
+export const NOMBRE_ECONOMIA = { accion: "Acción", adicional: "Adicional", reaccion: "Reacción", legendaria: "Legendarias", fuera: "Fuera de combate" };
+/** Acciones de cualquiera que se hacen durante el movimiento (sin gastar la Acción). */
+export const DURANTE_MOVIMIENTO = new Set(["Abrirse paso", "Voltereta"]);
+/** Las de cualquiera que valen fuera de combate (además de las de duración larga). */
+export const BASICAS_FUERA = ["buscar", "estudiar", "influir", "esconderse", "objeto"];
+/**
+ * Reparte lo que la hoja puede hacer por pestaña y, en la de Acción, en Atacar, Magia, De tu hoja y De cualquiera.
+ * Entrada: [{ id, nombre, eco, grupo: "atacar"|"magia"|"otras", comun, mov, disponible }]. Puro.
+ */
+export function clasificarAcciones(entradas = []) {
+  const r = { accion: { atacar: [], magia: [], otras: [], comun: [], mov: [] }, adicional: { hoja: [], comun: [] }, reaccion: { hoja: [], comun: [] }, legendaria: { hoja: [] }, fuera: { hoja: [], comun: [] } };
+  const orden = (a, b) => (b.disponible !== false) - (a.disponible !== false) || a.nombre.localeCompare(b.nombre, "es");
+  for (const e of entradas) {
+    if (e.mov) { r.accion.mov.push(e); continue; }
+    const g = r[e.eco]; if (!g) continue;
+    if (e.eco === "accion") (e.comun ? g.comun : g[e.grupo] ?? g.otras).push(e);
+    else (e.comun && g.comun ? g.comun : g.hoja).push(e);
+  }
+  for (const g of Object.values(r)) for (const l of Object.values(g)) l.sort(orden);
+  return r;
+}
+/** Cuántas hay en cada pestaña (para los botones de arriba). Puro. */
+export const cuentaPestanas = c => Object.fromEntries(Object.entries(c).map(([k, g]) => [k, Object.values(g).reduce((n, l) => n + l.length, 0)]));
+
 /** Daño de caída: 1d6 por cada 3 m (10 ft), hasta 20d6. Puro. */
 export const dadosCaida = pies => Math.min(20, Math.floor(Math.max(0, Number(pies) || 0) / 10));
 /** Los daños indirectos que el DM aplica directo. */
@@ -49,6 +76,104 @@ export const DANOS_INDIRECTOS = {
 };
 
 /* ---------------- Foundry ---------------- */
+const leerLS = (k, d) => { try { return JSON.parse(localStorage.getItem(`${MOD}.${k}`)) ?? d; } catch { return d; } };
+const guardarLS = (k, v) => { try { localStorage.setItem(`${MOD}.${k}`, JSON.stringify(v)); } catch { /* sin almacenamiento */ } };
+const actividadesDe = it => Array.from(it?.system?.activities?.values?.() ?? Object.values(it?.system?.activities ?? {}));
+const UNIDAD = { minute: ["minuto", "minutos"], hour: ["hora", "horas"], day: ["día", "días"] };
+/** 3.57 · Todo lo que la hoja puede usar ahora, con su pestaña, su grupo y si está disponible (usos, espacios de conjuro). */
+export function entradasHoja(actor) {
+  const out = [], slots = actor?.system?.spells ?? {};
+  const hayEspacio = nv => Object.entries(slots).some(([k, x]) => Number(x?.value) > 0 && (k === "pact" ? Number(x.level) : Number(String(k).replace(/\D/g, ""))) >= nv);
+  const quedan = u => (u?.max ? Number(u.value ?? (Number(u.max) - (Number(u.spent) || 0))) : null);
+  for (const it of actor?.items ?? []) {
+    if (it.flags?.[MOD]?.verbe) continue;
+    const comun = it.flags?.[MOD]?.accionComun, esConjuro = it.type === "spell", nv = Number(it.system?.level) || 0;
+    const metodo = it.system?.method ?? it.system?.preparation?.mode;
+    const prep = Number(it.system?.prepared ?? (it.system?.preparation?.prepared ? 1 : 0));
+    const props = it.system?.properties; const ritual = esConjuro && (props?.has?.("ritual") || (Array.isArray(props) && props.includes("ritual")));
+    const usable = !esConjuro || nv === 0 || prep >= 1 || ["innate", "atwill", "always", "pact"].includes(metodo);
+    const acts = actividadesDe(it), varias = acts.length > 1;
+    for (const act of acts) {
+      const tipo = act.activation?.type, eco = ECONOMIA[tipo];
+      if (!eco || !usable) continue;
+      let disponible = true, motivo = "";
+      const qi = quedan(it.system?.uses), qa = quedan(act.uses);
+      if ((qi !== null && qi <= 0) || (qa !== null && qa <= 0)) { disponible = false; motivo = "sin usos"; }
+      if (esConjuro && nv > 0 && !["innate", "atwill"].includes(metodo) && act.consumption?.spellSlot !== false && !hayEspacio(nv)) { disponible = false; motivo = "sin espacios"; }
+      const meta = [esConjuro ? (nv ? `Nivel ${nv}` : "Truco") : "", qi !== null ? `${qi}/${it.system.uses.max} usos` : qa !== null ? `${qa}/${act.uses.max} usos` : "",
+        UNIDAD[tipo] ? `${act.activation?.value ?? 1} ${UNIDAD[tipo][Number(act.activation?.value) === 1 ? 0 : 1]}` : ""].filter(Boolean).join(" · ");
+      out.push({ id: `${it.id}.${act.id}`, nombre: varias ? `${it.name}: ${act.name || act.type}` : it.name, img: it.img, eco, comun: !!comun,
+        mov: !!comun && DURANTE_MOVIMIENTO.has(String(act.name ?? "").trim()),
+        grupo: act.type === "attack" || it.type === "weapon" ? "atacar" : esConjuro ? "magia" : "otras",
+        disponible, motivo, meta, texto: plano(it.system?.description?.value).slice(0, 240) });
+    }
+    if (ritual && acts[0]) out.push({ id: `${it.id}.${acts[0].id}`, nombre: `${it.name} (ritual)`, img: it.img, eco: "fuera", grupo: "magia", disponible: true, motivo: "", meta: "Ritual: 10 minutos más, sin gastar espacio", texto: plano(it.system?.description?.value).slice(0, 240) });
+  }
+  return out;
+}
+/** 3.57 · El menú de acciones (panel y ventana): pestañas Acción / Adicional / Reacción / Fuera de combate arriba, y la lista. */
+export function htmlAcciones(actor, { filtro = null, turno = null, enCombate = false } = {}) {
+  const ent = entradasHoja(actor);
+  const comunes = new Set(ent.filter(e => e.comun).map(e => e.nombre.split(":").pop().trim()));
+  const basicas = ACCIONES_BASICAS.filter(a => !["atacar", "magia"].includes(a.id) && !(a.comun && comunes.has(a.comun)));
+  const c = clasificarAcciones(ent), n = cuentaPestanas(c);
+  n.accion += basicas.filter(a => a.tipo === "action").length; n.reaccion += basicas.filter(a => a.tipo === "reaction").length;
+  n.fuera += basicas.filter(a => BASICAS_FUERA.includes(a.id)).length + 2;
+  const pestanas = ["accion", "adicional", "reaccion", ...(n.legendaria ? ["legendaria"] : []), "fuera"];
+  const f = pestanas.includes(filtro) ? filtro : (enCombate ? "accion" : "fuera");
+  const gastada = k => enCombate && turno?.[k];
+  const chip = k => `<button type="button" class="ecos-ae-chip ${k === f ? "activo" : ""} ${gastada(k) ? "gastada" : ""}" data-eco="${k}" data-tooltip="${esc(gastada(k) ? `Ya gastaste tu ${NOMBRE_ECONOMIA[k]} este turno` : NOMBRE_ECONOMIA[k])}">${NOMBRE_ECONOMIA[k]} <small>${n[k] ?? 0}</small></button>`;
+  const fila = e => `<button type="button" class="ecos-ae-e ${e.disponible ? "" : "no"}" data-usar="${esc(e.id)}" data-tooltip="${esc(e.texto || e.nombre)}"><img src="${esc(e.img)}" alt=""><span><b>${esc(e.nombre)}</b>${e.meta || e.motivo ? `<small>${esc([e.meta, e.motivo].filter(Boolean).join(" · "))}</small>` : ""}</span></button>`;
+  const basica = a => `<button type="button" class="ecos-ae-e basica" data-basica="${a.id}" data-tooltip="${esc(a.que)}"><i class="fa-solid ${ICONO_BASICA[a.id] ?? "fa-circle"}"></i><span><b>${esc(a.n)}</b><small>${esc(a.que.length > 70 ? `${a.que.slice(0, 68)}…` : a.que)}</small></span></button>`;
+  const sec = (t, html, vacio = "") => (html ? `<h4>${t}</h4><div class="ecos-ae-l">${html}</div>` : vacio ? `<p class="ecos-ae-vacio">${vacio}</p>` : "");
+  let cuerpo = "";
+  if (f === "accion") cuerpo = (gastada("accion") ? `<p class="ecos-ae-aviso">Ya gastaste tu Acción este turno.</p>` : "")
+    + sec("Atacar", c.accion.atacar.map(fila).join(""), "Sin armas en la hoja: un golpe sin armas o agarrar/empujar están en «De cualquiera».")
+    + sec("Magia", c.accion.magia.map(fila).join("")) + sec("De tu hoja", c.accion.otras.map(fila).join(""))
+    + sec("De cualquiera", [...c.accion.comun.map(fila), ...basicas.filter(a => a.tipo === "action").map(basica)].join(""))
+    + sec("Al moverte (no gasta la Acción)", c.accion.mov.map(fila).join(""));
+  else if (f === "adicional") cuerpo = (gastada("adicional") ? `<p class="ecos-ae-aviso">Ya gastaste tu Acción adicional este turno.</p>` : "")
+    + sec("De tu hoja", c.adicional.hoja.map(fila).join(""), "Tu hoja no te da acciones adicionales propias (las dan un rasgo de clase, un conjuro o pelear con dos armas ligeras).")
+    + sec("De cualquiera", c.adicional.comun.map(fila).join(""));
+  else if (f === "reaccion") cuerpo = (gastada("reaccion") ? `<p class="ecos-ae-aviso">Ya gastaste tu Reacción esta ronda.</p>` : "")
+    + sec("De tu hoja", c.reaccion.hoja.map(fila).join("")) + sec("De cualquiera", [...c.reaccion.comun.map(fila), ...basicas.filter(a => a.tipo === "reaction").map(basica)].join(""));
+  else if (f === "legendaria") cuerpo = sec("Legendarias y de guarida", c.legendaria.hoja.map(fila).join(""));
+  else cuerpo = sec("Descansar", `<button type="button" class="ecos-ae-e basica" data-descanso="corto"><i class="fa-solid fa-mug-hot"></i><span><b>Descanso corto</b><small>1 hora: gastas Dados de Golpe y recuperas lo que sea por descanso corto.</small></span></button><button type="button" class="ecos-ae-e basica" data-descanso="largo"><i class="fa-solid fa-bed"></i><span><b>Descanso largo</b><small>8 horas: recuperas casi todo.</small></span></button>${actor.type === "character" ? `<button type="button" class="ecos-ae-e basica" data-taller><i class="fa-solid fa-hammer"></i><span><b>Taller</b><small>Fabricar con tus herramientas.</small></span></button>` : ""}`)
+    + sec("De tu hoja (rituales y lo que lleva minutos u horas)", c.fuera.hoja.map(fila).join("")) + sec("De cualquiera", [...c.fuera.comun.map(fila), ...basicas.filter(a => BASICAS_FUERA.includes(a.id)).map(basica)].join(""));
+  return `<nav class="ecos-ae-chips">${pestanas.map(chip).join("")}</nav><div class="ecos-ae-cuerpo">${cuerpo}</div>`;
+}
+const ICONO_BASICA = { correr: "fa-person-running", desenganche: "fa-person-walking-arrow-right", esquivar: "fa-shield-halved", ayudar: "fa-handshake-angle", esconderse: "fa-user-ninja",
+  buscar: "fa-magnifying-glass", estudiar: "fa-book-open", influir: "fa-comments", objeto: "fa-flask", preparar: "fa-hourglass-half", oportunidad: "fa-bolt" };
+/** Clic en el menú (panel o ventana). Devuelve true si cambió la pestaña (para repintar). */
+export async function clicAcciones(actor, ev, { claveFiltro = "aeFiltro" } = {}) {
+  const t = ev.target.closest("[data-eco], [data-usar], [data-basica], [data-descanso], [data-taller]"); if (!t) return false;
+  ev.preventDefault(); ev.stopPropagation();
+  if (t.dataset.eco) { guardarLS(claveFiltro, t.dataset.eco); return true; }
+  try {
+    if (t.dataset.usar) { const [iid, aid] = t.dataset.usar.split("."); const act = actor.items.get(iid)?.system?.activities?.get?.(aid); if (act) await act.use(); return false; }
+    if (t.dataset.descanso) { await (t.dataset.descanso === "largo" ? actor.longRest?.() : actor.shortRest?.()); return false; }
+    if (t.dataset.taller !== undefined) { game.modules.get(MOD)?.api?.taller?.abrir?.(actor); return false; }
+    if (t.dataset.basica) await usarBasica(actor, t.dataset.basica, { adicional: ev.shiftKey });
+  } catch (err) { console.error(`${MOD} | acción`, err); }
+  return false;
+}
+export const filtroGuardado = (clave = "aeFiltro") => leerLS(clave, null);
+/** Una acción de cualquiera: la hace el módulo si sabe; si no, gasta la acción (en combate) y lo anuncia. */
+export async function usarBasica(actor, id, { adicional = false } = {}) {
+  const a = ACCIONES_BASICAS.find(x => x.id === id); if (!a) return;
+  if (a.auto) { const { accionEstandar } = await import("./turno-tracker.js"); return accionEstandar(actor, a.auto, { adicional }); }
+  if (a.id === "ayudar") { const { ayudar } = await import("./ventaja-estados.js"); return ayudar(actor, { gastar: true }); }
+  if (a.id === "esconderse") { const { esconderse } = await import("./ventaja-estados.js"); return esconderse(actor, { gastar: true }); }
+  if (a.id === "preparar") { const { preparar } = await import("./reglas-dnd.js"); return preparar(actor); }
+  if (a.id === "influir") { const { influir } = await import("./reglas-dnd.js"); return influir(actor); }
+  if (a.comun) { const act = comunDe(actor, a.comun); if (act) return act.use(); }
+  const { combateActivo, datosTurno, turnoVacio, cambiarTurno, ACCIONES_DND } = await import("./turno-tracker.js");
+  const combat = combateActivo(), c = combat?.combatants?.find?.(x => x.actor === actor || x.actorId === actor.id), clave = a.tipo === "reaction" ? "reaccion" : (adicional ? "adicional" : "accion");
+  const t = c ? (datosTurno(combat, c.id) ?? turnoVacio()) : null;
+  if (t?.[clave]) return ui.notifications.warn(`${actor.name} ya gastó su ${ACCIONES_DND[clave]}.`);
+  if (c) await cambiarTurno(c.id, { op: "gastar", clave });
+  await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<p class="ecos-accion-estandar"><b>${esc(actor.name)}</b> usa <b>${esc(a.n)}</b>${c ? ` (${ACCIONES_DND[clave]})` : ""}: ${esc(a.que)}</p>` });
+}
 function entradasDe(actor) {
   const out = [];
   for (const it of actor.items ?? []) {
@@ -72,40 +197,18 @@ function comunDe(actor, nombre) {
 }
 export async function abrirAccionEstandar(actor) {
   if (!actor) return;
-  const g = agruparPorTiempo(entradasDe(actor).filter(e => !e.verbe));
-  const fila = e => `<li><button type="button" data-ae-usar="${esc(e.id)}" data-tooltip="${esc(e.texto || e.nombre)}"><img src="${esc(e.img)}" alt=""> ${esc(e.nombre)}</button></li>`;
-  const basica = a => `<li><button type="button" data-ae-basica="${a.id}" data-tooltip="${esc(a.que)}"><b>${esc(a.n)}</b></button> <small>${esc(a.que)}</small></li>`;
-  const sec = (t, ayuda, lista) => `<details open class="ae-sec"><summary>${t}</summary><p class="ecos-nota">${ayuda}</p><ul class="ae-lista">${lista || "<li><i>No tiene.</i></li>"}</ul></details>`;
-  const content = `<div class="ecos-accion-estandar">
-    <p class="ecos-nota">En tu turno tienes <b>una Acción</b>, <b>una Acción adicional</b> (solo si algo te la da) y <b>movimiento</b>. La <b>Reacción</b> es una por ronda, incluso en el turno de otros. El Verbe va aparte: su menú tiene sus propias acciones.</p>
-    ${sec("Acciones de cualquiera", "Lo que cualquier personaje puede hacer, sea de la clase que sea. Pasa el ratón para ver qué hace.", ACCIONES_BASICAS.filter(a => a.tipo === "action").map(basica).join(""))}
-    ${sec("Tu Acción", "Lo que tu hoja deja hacer con tu Acción: armas, conjuros preparados, rasgos de clase. Se actualiza solo al subir de nivel o al cambiar la hoja.", g.action.map(fila).join(""))}
-    ${sec("Tu Acción adicional", "Solo lo que algo te da: un rasgo de clase, un conjuro o la segunda arma.", g.bonus.map(fila).join(""))}
-    ${sec("Tu Reacción", "Una por ronda, cuando pasa lo que dice.", [basica(ACCIONES_BASICAS.find(a => a.id === "oportunidad")), ...g.reaction.map(fila)].join(""))}
-  </div>`;
-  const dlg = new foundry.applications.api.DialogV2({ window: { title: `Acción estándar · ${actor.name}`, icon: "fa-solid fa-hand-fist", resizable: true },
-    position: { width: 520, height: 640 }, classes: ["ecos-accion-estandar-app"], content, buttons: [{ action: "cerrar", label: "Cerrar", default: true }] });
+  const { combateActivo, datosTurno, turnoVacio } = await import("./turno-tracker.js");
+  const contenido = () => {
+    const combat = combateActivo(), c = combat?.combatants?.find?.(x => x.actor === actor || x.actorId === actor.id);
+    const t = c ? (datosTurno(combat, c.id) ?? turnoVacio(combat.round, combat.turn)) : null;
+    return `<div class="ecos-accion-estandar ecos-ae"><p class="ecos-nota">En tu turno tienes <b>una Acción</b>, <b>una Acción adicional</b> (solo si algo te la da) y <b>movimiento</b>; la <b>Reacción</b> es una por ronda, también en el turno de otros. Arriba eliges qué quieres gastar; cada cosa dice si te queda. El Verbe va aparte, en su panel.</p>
+      ${htmlAcciones(actor, { filtro: filtroGuardado("aeFiltroVentana"), turno: t, enCombate: !!c })}</div>`;
+  };
+  const dlg = new foundry.applications.api.DialogV2({ window: { title: `Acciones · ${actor.name}`, icon: "fa-solid fa-hand-fist", resizable: true },
+    position: { width: 540, height: 660 }, classes: ["ecos-accion-estandar-app"], content: contenido(), buttons: [{ action: "cerrar", label: "Cerrar", default: true }] });
   await dlg.render(true);
   dlg.element?.addEventListener("click", async ev => {
-    const b = ev.target.closest("button[data-ae-usar], button[data-ae-basica]");
-    if (!b) return;
-    ev.preventDefault(); ev.stopPropagation();
-    try {
-      if (b.dataset.aeUsar) {
-        const [iid, aid] = b.dataset.aeUsar.split(".");
-        const act = actor.items.get(iid)?.system?.activities?.get?.(aid);
-        if (act) await act.use();
-        return;
-      }
-      const a = ACCIONES_BASICAS.find(x => x.id === b.dataset.aeBasica);
-      if (a?.auto) { const { accionEstandar } = await import("./turno-tracker.js"); await accionEstandar(actor, a.auto); return; }
-      if (a?.id === "esconderse") { const { esconderse } = await import("./ventaja-estados.js"); await esconderse(actor, { gastar: true }); return; }
-      if (a?.id === "preparar") { const { preparar } = await import("./reglas-dnd.js"); await preparar(actor); return; }
-      if (a?.id === "influir") { const { influir } = await import("./reglas-dnd.js"); await influir(actor); return; }
-      if (a?.comun) { const act = comunDe(actor, a.comun); if (act) return act.use(); }
-      if (a?.arma) { const arma = actor.items.find(i => i.type === "weapon" && (i.system?.equipped ?? true)); if (arma) return arma.system.activities?.contents?.[0]?.use?.(); }
-      await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<p class="ecos-accion-estandar"><b>${esc(actor.name)}</b> usa <b>${esc(a.n)}</b>: ${esc(a.que)}</p>` });
-    } catch (err) { console.error(`${MOD} | acción estándar`, err); }
+    if (await clicAcciones(actor, ev, { claveFiltro: "aeFiltroVentana" })) { const caja = dlg.element.querySelector(".ecos-accion-estandar"); if (caja) caja.outerHTML = contenido(); }
   });
   return dlg;
 }

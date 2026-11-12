@@ -1041,3 +1041,41 @@ button.ecos-inspiracion { margin-top: 4px; background: linear-gradient(90deg, #f
 .application:is(.ecos-mega, .ecos-panel-dm, .ecos-funciones, .ecos-taller) .window-content { overflow-y: auto; overscroll-behavior: contain; }
 .ecos-ini-fila { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; padding: 2px 0; border-bottom: 1px solid rgba(127, 127, 127, 0.2); }
 .ecos-ini-fila label { display: flex; align-items: center; gap: 3px; white-space: nowrap; }
+
+/* 3.57 · Menú de acciones con pestañas (panel y ventana «Acciones») */
+.ecos-ae-chips { display: flex; flex-wrap: wrap; gap: 3px; margin: 4px 0; position: sticky; top: 0; z-index: 1; }
+.ecos-ae-chip { flex: 1 1 auto; width: auto; padding: 2px 6px; font-size: 11px; line-height: 1.5; border-radius: 10px; border: 1px solid rgba(127, 127, 127, 0.45); background: rgba(127, 127, 127, 0.12); color: inherit; white-space: nowrap; }
+.ecos-ae-chip small { opacity: 0.7; }
+.ecos-ae-chip.activo { background: #b8862b; border-color: #e0b35a; color: #fff; }
+.ecos-ae-chip.gastada { text-decoration: line-through; opacity: 0.6; }
+.ecos-ae-cuerpo h4 { margin: 6px 0 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.75; border-bottom: 1px solid rgba(127, 127, 127, 0.3); }
+.ecos-ae-l { display: flex; flex-direction: column; gap: 2px; }
+.ecos-ae-e { display: flex; align-items: center; gap: 6px; width: 100%; padding: 2px 5px; text-align: left; font-size: 11.5px; line-height: 1.25; border-radius: 5px; border: 1px solid transparent; background: rgba(127, 127, 127, 0.08); color: inherit; }
+.ecos-ae-e:hover { border-color: rgba(224, 179, 90, 0.7); background: rgba(224, 179, 90, 0.16); }
+.ecos-ae-e img { width: 22px; height: 22px; flex: 0 0 22px; border: none; border-radius: 3px; }
+.ecos-ae-e i { width: 22px; flex: 0 0 22px; text-align: center; color: #d9a646; }
+.ecos-ae-e span { display: flex; flex-direction: column; min-width: 0; }
+.ecos-ae-e b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.ecos-ae-e small { opacity: 0.72; font-size: 10.5px; }
+.ecos-ae-e.no { opacity: 0.45; }
+.ecos-ae-vacio { margin: 4px 2px; font-size: 11px; opacity: 0.75; font-style: italic; }
+.ecos-ae-aviso { margin: 4px 0; padding: 2px 6px; font-size: 11px; border-left: 3px solid #b5371f; background: rgba(181, 55, 31, 0.12); }
+#ecos-panel-acciones { width: 290px; }
+#ecos-panel-acciones .ecos-pa-menu { padding: 0 7px 8px; }
+#ecos-panel-acciones .ecos-ae-cuerpo { max-height: 46vh; overflow-y: auto; overscroll-behavior: contain; padding-right: 2px; }
+#ecos-panel-acciones .ecos-ae-chips { background: rgba(18, 16, 22, 0.95); padding: 3px 0; }
+#ecos-panel-acciones .ecos-pa-saltar { padding: 0 7px; }
+#ecos-panel-acciones .ecos-pa-saltar button { width: auto; padding: 1px 8px; font-size: 11px; line-height: 1.5; background: rgba(255, 255, 255, 0.07); color: #eee; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 5px; }
+.ecos-accion-estandar.ecos-ae .ecos-ae-e { font-size: 13px; }
+.ecos-accion-estandar.ecos-ae .ecos-ae-e img, .ecos-accion-estandar.ecos-ae .ecos-ae-e i { width: 28px; flex-basis: 28px; height: 28px; }
+
+/* 3.57 · Barra del turno movible, escalable y minimizable */
+#ecos-turno .ecos-turno-cab { cursor: move; position: relative; }
+#ecos-turno .ecos-turno-ctl { display: inline-flex; gap: 2px; margin-left: auto; }
+#ecos-turno .ecos-turno-ctl button { width: auto; flex: none; padding: 0 5px; line-height: 1.4; font-size: 11px; background: rgba(255, 255, 255, 0.1); color: #eee; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 4px; }
+#ecos-turno.mini { min-width: 0; padding: 3px 8px; }
+#ecos-turno.mini .ecos-turno-cab { gap: 6px; font-size: 12px; }
+#ecos-turno .ecos-turno-resumen { opacity: 0.9; white-space: nowrap; }
+#ecos-turno .ecos-turno-mov.previa > div { background: linear-gradient(90deg, #b8862b, #e0b35a); }
+#ecos-turno .ecos-turno-mov.previa.falta > div { background: #b5371f; }
+#ecos-turno .ecos-turno-mov.previa.falta > span { color: #ffd0c4; }
