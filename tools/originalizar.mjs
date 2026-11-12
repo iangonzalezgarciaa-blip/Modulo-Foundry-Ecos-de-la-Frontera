@@ -54,7 +54,9 @@ R.compatibilidad=compat.reliquias;
 for(let i=0;i<R.reliquias.length;i++){
  const r=R.reliquias[i],anterior=r.nombre;r.nombre=i<nombresReliquias.length?nombresReliquias[i]:reemplazar(r.nombre);
  r.original=null;r.canon='Reliquia del Archivo de las Profundidades de Nimerios. Su hallazgo, origen concreto y consecuencias los determina el DM.';r.fuentes=[];
- r.texto=reemplazar(r.texto).replaceAll(anterior,r.nombre).replaceAll('Shaker','Cápsula del Estrépito').replaceAll('Reg como personaje','un Vigía como personaje').replaceAll('Incinerador','Rayo del Vigía Sepultado');
+ r.texto=reemplazar(r.texto).replaceAll(anterior,r.nombre).replaceAll('Shaker','Cápsula del Estrépito').replaceAll('Reg como personaje','un Vigía como personaje').replaceAll('Incinerador','Rayo del Vigía Sepultado')
+  .replace('Familia del videojuego, no un ejemplar único del manga. Perfil de mesa: ','Familia de equipo de las capas: cada pieza es distinta. ');
+ r.grado=String(r.grado??'').replace('familia de videojuego','familia de equipo');
  r.item.name=r.nombre;r.item.system.source={custom:'Ecos · Archivo de las Profundidades',book:'Nimerios'};
  let html=r.item.system.description.value;html=html.replace(/<p><b>(?:Made in Abyss|Videojuego)[\s\S]*?<\/p>/,'<p><b>Archivo de las Profundidades · Nimerios</b></p>').replace(/<h3>(?:Fuentes|Referencia)[\s\S]*$/,'');
  // Reconstruye el texto visible sin aliases, enlaces o clasificaciones ajenas.

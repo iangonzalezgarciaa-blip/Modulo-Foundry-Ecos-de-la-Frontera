@@ -1149,3 +1149,11 @@ a.ecos-estado-link { color: inherit; text-decoration: underline dotted; text-und
 a.ecos-estado-link:hover { color: #b8862b; text-decoration-style: solid; }
 #ecos-escuchar { position: fixed; z-index: 80; transform: translateX(-50%); padding: 3px 9px; border-radius: 6px; background: rgba(20, 8, 10, 0.92); color: #ffd6d6; border: 1px solid #a5453a; font-size: 12px; white-space: nowrap; pointer-events: none; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); }
 #ecos-escuchar i { color: #ff6b6b; }
+
+/* 3.62 · Reliquias sin identificar y Nivel PNJ */
+.ecos-estudiar label, .ecos-nivel-pnj label { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
+.ecos-estudiar label select, .ecos-nivel-pnj label select { flex: 1; }
+.ecos-estudiar .ecos-check input { flex: 0 0 auto; }
+.ecos-reliquia-oculta { border-left: 3px solid #6b5a8a; padding-left: 8px; }
+.window-header .ecos-estudiar-reliquia { color: #c9b8ff; }
+.window-header .ecos-historia-reliquia { color: #d9a441; }

@@ -16,7 +16,7 @@ test('3.37 · un PNJ aprende hasta la mitad de su nivel de lanzador (o su VD)', 
 });
 test('3.37 · cada reliquia tiene tres etapas y un manual con cómo despertarlas', () => {
   const r = { id: 'x', nombre: 'Dosel', grado: '3', nivel: 1, texto: 'Protege de la lluvia.', canon: 'Archivo.' };
-  assert.equal(ETAPAS_RELIQUIA.length, 3);
+  assert.equal(ETAPAS_RELIQUIA.length, 4); // 3.62: la etapa 0 «Sin identificar»
   assert.match(textoEtapa(r, 1), /Dormida/); assert.match(textoEtapa(r, 3), /Resonante/);
   const m = manualReliquia(r); assert.match(m, /Cómo se despierta/); assert.match(m, /CD 16/);
   assert.ok(despertarReliquia(r)[2] && despertarReliquia(r)[3]);

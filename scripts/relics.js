@@ -60,7 +60,9 @@ export async function asegurarDiarioReliquias(){
 export async function darReliquia(actor,id){
  if(!game.user.isGM||!actor)return false;const D=await cargar(),r=D.reliquias.find(r=>r.id===id);if(!r)return false;
  if(actor.items.some(i=>meta(i)?.id===id)){ui.notifications.warn('Ya tiene una copia; se conserva su gasto y autorización.');return false;}
- const item=foundry.utils.deepClone(r.item);delete item._id;delete item.ownership;item.flags[MOD].reliquia.autorizada=true;
+ // 3.62: llega como la copia del almacén (etapa 0 «Sin identificar» si así está el ajuste; si no, Dormida y autorizada).
+ const {copiaEntregar}=await import('./reliquias-almacen.js');
+ const item=copiaEntregar(r,null,{embebida:true});delete item.folder;delete item.ownership;
  const car=actor.getFlag(MOD,'verbe')?.car??sistema.caracteristicaConjuros(actor)??'wis';
  for(const act of Object.values(item.system.activities))if(act.attack)act.attack.ability=['str','dex','con','int','wis','cha'].includes(car)?car:'wis';
  await actor.createEmbeddedDocuments('Item',[item]);return true;
@@ -72,7 +74,9 @@ export async function autorizarReliquia(item,{ritual=false}={}){
 export function permisoReliquia(actor,item,config={}){
  const m=meta(item);if(!m)return {ok:true};
  if(!actor||(!game.user.isGM&&!actor.isOwner))return {ok:false,motivo:'No puedes usar esta hoja.'};
- if(!m.autorizada)return {ok:false,motivo:'El DM debe autorizar esta copia en el catálogo de reliquias.'};
+ const al=item.flags?.[MOD]?.almacen;
+ if(al?.tipo==='entregar'){if(Number(al.etapa)===0)return {ok:false,motivo:'Todavía no sabéis qué es: hay que identificarla (botón «Estudiar» de su cabecera).'};}
+ else if(!m.autorizada)return {ok:false,motivo:'El DM debe autorizar esta copia en el catálogo de reliquias.'};
  if(nivel(actor)<m.nivel)return {ok:false,motivo:`La reliquia pide nivel ${m.nivel}.`};
  if(!item.system.equipped)return {ok:false,motivo:'Equipa primero la reliquia.'};
  if(m.nivel>=9&&!item.system.attuned)return {ok:false,motivo:'La reliquia necesita sintonía.'};
@@ -115,7 +119,7 @@ export async function caducarReliquias(){
 export class CatalogoReliquias extends foundry.applications.api.ApplicationV2{
  constructor(actor=null){super({window:{title:'Compendio de reliquias · DM'}});this.actor=actor;}
  static DEFAULT_OPTIONS={classes:['ecos-verbe-panel','ecos-reliquias'],position:{width:940,height:780},window:{resizable:true},actions:{
-  async entregar(ev,t){if(await darReliquia(this.actor??game.actors.get(this.element.querySelector('[name="destinoReliquia"]').value),t.dataset.id))ui.notifications.info('Reliquia entregada; equipa y sintoniza la copia para usarla.');this.render();},
+  async entregar(ev,t){if(await darReliquia(this.actor??game.actors.get(this.element.querySelector('[name="destinoReliquia"]').value),t.dataset.id))ui.notifications.info('Reliquia entregada (sin identificar si así está el ajuste): el jugador la estudia con «Estudiar»; tú la subes de etapa desde su cabecera.');this.render();},
   async autorizar(ev,t){const a=this.actor??game.actors.get(this.element.querySelector('[name="destinoReliquia"]').value);const it=a?.items.get(t.dataset.id);if(it)await autorizarReliquia(it,{ritual:t.dataset.ritual==='si'});this.render();},
   async textos(){if(!game.user.isGM)return;const n=await actualizarTextosReliquias();await asegurarCompendioReliquias();ui.notifications.info(`Explicaciones actualizadas en ${n} copias de hojas. Se conservan los textos personalizados y los usos gastados.`);this.render();},
   async compendio(){if(!game.user.isGM)return;const pack=await asegurarCompendioReliquias();pack?.render(true);},

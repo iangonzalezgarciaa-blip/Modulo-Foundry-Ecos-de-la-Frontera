@@ -1,6 +1,6 @@
 {
   "tecnicas": 949,
-  "dotes": 471,
+  "dotes": 472,
   "nuevas": 64,
   "dotesDetalle": [
     {
@@ -3329,6 +3329,21 @@
       "requisitos": {
         "nivel": 1,
         "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "tacto-archivero",
+      "nombre": "Tacto del archivero",
+      "trazos": 1,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {
+          "rastro": 1
+        },
         "dotes": [],
         "tecnicas": [],
         "dm": false

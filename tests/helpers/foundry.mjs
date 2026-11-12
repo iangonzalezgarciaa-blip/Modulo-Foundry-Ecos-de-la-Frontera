@@ -117,7 +117,7 @@ export function resetEnvironment() {
 }
 Math.clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
 globalThis.foundry = { applications: { api: { ApplicationV2: class {}, DialogV2: { confirm: async () => true } } },
-  utils: { deepClone: structuredClone, mergeObject: merge, setProperty: put, getProperty: get,
+  utils: { deepClone: structuredClone, mergeObject: merge, setProperty: put, getProperty: get, expandObject: o => { const out = {}; for (const [k, v] of Object.entries(o ?? {})) put(out, k, v); return out; },
     hasProperty: (o, k) => get(o, k) !== undefined,
     randomID: (n = 16) => crypto.randomBytes(n).toString('hex').slice(0, n) } };
 globalThis.Hooks = { once(name, fn) { const list = events.get(name) ?? []; list.push(fn); events.set(name, list); },

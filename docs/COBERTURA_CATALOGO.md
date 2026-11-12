@@ -1,10 +1,10 @@
-# Cobertura declarada del catálogo 3.61.0
+# Cobertura declarada del catálogo 3.62.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **949 técnicas y 471 dotes**.
+El catálogo reúne **949 técnicas y 472 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
@@ -1220,6 +1220,7 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `rompeguardias` | Rompeguardias | 3 | nivel 3 | Texto/mesa |
 | `ver-la-grieta` | Ver la grieta | 2 | rama Mirada | Texto/mesa |
 | `moneda-al-verbe` | Moneda al Verbe | 0 | — | Texto/mesa |
+| `tacto-archivero` | Tacto del archivero | 1 | rama Rastro | Texto/mesa |
 | `legado-maethra-marca` | Hija del primer sueño | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
 | `legado-maethra-1-1` | Raíz que sostiene | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
 | `legado-maethra-1-2` | Bosque en la sangre | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |

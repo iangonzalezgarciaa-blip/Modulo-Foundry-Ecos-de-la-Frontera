@@ -1,5 +1,14 @@
 # Historial de cambios
 
+## 3.62.0 — 2026-11-12
+
+- **Reliquias sin identificar (etapa 0).** Las copias de «2 · Para entregar» (y las del catálogo) llegan sin identificar: el jugador ve un nombre sacado de su aspecto («Barra de acero negro mate · sin identificar»), su aspecto y cómo identificarla. Botón **Estudiar**: Arcanos, Historia o Investigación contra CD 10 + la mitad de su nivel (ventaja con Detectar magia o la dote nueva **Tacto del archivero**; un fallo espera al Descanso Largo; un 20 siempre acierta), o el conjuro Identificar. Al acertar pasa a Dormida con «Deshacer» para el DM (ajuste para que lo confirmes tú con «Revelar»). El «Identificar» de D&D no la identifica para el jugador; para el DM cuenta como subirla a mano. Etapas 0 a 3 con «Subir etapa» / «Bajar».
+- **Descripciones «sin identificar» y «para el chat» rellenas** en todas las copias (las secciones de abajo de la hoja ya no salen vacías).
+- **Historia secreta (DM).** Botón en la cabecera de cada reliquia: abre su página en los diarios «Reliquias · Historias secretas…» (solo DM; el módulo los cierra a los jugadores) o empieza una en blanco. El manual del DM la enlaza y muestra la CD y cómo la ve el jugador. Los textos de las historias viven en el mundo, no en el módulo.
+- **Las copias del almacén ya se pueden usar** sin pasar por el catálogo: la autorización es su etapa (antes pedían autorizar aparte).
+- **Nivel PNJ.** Botón en la hoja de cada PNJ (DM): sube o baja su VD paso a paso o salta a uno; PG en proporción a sus dados (una criatura de pocos golpes sigue siéndolo), +2 a su mejor característica en VD 4/8/12/16/19, +1 CA en VD 4/5/8/10/13/17, nivel de lanzador y del Verbe. Bajar deshace exacto la última subida; el chat trae «Deshacer».
+- Las familias de equipo de reliquia ya no mencionan su procedencia ajena en el texto visible.
+
 ## 3.61.0 — 2026-11-12
 
 - **Información oculta** (pedido del autor): los jugadores ya no ven cómo está cada criatura (Health Estimate queda para el DM; barras y fichas de PNJ ya estaban ocultas). Ajuste «Ocultar cómo están los demás».

@@ -26,6 +26,7 @@ import "./turno-tracker.js";
 import "./verbe-334.js";
 import "./accion-estandar.js";
 import "./reliquias-almacen.js";
+import "./subir-pnj.js";
 import "./subir-nivel.js";
 import "./fama.js";
 import "./capas-abismo.js";
@@ -9218,7 +9219,7 @@ const OPS_PANEL = [
     ["venenos", "Venenos activos", "fa-skull-crossbones", "Quién está envenenado y en qué etapa: bajar, subir o curar. Los venenos avanzan solos con el tiempo del mundo (salvación en cada intervalo, daño y estados por etapa)."],
     ["traducirFichas", "Traducir fichas al español", "fa-language", "Copia a las fichas el nombre y la descripción en español de sus clases, rasgos, conjuros, acciones y objetos desde los compendios de D&D traducidos (para fichas armadas antes de activar la traducción). Primero muestra un informe."],
     ["proeza", "Proeza (fama)", "fa-bullhorn", "Marca una proeza de los PJ: suma fama y, al cruzar un umbral, las facciones se enteran (te susurra qué hacer)."],
-    ["almacenReliquias", "Almacén de reliquias", "fa-gem", "Crea o pone al día en la pestaña Objetos todas las reliquias del Abismo: manual del DM con sus etapas, una copia por etapa y una para entregar que sube de etapa con un botón."],
+    ["almacenReliquias", "Almacén de reliquias", "fa-gem", "Crea o pone al día en la pestaña Objetos todas las reliquias del Abismo: manual del DM (etapas, CD para identificarla, cómo despertarla y enlace a su historia secreta) y una copia para entregar que llega sin identificar y sube de etapa con un botón."],
     ["danoIndirecto", "Daño de caída e indirecto", "fa-person-falling-burst", "Caídas (1d6 cada 10 ft), derrumbes, brasas, lava, ácido, descargas, frío o gas: se aplica directo a los tokens seleccionados o marcados, con su salvación."],
     ["recuperar", "Recuperar el control", "fa-hand-pointer", "Si de pronto no puedes seleccionar ni mover fichas (un diálogo se quedó con el ratón), esto lo arregla sin F5."]
   ]]
