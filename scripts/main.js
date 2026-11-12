@@ -30,6 +30,7 @@ import "./subir-pnj.js";
 import "./reliquias-menores.js";
 import "./plan-sensei.js";
 import "./herramientas-shinobi.js";
+import "./resolucion-auto.js";
 import "./subir-nivel.js";
 import "./fama.js";
 import "./capas-abismo.js";

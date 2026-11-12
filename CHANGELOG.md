@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.70.0 — 2026-11-12
+
+- **Resolución automática de técnicas (pedido del autor):** al usar una técnica con objetivos marcados, todo se resuelve con un clic. Quien la usa tira sus dados (ataque contra la CA de cada objetivo, 20 natural crítico y 1 natural falla; daño si acierta; o el daño y la cura una vez) y el DM principal lo aplica con las resistencias de D&D y pone los efectos de la técnica. Las salvaciones siguen pasando por la Defensa a pedido y ahora traen el daño (mitad si se salva). Al DM le llega «Resolución · …» con ataque, CA, daño y PG antes → después, con **Deshacer** (devuelve PG y quita efectos) y **A mano** (fijas tú el daño o la cura de cada uno). Ajuste «Técnicas: resolución automática»: tirar y aplicar · solo tirar (botón «Aplicar el daño») · no.
+
 ## 3.69.0 — 2026-11-12
 
 - **Arreglo (prueba en el mundo):** las técnicas de Hilo buscaban su herramienta por el nombre y confundían la propia técnica con ella («Lluvia de agujas» contaba como agujas), así que no descontaban nada ni avisaban. Ahora solo cuenta lo que se lleva en el inventario (armas, equipo, consumibles, herramientas, botín y contenedores).

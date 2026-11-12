@@ -55,6 +55,13 @@ async function alUsar(activity) {
   const salv = [...(activity.save?.ability ?? [])].filter(a => NOMBRE_SALV[a]);
   if (!Number.isFinite(cd) || !salv.length) return;
   const idAccion = activity.item?.flags?.[MOD]?.accionComun ? Object.entries(VERBO).find(([k]) => (activity.name ?? "").toLowerCase().includes(k.split("-")[0]))?.[0] : null;
+  // 3.70: con la resolución automática, el daño de una técnica se tira una vez aquí y llega con la defensa (mitad si se salva).
+  let dano = null;
+  if (item?.flags?.[MOD]?.verbe?.id && activity.damage?.parts?.length && resolucionActiva()) {
+    const { descripcionesDano } = await import("./resolucion-auto.js");
+    const dr = await activity.rollDamage({}, { configure: false }, {}).catch(err => { console.error(`${MOD} | defensa`, err); return null; });
+    dano = { danos: descripcionesDano(dr).map(x => ({ ...x, properties: [...x.properties] })), onSave: activity.damage?.onSave ?? "half" };
+  }
   const porUsuario = new Map();
   for (const t of objetivos) {
     const u = quienResponde(t.actor);
@@ -64,7 +71,7 @@ async function alUsar(activity) {
   }
   for (const [para, lista] of porUsuario) {
     const d = { defensa: "pedir", id: foundry.utils.randomID(), para, de: game.user.id, autor: actor?.name ?? "", accion: activity.item?.name === activity.name ? activity.name : `${activity.item?.name} · ${activity.name}`,
-      idAccion, actividad: activity.uuid, objetivos: lista, salv, cd, pesada: esPesada(item) };
+      idAccion, actividad: activity.uuid, objetivos: lista, salv, cd, pesada: esPesada(item), dano };
     if (para === game.user.id) responder(d).catch(err => console.error(`${MOD} | defensa`, err));
     else game.socket.emit(`module.${MOD}`, d);
   }
@@ -84,7 +91,7 @@ async function responder(d) {
     buttons: [{ action: "tirar", label: "Tirar la defensa", icon: "fa-solid fa-dice-d20", default: true, callback: (ev, btn) => new foundry.applications.ux.FormDataExtended(btn.form).object },
       { action: "nada", label: "No defenderse (falla)", icon: "fa-solid fa-xmark", callback: () => ({ nada: true }) }] });
   if (!r) return;
-  const resultados = [];
+  const resultados = [], deshacer = { cambios: [], borrar: [] };
   for (const [i, o] of fichas.entries()) {
     let total = -Infinity, ok = false;
     if (!r.nada) {
@@ -96,11 +103,27 @@ async function responder(d) {
       total = Number(tiradas?.[0]?.total);
       ok = seSalva(total, d.cd);
     }
-    resultados.push({ nombre: o.nombre, ok });
-    await aplicarResultado(o.actor, d.actividad, ok).catch(err => console.error(`${MOD} | defensa`, err));
+    const res = { nombre: o.nombre, ok };
+    const creados = await aplicarResultado(o.actor, d.actividad, ok).catch(err => { console.error(`${MOD} | defensa`, err); return []; });
+    deshacer.borrar.push(...(creados ?? []).map(e => e.uuid));
+    if (d.dano?.danos?.length) {
+      const { multiplicadorSalvacion } = await import("./resolucion-auto.js");
+      const mult = multiplicadorSalvacion(ok, d.dano.onSave);
+      if (mult > 0) {
+        const antes = { value: Number(o.actor.system?.attributes?.hp?.value) || 0, temp: Number(o.actor.system?.attributes?.hp?.temp) || 0 };
+        await o.actor.applyDamage(d.dano.danos.map(x => ({ ...x, properties: new Set(x.properties ?? []) })), { multiplier: mult }).catch(err => console.error(`${MOD} | defensa`, err));
+        const despues = Number(o.actor.system?.attributes?.hp?.value) || 0, tmp = Number(o.actor.system?.attributes?.hp?.temp) || 0;
+        res.dano = (antes.value - despues) + (antes.temp - tmp);
+        deshacer.cambios.push({ uuid: o.actor.uuid, antes: { "system.attributes.hp.value": antes.value, "system.attributes.hp.temp": antes.temp } });
+      }
+    }
+    resultados.push(res);
   }
-  const lineas = resultados.map(x => `<li><b>${esc(x.nombre)}</b>: ${x.ok ? "se defiende" : "no se defiende"}</li>`).join("");
-  await ChatMessage.create({ speaker: { alias: "Defensa" }, content: `<section class="ecos-defensa-resultado"><p>${esc(d.accion)} de ${esc(d.autor)}:</p><ul>${lineas}</ul></section>`, flags: { [MOD]: { defensaResultado: d.id } } });
+  const lineas = resultados.map(x => `<li><b>${esc(x.nombre)}</b>: ${x.ok ? "se defiende" : "no se defiende"}${x.dano ? ` · recibe ${x.dano} de daño` : ""}</li>`).join("");
+  const conDeshacer = deshacer.cambios.length || deshacer.borrar.length;
+  const { botonDeshacer } = await import("./deshacer.js");
+  await ChatMessage.create({ speaker: { alias: "Defensa" }, content: `<section class="ecos-defensa-resultado"><p>${esc(d.accion)} de ${esc(d.autor)}:</p><ul>${lineas}</ul>${conDeshacer ? botonDeshacer() : ""}</section>`,
+    flags: { [MOD]: { defensaResultado: d.id, ...(conDeshacer ? { deshacer } : {}) } } });
   if (d.de !== game.user.id) game.socket.emit(`module.${MOD}`, { defensa: "resultado", id: d.id, para: d.de, resultados });
 }
 const mejor = (actor, salv) => salv.reduce((m, a) => (Number(actor.system?.abilities?.[a]?.save?.value ?? 0) > Number(actor.system?.abilities?.[m]?.save?.value ?? 0) ? a : m), salv[0]);
@@ -108,11 +131,13 @@ const mejor = (actor, salv) => salv.reduce((m, a) => (Number(actor.system?.abili
 /** Pone en la ficha los efectos de la acción que tocan: los de fallar (o los de salvarse, si la acción tiene). */
 async function aplicarResultado(actor, uuidActividad, salvado) {
   const act = await fromUuid(uuidActividad);
-  if (!act?.effects?.length) return;
+  if (!act?.effects?.length) return [];
   const datos = act.effects.filter(e => !!e.onSave === salvado).map(e => e.effect ?? act.item?.effects?.get?.(e._id)).filter(Boolean)
     .map(ef => { const o = ef.toObject(); delete o._id; o.origin = act.item?.uuid ?? o.origin; o.transfer = false; return o; });
-  if (datos.length) await actor.createEmbeddedDocuments("ActiveEffect", datos);
+  return datos.length ? actor.createEmbeddedDocuments("ActiveEffect", datos) : [];
 }
+/** ¿Está encendida la resolución automática de técnicas (3.70)? */
+const resolucionActiva = () => { try { return game.settings.get(MOD, "resolucionAuto") === "todo"; } catch { return false; } };
 
 if (globalThis.Hooks) {
   Hooks.once("init", () => {
