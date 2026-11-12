@@ -26,11 +26,13 @@ export const HERRAMIENTA_BUSCA = {
 /** Cuánto gasta cada uso: `cantidad` (unidades) o `usos` (cargas del objeto). */
 export const GASTO_HERRAMIENTA = { agujas: { cantidad: 10, devuelve: 5 }, sellos: { cantidad: 1 }, tinta: { usos: 1 } };
 const lista = x => Array.from(x?.contents ?? x ?? []);
+/** Solo cuenta lo que se lleva en el inventario: una técnica que se llama «Lluvia de agujas» no son agujas (prueba en el mundo, 3.69). */
+export const TIPOS_INVENTARIO = new Set(["weapon", "equipment", "consumable", "tool", "loot", "container"]);
 /** La herramienta que tiene la hoja para esa clave; `true` si no se comprueba; `null` si falta. Puro. */
 export function buscarHerramienta(items, clave) {
   const f = HERRAMIENTA_BUSCA[clave];
   if (f === null || f === undefined) return true;
-  return lista(items).find(i => f(i) && (Number(i.system?.quantity ?? 1) > 0)) ?? null;
+  return lista(items).find(i => TIPOS_INVENTARIO.has(i?.type) && f(i) && (Number(i.system?.quantity ?? 1) > 0)) ?? null;
 }
 /**
  * Lo que hay que cambiar en la herramienta al usar la técnica: { ruta, antes, despues } o null. Puro.

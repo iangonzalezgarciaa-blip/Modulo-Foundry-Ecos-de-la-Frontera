@@ -363,3 +363,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 12-nov-2026 | Mejora | Claude | Rangos y Control se entrenan, técnicas mundanas retiradas, Papel que estalla, Liberar el Velo, mejoras de 0 Verbe. Release v3.66.0 | 3.66.0 |
 | 12-nov-2026 | Mejora | Claude | Auditoría de técnicas (Qué es/Aspecto, Sello sin choques, Velo doble uso, Quietud, Hilo con herramientas). Release v3.67.0 | 3.67.0 |
 | 12-nov-2026 | Mejora | Claude | Estilos de rama: 36 dotes (estilo, estilo mayor y oficio por rama). Release v3.68.0 | 3.68.0 |
+| 12-nov-2026 | Mejora | Claude | Hilo: la herramienta se busca solo en el inventario. Release v3.69.0 | 3.69.0 |

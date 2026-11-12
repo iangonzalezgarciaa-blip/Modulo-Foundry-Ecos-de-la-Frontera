@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.69.0 — 2026-11-12
+
+- **Arreglo (prueba en el mundo):** las técnicas de Hilo buscaban su herramienta por el nombre y confundían la propia técnica con ella («Lluvia de agujas» contaba como agujas), así que no descontaban nada ni avisaban. Ahora solo cuenta lo que se lleva en el inventario (armas, equipo, consumibles, herramientas, botín y contenedores).
+
 ## 3.68.0 — 2026-11-12
 
 - **Estilos de rama (pedido del autor: cada rama excelente en un estilo de combate y en utilidad, con dotes que se ramifican):** nueva categoría de dotes entrenadas con 36 dotes, tres por rama (salvo Sangre, que la da el linaje): un **Estilo** (rango Entrenado), un **Estilo mayor** (pide el Estilo, nivel 5 y rango Experto) y un **Oficio** para fuera de la pelea. Todas copian algo que ya existe en D&D y lo dicen («Equivale a … de D&D»): por ejemplo Quietud → Centinela y Réplica; Hilo → Estilo de armas arrojadizas y Tirador experto; Rastro → Marca del cazador y Crítico mejorado; Pulso → Discípulo de la vida y Sanador; Cuerpo → Móvil, Atacante salvaje y Atleta.

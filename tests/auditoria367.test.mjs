@@ -79,6 +79,9 @@ test('3.67 · Hilo ligado a sus herramientas', () => {
   assert.equal(buscarHerramienta(items, 'arrojadiza').name, 'Kunai (5)');
   assert.equal(buscarHerramienta(items, 'marioneta'), null);
   assert.equal(buscarHerramienta([], 'reliquia'), true);
+  // 3.69 (prueba en el mundo): la técnica «Lluvia de agujas» no cuenta como agujas.
+  assert.equal(buscarHerramienta([{ name: 'Lluvia de agujas', type: 'spell', system: {} }], 'agujas'), null);
+  assert.equal(buscarHerramienta([{ name: 'Lluvia de agujas', type: 'spell', system: {} }, items[0]], 'agujas').name, 'Agujas (20)');
   assert.deepEqual(gastoDe(items[0], 'agujas'), { ruta: 'system.quantity', antes: 20, despues: 10, devuelve: 5 });
   assert.deepEqual(gastoDe({ system: { uses: { max: 10, spent: 9 } } }, 'tinta'), { ruta: 'system.uses.spent', antes: 9, despues: 10 });
   assert.equal(gastoDe(items[1], 'arrojadiza'), null, 'el kunai no se gasta');
