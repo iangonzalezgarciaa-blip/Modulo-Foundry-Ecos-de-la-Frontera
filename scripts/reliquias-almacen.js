@@ -12,6 +12,7 @@
  *  historia secreta (diarios del mundo «Reliquias · Historias secretas…», solo DM; el texto no está en el código).
  *  Revertir: «Bajar etapa» (DM) o «Deshacer» del chat. A mano: «Subir etapa» o el «Identificar» nativo del DM.
  */
+import { LEGENDARIAS, datosLegendaria, copiaLegendaria, manualLegendaria } from "./reliquias-legendarias.js";
 const MOD = "ecos-frontera";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const ETAPAS_RELIQUIA = [
@@ -101,6 +102,11 @@ export function updateIdentificada(a) {
     ...(a?.siguiente ? { "system.description.value": a.siguiente } : {}), ...(a?.siguienteChat ? { "system.description.chat": a.siguienteChat } : {}),
     [`flags.${MOD}.almacen.etapa`]: 1, [`flags.${MOD}.almacen.estudioFallido`]: false, [`flags.${MOD}.reliquia.autorizada`]: true
   };
+}
+/** Lo que cambia al identificarla, sea reliquia o arma legendaria. Puro. */
+export function identificacion(a) {
+  if (a?.legendaria && LEGENDARIAS[a.legendaria]) return { ...datosLegendaria(a.legendaria, a.nombre, 1, { embebida: true }), [`flags.${MOD}.almacen.estudioFallido`]: false, [`flags.${MOD}.reliquia.autorizada`]: true };
+  return updateIdentificada(a);
 }
 /** Resultado de un estudio: un 20 natural siempre la identifica. Puro. */
 export const exitoEstudio = ({ total, cd, natural = 0 }) => Number(natural) === 20 || Number(total) >= Number(cd);
@@ -213,6 +219,19 @@ export async function crearAlmacenReliquias() {
     if (!iEnt) crear.push(copiaEntregar(r, null, { folder: fEnt.id }));
     else actualizar.push({ _id: iEnt.id, ...datosEtapa(r, iEnt.flags[MOD].almacen.etapa ?? 1) });
   }
+  // 3.63: las armas legendarias del Verbe, con sus etapas (carpeta propia).
+  const nombresLeg = new Map((game.modules.get(MOD)?.api?.verbe?.datos?.()?.artefactosShinobi ?? []).map(x => [x.id, x.nombre]));
+  const fLeg = await carpeta("3 · Armas legendarias", raiz);
+  for (const id of Object.keys(LEGENDARIAS)) {
+    const nombre = nombresLeg.get(id) ?? id;
+    const pag = paginaHistoria(`leg-${id}`, nombre), historia = pag ? `@UUID[${pag.uuid}]{${nombre}}` : null;
+    const iMan = ya.get(`leg-${id}|manual`), desc = manualLegendaria(id, nombre, { historia });
+    if (iMan) actualizar.push({ _id: iMan.id, name: `${nombre} · manual`, "system.description.value": desc });
+    else crear.push({ name: `${nombre} · manual`, type: "loot", img: "icons/svg/book.svg", folder: fMan.id, ownership: { default: 0 }, system: { description: { value: desc } }, flags: { [MOD]: { almacen: { id: `leg-${id}`, tipo: "manual", legendaria: id } } } });
+    const iEnt = ya.get(`leg-${id}|entregar`);
+    if (!iEnt) crear.push(copiaLegendaria(id, nombre, leer("reliquiaEtapaCero", true) ? 0 : 1, { folder: fLeg.id }));
+    else actualizar.push({ _id: iEnt.id, ...datosLegendaria(id, nombre, iEnt.flags[MOD].almacen.etapa ?? 0) });
+  }
   for (let i = 0; i < crear.length; i += 100) await Item.createDocuments(crear.slice(i, i + 100));
   for (let i = 0; i < actualizar.length; i += 100) await Item.updateDocuments(actualizar.slice(i, i + 100));
   ui.notifications.info(`Almacén de reliquias: ${crear.length} nuevos, ${actualizar.length} al día${porEtapa.length ? `, ${porEtapa.length} copias «por etapa» quitadas` : ""}. Están en la pestaña Objetos.`);
@@ -230,7 +249,7 @@ export async function ponerAlDia362() {
   const revisar = async (it, embebida) => {
     const a = it.flags?.[MOD]?.almacen, rel = it.flags?.[MOD]?.reliquia;
     if (a?.tipo === "entregar") {
-      const r = porId.get(a.id); if (!r || a.cd) return;
+      const r = porId.get(a.id); if (!r || a.cd || a.legendaria) return;
       const e = !embebida && primera && etapa0 && Number(a.etapa ?? 1) === 1 ? 0 : Number(a.etapa ?? 1);
       await it.update(datosEtapa(r, e, { embebida })); n++;
     } else if (rel && !a) {
@@ -247,10 +266,14 @@ export async function ponerAlDia362() {
 export async function cambiarEtapa(item, paso = 1) {
   const a = item?.flags?.[MOD]?.almacen;
   if (!a || a.tipo !== "entregar" || !game.user.isGM) return;
+  const n = Math.max(0, Math.min(ETAPA_MAX, (Number(a.etapa) || 0) + paso)), e = etapaN(n);
+  if (a.legendaria) {
+    await item.update(datosLegendaria(a.legendaria, a.nombre ?? item._source.name, n, { embebida: !!item.parent }), { ecosIdentificar: true });
+    return ui.notifications.info(`${a.nombre}: ahora está ${e.nombre}.`);
+  }
   const { consultarReliquias } = await import("./relics.js");
   const r = (await consultarReliquias()).find(x => x.id === a.id);
   if (!r) return;
-  const n = Math.max(0, Math.min(ETAPA_MAX, (Number(a.etapa) || 0) + paso)), e = etapaN(n);
   await item.update(datosEtapa(r, n, { embebida: !!item.parent }), { ecosIdentificar: true });
   ui.notifications.info(`${r.nombre}: ahora está ${e.nombre}.`);
 }
@@ -302,7 +325,9 @@ export async function estudiarReliquia(item) {
   if (leer("reliquiaIdentificarAuto", true)) {
     const antes = { name: item._source.name, "system.identified": false, "system.description.value": item._source.system?.description?.value ?? "", "system.description.chat": item._source.system?.description?.chat ?? "",
       [`flags.${MOD}.almacen.etapa`]: 0, [`flags.${MOD}.reliquia.autorizada`]: false };
-    await item.update(updateIdentificada(a), { ecosIdentificar: true });
+    if (a.legendaria) Object.assign(antes, { "system.magicalBonus": item._source.system?.magicalBonus, "system.properties": [...(item._source.system?.properties ?? [])], "system.attunement": item._source.system?.attunement ?? "", "system.rarity": item._source.system?.rarity ?? "", "system.armor.magicalBonus": item._source.system?.armor?.magicalBonus ?? null });
+    for (const k of Object.keys(antes)) if (antes[k] === undefined) delete antes[k];
+    await item.update(identificacion(a), { ecosIdentificar: true });
     return ChatMessage.create({ ...quien, content: `<div class="ecos-dialogo"><p><b>${esc(actor.name)}</b> identifica la reliquia (${detalle}): es <b>${esc(a.nombre ?? item.name)}</b>. Está Dormida.</p><p><button type="button" data-ecos-deshacer><i class="fa-solid fa-rotate-left"></i> Deshacer</button></p></div>`,
       flags: { [MOD]: { deshacer: { cambios: [{ uuid: item.uuid, antes }] } } } });
   }
@@ -331,7 +356,7 @@ if (globalThis.Hooks) {
     if (a?.tipo !== "entregar" || Number(a.etapa) !== 0 || !item.parent || opciones?.ecosIdentificar) return;
     if (foundry.utils.getProperty(cambios, "system.identified") !== true) return;
     if (!game.user.isGM) { ui.notifications.warn("Una reliquia no se identifica con un clic: pulsa «Estudiar» en su cabecera (o pídeselo al DM)."); return false; }
-    foundry.utils.mergeObject(cambios, foundry.utils.expandObject(updateIdentificada(a)));
+    foundry.utils.mergeObject(cambios, foundry.utils.expandObject(identificacion(a)));
   });
   Hooks.on("dnd5e.restCompleted", (actor, resultado, config) => {
     if (config?.type !== "long" || !(game.user.isGM || actor.isOwner)) return;
@@ -345,7 +370,7 @@ if (globalThis.Hooks) {
       ev.preventDefault();
       const it = await fromUuid(b.dataset.ecosRevelar).catch(() => null);
       const a = it?.flags?.[MOD]?.almacen; if (!it || Number(a?.etapa) !== 0) return;
-      await it.update(updateIdentificada(a), { ecosIdentificar: true });
+      await it.update(identificacion(a), { ecosIdentificar: true });
       ui.notifications.info(`${a.nombre}: identificada (Dormida).`);
     });
   });

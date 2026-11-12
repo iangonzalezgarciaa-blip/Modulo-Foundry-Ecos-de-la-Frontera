@@ -27,6 +27,7 @@ import "./verbe-334.js";
 import "./accion-estandar.js";
 import "./reliquias-almacen.js";
 import "./subir-pnj.js";
+import "./reliquias-menores.js";
 import "./subir-nivel.js";
 import "./fama.js";
 import "./capas-abismo.js";
@@ -9219,7 +9220,9 @@ const OPS_PANEL = [
     ["venenos", "Venenos activos", "fa-skull-crossbones", "Quién está envenenado y en qué etapa: bajar, subir o curar. Los venenos avanzan solos con el tiempo del mundo (salvación en cada intervalo, daño y estados por etapa)."],
     ["traducirFichas", "Traducir fichas al español", "fa-language", "Copia a las fichas el nombre y la descripción en español de sus clases, rasgos, conjuros, acciones y objetos desde los compendios de D&D traducidos (para fichas armadas antes de activar la traducción). Primero muestra un informe."],
     ["proeza", "Proeza (fama)", "fa-bullhorn", "Marca una proeza de los PJ: suma fama y, al cruzar un umbral, las facciones se enteran (te susurra qué hacer)."],
-    ["almacenReliquias", "Almacén de reliquias", "fa-gem", "Crea o pone al día en la pestaña Objetos todas las reliquias del Abismo: manual del DM (etapas, CD para identificarla, cómo despertarla y enlace a su historia secreta) y una copia para entregar que llega sin identificar y sube de etapa con un botón."],
+    ["almacenReliquias", "Almacén de reliquias", "fa-gem", "Crea o pone al día en la pestaña Objetos todas las reliquias del Abismo y las 17 armas legendarias: manual del DM (etapas, CD para identificarla, cómo despertarla y enlace a su historia secreta) y una copia para entregar que llega sin identificar y sube de etapa con un botón."],
+    ["reliquiasMenores", "Reliquias menores y objetos del Verbe", "fa-wand-sparkles", "Lleva a Objetos los objetos mágicos de siempre de D&D (común a muy raro) como «Reliquias menores», sin etapas y ordenados por nivel (1, 3, 5, 11), y lo mundano del Verbe (tinta, sellos, agujas, estrellas, hilo, marionetas) en «Objetos del Verbe». No pisa nada."],
+    ["quitarMenores", "Quitar reliquias menores", "fa-trash-can-arrow-up", "Revierte lo anterior: borra de Objetos solo lo que creó (las copias en hojas no se tocan)."],
     ["danoIndirecto", "Daño de caída e indirecto", "fa-person-falling-burst", "Caídas (1d6 cada 10 ft), derrumbes, brasas, lava, ácido, descargas, frío o gas: se aplica directo a los tokens seleccionados o marcados, con su salvación."],
     ["recuperar", "Recuperar el control", "fa-hand-pointer", "Si de pronto no puedes seleccionar ni mover fichas (un diálogo se quedó con el ratón), esto lo arregla sin F5."]
   ]]
@@ -9563,6 +9566,8 @@ async function ejecutarPanel(op) {
     case "recuperar": await api?.recuperarControl?.(); break;
     case "danoIndirecto": await api?.danoIndirecto?.(); break;
     case "almacenReliquias": await api?.almacenReliquias?.(); break;
+    case "reliquiasMenores": await api?.reliquiasMenores?.(); break;
+    case "quitarMenores": await api?.quitarReliquiasMenores?.(); break;
     case "proeza": await api?.proeza?.(); break;
     case "capasAbismo": await api?.capasAbismo?.(); break;
     case "sucesoDia": await api?.sucesoDia?.(); break;

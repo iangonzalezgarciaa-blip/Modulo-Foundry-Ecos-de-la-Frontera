@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 3.63.0 — 2026-11-12
+
+- **Armas legendarias con etapas.** Las 17 armas legendarias del Verbe (Fauces de la Marea, Segadora del Vado, Trueno en Láminas, Gemelas de la Tormenta, Abanico de los Cinco Vientos…) son ahora objetos de D&D de verdad en Objetos → Reliquias del Abismo → «3 · Armas legendarias», con su manual en «1 · Manual del DM». Llegan sin identificar y funcionan como un arma (escudo u objeto) común; Dormida +1 con sintonía; Despierta +2 y su poder como actividad de la hoja con sus usos; Resonante +3 y el poder completo. Siguen contando como artefacto equipado para las técnicas del Verbe. «Estudiar», «Subir etapa», «Bajar» e «Historia secreta» igual que las reliquias.
+- **Reliquias menores.** Menú del DM → «Reliquias menores y objetos del Verbe»: los objetos mágicos de D&D de común a muy raro (sin legendarios) en una carpeta aparte, ordenados por el nivel desde el que darlos (1, 3, 5, 11), sin etapas. «Quitar reliquias menores» lo revierte.
+- **Objetos del Verbe.** Tinta, pergaminos, sellos, agujas, estrellas arrojadizas (1d4, 20/60 ft), hilo, marionetas y maletín de cirujano como objetos con precio y nivel.
+
 ## 3.62.0 — 2026-11-12
 
 - **Reliquias sin identificar (etapa 0).** Las copias de «2 · Para entregar» (y las del catálogo) llegan sin identificar: el jugador ve un nombre sacado de su aspecto («Barra de acero negro mate · sin identificar»), su aspecto y cómo identificarla. Botón **Estudiar**: Arcanos, Historia o Investigación contra CD 10 + la mitad de su nivel (ventaja con Detectar magia o la dote nueva **Tacto del archivero**; un fallo espera al Descanso Largo; un 20 siempre acierta), o el conjuro Identificar. Al acertar pasa a Dormida con «Deshacer» para el DM (ajuste para que lo confirmes tú con «Revelar»). El «Identificar» de D&D no la identifica para el jugador; para el DM cuenta como subirla a mano. Etapas 0 a 3 con «Subir etapa» / «Bajar».

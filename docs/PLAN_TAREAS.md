@@ -357,3 +357,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 12-nov-2026 | Mejora | Claude | Estilos de hoja oscuros con textura y filigrana. Release v3.60.0 | 3.60.0 |
 | 12-nov-2026 | Mejora | Claude | Información oculta, Escuchar el cuerpo y estados enlazados al diario. Release v3.61.0 | 3.61.0 |
 | 12-nov-2026 | Mejora | Claude | Reliquias en etapa 0 con Estudiar e historias secretas; Nivel PNJ. Release v3.62.0 | 3.62.0 |
+| 12-nov-2026 | Mejora | Claude | Armas legendarias con etapas, reliquias menores y objetos del Verbe. Release v3.63.0 | 3.63.0 |
