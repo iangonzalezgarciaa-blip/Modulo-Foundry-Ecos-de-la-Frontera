@@ -150,20 +150,23 @@ export async function dispararPreparada(actor, { cancelar = false } = {}) {
 }
 
 /* 8 · Influir */
-const actitudDe = a => a?.getFlag?.(MOD, "actitud") ?? "indiferente";
-export async function ponerActitud(actor, actitud) {
+/** 3.56: la actitud es de cada token (dos bandidos del mismo actor pueden sentir distinto); si el token no la tiene, la del actor. */
+const docToken = t => t?.document ?? t ?? null;
+export const actitudDe = (a, tok = null) => docToken(tok)?.getFlag?.(MOD, "actitud") ?? a?.getFlag?.(MOD, "actitud") ?? "indiferente";
+export async function ponerActitud(actor, actitud, token = null) {
   if (!game.user.isGM || !actor || !CD_ACTITUD[actitud]) return;
-  const antes = actitudDe(actor);
-  await actor.setFlag(MOD, "actitud", actitud);
-  await decir(actor, `<p><b>${esc(actor.name)}</b>: actitud ${NOMBRE_ACTITUD[antes]} → <b>${NOMBRE_ACTITUD[actitud]}</b>.</p>${botonDeshacer()}`,
-    { whisper: gms(), flags: { [MOD]: { deshacer: { cambios: [{ uuid: actor.uuid, antes: { [`flags.${MOD}.actitud`]: antes } }], borrar: [] } } } });
+  const doc = docToken(token) ?? (actor.isToken ? actor.token : null) ?? actor.getActiveTokens?.(false, true)?.[0] ?? null;
+  const antes = actitudDe(actor, doc), destino = doc ?? actor;
+  await destino.setFlag(MOD, "actitud", actitud);
+  await decir(actor, `<p><b>${esc(doc?.name ?? actor.name)}</b>: actitud ${NOMBRE_ACTITUD[antes]} → <b>${NOMBRE_ACTITUD[actitud]}</b>.</p>${botonDeshacer()}`,
+    { whisper: gms(), flags: { [MOD]: { deshacer: { cambios: [{ uuid: destino.uuid, antes: { [`flags.${MOD}.actitud`]: antes } }], borrar: [] } } } });
 }
 export async function influir(actor) {
   const tok = objetivo(), npc = tok?.actor;
   if (!npc || npc === actor) return ui.notifications.warn("Marca (T) a quien quieres convencer.");
   const c = combatienteDe(actor), t = turnoDe(c);
   if (t?.accion) return ui.notifications.warn(`${actor.name} ya gastó su ${ACCIONES_DND.accion}.`);
-  const act = actitudDe(npc);
+  const act = actitudDe(npc, tok);
   const r = await foundry.applications.api.DialogV2.wait({ window: { title: `Influir en ${tok.name}`, icon: "fa-solid fa-comments" }, position: { width: 440 },
     content: `<div class="ecos-dialogo"><p>Pides algo a <b>${esc(tok.name)}</b>. ${game.user.isGM ? `Actitud: <b>${NOMBRE_ACTITUD[act]}</b> (CD ${CD_ACTITUD[act]}).` : "El DM sabe qué tan dispuesto está."}</p>
       <label>Cómo <select name="skill"><option value="per">Persuasión (convencer)</option><option value="dec">Engaño (mentir)</option><option value="itm">Intimidación (amenazar)</option><option value="prf">Interpretación (impresionar)</option><option value="ani">Trato con animales</option></select></label>
@@ -176,7 +179,7 @@ export async function influir(actor) {
   if (!Number.isFinite(total)) return;
   const res = resultadoInfluir(total, act, r.cd);
   await decir(actor, `<div class="ecos-influir"><p><b>${esc(actor.name)}</b> intenta influir en <b>${esc(tok.name)}</b>: ${total} contra CD ${res.cd} (actitud ${NOMBRE_ACTITUD[act]}) → <b>${res.exito ? "lo logra" : "no lo logra"}</b>${res.exito ? "" : res.margen <= -5 ? " y puede empeorar su actitud" : ""}.</p>
-    <p>Cambiar la actitud: ${Object.keys(CD_ACTITUD).map(k => `<button type="button" data-ecos-actitud="${npc.uuid}|${k}">${NOMBRE_ACTITUD[k]}</button>`).join(" ")}</p></div>`, { whisper: gms() });
+    <p>Cambiar la actitud: ${Object.keys(CD_ACTITUD).map(k => `<button type="button" data-ecos-actitud="${docToken(tok)?.uuid ?? npc.uuid}|${k}">${NOMBRE_ACTITUD[k]}</button>`).join(" ")}</p></div>`, { whisper: gms() });
 }
 
 /* 9 · Inspiración heroica */
@@ -247,7 +250,7 @@ if (globalThis.Hooks) {
     if (!raiz) return;
     for (const b of raiz.querySelectorAll("button[data-ecos-actitud]")) {
       if (!game.user.isGM) { b.remove(); continue; }
-      b.addEventListener("click", async ev => { ev.preventDefault(); const [uuid, k] = b.dataset.ecosActitud.split("|"); await ponerActitud(await fromUuid(uuid), k); });
+      b.addEventListener("click", async ev => { ev.preventDefault(); const [uuid, k] = b.dataset.ecosActitud.split("|"); const d = await fromUuid(uuid); if (d instanceof Actor) await ponerActitud(d, k); else if (d?.actor) await ponerActitud(d.actor, k, d); });
     }
     if (!leer("inspiracionBoton", true) || msg.getFlag(MOD, "inspiracionUsada") || msg.getFlag(MOD, "inspiracionRepetida")) return;
     const actor = ChatMessage.getSpeakerActor?.(msg.speaker), roll = Array.from(msg.rolls ?? [])[0];

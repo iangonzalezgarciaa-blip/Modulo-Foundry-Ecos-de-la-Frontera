@@ -11,6 +11,7 @@
  *  - Iniciativa: a cada jugador le pregunta si tira con ventaja, normal o desventaja.
  * Lo puro se prueba sin Foundry.
  */
+import { actividadMensaje, esTarjetaUso } from "./compat.js";
 const MOD = "ecos-frontera";
 export const DESENGANCHE = "ecosDesenganche";
 export const TERRENO = "ecosTerrenoDificil";
@@ -319,6 +320,24 @@ async function preguntarIniciativa(combatant) {
   if (r && combatant.isOwner) await combatant.setFlag(MOD, "iniciativa", r);
 }
 
+/** 3.56: «Tirar todas» / «Tirar PNJ» del rastreador: el DM elige ventaja, normal o desventaja para cada uno antes de tirar. */
+export async function preguntarIniciativas(soloPNJ = false) {
+  const combat = game.combat;
+  if (!combat) return;
+  const lista = combat.combatants.filter(c => c.actor && (c.initiative === null || c.initiative === undefined) && (!soloPNJ || !c.actor.hasPlayerOwner));
+  const tirar = () => (soloPNJ ? combat.rollNPC() : combat.rollAll());
+  if (!lista.length) return tirar();
+  const op = (c, k, n) => `<label><input type="radio" name="${c.id}" value="${k}" ${(c.getFlag(MOD, "iniciativa") ?? "normal") === k ? "checked" : ""}> ${n}</label>`;
+  const r = await foundry.applications.api.DialogV2.wait({ window: { title: "Iniciativa", icon: "fa-solid fa-dice-d20" }, position: { width: 520 },
+    content: `<div class="ecos-dialogo ecos-ini"><p>¿Cómo tira cada uno? (lo que eligieron los jugadores ya viene marcado)</p>
+      ${lista.map(c => `<div class="ecos-ini-fila"><b>${esc(c.name)}</b>${op(c, "ventaja", "Ventaja")}${op(c, "normal", "Normal")}${op(c, "desventaja", "Desventaja")}</div>`).join("")}</div>`,
+    buttons: [{ action: "ok", label: "Tirar", icon: "fa-solid fa-dice-d20", default: true, callback: (_e, b) => Object.fromEntries(lista.map(c => [c.id, b.form.elements[c.id]?.value ?? "normal"])) },
+      { action: "sin", label: "Tirar sin preguntar" }, { action: "no", label: "Cancelar" }], rejectClose: false });
+  if (!r || r === "no") return;
+  if (typeof r === "object") await combat.updateEmbeddedDocuments("Combatant", Object.entries(r).map(([_id, v]) => ({ _id, [`flags.${MOD}.iniciativa`]: v })));
+  return tirar();
+}
+
 /* ---------------- Ganchos ---------------- */
 if (globalThis.Hooks) {
   Hooks.once("init", () => {
@@ -381,9 +400,10 @@ if (globalThis.Hooks) {
   // Lo que se usa marca la acción de D&D (las técnicas del Verbe gastan su propia economía).
   Hooks.on("createChatMessage", msg => {
     if (!gmActivo()) return;
-    const combat = combateActivo(), dact = msg.flags?.dnd5e?.activity;
-    if (!combat || !dact?.uuid) return;
-    let act = null; try { act = fromUuidSync(dact.uuid); } catch { act = null; }
+    // 3.56: en dnd5e 6 la actividad va en msg.system.activity (antes en flags.dnd5e.activity): por eso no se gastaba la acción.
+    const combat = combateActivo(), uuid = actividadMensaje(msg);
+    if (!combat || !uuid || !esTarjetaUso(msg)) return;
+    let act = null; try { act = msg.getAssociatedActivity?.() ?? fromUuidSync(uuid, { strict: false }); } catch { act = null; }
     if (!act || act.item?.flags?.[MOD]?.verbe) return;
     const k = tipoActivacion(act.activation?.type ?? act.item?.system?.activation?.type);
     const c = combat.combatants.find(x => x.actor === act.actor || x.actorId === act.actor?.id);
@@ -404,4 +424,17 @@ if (globalThis.Hooks) {
   });
   // Tirada desde la hoja: la ventana de dnd5e (Normal / Ventaja / Desventaja) siempre sale.
   Hooks.on("dnd5e.preRollInitiativeDialogV2", (config, dialog) => { if (leer("iniciativaPregunta", true) && dialog) dialog.configure = true; });
+  // 3.56: «Tirar todas» y «Tirar PNJ» no abrían ninguna ventana: ahora el DM elige para cada uno.
+  Hooks.on("renderCombatTracker", (app, html) => {
+    if (!game.user.isGM || !leer("iniciativaPregunta", true)) return;
+    const raiz = html instanceof HTMLElement ? html : (html?.[0] ?? app?.element);
+    for (const b of raiz?.querySelectorAll?.('[data-action="rollAll"], [data-action="rollNPC"], [data-control="rollAll"], [data-control="rollNPC"]') ?? []) {
+      if (b.dataset.ecosIni) continue;
+      b.dataset.ecosIni = "1";
+      b.addEventListener("click", ev => {
+        ev.preventDefault(); ev.stopImmediatePropagation();
+        preguntarIniciativas(/NPC/.test(b.dataset.action ?? b.dataset.control ?? "")).catch(err => console.error(`${MOD} | iniciativa`, err));
+      }, { capture: true });
+    }
+  });
 }

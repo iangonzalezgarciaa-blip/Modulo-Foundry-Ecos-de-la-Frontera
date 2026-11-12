@@ -1031,3 +1031,13 @@ button.ecos-inspiracion { margin-top: 4px; background: linear-gradient(90deg, #f
 .ecos-taller-bot { display: flex; gap: 3px; }
 .ecos-taller-bot button { width: auto; line-height: 22px; padding: 0 6px; }
 .ecos-taller-vacio { opacity: 0.7; }
+
+/* 3.56 · Toda ventana de diálogo del módulo se desplaza con la rueda (pedido del autor: Relojes y otras pantallas largas
+   del Menú del DM no dejaban ver lo de abajo). El contenido se desplaza y los botones quedan siempre a la vista. */
+.application.dialog:has([class*="ecos"]) { max-height: calc(100vh - 16px); }
+.application.dialog:has([class*="ecos"]) .window-content { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.application.dialog:has([class*="ecos"]) .dialog-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.application.dialog:has([class*="ecos"]) .form-footer { flex: 0 0 auto; }
+.application:is(.ecos-mega, .ecos-panel-dm, .ecos-funciones, .ecos-taller) .window-content { overflow-y: auto; overscroll-behavior: contain; }
+.ecos-ini-fila { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; padding: 2px 0; border-bottom: 1px solid rgba(127, 127, 127, 0.2); }
+.ecos-ini-fila label { display: flex; align-items: center; gap: 3px; white-space: nowrap; }

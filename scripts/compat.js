@@ -84,6 +84,10 @@ export function filtrarObjetivosMensaje(m, seguir) {
   const quedan = viejos.filter(t => seguir({ uuid: t?.uuid ?? t?.actorUuid ?? null, token: t?.tokenUuid ?? null }));
   return quedan.length === viejos.length ? null : { "flags.dnd5e.targets": quedan };
 }
+/** 3.56: la actividad de una tarjeta (dnd5e 6: system.activity; dnd5e 5: flags.dnd5e.activity). */
+export const actividadMensaje = m => m?.system?.activity?.uuid ?? m?.flags?.dnd5e?.activity?.uuid ?? null;
+/** ¿Es la tarjeta de uso de una actividad (no una tirada)? */
+export const esTarjetaUso = m => m?.type === "usage" || m?.flags?.dnd5e?.messageType === "usage" || (!!m?.flags?.dnd5e?.activity && !m?.flags?.dnd5e?.roll);
 /** Lo consumido al usar una actividad (dnd5e 6: system.deltas; dnd5e 5: flags.dnd5e.use.consumed). */
 export const consumoMensaje = m => m?.system?.deltas ?? m?.flags?.dnd5e?.use?.consumed ?? null;
 

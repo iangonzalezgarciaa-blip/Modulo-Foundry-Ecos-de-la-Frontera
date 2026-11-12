@@ -111,7 +111,7 @@ async function alMensaje(m) {
     quien: leer("festejoQuien", "pj"), conUno: leer("festejoUno", true), soloAtaques: leer("festejoSoloAtaques", false) });
   if (!f) return;
   const tokenDoc = m.speaker?.token ? canvas?.scene?.tokens?.get(m.speaker.token) : null;
-  const detalle = r.tipo === "attack" ? (m.flags?.dnd5e?.item?.name ?? fromUuidSync?.(m.flags?.dnd5e?.item?.uuid ?? "")?.name ?? "") : "";
+  const detalle = r.tipo === "attack" ? (m.getAssociatedItem?.()?.name ?? m.flags?.dnd5e?.item?.name ?? fromUuidSync?.(m.flags?.dnd5e?.item?.uuid ?? "")?.name ?? "") : "";
   // Con dados 3D, espera a que caigan.
   if (game.dice3d?.waitFor3DAnimationByMessageID) await Promise.race([game.dice3d.waitFor3DAnimationByMessageID(m.id), new Promise(res => setTimeout(res, 6000))]).catch(() => null);
   festejar(datosFestejo(actor, f, tokenDoc, detalle));

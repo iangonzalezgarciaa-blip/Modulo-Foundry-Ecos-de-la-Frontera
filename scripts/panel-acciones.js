@@ -6,7 +6,7 @@
  */
 import { ACCIONES_BASICAS } from "./accion-estandar.js";
 import { ayudar, esconderse } from "./ventaja-estados.js";
-import { saltar, preparar, dispararPreparada, influir, ponerActitud, alternarInspiracion, NOMBRE_ACTITUD } from "./reglas-dnd.js";
+import { saltar, preparar, dispararPreparada, influir, ponerActitud, actitudDe, alternarInspiracion, NOMBRE_ACTITUD } from "./reglas-dnd.js";
 import { ACCIONES_DND, accionEstandar, cambiarTurno, combateActivo, datosTurno, turnoVacio, movimientoRestante } from "./turno-tracker.js";
 const MOD = "ecos-frontera";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -16,8 +16,9 @@ const leerLS = (k, d) => { try { return JSON.parse(localStorage.getItem(`${MOD}.
 const guardarLS = (k, v) => { try { localStorage.setItem(`${MOD}.${k}`, JSON.stringify(v)); } catch { /* sin almacenamiento */ } };
 const velocidad = a => Number(a?.system?.attributes?.movement?.walk) || 30;
 
+function tokenActual() { return canvas?.tokens?.controlled?.[0] ?? null; }
 function actorActual() {
-  const t = canvas?.tokens?.controlled?.[0];
+  const t = tokenActual();
   return t?.actor ?? game.user.character ?? null;
 }
 function html(actor) {
@@ -30,7 +31,7 @@ function html(actor) {
   return `<header data-arrastre><img src="${esc(actor.img)}" alt=""><b>${esc(actor.name)}</b>${actor.isOwner ? `<button type="button" data-festejo title="Tu frase del 20 y del 1 natural (festejo a pantalla completa)"><i class="fa-solid fa-star"></i></button>` : ""}<button type="button" data-plegar title="${plegado ? "Desplegar" : "Plegar"}">${plegado ? "+" : "–"}</button></header>
     ${plegado ? "" : `<div class="ecos-pa-turno">${["accion", "adicional", "reaccion", "interaccion"].map(pip).join("")}<span class="ecos-pa-mov" title="Movimiento que queda"><i class="fa-solid fa-shoe-prints"></i> ${mov}</span></div>
     ${t?.preparada ? `<div class="ecos-pa-preparada">⏳ <b>${esc(t.preparada.que)}</b>${t.preparada.cuando ? ` cuando ${esc(t.preparada.cuando)}` : ""}<br><button type="button" data-preparada="si" title="Se cumplió: gasta tu Reacción">¡Ahora!</button><button type="button" data-preparada="no" title="Soltar lo preparado">Soltar</button></div>` : ""}
-    ${game.user.isGM ? `<div class="ecos-pa-dm">${actor.type === "character" ? `<button type="button" data-inspiracion title="Dar o quitar Inspiración heroica">${actor.system?.attributes?.inspiration ? "★ Inspiración" : "☆ Inspiración"}</button>` : `<span title="Su actitud hacia los PJ: la CD de Influir">Actitud:</span>${Object.keys(NOMBRE_ACTITUD).map(k => `<button type="button" data-actitud="${k}" class="${(actor.getFlag(MOD, "actitud") ?? "indiferente") === k ? "activa" : ""}">${NOMBRE_ACTITUD[k]}</button>`).join("")}`}</div>` : ""}
+    ${game.user.isGM ? `<div class="ecos-pa-dm">${actor.type === "character" ? `<button type="button" data-inspiracion title="Dar o quitar Inspiración heroica">${actor.system?.attributes?.inspiration ? "★ Inspiración" : "☆ Inspiración"}</button>` : `<span title="Su actitud hacia los PJ: la CD de Influir">Actitud:</span>${Object.keys(NOMBRE_ACTITUD).map(k => `<button type="button" data-actitud="${k}" class="${actitudDe(actor, tokenActual()) === k ? "activa" : ""}">${NOMBRE_ACTITUD[k]}</button>`).join("")}`}</div>` : ""}
     ${c ? "" : `<p class="ecos-pa-nota">Fuera de combate: las acciones se cuentan solo en un combate.</p>`}
     <div class="ecos-pa-acciones"><button type="button" data-accion="saltar" title="Saltar · movimiento\nCalcula tu salto largo y alto (con y sin carrera) y pone el token en modo salto."><i class="fa-solid ${ICONO.saltar}"></i><span>Saltar</span></button>${ACCIONES_BASICAS.map(a => `<button type="button" data-accion="${a.id}" title="${esc(a.n)} · ${a.tipo === "reaction" ? "Reacción" : "Acción"}\n${esc(a.que)}"><i class="fa-solid ${ICONO[a.id] ?? "fa-circle"}"></i><span>${esc(a.n)}</span></button>`).join("")}</div>`}`;
 }
@@ -53,7 +54,7 @@ async function alClic(ev) {
   if (p) { const combat = combateActivo(), c = combat?.combatants?.find?.(x => x.actor === actor || x.actorId === actor.id); if (c) await cambiarTurno(c.id, { op: "alternar", clave: p.dataset.pip }); return; }
   const pr = ev.target.closest("[data-preparada]"); if (pr) return dispararPreparada(actor, { cancelar: pr.dataset.preparada === "no" });
   if (ev.target.closest("[data-inspiracion]")) return alternarInspiracion(actor);
-  const ac = ev.target.closest("[data-actitud]"); if (ac) return ponerActitud(actor, ac.dataset.actitud);
+  const ac = ev.target.closest("[data-actitud]"); if (ac) return ponerActitud(actor, ac.dataset.actitud, tokenActual());
   const b = ev.target.closest("[data-accion]"); if (!b) return;
   if (b.dataset.accion === "saltar") return saltar(actor);
   const a = ACCIONES_BASICAS.find(x => x.id === b.dataset.accion);
@@ -92,5 +93,5 @@ if (globalThis.Hooks) {
       await game.settings.set(MOD, "panelAcciones", ver);
     }, pintar };
   });
-  for (const h of ["controlToken", "updateCombat", "updateCombatant", "deleteCombat", "createCombat", "updateActor", "canvasReady"]) Hooks.on(h, () => repintar());
+  for (const h of ["controlToken", "updateCombat", "updateCombatant", "deleteCombat", "createCombat", "updateActor", "updateToken", "canvasReady"]) Hooks.on(h, () => repintar());
 }

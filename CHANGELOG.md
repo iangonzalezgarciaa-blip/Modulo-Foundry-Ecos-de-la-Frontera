@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 3.56.0 — 2026-11-12
+
+- **Arreglo**: ninguna actividad gastaba la acción en el turno (dnd5e 6 guarda la actividad en otro lugar de la tarjeta del chat). Ahora conjuros, ataques y objetos marcan Acción, Adicional o Reacción.
+- **Arreglo**: la actitud de los PNJ es de cada token (antes, dos tokens del mismo actor compartían la marca); el panel de acciones muestra la del token seleccionado.
+- **Arreglo**: toda ventana de diálogo del módulo se desplaza con la rueda (Relojes de facción y otras pantallas largas del Menú del DM); los botones quedan a la vista.
+- **Iniciativa**: «Tirar todas» y «Tirar PNJ» del rastreador abren una ventana para elegir Ventaja, Normal o Desventaja de cada uno (lo que eligieron los jugadores viene marcado); «Tirar sin preguntar» para ir rápido.
+
 ## 3.55.0 — 2026-11-12
 
 - **Venenos por etapas** (de PF2e, nivelados a D&D): CD de Constitución, incubación, duración máxima y etapas con texto, intervalo, daño (ya escalado a D&D) y estados de D&D. Exposición, salvación en cada intervalo (sube o baja una o dos etapas), otra dosis, cura en 0 o al pasar la duración. Corre solo con el tiempo del mundo; los PNJ tiran solos y los PJ con un botón.
