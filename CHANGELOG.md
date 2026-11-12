@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.51.0 — 2026-11-12
+
+- **Estilos de hoja** al estilo anime de acción: letras de impacto en el nombre y los títulos, adornos en las esquinas, cabecera y colores propios. Cada jugador elige uno de cinco para su PJ (Llama, Marea, Hoja, Sombra, Tormenta) con la paleta de la cabecera de su hoja, o «Original». Los PNJ llevan «Tinta» (ajuste del mundo para cambiarlo u «Original»). Cada usuario puede no verlos («Ver los estilos de hoja»). Solo cambia colores y fondos: la hoja y sus datos no se tocan.
+- **Traducir fichas** solo traduce lo que sigue en inglés (un nombre propio o ya en español no se toca) y guarda un respaldo: «Deshacer la última traducción» en la misma ventana. En el mundo: la traducción de ravanno está activa y las fichas quedaron traducidas (los 135 nombres propios que se habían cambiado volvieron a ser los de antes).
+
 ## 3.50.0 — 2026-11-12
 
 Lo que D&D base no hace (las 10 propuestas, todas con control del DM para revertir):

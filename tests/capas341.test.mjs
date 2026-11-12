@@ -42,3 +42,11 @@ test("3.41 · traducir fichas: copia nombre, descripción y actividades distinto
   assert.equal(esFuenteDnd("Compendium.dnd5e.classes24.Item.x"), true);
   assert.equal(esFuenteDnd("Compendium.world.algo.Item.x"), false);
 });
+test("3.51 · traducir solo lo que sigue en inglés: un nombre propio o ya en español no se toca", async () => {
+  const { cambiosTraduccion, esEspanol } = await import("../scripts/traducir-fichas.js");
+  const fuente = { name: "Armadura de bandas", flags: { babele: { originalName: "Splint Armor" } }, system: { description: { value: "<p>ES</p>" } } };
+  assert.equal(cambiosTraduccion({ _id: "a", name: "Splint Armor", system: { description: { value: "<p>EN</p>" } } }, fuente).name, "Armadura de bandas");
+  assert.equal(cambiosTraduccion({ _id: "a", name: "Armadura de placas", system: { description: { value: "<p>x</p>" } } }, fuente), null);
+  assert.equal(cambiosTraduccion({ _id: "a", name: "Martillo de forja", system: {} }, { name: "Martillo de guerra", system: {} }), null, "sin Babele: ya está en español");
+  assert.equal(esEspanol("Relámpago"), true); assert.equal(esEspanol("Bless"), false);
+});
