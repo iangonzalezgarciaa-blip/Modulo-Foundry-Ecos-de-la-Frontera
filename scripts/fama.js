@@ -29,6 +29,7 @@ export async function sumarFama(actor, puntos, motivo = "") {
   // 3.42: con «Deshacer» al lado (regla del autor); el ajuste a mano está en Menú del DM → Proeza.
   await ChatMessage.create({ speaker: { alias: "Se corre la voz" }, content: `<p><b>${esc(actor.name)}</b>: ${puntos >= 0 ? "+" : ""}${puntos} de fama${motivo ? ` (${esc(motivo)})` : ""}. Ahora: <b>${n1.nombre}</b> (${despues}).</p>${botonDeshacer()}`,
     flags: { [MOD]: { deshacer: { cambios: [{ uuid: actor.uuid, antes: { [`flags.${MOD}.fama`]: antes || undefined } }], borrar: [] } } } });
+  if (n1.min > n0.min) Hooks.callAll("ecosSubeFama", { actor, nivel: n1.nombre }); // 3.43: relojes de facción
   if (n1.min > n0.min) await ChatMessage.create({ whisper: game.users.filter(u => u.isGM).map(u => u.id), speaker: { alias: "Fama · solo DM" },
     content: `<p><b>${esc(actor.name)}</b> pasa a <b>${n1.nombre}</b>. ${esc(n1.texto)}</p><p class="ecos-nota">Buen momento para que una facción mueva ficha: alguien aparece en la posada preguntando por él.</p>` });
 }

@@ -31,6 +31,9 @@ import "./fama.js";
 import "./capas-abismo.js";
 import "./traducir-fichas.js";
 import "./sucesos-dia.js";
+import "./relojes-faccion.js";
+import "./token-vista.js";
+import "./viajes.js";
 import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
@@ -6521,6 +6524,8 @@ async function tirarZona(zona) {
 }
 
 /** Encuentro completo: tabla → plantilla → criaturas. opciones: {dificultad, aliados}. */
+// 3.43: viajes.js arma encuentros por zona con esto.
+Hooks.once("ready", () => { const api = game.modules.get(MOD)?.api; if (api) { api.encuentroZona = sacarEncuentroArmado; api.zonasEncuentro = { ...ZONAS_ENCUENTRO, camino: "Camino (según la estación)" }; } });
 async function sacarEncuentroArmado(zona, { dificultad = null, aliados = 0 } = {}) {
   const t = await tirarZona(zona);
   if (!t) return null;
@@ -9151,6 +9156,9 @@ const OPS_PANEL = [
     ["pantalla", "Pantalla del DM", "fa-table-columns", "Abre o cierra la Pantalla del DM (pestaña «Ecos · DM»)."],
     ["plantillas", "Quitar plantillas", "fa-eraser", "Lista las plantillas de área de la escena (en Foundry 14 son regiones) y quita las marcadas o todas. También está la goma en la barra de Tokens."],
     ["choqueVerbe", "Choque de técnicas", "fa-burst", "Resuelve a mano un choque entre dos técnicas (elemento, grado y Control)."],
+    ["relojesFaccion", "Relojes de facción", "fa-clock", "El reloj de cada facción del mundo: avanzan solos con la fama de los PJ o con los días (cada avance con Deshacer) y aquí los mueves a mano. Qué pasa cuando cada uno se llena."],
+    ["siluetas", "Tokens a silueta", "fa-user-secret", "Elige qué criaturas y PNJ con imagen del sistema o de un módulo de arte vuelven a la silueta (también en las escenas). Guarda la imagen anterior: «Deshacer todas» la devuelve."],
+    ["viaje", "Viaje por zonas", "fa-route", "Zona, días y ritmo: tira encuentros y hallazgos por día, avanza el reloj (anuncio del día, suceso, clima y relojes) y deja un resumen con «Deshacer» y un botón para armar cada encuentro."],
     ["sucesoDia", "Suceso del día", "fa-calendar-day", "El suceso del día de la estación: tirarlo, elegirlo a mano, deshacerlo o volver al anterior, y apagar el automático."],
     ["capasAbismo", "Capas del Abismo", "fa-stairs", "En qué capa está la escena, cruzar umbrales hacia afuera con su cobro (salvación, Agotamiento, daño y estados automáticos) y la llamada del amanecer. Explica la mecánica paso a paso."],
     ["traducirFichas", "Traducir fichas al español", "fa-language", "Copia a las fichas el nombre y la descripción en español de sus clases, rasgos, conjuros, acciones y objetos desde los compendios de D&D traducidos (para fichas armadas antes de activar la traducción). Primero muestra un informe."],
@@ -9502,6 +9510,9 @@ async function ejecutarPanel(op) {
     case "proeza": await api?.proeza?.(); break;
     case "capasAbismo": await api?.capasAbismo?.(); break;
     case "sucesoDia": await api?.sucesoDia?.(); break;
+    case "relojesFaccion": await api?.relojesFaccion?.(); break;
+    case "siluetas": await api?.siluetas?.(); break;
+    case "viaje": await api?.viaje?.(); break;
     case "traducirFichas": await api?.abrirTraducir?.(); break;
     case "estado": game.journal.get("G0rD0J3JkpOkXM00")?.pages.find(p => p.getFlag(MOD, "estado"))?.sheet?.render(true); break;
     case "tirada":

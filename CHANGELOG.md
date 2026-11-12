@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 3.43.0 — 2026-11-11
+
+- **Relojes de facción** (aprobado por el autor): Menú del DM → Mesa → «Relojes de facción». Cada facción del mundo tiene su reloj (dibujado en segmentos), agrupadas por región. Avanzan solos cuando un PJ sube de nivel de fama (las que reaccionan a la fama) o cada cierto número de días (las que tienen ritmo propio); cada avance te llega en un susurro con **Deshacer**, y cuando uno se llena, qué pasa. En la ventana los mueves a mano con −, + o escribiendo el número. Las facciones y sus textos son de tu campaña: se leen de un diario de tu mundo.
+- **Defensa a la vista en el token:** anillo de color y letra según la defensa (Coraza azul «C», Fortaleza dorada «F», Cuerpo sordo violeta «S», con su bono). Ajuste del módulo: la ven todos, solo el DM o nadie.
+- **Tokens a silueta:** Menú del DM → Mesa. Elige qué criaturas y PNJ con imagen del sistema o de un módulo de arte vuelven a la silueta (también los tokens ya puestos en escenas). Guarda la imagen anterior: **Deshacer todas** la devuelve. Lo que pusiste tú en tu mundo no aparece.
+- **Viaje por zonas:** Menú del DM → Mesa. Zona, días y ritmo (lento, normal, rápido): tira por día el encuentro y el hallazgo (un 20 encuentra uno de los lugares por descubrir), avanza el reloj del mundo (y con él el anuncio del día, el suceso, el clima y los relojes) y deja un resumen con **Deshacer** (devuelve el reloj) y un botón para armar cada encuentro.
+- Prueba de mesa nueva en el Diagnóstico (73).
+
 ## 3.42.0 — 2026-11-11
 
 - **Suceso del día automático** (aprobado por el autor): al empezar cada día de campaña, el módulo tira la tabla de sucesos de la estación y te la susurra con botones para **Otro**, **Elegir a mano** (de cualquier estación, o escribir el tuyo), **Deshacer**, **Volver al anterior** y **Contar a la mesa** (si lo deshaces después, el mensaje público se borra). Menú del DM → Mesa → «Suceso del día» para tirarlo, elegirlo o apagar el automático. Las tablas no están en el código: las lee de un diario de tu mundo.

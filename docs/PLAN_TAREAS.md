@@ -337,3 +337,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 11-nov-2026 | Mejora | Claude | Arreglo del estado «Muerto» duplicado y auditoría con los registros de Foundry. Release v3.40.0 | 3.40.0 |
 | 11-nov-2026 | Mejora | Claude | Capas del Abismo con su cobro automático y traducir fichas al español. Release v3.41.0 | 3.41.0 |
 | 11-nov-2026 | Mejora | Claude | Suceso del día automático y botones Deshacer en lo automático. Release v3.42.0 | 3.42.0 |
+| 11-nov-2026 | Mejora | Claude | Relojes de facción, defensa a la vista, tokens a silueta y viajes por zonas. Release v3.43.0 | 3.43.0 |
