@@ -349,3 +349,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 12-nov-2026 | Mejora | Claude | PF2e a D&D fase 1: dotes, especies, herencias y objetos nivelados. Release v3.52.0 | 3.52.0 |
 | 12-nov-2026 | Mejora | Claude | Dotes menores por nivel: pestaña con huecos, lista de elegibles, herencia, PNJ. Release v3.53.0 | 3.53.0 |
 | 12-nov-2026 | Mejora | Claude | Conjuros por huecos (trucos, preparados, libro del mago) con buscador D&D+PF2e. Release v3.54.0 | 3.54.0 |
+| 12-nov-2026 | Mejora | Claude | Venenos por etapas automáticos y Taller de fabricación. Release v3.55.0 | 3.55.0 |

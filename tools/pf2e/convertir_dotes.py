@@ -12,7 +12,7 @@ Escribe en la carpeta actual (Data/ecos-pf2e/ del PC del autor): dotes-dnd5e.jso
 Llevan texto de Paizo (ORC u OGL, citado en cada objeto): no se suben al repositorio.
 Uso: python convertir_dotes.py <carpeta Data de Foundry>
 """
-import json, os, re, sys, hashlib, unicodedata, collections
+import json, os, re, sys, hashlib, unicodedata, collections, math
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from leveldb import leer_pack
 import convertir_conjuros as CC
@@ -98,12 +98,12 @@ TEXTO = [
     (r'\bMantener (?:un conjuro|el conjuro)?\b', 'mantener (con tu Acción adicional, como la Concentración)'),
     (r'CD de clase', 'CD de clase (8 + tu bono de competencia + el modificador de tu característica principal)'),
 
-    (r'\btorpe (\d+)\b', 'con desventaja en pruebas, ataques y salvaciones de Destreza'), (r'\bdebilitad[oa] (\d+)\b', 'con desventaja en pruebas y ataques de Fuerza'),
-    (r'\b(?:anonadad|estupidizad|aturdid)[oa] mental (\d+)\b', 'con desventaja en pruebas de Inteligencia, Sabiduría y Carisma'),
-    (r'\bindispuest[oa] (\d+)\b', 'Envenenado'), (r'\basustad[oa] (\d+)\b', 'Asustado'), (r'\blentificad[oa] (\d+)\b', 'Lento (pierde su Acción adicional)'),
-    (r'\bacelerad[oa]\b', 'con una acción extra limitada (como Prisa)'), (r'\bfatigad[oa]\b', 'con 1 nivel de Agotamiento'),
-    (r'\bdeslumbrad[oa]\b', 'Deslumbrado (desventaja en ataques y en Percepción con la vista)'), (r'\binmovilizad[oa]\b', 'con velocidad 0'),
-    (r'\bdrenad[oa] (\d+)\b', r'con sus PG máximos reducidos en \1 por nivel'), (r'\baturdid[oa] (\d+)\b', 'Aturdido'),
+    (r'(?i)\btorpe (\d+)\b', 'con desventaja en pruebas, ataques y salvaciones de Destreza'), (r'(?i)\bdebilitad[oa] (\d+)\b', 'con desventaja en pruebas y ataques de Fuerza'),
+    (r'(?i)\b(?:anonadad|estupidizad|aturdid)[oa] mental (\d+)\b', 'con desventaja en pruebas de Inteligencia, Sabiduría y Carisma'), (r'(?i)\banonadad[oa] (\d+)\b', 'con desventaja en pruebas de Inteligencia, Sabiduría y Carisma'),
+    (r'(?i)\bindispuest[oa] (\d+)\b', 'Envenenado'), (r'(?i)\basustad[oa] (\d+)\b', 'Asustado'), (r'(?i)\blentificad[oa] (\d+)\b', 'Lento (pierde su Acción adicional)'),
+    (r'(?i)\bacelerad[oa]\b', 'con una acción extra limitada (como Prisa)'), (r'(?i)\bfatigad[oa]\b', 'con 1 nivel de Agotamiento'),
+    (r'(?i)\bdeslumbrad[oa]\b', 'Deslumbrado (desventaja en ataques y en Percepción con la vista)'), (r'(?i)\binmovilizad[oa]\b', 'con velocidad 0'),
+    (r'(?i)\bdrenad[oa] (\d+)\b', r'con sus PG máximos reducidos en \1 por nivel'), (r'(?i)\baturdid[oa] (\d+)\b', 'Aturdido'),
     (r'\bReflejos\b', 'Destreza'), (r'\bFortaleza\b', 'Constitución'), (r'\bVoluntad\b', 'Sabiduría'),
     (r'<span class="action-glyph">[^<]*</span>', ''), (r'\s+\.', '.'),
 ]
@@ -169,7 +169,7 @@ def dote(d, es, ya_dnd):
     if n in DND_FEATS or SINONIMO_DOTE.get(n) or n in ya_dnd: return None, 'ya en D&D'
     clase = None
     if cat == 'class':
-        clases = [CLASE_DND[c] for c in rasgos if c in CLASE_DND]
+        clases = sorted({CLASE_DND[c] for c in rasgos if c in CLASE_DND})
         if not clases: return None, 'clase sin equivalente en D&D'
         clase = clases
     nivel = int((s.get('level') or {}).get('value') or 1)
@@ -261,16 +261,45 @@ def rareza_nivel(n):
     n = int(n or 0)
     return '' if n <= 0 else 'uncommon' if n <= 4 else 'rare' if n <= 10 else 'veryRare' if n <= 16 else 'legendary'
 DANO_ARMA = {'b': 'bludgeoning', 'p': 'piercing', 's': 'slashing', 'bludgeoning': 'bludgeoning', 'piercing': 'piercing', 'slashing': 'slashing'}
-def veneno(t_en, nivel=1):
-    """Datos de un veneno de PF2e por etapas (los usa 3.55)."""
-    t = re.sub(r'<[^>]+>', ' ', t_en or '')
+COND_DND = {'unconscious': 'unconscious', 'paralyzed': 'paralyzed', 'blinded': 'blinded', 'deafened': 'deafened', 'frightened': 'frightened',
+            'stunned': 'stunned', 'sickened': 'poisoned', 'restrained': 'restrained', 'grabbed': 'grappled', 'prone': 'prone', 'fatigued': 'exhaustion',
+            'petrified': 'petrified', 'fleeing': 'frightened'}
+TIPO_DANO = {'poison': 'poison', 'acid': 'acid', 'fire': 'fire', 'cold': 'cold', 'electricity': 'lightning', 'sonic': 'thunder', 'mental': 'psychic',
+             'void': 'necrotic', 'negative': 'necrotic', 'vitality': 'radiant', 'positive': 'radiant', 'force': 'force', 'spirit': 'force',
+             'bludgeoning': 'bludgeoning', 'piercing': 'piercing', 'slashing': 'slashing', 'bleed': ''}
+def duracion(txt):
+    """«1 round», «1d4 hours», «6 days» → {'n': '1', 'u': 'round'}."""
+    m = re.search(r'(\d+d\d+|\d+)\s*(round|minute|hour|day|week)s?', txt or '', re.I)
+    return {'n': m.group(1), 'u': m.group(2).lower()} if m else None
+def escalar_dados(f):
+    """Los PG de PF2e son ~1,5 veces los de D&D al mismo nivel: los dados de daño de un veneno bajan a ~2/3."""
+    m = re.fullmatch(r'(\d+)d(\d+)(?:\+(\d+))?', (f or '').replace(' ', ''))
+    if not m: return f
+    n = max(1, math.ceil(int(m.group(1)) * 0.65)); b = math.ceil(int(m.group(3)) * 0.65) if m.group(3) else 0
+    return f"{n}d{m.group(2)}" + (f"+{b}" if b else '')
+def veneno(t_en, nivel=1, html_es=''):
+    """Datos de un veneno de PF2e por etapas, ya en D&D: CD, inicio, duración máxima y, por etapa, texto en español, intervalo, daño (escalado) y estados de D&D."""
+    t = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', t_en or ''))
     cd = re.search(r'Saving Throw\s*(?:\[\[[^\]]*\]\]|@Check\[[^\]]*\])?[^D]*DC\s*(\d+)|DC\s*(\d+)\s*Fortitude|dc:(\d+)', t)
     cdv = next((int(g) for g in (cd.groups() if cd else []) if g), None)
-    t = re.sub(r'\s+', ' ', t)
     inicio = re.search(r'Onset\s*(.+?)(?=Maximum Duration|Stage \d|;|$)', t); maxd = re.search(r'Maximum Duration\s*(.+?)(?=Stage \d|;|$)', t)
-    etapas = re.findall(r'Stage\s*(\d+)\s*(.+?)(?=Stage\s*\d|$)', t)
-    return {'cdPf2e': cdv, 'cd': cd_dnd(nivel) if cdv else None, 'inicio': inicio.group(1).strip() if inicio else None,
-            'duracionMax': maxd.group(1).strip() if maxd else None, 'etapas': [{'n': int(n), 'texto': nivelar(x.strip(), nivel)[:300]} for n, x in etapas]}
+    es = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', html_es or ''))
+    es_etapas = dict(re.findall(r'Etapa\s*(\d+)\s*(.+?)(?=Etapa\s*\d|Adaptada de PF2e|$)', es))
+    etapas = []
+    for n, x in re.findall(r'Stage\s*(\d+)\s*(.+?)(?=Stage\s*\d|$)', t):
+        dano = [{'orig': f.replace(' ', ''), 'f': escalar_dados(f), 't': TIPO_DANO.get(tp.lower(), '')}
+                for f, tp in re.findall(r'@Damage\[\(?([0-9d+ ]+?)\)?\[(?:persistent,)?(\w+)', x)]
+        dano += [{'orig': f.replace(' ', ''), 'f': escalar_dados(f), 't': TIPO_DANO.get(tp.lower(), '')}
+                 for f, tp in re.findall(r'(?<![\[\w])(\d+d\d+(?:\s*\+\s*\d+)?)\s+(?:persistent\s+)?(\w+)\s+damage', x) if tp.lower() in TIPO_DANO]
+        nombres = re.findall(r'\{(\w+)(?:\s+\d+)?\}', x) + re.findall(r'\b(unconscious|paralyzed|blinded|deafened|frightened|stunned|sickened|restrained|grabbed|prone|fatigued|petrified|fleeing)\b', x, re.I)
+        estados = sorted({COND_DND[c.lower()] for c in nombres if c.lower() in COND_DND})
+        fin = re.search(r'\(([^()]*(?:\([^()]*\)[^()]*)*)\)\s*$', x.strip())
+        texto = (es_etapas.get(n) or nivelar(x.strip(), nivel)).strip()
+        for o in dano: texto = texto.replace(o['orig'], o['f'], 1)
+        etapas.append({'n': int(n), 'texto': texto[:400], 'dur': duracion(fin.group(1)) if fin else None,
+                       'dano': [{'f': o['f'], 't': o['t'], 'orig': o['orig']} for o in dano], 'estados': estados})
+    return {'cdPf2e': cdv, 'cd': cd_dnd(nivel) if cdv else None, 'inicio': duracion(inicio.group(1)) if inicio else None,
+            'duracionMax': duracion(maxd.group(1)) if maxd else None, 'etapas': etapas}
 def cd_dnd(nivel):
     """CD de D&D para un objeto de PF2e de ese nivel: 11 + la mitad del nivel (12 a nivel 1-2, 15 a nivel 7, 21 a nivel 20)."""
     return 11 + -(-max(1, int(nivel or 1)) // 2)
@@ -325,11 +354,14 @@ def objeto(e, es, ya_dnd):
         sub = 'poison' if 'poison' in rasgos else 'potion' if ({'potion', 'elixir', 'oil', 'mutagen'} & rasgos) else 'scroll' if 'scroll' in rasgos else 'ammo' if 'ammunition' in rasgos else 'food' if 'drug' in rasgos else 'trinket'
         ven = None
         if sub == 'poison':
-            ven = veneno(desc_en, nivel)
+            ven = veneno(desc_en, nivel, html)
+            for e_ in ven['etapas']:
+                for o in e_['dano']: html = html.replace(o['orig'], o['f'], 1)
+                for o in e_['dano']: o.pop('orig', None)
             via = 'contact' if 'contact' in rasgos else 'ingested' if 'ingested' in rasgos else 'inhaled' if 'inhaled' in rasgos else 'injury'
             sist['type'] = {'value': 'poison', 'subtype': via}
             flags['veneno'] = ven
-            extra.append(f"Veneno por etapas (PF2e){f': salvación de Constitución CD {ven['cd']}' if ven and ven.get('cd') else ''}. Cada etapa empeora si falla la salvación al final del intervalo; mejora si la supera. Ver «Venenos» en la biblioteca.")
+            extra.append(f"Veneno por etapas (PF2e){f': salvación de Constitución CD {ven['cd']}' if ven and ven.get('cd') else ''}. Al final de cada intervalo se repite la salvación: si falla sube de etapa, si la supera baja (con 0 se cura). Los dados de daño ya están nivelados a D&amp;D. Ver «18 · Fabricación y venenos» en las reglas de la casa.")
         else:
             sist['type'] = {'value': sub, 'subtype': ''}
         sist['uses'] = {'max': '1', 'spent': 0, 'autoDestroy': True, 'recovery': []}

@@ -1011,3 +1011,23 @@ button.ecos-inspiracion { margin-top: 4px; background: linear-gradient(90deg, #f
 .ecos-hc-chip.vacio { border: 2px dashed var(--dnd5e-color-gold, #9f9275); color: var(--dnd5e-color-gold, #9f9275); font-size: 11px; }
 .ecos-hc-chip.vacio[data-ecos-hc] { cursor: pointer; animation: ecos-hueco-pulso 2.4s ease-in-out infinite; }
 .ecos-hc-chip.vacio[data-ecos-hc]:hover { background: rgba(159, 146, 117, 0.25); }
+
+/* 3.55 · Venenos por etapas y taller */
+.ecos-veneno-chat p { margin: 2px 0; }
+.ecos-veneno-botones, .ecos-veneno-dm { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.ecos-veneno-botones button, .ecos-veneno-dm button { flex: 1 1 auto; width: auto; line-height: 22px; padding: 0 6px; font-size: 0.85em; }
+.ecos-veneno-botones [data-solo-dm] { display: contents; }
+.ecos-veneno-res { font-weight: bold; }
+.ecos-taller-fila { display: flex; justify-content: flex-end; margin: 4px 0; }
+.ecos-taller-boton { width: auto; line-height: 24px; padding: 0 10px; }
+.ecos-taller-cuerpo { display: flex; flex-direction: column; gap: 8px; padding: 6px; }
+.ecos-taller-cuerpo p { margin: 0; }
+.ecos-taller-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ecos-taller-p { display: grid; grid-template-columns: 36px 1fr auto; gap: 8px; align-items: center; padding: 6px; border: 1px solid var(--color-border-light-2, #999); border-radius: 6px; }
+.ecos-taller-p img { width: 36px; height: 36px; border: none; }
+.ecos-taller-p small { display: block; opacity: 0.8; }
+.ecos-taller-barra { height: 6px; border-radius: 3px; background: rgba(127, 127, 127, 0.25); overflow: hidden; margin: 3px 0; }
+.ecos-taller-barra span { display: block; height: 100%; background: #a0702a; }
+.ecos-taller-bot { display: flex; gap: 3px; }
+.ecos-taller-bot button { width: auto; line-height: 22px; padding: 0 6px; }
+.ecos-taller-vacio { opacity: 0.7; }

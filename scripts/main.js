@@ -43,6 +43,8 @@ import "./reglas-dnd.js";
 import "./hoja-estilos.js";
 import "./pf2e-dotes.js";
 import "./dotes-nivel.js";
+import "./venenos.js";
+import "./taller.js";
 import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
@@ -9195,6 +9197,7 @@ const OPS_PANEL = [
     ["sucesoDia", "Suceso de la estación", "fa-calendar-day", "Tabla de la estación (Mundo 14): tirar, elegir a mano, deshacer o volver al anterior; apaga el automático."],
     ["capasAbismo", "Capas del Abismo", "fa-stairs", "En qué capa está la escena, cruzar umbrales hacia afuera con su cobro (salvación, Agotamiento, daño y estados automáticos) y la llamada del amanecer. Explica la mecánica paso a paso."],
     ["pf2eDotes", "PF2e: dotes, especies y objetos", "fa-book-medical", "Lleva (o vuelve a llevar) a los compendios del mundo las dotes menores, las especies con sus herencias y los objetos de PF2e nivelados a D&D (lo que D&D ya tiene se omite). Necesita los archivos de Data/ecos-pf2e."],
+    ["venenos", "Venenos activos", "fa-skull-crossbones", "Quién está envenenado y en qué etapa: bajar, subir o curar. Los venenos avanzan solos con el tiempo del mundo (salvación en cada intervalo, daño y estados por etapa)."],
     ["traducirFichas", "Traducir fichas al español", "fa-language", "Copia a las fichas el nombre y la descripción en español de sus clases, rasgos, conjuros, acciones y objetos desde los compendios de D&D traducidos (para fichas armadas antes de activar la traducción). Primero muestra un informe."],
     ["proeza", "Proeza (fama)", "fa-bullhorn", "Marca una proeza de los PJ: suma fama y, al cruzar un umbral, las facciones se enteran (te susurra qué hacer)."],
     ["almacenReliquias", "Almacén de reliquias", "fa-gem", "Crea o pone al día en la pestaña Objetos todas las reliquias del Abismo: manual del DM con sus etapas, una copia por etapa y una para entregar que sube de etapa con un botón."],
@@ -9550,6 +9553,7 @@ async function ejecutarPanel(op) {
     case "balance": await api?.balance?.(); break;
     case "festejo": await api?.festejo?.abrir?.(); break;
     case "traducirFichas": await api?.abrirTraducir?.(); break;
+    case "venenos": await api?.venenos?.panel?.(); break;
     case "pf2eDotes": { const r = await api?.pf2eDotes?.importarTodo?.({ forzar: true }); if (r) ui.notifications.info(`PF2e: ${Object.entries(r).map(([k, x]) => `${k} ${x?.ok ? (x.total ?? "ok") : x?.motivo}`).join(" · ")}`); break; }
     case "estado": game.journal.get("G0rD0J3JkpOkXM00")?.pages.find(p => p.getFlag(MOD, "estado"))?.sheet?.render(true); break;
     case "tirada":

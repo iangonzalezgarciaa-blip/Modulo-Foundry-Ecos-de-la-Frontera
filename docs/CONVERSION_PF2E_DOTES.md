@@ -26,3 +26,11 @@ Pedido del autor (12-nov-2026): traer de PF2e lo **nuevo** (lo que D&D ya tiene 
 - **Herencia** (nivel 1): especies de PF2e, o la que el DM habilite.
 - **Revertir**: × del hueco, «Deshacer» del chat, ajuste «Dotes menores por nivel» del mundo. **A mano (DM)**: «Sin filtros», «Asignar una dote a mano», clase/ascendencia/herencia para las dotes de cada PJ.
 - **Aviso** al subir de nivel con botón a la pestaña. PNJ: Rasgos → «Sumar dotes de PF2e».
+
+## Venenos por etapas y taller (3.55)
+
+**Venenos** (`scripts/venenos.js`): el convertidor deja en cada veneno `flags.ecos-frontera.pf2e.veneno` = CD de D&D (11 + ½ nivel), incubación, duración máxima y, por etapa, el texto en español, el intervalo, el daño escalado (dados ×0,65 hacia arriba: los PG de PF2e son ~1,5 veces los de D&D) y los estados de D&D (Indispuesto → Envenenado, Inconsciente, Paralizado, Cegado, Ensordecido, Asustado, Aturdido, Apresado, Agarrado, Derribado, Petrificado). Reglas de PF2e: exposición (éxito nada, fallo etapa 1, fallo crítico etapa 2), salvación en cada intervalo (±1 o ±2), otra dosis (+1/+2), etapa 0 o duración máxima = curado. Corre con el tiempo del mundo; daño automático con «Deshacer daño»; el DM baja, sube o cura (chat y Menú del DM → «Venenos activos»). Desde el objeto: «Usar veneno» (untar arma: el próximo golpe con daño lo inyecta; o exponer a los objetivos).
+
+**Taller** (`scripts/taller.js`): Manual 2024 con la escala de Ecos. Herramienta según el objeto, materiales = ½ precio, días = precio ÷ 10 (mín. 2) o por rareza (5/10/50/125/250; consumibles la mitad), CD por nivel de PF2e (12 + ½ nivel), rareza (12/15/18/21/25) o precio. Tirada al empezar: crítico ½ días, éxito igual, fallo ×2, fallo crítico ×2 y −½ materiales; ayudantes dividen. «+1 día» por jornada; «Cancelar» devuelve materiales; el DM termina o autoriza sin competencia/fórmula; «Deshacer» quita lo fabricado.
+
+También en 3.55: el convertidor ordena las clases de cada dote (salía distinto en cada corrida) y traduce los estados de PF2e en mayúscula (Anonadado, Drenado, Indispuesto…) a su efecto en D&D.

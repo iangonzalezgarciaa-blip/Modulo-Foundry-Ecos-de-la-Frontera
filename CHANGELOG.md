@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 3.55.0 — 2026-11-12
+
+- **Venenos por etapas** (de PF2e, nivelados a D&D): CD de Constitución, incubación, duración máxima y etapas con texto, intervalo, daño (ya escalado a D&D) y estados de D&D. Exposición, salvación en cada intervalo (sube o baja una o dos etapas), otra dosis, cura en 0 o al pasar la duración. Corre solo con el tiempo del mundo; los PNJ tiran solos y los PJ con un botón.
+- En la hoja del veneno: **Usar veneno** (untar un arma —el próximo golpe con daño lo inyecta— o exponer a los objetivos). Daño con «Deshacer daño»; Menú del DM → **Venenos activos** para bajar, subir o curar; «Superó/Falló» a mano.
+- **Taller** en el inventario de los PJ: fabricar objetos de D&D y PF2e con la herramienta que piden, materiales (½ precio), días del Manual 2024 (o por rareza) y una tirada que da la mitad, los mismos o el doble de días. «+1 día» hasta terminar; Cancelar devuelve el dinero; el DM termina o autoriza.
+- Guía «18 · Fabricación y venenos» en las reglas de la casa.
+- Convertidor: textos de estados de PF2e en mayúscula traducidos a D&D; orden fijo de clases en las dotes.
+
 ## 3.54.0 — 2026-11-12
 
 - **Conjuros por huecos**: en el libro de conjuros de los PJ, «Conjuros por nivel» muestra los huecos que da cada clase lanzadora en su nivel (Manual 2024): trucos, y conjuros preparados (o el libro gratis del mago). Usa la tabla de la clase de la hoja y, si no la trae, la del Manual.
