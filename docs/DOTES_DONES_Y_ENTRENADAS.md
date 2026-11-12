@@ -2,7 +2,7 @@
 
 Regla del autor (12-nov-2026): las dotes que son **dones** (de nacimiento, de la sangre, de la naturaleza o concedidos por el DM) se tienen al comprarlas; las que son **técnicas o entrenamientos** pasan a **dotes entrenadas**: después de pagar los Trazos se entrenan en bloques de horas o en días, con una tirada por bloque (Control del Verbe, Sabiduría por instinto o, con guía, la característica que elija). Un 20 natural la aprende al instante; un 1 pierde un bloque.
 
-**259 dones · 213 entrenadas** (de 472). Los 231 dones de los legados de sangre no se listan uno a uno: todos son dones.
+**260 dones · 214 entrenadas** (de 474). Los 231 dones de los legados de sangre no se listan uno a uno: todos son dones.
 
 ## Tiempo de entrenamiento según los Trazos
 
@@ -19,6 +19,7 @@ Regla del autor (12-nov-2026): las dotes que son **dones** (de nacimiento, de la
 
 | Dote | Categoría | Trazos | Tipo |
 |---|---|---:|---|
+| Control por instinto | Control del Verbe | 2 | Don |
 | Ascensión mítica | Ascensión y perfeccionamiento | 4 | Don |
 | Ascensión trascendente | Ascensión y perfeccionamiento | 5 | Don |
 | Aliento del Verbe | Dones del despertar | 0 | Don |
@@ -76,6 +77,7 @@ Regla del autor (12-nov-2026): las dotes que son **dones** (de nacimiento, de la
 | Control a ciegas | Control del Verbe | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
 | Control fino del Verbe | Control del Verbe | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
 | Control legendario | Control del Verbe | 4 | Entrenada · 2 días buenos · CD 14 |
+| Control por presencia | Control del Verbe | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
 | Control sereno | Control del Verbe | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |
 | Foco de la rama | Control del Verbe | 3 | Entrenada · 2 bloques buenos de 4 h (unas 8 h) · CD 13 |
 | Leer el flujo | Control del Verbe | 2 | Entrenada · 1 bloque bueno de 4 h (unas 4 h) · CD 12 |

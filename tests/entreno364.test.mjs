@@ -117,3 +117,33 @@ test('3.64 · plan de estudios del sensei y cómo subir de etapa', async () => {
   assert.match(P.comoSubirHTML(1), /Practicante.*CD 13/); assert.match(P.comoSubirHTML(3), /Pleno.*CD 18/);
   assert.match(P.comoSubirHTML(4), /sendas/); assert.match(P.comoSubirHTML(0), /no despertó/);
 });
+
+test('3.65 · Control con INT, dotes de instinto y presencia, y el árbol de Control', async () => {
+  const D2 = readCatalog();
+  const de = id => D2.dotes.find(d => d.id === id);
+  assert.equal(de('control-instinto').tipo, 'don'); assert.equal(E.tipoDote(de('control-instinto')), 'don');
+  assert.equal(de('control-presencia').tipo, 'entrenada'); assert.deepEqual(de('control-presencia').requisitos.dotes, ['practica-control']);
+  assert.deepEqual(de('control-fino').requisitos.dotes, ['practica-control']); assert.equal(de('control-fino').requisitos.nivel, 3);
+  assert.deepEqual(de('choque-perfecto').requisitos.dotes, ['leer-flujo']);
+  const S = await import('../scripts/sistema/dnd5e.js');
+  assert.deepEqual(S.datosControl({ ability: 'wis' }), { 'system.skills.cvb.ability': 'wis' });
+  assert.deepEqual(S.datosControl({ ability: 'xyz' }), {});
+});
+
+test('3.65 · las ramas no se abren solas; abrir una rama entrenando', async () => {
+  const H = await import('./helpers/foundry.mjs');
+  const V = await import('../scripts/verbe.js');
+  H.resetEnvironment(); V.usarDatos(D, 'activo'); game.user = game.users.get('gm');
+  H.settings.set('ramasCerradas', true);
+  const a = new H.MockActor(5, { valor: 10, etapa: 2, principal: 'forma', ordenRamas: ['forma'], rangos: { forma: 1 } });
+  assert.equal(V.ramaAbierta(a, 'forma'), true);
+  assert.equal(V.ramaAbierta(a, 'velo'), false);
+  H.settings.set('ramasCerradas', false); assert.equal(V.ramaAbierta(a, 'velo'), true); H.settings.set('ramasCerradas', true);
+  const antes = V.trazos(a).libres;
+  await V.abrirRama(a, 'velo');
+  assert.ok(V.estado(a).entrenosDote['rama:velo']); assert.equal(V.trazos(a).libres, antes - 2);
+  assert.equal(V.ramaAbierta(a, 'velo'), false, 'hasta terminar el entrenamiento');
+  await V.terminarDoteYa(a, 'rama:velo');
+  assert.equal(V.ramaAbierta(a, 'velo'), true); assert.ok(V.estado(a).abiertas.includes('velo'));
+  assert.equal(await V.abrirRama(a, 'pulso'), false, 'Pulso se abre con su dote');
+});

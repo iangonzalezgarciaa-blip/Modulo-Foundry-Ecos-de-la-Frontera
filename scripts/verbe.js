@@ -694,8 +694,30 @@ export function ramaAbierta(actor, rama) {
   if (rama === "sangre") return !!herenciaDe(actor) || (D.hitosShinobi ?? []).some(h => h.abreSangre && estado(actor)?.hitosShinobi?.includes(h.id));
   if (rama === "vasija") return !!e.vasija?.bestia || (e.hitosShinobi ?? []).some(h => ["seis-caminos", "sangre-primordial", "creacion-primordial", "sol-y-luna", "dominio-dimensional"].includes(h));
   if (rama === "pacto") return (e.pactos ?? []).length > 0;
-  return true;
+  // 3.65 (regla del autor): las demás ramas no se abren solas por la etapa: la principal, las que ya empezó (o de las que
+  // sabe técnicas), las que abrió entrenando («Abrir rama») y las que abre el DM o un maestro.
+  if (!e.despierto || !ajuste("ramasCerradas", true)) return true;
+  if (e.principal === rama || (e.ordenRamas ?? []).includes(rama) || Number(e.rangos?.[rama]) > 0) return true;
+  return itemsTecnica(actor).some(i => i.getFlag?.(MOD, F)?.rama === rama);
 }
+/** 3.65: abrir una rama entrenando: 2 Trazos y 2 días buenos (Control del Verbe, CD 13). Respeta las ramas de su etapa. */
+export const PLAN_RAMA = { unidad: "dias", bloque: 1, exitos: 2, cd: 13, trazos: 2 };
+export function abrirRama(actor, rama) { return serializarActor(actor, async () => {
+  const e = estado(actor), r = D.ramas.find(x => x.id === rama);
+  if (!r || ramaAbierta(actor, rama)) return rechazar("Esa rama ya está abierta.", "warn");
+  if (["pulso", "mirada", "sangre", "vasija", "pacto"].includes(rama)) return rechazar("Esa rama se abre por su camino propio (dote, ojo, herencia o pacto).", "warn");
+  const id = `rama:${rama}`;
+  if (e.entrenosDote?.[id]) return rechazar("Ya estás entrenando para abrirla: sigue en «Entrenando».", "warn");
+  const pe = permisoEtapa(e, { rama, grado: 0, ramasDeTecnicas: itemsTecnica(actor).map(i => i.getFlag(MOD, F)?.rama) });
+  if (!pe.ok) return rechazar(pe.motivo, "warn");
+  if (trazos(actor).libres < PLAN_RAMA.trazos) return rechazar(`Abrir una rama cuesta ${PLAN_RAMA.trazos} Trazos.`, "warn");
+  const texto = `Empieza a entrenar para abrir la rama ${r.nombre} (${PLAN_RAMA.trazos} Trazos)`;
+  await guardar(actor, { gastados: (Number(e.gastados) || 0) + PLAN_RAMA.trazos, entrenosDote: { [id]: { id, nombre: `Abrir la rama ${r.nombre}`, rama, ...PLAN_RAMA, progreso: 0, intentos: 0, desde: Number(game.time?.worldTime) || 0 } },
+    historial: hist(e, texto), compras: compra(e, "rama", { rama }, PLAN_RAMA.trazos, texto) });
+  aLaMesa(actor, "✦ Abre una rama", `<p>${escH(actor.name)} paga ${PLAN_RAMA.trazos} Trazos y empieza a entrenar para abrir <b>${escH(r.nombre)}</b>: 2 días buenos, Control del Verbe CD 13. Un 20 natural la abre al instante.</p>`);
+  refrescarPanel(actor.id);
+  return true;
+}); }
 
 /** Posición de una rama entre las entrenadas (0 = la primera). Una rama nueva va al final. */
 function ordenRama(actor, rama) {
@@ -1390,7 +1412,7 @@ function familiaHTML(id) {
   for (const t of tecs) { const n = Number(t.obtencion?.nivel ?? t.nivelMin ?? 1) || 1; if (!porNivel.has(n)) porNivel.set(n, []); porNivel.get(n).push(t); }
   const filas = [...porNivel.entries()].map(([n, ts]) => `<h3>Desde el nivel ${n}</h3><ul>${ts.map(t => `<li><b>${escH(t.n)}</b> · grado ${t.g} · ${escH(nombreRama(t.rama))} · ${escH(t.usoL ?? t.uso ?? "")}<br>${escH(textoDe(t))}</li>`).join("")}</ul>`).join("");
   return `<h1>${escH(f.nombre)}</h1><p><em>Solo DM. Arte de familia: solo se tiene por nacimiento. No se gana subiendo una rama ni con un maestro.</em></p>
-    <h2>Cómo se da</h2><ul><li>Al despertar a alguien, en «Familia de nacimiento» (o con 🎲 para tirarla al azar).</li><li>Después, en su panel → DM → «Naturalezas y linaje» → Familia de nacimiento → Guardar.</li><li>Una sola familia por persona. Sin ella, sus artes no aparecen en la tienda del jugador.</li></ul>
+    <h2>Cómo se da</h2><ul><li>Familia y linaje son lo mismo (3.65): la da la sangre. Al despertar a alguien (o después, en su panel → DM → «Naturalezas y linaje»), elige el linaje de su dios y la familia viene con él.</li><li>Una sola familia por persona. Sin ella, sus artes no aparecen en la tienda del jugador.</li></ul>
     <h2>Sus artes, nivel a nivel (${tecs.length})</h2>${filas || "<p>Esta familia todavía no tiene artes en el catálogo.</p>"}
     <p class="ecos-nota">Cada técnica sigue pidiendo además su rama, su rango y su grado, como cualquier otra.</p>`;
 }
@@ -1425,7 +1447,7 @@ export async function abrirFamilia(id) {
 
 /** 3.38 · Tutorial del panel: lo que alguien nuevo pregunta al ver la interfaz por primera vez. */
 const TUTORIAL = [
-  ["¿Qué es el Control del Verbe?", "<p>El <b>Control</b> es una habilidad nueva de tu hoja (aparece junto a las de D&D como «Control del Verbe»). Mide qué tan bien dominas tu energía: se tira con <b>Sabiduría</b> (como Percepción) más tu competencia si eres competente en Control. Se tira para aprender técnicas (cada día de práctica), para resistir un choque, para no perder una técnica que cargas y para cosas finas (frenar un golpe, sostener una forma). Dotes como <b>Práctica de control</b> te hacen competente o lo suben; tu rango en una rama no lo cambia.</p>"],
+  ["¿Qué es el Control del Verbe?", "<p>El <b>Control</b> es una habilidad nueva de tu hoja (aparece junto a las de D&D como «Control del Verbe»). Mide qué tan bien dominas tu energía: se tira con <b>Inteligencia</b> (con la dote Control por instinto, con Sabiduría; con Control por presencia, con Carisma) más tu competencia si eres competente en Control. Se tira para aprender técnicas (cada día de práctica), para resistir un choque, para no perder una técnica que cargas y para cosas finas (frenar un golpe, sostener una forma). Dotes como <b>Práctica de control</b> te hacen competente o lo suben; tu rango en una rama no lo cambia.</p>"],
   ["¿Qué es un choque de técnicas?", "<p>Cuando una técnica que cuesta Verbe va contra ti y tú tienes otra técnica que la pueda enfrentar, puedes <b>chocarla</b> con tu <b>reacción Verbe</b>: las dos se encuentran en el aire. Gana la de más grado; el elemento que vence al otro suma; con empate, tu Control decide. Quien gana sale con <b>Ímpetu</b> (+2 a atacar) y quien pierde, con <b>Brecha</b> (−2 CA). Un choque grande estalla y deja el terreno marcado; quien pierde por mucho se lleva el contragolpe.</p><p>En <b>Aprender técnicas</b> cada técnica dice <b>⚔ Choca</b> o <b>No choca</b>.</p>"],
   ["Mi acción de D&D y mi acción Verbe", "<p>Son aparte: en tu turno tienes tu Acción, tu Acción adicional y tu Reacción de D&D, y <b>además</b> tu Acción Verbe, tu Adicional Verbe y tu Reacción Verbe. Las técnicas gastan las del Verbe; atacar con tu espada gasta la de D&D. La barra del turno (bajo la iniciativa) muestra las seis.</p>"],
   ["¿Qué pasa si me quedo sin Verbe?", "<p>Puedes <b>forzarte</b>: usar la técnica igual y quedar en negativo. Antes te pregunta y te dice qué arriesgas (una salvación de Constitución o 1 nivel de Agotamiento). Mientras estés en negativo te recuperas más lento. Con Agotamiento 4 ya no puedes forzarte.</p>"],
@@ -1447,12 +1469,11 @@ export async function dialogoDespertar(actor) {
     <p>Despierta a <b>${escH(actor.name)}</b>. Desde ahí su hoja muestra la barra, la habilidad Control y el panel. Cada campo tiene su «¿Qué es esto?» y, debajo, lo que significa la opción elegida para el jugador.</p>
     <label>Característica <select name="car" data-desc="car">${opciones(Object.entries(CARS), caracteristicaSugerida(actor))}</select></label>${caja("car", "car", caracteristicaSugerida(actor))}
     <label>Etapa del Verbe <select name="etapa" data-desc="etapa">${opciones(ETAPAS.filter(x => x.n > 0).map(x => [x.n, `${x.n} · ${x.nombre}`]), 1)}</select> <small>quién le enseña decide cuánto se abre; luego subes la etapa con «Abrir la siguiente etapa»</small></label>${caja("etapa", "etapa", 1)}
-    <label>Primera naturaleza <select name="natModo" data-desc="natModo">${opciones(Object.entries(MODOS_NATURALEZA), "dado")}</select></label>${caja("natModo", "natModo", "dado")}
-    <label>Segunda naturaleza <select name="segundaModo" data-desc="segundaModo">${opciones(Object.entries(MODOS_SEGUNDA), "dado")}</select> <small>si es fija, manda la «naturaleza oculta» de abajo</small></label>${caja("segundaModo", "segundaModo", "dado")}
-    <label>Cuál <select name="nat" data-desc="nat"><option value="">Al azar (secreta) o la que elija el jugador</option>${opciones(Object.entries(NATS), "")}</select> <small>solo la ves tú si es secreta</small></label>${ayudaCampoHTML("nat", escH)}<div class="ecos-verbe-desc" data-de="nat"></div>
-    <label>Naturaleza oculta <select name="oculta" data-desc="nat" data-azar data-azar-nombre="Naturaleza oculta">${opciones(Object.entries(NATS), oculta)}</select> <small>sorteada; solo la ves tú</small></label>${ayudaCampoHTML("oculta", escH)}<div class="ecos-verbe-desc" data-de="oculta"></div>
+    <label>Primera naturaleza <select name="natModo" data-desc="natModo">${opciones(Object.entries(MODOS_NATURALEZA).filter(([k]) => k !== "secreta"), "dado")}</select></label>${caja("natModo", "natModo", "dado")}
+    <p class="ecos-nota"><b>Segunda naturaleza:</b> sale con su dado cuando la descubra entrenando (3.65: sin naturaleza oculta).</p>
+    <label>Cuál <select name="nat" data-desc="nat"><option value="">La tira el jugador entrenando (o la elige, según el modo)</option>${opciones(Object.entries(NATS), "")}</select> <small>solo la ves tú si es secreta</small></label>${ayudaCampoHTML("nat", escH)}<div class="ecos-verbe-desc" data-de="nat"></div>
     <label>Linaje <select name="linaje" data-desc="linaje" data-azar="sin-ninguno" data-azar-nombre="Linaje">${opcionesLinaje(portador ? linPortador : "ninguno")}</select> <button type="button" data-ecos-leer-linaje title="Leer su diario antes de dárselo"><i class="fa-solid fa-book-open"></i> Su diario</button></label>${caja("linaje", "linaje", portador ? linPortador : "ninguno")}
-    <label>Familia de nacimiento <select name="familia" data-desc="familia" data-azar="sin-ninguno" data-azar-nombre="Familia de nacimiento">${opciones([["ninguna", "Sin familia"], ...Object.entries(FAMILIAS).map(([k, f]) => [k, `${f.nombre} · ${nombreLegado(f.dios)}`])], fam0)}</select> <button type="button" data-ecos-leer-familia title="Leer la familia y sus artes"><i class="fa-solid fa-book-open"></i> Su diario</button> <small>al elegir el linaje se pone sola la familia de su dios</small></label>${caja("familia", "familia", fam0)}
+    <p class="ecos-nota"><b>Familia:</b> la familia y el linaje son lo mismo (3.65): la da su sangre. Elige el linaje y la familia de su dios viene con él.</p>
     <label>Fuerza de la sangre <select name="fuerza" data-desc="fuerza" data-azar="sin-ninguno" data-azar-nombre="Fuerza de la sangre">${opciones(Object.entries(FUERZA).map(([k, v]) => [k, v.nombre]), portador ? "plena" : "ninguna")}</select></label>${caja("fuerza", "fuerza", portador ? "plena" : "ninguna")}
     <label><input type="checkbox" name="linajeVisible" ${portador ? "" : "checked"}> El jugador sabe su linaje <small>(si no, no ve la rama Sangre ni su linaje)</small></label>${ayudaCampoHTML("linajeVisible", escH)}
     <details><summary>Consultar linajes y fuerzas antes de asignar</summary><div class="ecos-verbe-consulta" role="region" aria-label="Consulta de linajes y fuerzas" tabindex="0">${Object.entries(FUERZA).map(([k])=>describir("fuerza",k,actor)).join("")}${D.linajes.map(l=>describir("linaje",l.id,actor)).join("")}</div></details>
@@ -2191,6 +2212,7 @@ export function cumpleReqDote(actor, dote) {
   if (/Mirada trasplantada/.test(req) && !e.trasplantes?.length) return { ok: false, motivo: "Pide una Mirada trasplantada." };
   if (/una herencia/.test(req) && !herenciaDe(actor)) return { ok: false, motivo: "Pide una herencia." };
   if (/una técnica Propia/.test(req) && !Object.values(e.cultivos ?? {}).some(c => c.nivel >= 3)) return { ok: false, motivo: "Pide una técnica cultivada hasta Propia." };
+  if (["control-instinto", "control-presencia"].includes(dote.id) && (tieneDote(actor, "control-instinto") || tieneDote(actor, "control-presencia"))) return { ok: false, motivo: "Ya cambió la característica de su Control del Verbe." };
   if (dote.id === "tercera-naturaleza" && natsDe(actor).size >= 3) return { ok: false, motivo: "Ya tiene tres o más naturalezas; el DM puede gestionar sus dones adicionales." };
   if (["naturaleza-combinada", "tercera-naturaleza"].includes(dote.id) && natsDe(actor).size < 2) return { ok: false, motivo: "Primero debe dominar dos naturalezas." };
   for (const parte of req.split(/[;,]/).map(x => x.trim().toLowerCase()).filter(Boolean)) {
@@ -2254,13 +2276,15 @@ async function tiradaEntreno(actor, { modo = "cvb", cd, flavor }) {
   return { total: roll.total, natural };
 }
 async function elegirModoEntreno(titulo, texto) {
+  if (!foundry.applications?.api?.DialogV2?.wait) return "cvb";
   return foundry.applications.api.DialogV2.wait({ window: { title: titulo, icon: "fa-solid fa-dumbbell" }, position: { width: 440 },
     content: `<div class="ecos-dialogo"><p>${texto}</p><label>Con qué tiras <select name="modo">${Object.entries(CARS_ENTRENO).map(([k, n]) => `<option value="${k}">${n}${["str", "dex", "con", "int", "cha"].includes(k) ? " · con guía" : ""}</option>`).join("")}</select></label>
       <p class="ecos-nota">Solo: Control del Verbe o Sabiduría (por instinto). Con un maestro o un compañero que te guía, puedes elegir otra característica.</p></div>`,
     buttons: [{ action: "ok", label: "Tirar", icon: "fa-solid fa-dice-d20", default: true, callback: (_e, b) => b.form.elements.modo.value }, { action: "no", label: "Cancelar", callback: () => null }], rejectClose: false }).catch(() => null);
 }
+const doteOEntreno = (actor, id) => D.dotes.find(x => x.id === id) ?? (String(id).startsWith("rama:") ? { id, nombre: estado(actor)?.entrenosDote?.[id]?.nombre ?? `Abrir la rama ${nombreRama(String(id).slice(5))}`, rama: String(id).slice(5) } : null);
 export function entrenarDote(actor, id, { modo = null } = {}) { return serializarActor(actor, async () => {
-  const ent = estado(actor)?.entrenosDote?.[id], dote = D.dotes.find(x => x.id === id);
+  const ent = estado(actor)?.entrenosDote?.[id], dote = doteOEntreno(actor, id);
   if (!ent || !dote) return rechazar("No está entrenando esa dote.", "warn");
   const dia = diaMundo();
   if (ent.unidad === "dias" && ent.ultimoDia === dia) return rechazar("Hoy ya entrenó esta dote: mañana (en el calendario del mundo) puede seguir.", "warn");
@@ -2277,10 +2301,16 @@ export function entrenarDote(actor, id, { modo = null } = {}) { return serializa
   return r;
 }); }
 async function terminarEntrenoDote(actor, id, nota = "") {
-  const dote = D.dotes.find(x => x.id === id), e = estado(actor);
+  const dote = doteOEntreno(actor, id), e = estado(actor);
   if (!dote || !e?.entrenosDote?.[id]) return false;
   await actor.update(Object.fromEntries([quitar(`flags.${MOD}.${F}.entrenosDote.${id}`)]));
   const e2 = estado(actor);
+  if (dote.rama && !D.dotes.some(x => x.id === id)) {
+    await guardar(actor, { abiertas: [...new Set([...(e2.abiertas ?? []), dote.rama])], ordenRamas: [...new Set([...(e2.ordenRamas ?? []), dote.rama])], historial: hist(e2, `Abre la rama ${nombreRama(dote.rama)}${nota ? ` · ${nota}` : ""}`) });
+    aLaMesa(actor, "✦ Rama abierta", `<p>${escH(actor.name)} abre la rama <b>${escH(nombreRama(dote.rama))}</b>${nota ? ` (${escH(nota)})` : ""}: ya puede aprender sus técnicas según su rango.</p>`, { soloDueno: true });
+    refrescarPanel(actor.id);
+    return true;
+  }
   await guardar(actor, { dotes: [...new Set([...(e2.dotes ?? []), id])], historial: hist(e2, `Termina de entrenar la dote ${dote.nombre}${nota ? ` · ${nota}` : ""}`) });
   await rasgoDote(actor, dote);
   await ajustarControl(actor);
@@ -2294,7 +2324,7 @@ async function terminarEntrenoDote(actor, id, nota = "") {
 export function terminarDoteYa(actor, id) { if (!game.user.isGM) return Promise.resolve(false); return serializarActor(actor, () => terminarEntrenoDote(actor, id, "el DM la da por aprendida")); }
 /** Dejar el entrenamiento: devuelve los Trazos. */
 export function cancelarEntrenoDote(actor, id) { return serializarActor(actor, async () => {
-  const e = estado(actor), ent = e?.entrenosDote?.[id], dote = D.dotes.find(x => x.id === id);
+  const e = estado(actor), ent = e?.entrenosDote?.[id], dote = doteOEntreno(actor, id);
   if (!ent) return false;
   await actor.update(Object.fromEntries([quitar(`flags.${MOD}.${F}.entrenosDote.${id}`)]));
   const e2 = estado(actor);
@@ -2322,7 +2352,14 @@ export function diaDeCrecimiento(actor, { actividad = "meditar", sensei = false,
 export async function ajustarControl(actor) {
   const b = (tieneDote(actor, "control-fino") ? 1 : 0) + (tieneDote(actor, "control-legendario") ? 4 : tieneDote(actor, "maestria-control") ? 2 : 0)
     + sumaEf(actor, ef => ef.control);
-  await actor.update(sistema.datosControl({ bono: b }));
+  const ability = tieneDote(actor, "control-instinto") ? "wis" : tieneDote(actor, "control-presencia") ? "cha" : null;
+  await actor.update(sistema.datosControl({ bono: b, ability }));
+}
+/** 3.65: el DM fija a mano con qué característica se tira el Control del Verbe (revertir o asignar). */
+export async function caracteristicaControl(actor, ability) {
+  if (!game.user.isGM || !["int", "wis", "cha"].includes(ability)) return false;
+  await actor.update(sistema.datosControl({ ability }));
+  return true;
 }
 
 export function comprarControl(actor, ...args) { return serializarActor(actor, () => comprarControlInterno(actor, ...args)); }
@@ -2516,15 +2553,17 @@ async function terminarEstudio(actor, id, nota = "") {
   return true;
 }
 /** La práctica del día: Control del Verbe contra la CD del estudio. Una por técnica y por día del mundo. */
-export function practicarEstudio(actor, id) { return serializarActor(actor, async () => {
+export function practicarEstudio(actor, id, { modo = null } = {}) { return serializarActor(actor, async () => {
   const est = estudioDe(actor, id), tec = tecnicaPorId(id, actor);
   if (!est || !tec) return rechazar("No está estudiando esa técnica.", "warn");
   const dia = diaMundo();
   if (est.ultimoDia === dia) return rechazar("Hoy ya practicó esta técnica: mañana (en el calendario del mundo) puede seguir.", "warn");
-  const res = await sistema.tirarHabilidad(actor, "cvb", { target: est.cd }, {}, { data: { flavor: `Practicar ${tec.n} · Control del Verbe (CD ${est.cd}) · día ${(Number(est.dias) || 0) + 1}` } });
-  const roll = Array.isArray(res) ? res[0] : res;
-  if (!roll) return false;
-  const natural = Number(roll.dice?.[0]?.results?.find(x => x.active)?.result ?? roll.d20?.total) || null;
+  // 3.65 (regla del autor): se aprende con Control, con Sabiduría por instinto o, con guía, con la característica elegida.
+  modo ??= game.user ? await elegirModoEntreno(`Practicar · ${tec.n}`, `CD ${est.cd}. Lleva ${est.progreso}/${est.exitos} días buenos.`) : "cvb";
+  if (!modo) return false;
+  const tir = await tiradaEntreno(actor, { modo, cd: est.cd, flavor: `Practicar ${tec.n} · ${CARS_ENTRENO[modo] ?? modo} (CD ${est.cd}) · día ${(Number(est.dias) || 0) + 1}` });
+  if (!tir) return false;
+  const roll = { total: tir.total }, natural = tir.natural;
   const r = practicar(est, { total: roll.total, natural, dia });
   if (!r.ok) return rechazar(r.motivo, "warn");
   await guardar(actor, { estudios: { [id]: r.estudio } });
@@ -3629,7 +3668,7 @@ const AYUDA = {
   car: "La característica con la que usas el Verbe. Da la CD de tus técnicas (8 + competencia + modificador) y su bonificador de ataque. La cantidad de Verbe (reserva y recuperación) va siempre con la Constitución.",
   grado: "Potencia de una técnica, de 0 a 11. Es distinto de tu nivel de personaje y de tu rango en una rama. Tu grado máximo sube con tu nivel: grado 1 al nivel 1, 2 al 3, 3 al 5, 6 al 11, 8 al 16, 9 al 18, 10 al 19 y 11 al 20. En cada rama, además, llegas solo hasta lo que deja tu rango.",
   sobre: "Puedes gastar Verbe que no tienes hasta el límite negativo que indique tu barra. Normalmente es la mitad de tu reserva; algunas dotes lo amplían. Cada técnica que usas en negativo te pide una salvación de CON (CD 10 + su grado); si fallas, ganas 1 Agotamiento. Lo que quede en negativo cuesta el doble de recuperar.",
-  control: "Una habilidad de tu hoja basada en Sabiduría. Decide un choque cuando las potencias empatan entre dos técnicas, romper un Velo, abrir los Cerrojos y no perderse en la Quietud. Se compra en Mejorar → Especialidades."
+  control: "Una habilidad de tu hoja basada en Inteligencia (Sabiduría o Carisma con su dote). Decide un choque cuando las potencias empatan entre dos técnicas, romper un Velo, abrir los Cerrojos y no perderse en la Quietud. Se compra en Mejorar → Especialidades."
 };
 const ayuda = k => `<i class="ecos-verbe-ayuda fa-solid fa-circle-question" tabindex="0" role="img" aria-label="${escH(AYUDA[k])}" data-tooltip="${escH(AYUDA[k])}"></i>`;
 /** Una línea para entender la pestaña; lo largo, plegado; y el enlace a su parte de la guía escrita. */
@@ -3697,7 +3736,7 @@ ${h2("cultivo", "Cultivo")}
 ${h2("crear-tecnicas", "Crear técnicas")}
 <p>Con Entrenado en una rama puedes inventar técnicas de esa rama, en Mejorar → Inventar una técnica. El menú propone un presupuesto según acción, alcance, área, estados y daño repetido. El DM aprueba; una excepción de balance queda registrada con su motivo. Cuesta grado + 1 Trazos (más combinaciones), días de entrenamiento y 25 o por grado. El oro y los días de creación o cultivo se resuelven en mesa antes de confirmar: el panel cobra los Trazos.</p>
 ${h2("control-y-sobreesfuerzo", "Control, choques y sobreesfuerzo")}
-<ul><li><b>Control del Verbe</b> es una habilidad con Sabiduría: choques de técnicas, romper Velos, abrir Cerrojos, la Quietud.</li>
+<ul><li><b>Control del Verbe</b> es una habilidad con Inteligencia (Sabiduría o Carisma con su dote): choques de técnicas, romper Velos, abrir Cerrojos, la Quietud.</li>
 <li><b>Choque</b>: se resuelve en este orden.<ol>${PASOS_CHOQUE.map(([t,d])=>`<li><b>${escH(t)}.</b> ${escH(d)}</li>`).join("")}</ol>El DM puede elegir la regla clásica de prioridad elemental en los ajustes.</li>
 <li><b>Sobreesfuerzo</b>: puedes gastar Verbe que no tienes, hasta la mitad de tu reserva en negativo. Cada gasto en negativo, incluidas defensas y Cerrojos, pide CON (CD 10 + grado, antes de dones) o 1 Agotamiento. Con Agotamiento 4 no se permite. Todas las fuentes recuperan la deuda a razón de 2 por punto; un punto impar se guarda para la próxima recuperación.</li></ul>
 ${h2("siete-cerrojos", "Ocho Cerrojos")}
@@ -3989,6 +4028,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       terminarDote(ev, t) { ev?.preventDefault?.(); correr(this, terminarDoteYa(this.actor, t.dataset.id)); },
       cancelarDote(ev, t) { ev?.preventDefault?.(); confirmar("Dejar de entrenar", "<p>Se devuelven los Trazos y se pierde el avance.</p>").then(ok => ok && correr(this, cancelarEntrenoDote(this.actor, t.dataset.id))); },
       async tipoDote(ev, t) { ev?.preventDefault?.(); ev?.stopPropagation?.(); if (await marcarTipoDote(t.dataset.id, t.dataset.tipo)) this.render(); },
+      abrirRama(ev, t) { ev?.preventDefault?.(); correr(this, abrirRama(this.actor, t.dataset.rama)); },
+      async ctlCar(ev, t) { ev?.preventDefault?.(); if (await caracteristicaControl(this.actor, t.dataset.car)) this.render(); },
       crecer(ev, t) { ev?.preventDefault?.(); correr(this, diaDeCrecimiento(this.actor, { actividad: valorDe(this, "crecerActividad") || "meditar", sensei: !!this.element.querySelector('[name="crecerSensei"]')?.checked, companero: !!this.element.querySelector('[name="crecerCompanero"]')?.checked })); },
       afinidad(ev, t) { correr(this, subirAfinidad(this.actor, t.dataset.nat)); },
       control() { correr(this, comprarControl(this.actor)); },
@@ -4074,7 +4115,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
           .then(() => asegurarRasgos(this.actor)).then(() => refrescar(this.actor)));
       },
       diarioLinaje() { abrirSangre("linaje", valorDe(this, "linaje"), this.actor); },
-      diarioFamilia() { abrirFamilia(valorDe(this, "familia")); },
+      diarioFamilia(ev, t) { abrirFamilia(t?.dataset?.familia || valorDe(this, "familia")); },
       familia() { correr(this, concederShinobi(this.actor, "familia", valorDe(this, "familia"))); },
       linaje() {
         const c = conflictoSangre(this.actor, { linaje: valorDe(this, "linaje") });
@@ -4447,7 +4488,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         return `<li class="${tiene ? "tiene" : ""}"><b>${ORD_DON[i]} don · ${escH(nombre)}</b> <span class="ecos-nota">${cuando}</span><br>${escH(texto)}</li>`;
       }).join("") : "";
       const cerradaPor = { pulso: "Se abre con la dote Control fino del Verbe (Mejorar → Dotes).", mirada: "Se abre si despierta un ojo, en la historia.",
-        pacto: "Se abre con un pacto que se gana en la historia.", sangre: "Se abre con una herencia de sangre. No tienes manera de saber si la tienes; si es así, la historia lo dirá." }[r.id] ?? "La abre el DM.";
+        pacto: "Se abre con un pacto que se gana en la historia.", sangre: "Se abre con una herencia de sangre. No tienes manera de saber si la tienes; si es así, la historia lo dirá." }[r.id]
+        ?? (e.entrenosDote?.[`rama:${r.id}`] ? "Estás entrenando para abrirla: sigue en «Entrenando»." : `Se abre entrenando (2 Trazos, 2 días buenos, CD 13), con una dote o con un maestro. <button type="button" data-action="abrirRama" data-rama="${r.id}" ${trazos(a).libres < PLAN_RAMA.trazos ? "disabled" : ""}>Abrir · ${PLAN_RAMA.trazos} Trazos</button>`);
       const rec = (c !== null && !principal) ? recargoRama(ordenRama(a, r.id)) : 0;
       const extra = rec ? ` (incluye ${rec} de más por ser tu ${ordenRama(a, r.id) >= 4 ? "quinta" : "tercera"} rama o más)` : "";
       const ahora = abierta
@@ -4619,7 +4661,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const dts = Object.values(e.entrenosDote ?? {}).map(x => {
       const d = D.dotes.find(y => y.id === x.id);
       const bloqueado = x.unidad === "dias" && x.ultimoDia === hoy;
-      return `<li><b>${escH(d?.nombre ?? x.id)}</b> · dote entrenada · ${x.progreso}/${x.exitos} · ${escH(textoPlan(x))} · CD ${x.cd}
+      return `<li><b>${escH(d?.nombre ?? x.nombre ?? x.id)}</b> · ${x.rama && !d ? "abrir rama" : "dote entrenada"} · ${x.progreso}/${x.exitos} · ${escH(textoPlan(x))} · CD ${x.cd}
         ${bloqueado ? "<small>Hoy ya entrenó.</small>" : `<button type="button" data-action="entrenarDote" data-id="${escH(x.id)}"><i class="fa-solid fa-dice-d20"></i> Entrenar ${x.unidad === "horas" ? `(${x.bloque} h)` : "hoy"}</button>`}
         <button type="button" data-action="cancelarDote" data-id="${escH(x.id)}">Dejar</button>${dm() ? ` <button type="button" data-action="terminarDote" data-id="${escH(x.id)}">Dar por aprendida (DM)</button>` : ""}</li>`;
     }).join("");
@@ -4815,9 +4857,9 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
           <label><input type="checkbox" name="linajeVisible" ${e.linajeVisible ? "checked" : ""}> el jugador lo sabe</label> <button type="button" data-action="linaje">Guardar</button> <button type="button" data-action="diarioLinaje" title="Ver la sangre elegida y abrir su diario"><i class="fa-solid fa-book-open"></i> Su diario</button></p>
         <div class="ecos-verbe-desc" data-de="linaje">${describir("linaje", e.linaje, a)}</div><div class="ecos-verbe-desc" data-de="fuerza">${describir("fuerza", e.fuerza, a)}</div>
         <p class="ecos-nota">El linaje lo eliges siempre tú (o lo tiras con 🎲): el jugador nunca lo elige. Si no lo sabe, en su panel dice «Desconocido», igual que para quien no tiene ninguno. Antes de guardar, «Su diario» abre la página que cuenta su dios y lo que hereda su línea nivel a nivel.</p>
-        <p>Familia de nacimiento: <select name="familia" data-desc="familia" data-azar="sin-ninguno" data-azar-nombre="Familia de nacimiento">${opciones([["ninguna", "Sin familia"], ...Object.entries(FAMILIAS).map(([k, f]) => [k, `${f.nombre} · ${nombreLegado(f.dios)}`])], (e.tradiciones ?? []).find(esFamilia) ?? "ninguna")}</select>
-          <button type="button" data-action="familia">Guardar</button> <button type="button" data-action="diarioFamilia" title="Leer esa familia y sus artes nivel a nivel"><i class="fa-solid fa-book-open"></i> Su diario</button></p>
-        <div class="ecos-verbe-desc" data-de="familia">${describir("familia", (e.tradiciones ?? []).find(esFamilia) ?? "ninguna", a, { linaje: e.linaje })}</div><p class="ecos-nota">Las artes de familia (Crecer, Sombra, Mente, Enjambre, Colmillo, Tinta) solo las aprende quien nace en ella. Desde 3.31 cada familia es parte del legado de un dios: con su sangre (cualquier fuerza) ya la tiene. Aquí la das sin la sangre, por historia.</p>`)}
+        <p><b>Familia:</b> ${escH(FAMILIAS[familiaDeSangre(D.linajes, e.linaje, e.fuerza)]?.nombre ?? (e.tradiciones ?? []).filter(esFamilia).map(f => FAMILIAS[f]?.nombre).join(", ") ?? "")}${familiaDeSangre(D.linajes, e.linaje, e.fuerza) || (e.tradiciones ?? []).some(esFamilia) ? "" : "ninguna"} <button type="button" data-action="diarioFamilia" data-familia="${escH(familiaDeSangre(D.linajes, e.linaje, e.fuerza) ?? "")}" title="Leer esa familia y sus artes nivel a nivel"><i class="fa-solid fa-book-open"></i> Su diario</button></p>
+        <p class="ecos-nota">3.65 (pedido del autor): familia y linaje son lo mismo. La familia sale del linaje: cámbialo arriba. Las familias dadas antes por historia se conservan.</p>
+        <p><b>Control del Verbe</b> se tira con <b>${escH(CARS[a.system?.skills?.cvb?.ability] ?? "Inteligencia")}</b> (3.65: Inteligencia; Sabiduría con «Control por instinto», Carisma con «Control por presencia»). A mano: ${[["int", "INT"], ["wis", "SAB"], ["cha", "CAR"]].map(([k, n]) => `<button type="button" data-action="ctlCar" data-car="${k}">${n}</button>`).join(" ")}</p>`)}
       ${sec("Ramas, ojos, pactos y escuela", `${cerradas.length ? `<p>Abrir una rama: <select name="abiertas">${opciones(cerradas, "")}</select> <button type="button" data-action="lista" data-campo="abiertas" data-texto="rama">Abrir</button></p>` : ""}
         <p>Despertar un ojo: <select name="mirada">${opciones(D.miradas.map(m => [m.id, `${m.nombre}${m.real && m.real !== m.nombre ? ` (${m.real})` : ""}`]), "")}</select> <select name="etapa">${opciones([[1, "Etapa 1 · 3 Trazos"], [2, "Etapa 2 · 5"], [3, "Etapa 3 · 8"]], 1)}</select>
           <label><input type="checkbox" name="trasplante"> trasplantado</label> <button type="button" data-action="mirada">Despertar o subir</button></p>
@@ -5337,6 +5379,8 @@ Hooks.once("init", () => {
   game.settings.register(MOD, "dadoControl", { name: "Verbe: dado de control", hint: "A todo costo de Verbe se le suma el dado de control de su etapa: Aprendiz +1d4, Practicante +1d3, Iniciado +1d2, Pleno +1d2−1. El dado nunca impide usar la técnica: si no alcanza, se lleva hasta el límite.", scope: "world", config: true, type: Boolean, default: true });
   game.settings.register(MOD, "dotesEntrenadas", { name: "Verbe: dotes entrenadas", hint: "Las dotes que no son dones se entrenan (horas o días, una tirada por bloque; un 20 natural las da al instante). Apagado: se compran y se tienen ya.", scope: "world", config: true, type: Boolean, default: true });
   game.settings.register(MOD, "dotesTipoManual", { scope: "world", config: false, type: Object, default: {} });
+  game.settings.register(MOD, "aviso365", { scope: "world", config: false, type: Boolean, default: false });
+  game.settings.register(MOD, "ramasCerradas", { name: "Verbe: las ramas no se abren solas", hint: "Además de la principal, una rama se abre entrenando («Abrir rama»: 2 Trazos y 2 días), con una dote, o la abre el DM o un maestro. Las que ya empezó siguen abiertas. Apagado: toda rama queda abierta en Novato.", scope: "world", config: true, type: Boolean, default: true });
   game.settings.register(MOD, "verbeAprenderDias", {
     name: "Verbe · aprender por días", hint: "3.27: pagar los Trazos es el primer paso; después hay días de práctica con una tirada diaria de Control del Verbe (CD 10 + grado, tantos días buenos como grado + 1). Apagado: se aprende al pagar, como antes. El DM puede dar una técnica por aprendida o poner a un personaje «al instante» (creación de personajes de más nivel).",
     scope: "world", config: true, type: Boolean, default: true
@@ -5358,7 +5402,8 @@ Hooks.once("init", () => {
   const iconos = { vum: "conjuration", vva: "evocation", vfo: "evocation", vve: "illusion", vcu: "transmutation", vmi: "divination", vse: "abjuration", vpa: "conjuration",
     vpu: "necromancy", vhi: "enchantment", vqu: "abjuration", vra: "divination", vsa: "transmutation" };
   for (const [k, n] of Object.entries(ramas)) CONFIG.DND5E.spellSchools[k] = { label: n, icon: `systems/dnd5e/icons/svg/schools/${iconos[k]}.svg`, fullKey: `verbe${n}`, reference: "" };
-  CONFIG.DND5E.skills.cvb = { label: "Control del Verbe", ability: "wis", fullKey: "controlVerbe", reference: "", icon: "systems/dnd5e/icons/svg/abilities/wisdom.svg" };
+  // 3.65 (regla del autor): el Control del Verbe se tira con Inteligencia; las dotes Control por instinto (SAB) y Control por presencia (CAR) lo cambian.
+  CONFIG.DND5E.skills.cvb = { label: "Control del Verbe", ability: "int", fullKey: "controlVerbe", reference: "", icon: "systems/dnd5e/icons/svg/abilities/intelligence.svg" };
   // dnd5e 6 rehace CONFIG.statusEffects en i18nInit a partir de CONFIG.DND5E.statusEffects: los estados se registran ahí
   // (también vale para dnd5e 5.2). Sin dnd5e, se añaden a la lista del núcleo como antes.
   for (const [id, c] of Object.entries(ESTADOS)) {
@@ -5381,6 +5426,12 @@ Hooks.once("ready", async () => {
     aplicarEdicionesMundo();
     if (soyGM()) setTimeout(() => revisarSangres().catch(err => console.warn(`${MOD} | sangre`, err)), 3000);
     if (soyGM()) setTimeout(() => rearmarMundo().catch(err => console.warn(`${MOD} | rearmar`, err)), 5000);
+    // 3.65: aviso único al DM: el Control del Verbe pasa a Inteligencia; las fichas que ya lo tiraban con Sabiduría se respetan.
+    if (soyGM() && !ajuste("aviso365", false)) setTimeout(async () => {
+      const con = (game.actors ?? []).filter(x => despierto(x) && x.system?.skills?.cvb?.ability === "wis" && !tieneDote(x, "control-instinto")).map(x => escH(x.name));
+      if (con.length) await susurrarDM("El Control del Verbe ahora es de Inteligencia", `<p>Regla 3.65: el Control del Verbe se tira con Inteligencia; con la dote <b>Control por instinto</b>, con Sabiduría; con <b>Control por presencia</b>, con Carisma.</p><p>Estas fichas lo tiraban con Sabiduría y se respetó: <b>${con.join(", ")}</b>. Para cambiarlas: su panel del Verbe → DM → «Control del Verbe» (INT / SAB / CAR), o dales la dote Control por instinto.</p>`);
+      await game.settings.set(MOD, "aviso365", true).catch(() => null);
+    }, 7000);
     console.log(`${MOD} | capa V ${D.version}: ${D.tecnicas.length} técnicas (${MODO})`);
   } catch (err) {
     return console.error(`${MOD} | capa V: no pude leer sus datos`, err);

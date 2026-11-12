@@ -26,7 +26,7 @@ export const textoCostoControl = (costo, etapa, activo = true) => activo ? `${co
 /** Las categorías y dotes que son dones (de nacimiento, de sangre, de la naturaleza o concedidos por el DM). */
 export const CATS_DON = new Set(["innatos"]);
 export const DOTES_DON = new Set(["eco-sangre", "hijo-santuario", "piel-naturaleza", "corazon-fuego", "corazon-agua", "corazon-viento", "corazon-tierra", "corazon-rayo",
-  "tercera-naturaleza", "afinidad-natural", "injerto-aceptado", "sangre-callada", "heredero-arte", "ascension-mitica", "ascension-trascendente"]);
+  "tercera-naturaleza", "afinidad-natural", "control-instinto", "injerto-aceptado", "sangre-callada", "heredero-arte", "ascension-mitica", "ascension-trascendente"]);
 /** ¿Don o entrenada? Primero lo que marcó el DM a mano. Puro. */
 export function tipoDote(d, manual = {}) {
   if (!d) return "don";

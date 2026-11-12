@@ -32,9 +32,10 @@ export const danar = (actor, n, tipo) => actor.applyDamage([{ value: num(n), typ
 /** Rango en Control del Verbe (la habilidad `cvb` que Ecos añade): 0 sin competencia, 1 competente, 2 pericia. */
 export const control = actor => num(actor?.system?.skills?.cvb?.value);
 /** Datos de actualización del Control: `rango` (0 a 2) y `bono` (bono fijo a la prueba; 0 lo quita). Solo los que se dan. */
-export const datosControl = ({ rango, bono } = {}) => ({
+export const datosControl = ({ rango, bono, ability } = {}) => ({
   ...(rango != null ? { "system.skills.cvb.value": Math.min(2, Math.max(0, Math.trunc(num(rango)))) } : {}),
-  ...(bono != null ? { "system.skills.cvb.bonuses.check": num(bono) ? `+ ${num(bono)}` : "" } : {}) });
+  ...(bono != null ? { "system.skills.cvb.bonuses.check": num(bono) ? `+ ${num(bono)}` : "" } : {}),
+  ...(["int", "wis", "cha", "str", "dex", "con"].includes(ability) ? { "system.skills.cvb.ability": ability } : {}) });
 /** Nivel del PJ, o el VD redondeado hacia arriba (mínimo 1) si es un PNJ. */
 export function nivel(actor) {
   return num(actor?.system?.details?.level) || Math.max(1, Math.ceil(num(actor?.system?.details?.cr, 1)));

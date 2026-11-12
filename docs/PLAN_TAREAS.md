@@ -359,3 +359,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 12-nov-2026 | Mejora | Claude | Reliquias en etapa 0 con Estudiar e historias secretas; Nivel PNJ. Release v3.62.0 | 3.62.0 |
 | 12-nov-2026 | Mejora | Claude | Armas legendarias con etapas, reliquias menores y objetos del Verbe. Release v3.63.0 | 3.63.0 |
 | 12-nov-2026 | Mejora | Claude | Dado de control, dotes entrenadas, pestaña Entrenando, crecer en Trazos, Guardia de Verbe y plan del sensei. Release v3.64.0 | 3.64.0 |
+| 12-nov-2026 | Mejora | Claude | Familia = linaje, naturaleza por dado, Control con INT y dotes de instinto/presencia, ramas cerradas, árbol de Control. Release v3.65.0 | 3.65.0 |

@@ -1,5 +1,14 @@
 # Historial de cambios
 
+## 3.65.0 — 2026-11-12
+
+- **Familia y linaje son lo mismo** (pedido del autor): se quita «Familia de nacimiento» del despertar y del panel del DM; la familia sale del linaje (las dadas antes por historia se conservan).
+- **Naturaleza por dado, sin naturaleza oculta**: al despertar, la naturaleza la tira el jugador entrenando; se quitan la «naturaleza oculta», la segunda «fija» y el modo «secreta».
+- **Control del Verbe con Inteligencia** (regla del autor). Dotes nuevas: **Control por instinto** (don: Sabiduría) y **Control por presencia** (entrenada: Carisma). Las fichas que ya lo tiraban con Sabiduría se respetan (aviso al DM); el DM lo cambia a mano en el panel (INT/SAB/CAR).
+- **Las ramas no se abren solas por la etapa**: además de la principal y las ya empezadas, se abren entrenando (**Abrir · 2 Trazos**, 2 días buenos, CD 13), con una dote, o las abre el DM o un maestro. Ajuste «Verbe: las ramas no se abren solas».
+- **Aprender con instinto o con guía**: practicar una técnica (y entrenar una dote) pregunta con qué se tira: Control del Verbe, Sabiduría por instinto o, con guía, la característica elegida.
+- **Árbol de Control ramificado**: Práctica de Control es la raíz; Control fino pide Práctica y nivel 3; Choque perfecto pide Leer el flujo; Contención pide Control sereno; Foco y Puntería piden Control fino.
+
 ## 3.64.0 — 2026-11-12
 
 - **Dado de control (regla nueva del autor).** A todo costo de Verbe se le suma un dado que baja con la etapa: Aprendiz +1d4, Practicante +1d3, Iniciado +1d2, Pleno +1d2−1. El dado nunca impide usar la técnica (si no alcanza, se lleva lo que quede hasta el límite). La ficha dice «cuesta 2 + 1d4» y el recibo de la tarjeta, cuánto salió. Ajuste «Verbe: dado de control»; el DM corrige el gasto desde el recibo.

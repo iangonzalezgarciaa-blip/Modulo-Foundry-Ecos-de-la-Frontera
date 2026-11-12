@@ -1,10 +1,10 @@
-# Cobertura declarada del catálogo 3.64.0
+# Cobertura declarada del catálogo 3.65.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
 Una actividad proporciona tiradas o una tarjeta; un efecto declarado aporta solo sus cambios y estados. La geometría, los objetivos válidos, las repeticiones de salvación, las decisiones narrativas y las reglas especiales requieren revisión en mesa salvo automatización explícita.
 
-El catálogo reúne **949 técnicas y 472 dotes**.
+El catálogo reúne **949 técnicas y 474 dotes**.
 
 | Rama | Técnicas | Solo utilidad, sin efectos |
 |---|---:|---:|
@@ -982,7 +982,7 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 
 | ID | Nombre | Trazos | Requisitos | Campos de efecto |
 |---|---|---:|---|---|
-| `control-fino` | Control fino del Verbe | 3 | — | Texto/mesa |
+| `control-fino` | Control fino del Verbe | 3 | Práctica de Control; nivel 3 | Texto/mesa |
 | `maestria-control` | Maestría del Control | 4 | Control fino; nivel 11 | Texto/mesa |
 | `control-legendario` | Control legendario | 4 | Maestría del Control; nivel 17 | Texto/mesa |
 | `reserva-profunda` | Reserva profunda | 2 | — | Texto/mesa |
@@ -1003,7 +1003,7 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `tecnica-reserva` | Técnica de reserva | 3 | — | Texto/mesa |
 | `sustitucion-refleja` | Sustitución refleja | 2 | Sustitución | Texto/mesa |
 | `golpe-verbe` | Golpe de Verbe | 2 | — | Texto/mesa |
-| `choque-perfecto` | Choque perfecto | 2 | nivel 3 | Texto/mesa |
+| `choque-perfecto` | Choque perfecto | 2 | Leer el flujo; nivel 3 | Texto/mesa |
 | `pulso-largo` | Pulso largo | 2 | — | Texto/mesa |
 | `concentracion-hierro` | Concentración de hierro | 2 | — | Texto/mesa |
 | `mente-hierro` | Mente de hierro | 2 | — | Texto/mesa |
@@ -1033,15 +1033,15 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `beber-aire` | Beber del aire | 3 | rama Quietud, Entrenado | actividad propia |
 | `reserva-de-guerra` | Reserva de guerra | 2 | nivel 5 | actividad propia |
 | `practica-control` | Práctica de Control | 2 | — | control |
-| `control-sereno` | Control sereno | 2 | — | Texto/mesa |
-| `leer-flujo` | Leer el flujo | 2 | — | Texto/mesa |
+| `control-sereno` | Control sereno | 2 | Práctica de Control | Texto/mesa |
+| `leer-flujo` | Leer el flujo | 2 | Práctica de Control | Texto/mesa |
 | `choque-lejano` | Choque desde lejos | 2 | Choque perfecto | Texto/mesa |
-| `romper-flujo` | Romper el flujo | 3 | nivel 5 | Texto/mesa |
-| `contencion` | Contención | 3 | — | Texto/mesa |
-| `foco-principal` | Foco de la rama | 3 | nivel 5 | cd |
-| `punteria-verbe` | Puntería del Verbe | 3 | nivel 5 | ae |
-| `control-a-ciegas` | Control a ciegas | 2 | Sentir el Verbe; nivel 7 | Texto/mesa |
-| `calma-combate` | Calma de combate | 2 | — | Texto/mesa |
+| `romper-flujo` | Romper el flujo | 3 | Choque perfecto; nivel 5 | Texto/mesa |
+| `contencion` | Contención | 3 | Control sereno; nivel 5 | Texto/mesa |
+| `foco-principal` | Foco de la rama | 3 | Control fino del Verbe; nivel 5 | cd |
+| `punteria-verbe` | Puntería del Verbe | 3 | Control fino del Verbe; nivel 5 | ae |
+| `control-a-ciegas` | Control a ciegas | 2 | Sentir el Verbe; Leer el flujo; nivel 7 | Texto/mesa |
+| `calma-combate` | Calma de combate | 2 | Práctica de Control | Texto/mesa |
 | `corazon-fuego` | Corazón de fuego | 2 | naturaleza Fuego; nivel 9 | Texto/mesa |
 | `corazon-agua` | Corazón de agua | 2 | naturaleza Agua | ae |
 | `corazon-viento` | Corazón de viento | 2 | naturaleza Viento | ae |
@@ -1221,6 +1221,8 @@ Campos mecánicos registrados: se consumen por distintos adaptadores del módulo
 | `ver-la-grieta` | Ver la grieta | 2 | rama Mirada | Texto/mesa |
 | `moneda-al-verbe` | Moneda al Verbe | 0 | — | Texto/mesa |
 | `tacto-archivero` | Tacto del archivero | 1 | rama Rastro | Texto/mesa |
+| `control-instinto` | Control por instinto | 2 | — | Texto/mesa |
+| `control-presencia` | Control por presencia | 2 | Práctica de Control | Texto/mesa |
 | `legado-maethra-marca` | Hija del primer sueño | 1 | sangre Rastro o más de este legado; lo concede el DM | Texto/mesa |
 | `legado-maethra-1-1` | Raíz que sostiene | 2 | nivel 3; sangre Débil o más; la Marca del legado; lo concede el DM | Texto/mesa |
 | `legado-maethra-1-2` | Bosque en la sangre | 3 | nivel 7; sangre Media o más; el escalón anterior de la rama; lo concede el DM | Texto/mesa |

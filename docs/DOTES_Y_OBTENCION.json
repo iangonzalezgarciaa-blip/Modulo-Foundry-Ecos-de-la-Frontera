@@ -1,6 +1,6 @@
 {
   "tecnicas": 949,
-  "dotes": 472,
+  "dotes": 474,
   "nuevas": 64,
   "dotesDetalle": [
     {
@@ -8,9 +8,11 @@
       "nombre": "Control fino del Verbe",
       "trazos": 3,
       "requisitos": {
-        "nivel": 1,
+        "nivel": 3,
         "ramas": {},
-        "dotes": [],
+        "dotes": [
+          "practica-control"
+        ],
         "tecnicas": [],
         "dm": false
       },
@@ -708,7 +710,9 @@
       "requisitos": {
         "nivel": 1,
         "ramas": {},
-        "dotes": [],
+        "dotes": [
+          "practica-control"
+        ],
         "tecnicas": [],
         "dm": false
       },
@@ -721,7 +725,9 @@
       "requisitos": {
         "nivel": 1,
         "ramas": {},
-        "dotes": [],
+        "dotes": [
+          "practica-control"
+        ],
         "tecnicas": [],
         "dm": false
       },
@@ -749,7 +755,9 @@
       "requisitos": {
         "nivel": 5,
         "ramas": {},
-        "dotes": [],
+        "dotes": [
+          "choque-perfecto"
+        ],
         "tecnicas": [],
         "dm": false
       },
@@ -760,9 +768,11 @@
       "nombre": "Contención",
       "trazos": 3,
       "requisitos": {
-        "nivel": 1,
+        "nivel": 5,
         "ramas": {},
-        "dotes": [],
+        "dotes": [
+          "control-sereno"
+        ],
         "tecnicas": [],
         "dm": false
       },
@@ -775,7 +785,9 @@
       "requisitos": {
         "nivel": 5,
         "ramas": {},
-        "dotes": [],
+        "dotes": [
+          "control-fino"
+        ],
         "tecnicas": [],
         "dm": false
       },
@@ -788,7 +800,9 @@
       "requisitos": {
         "nivel": 5,
         "ramas": {},
-        "dotes": [],
+        "dotes": [
+          "control-fino"
+        ],
         "tecnicas": [],
         "dm": false
       },
@@ -816,7 +830,9 @@
       "requisitos": {
         "nivel": 1,
         "ramas": {},
-        "dotes": [],
+        "dotes": [
+          "practica-control"
+        ],
         "tecnicas": [],
         "dm": false
       },
@@ -3345,6 +3361,34 @@
           "rastro": 1
         },
         "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "control-instinto",
+      "nombre": "Control por instinto",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [],
+        "tecnicas": [],
+        "dm": false
+      },
+      "automatizacion": "Beneficio de mesa salvo integración específica indicada en el panel."
+    },
+    {
+      "id": "control-presencia",
+      "nombre": "Control por presencia",
+      "trazos": 2,
+      "requisitos": {
+        "nivel": 1,
+        "ramas": {},
+        "dotes": [
+          "practica-control"
+        ],
         "tecnicas": [],
         "dm": false
       },
