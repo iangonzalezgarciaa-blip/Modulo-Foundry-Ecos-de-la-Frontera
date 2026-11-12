@@ -35,6 +35,7 @@ import "./relojes-faccion.js";
 import "./token-vista.js";
 import "./viajes.js";
 import "./balance-encuentro.js";
+import "./panel-acciones.js";
 import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";
@@ -4634,6 +4635,10 @@ function registrarAjustes() {
   });
 }
 
+/* 3.45 (pedido del autor): todas las ventanas de diálogo se pueden agrandar o achicar y se desplazan con la rueda. */
+Hooks.once("init", () => { try { const W = foundry.applications.api.DialogV2.DEFAULT_OPTIONS.window; if (W) W.resizable = true; } catch { /* versión sin DialogV2 */ } });
+/* 3.45: los botones que el módulo pone en la cabecera de las hojas no deben empezar a arrastrar la ventana. */
+document.addEventListener("pointerdown", ev => { if (ev.target?.closest?.(".window-header .ecos-cabecera, .window-header .ecos-etapa-reliquia, .window-header .ecos-subir-boton, .window-header .ecos-ae-boton")) ev.stopPropagation(); }, true);
 Hooks.once("init", () => {
   registrarAjustes();
   try { if (puenteRitmoViaje()) console.log(`${MOD} | dnd5e 6: alias de getTravelPaceMode para módulos antiguos (adv-reminder)`); } catch (err) { console.warn(`${MOD} | puente de ritmo de viaje`, err); }
@@ -9161,7 +9166,7 @@ const OPS_PANEL = [
     ["siluetas", "Tokens a silueta", "fa-user-secret", "Elige qué criaturas y PNJ con imagen del sistema o de un módulo de arte vuelven a la silueta (también en las escenas). Guarda la imagen anterior: «Deshacer todas» la devuelve."],
     ["balance", "Balance del encuentro", "fa-scale-balanced", "Elige el grupo: te dice si lo que hay en la escena es trivial, bajo, moderado, alto o letal, y qué sumar para un combate interesante (táctico), trivial o alto, con criaturas de tu mundo y un botón para colocarlas (y deshacer). También sale solo al arrastrar una criatura hostil."],
     ["viaje", "Viaje por zonas", "fa-route", "Zona, días y ritmo: tira encuentros y hallazgos por día, avanza el reloj (anuncio del día, suceso, clima y relojes) y deja un resumen con «Deshacer» y un botón para armar cada encuentro."],
-    ["sucesoDia", "Suceso del día", "fa-calendar-day", "El suceso del día de la estación: tirarlo, elegirlo a mano, deshacerlo o volver al anterior, y apagar el automático."],
+    ["sucesoDia", "Suceso de la estación", "fa-calendar-day", "Tabla de la estación (Mundo 14): tirar, elegir a mano, deshacer o volver al anterior; apaga el automático."],
     ["capasAbismo", "Capas del Abismo", "fa-stairs", "En qué capa está la escena, cruzar umbrales hacia afuera con su cobro (salvación, Agotamiento, daño y estados automáticos) y la llamada del amanecer. Explica la mecánica paso a paso."],
     ["traducirFichas", "Traducir fichas al español", "fa-language", "Copia a las fichas el nombre y la descripción en español de sus clases, rasgos, conjuros, acciones y objetos desde los compendios de D&D traducidos (para fichas armadas antes de activar la traducción). Primero muestra un informe."],
     ["proeza", "Proeza (fama)", "fa-bullhorn", "Marca una proeza de los PJ: suma fama y, al cruzar un umbral, las facciones se enteran (te susurra qué hacer)."],
@@ -9249,7 +9254,7 @@ class PanelDM extends foundry.applications.api.ApplicationV2 {
     const boton = ([op, et, ic, tip]) => {
       const activo = (op === "santuario") && santo;
       const etiqueta = (op === "santuario") ? `Santuario: ${santo ? "SÍ" : "NO"}` : et;
-      return `<button type="button" data-action="ecos" data-op="${op}" class="ecos-buscable ${activo ? "activo" : ""}" data-texto="${escH(`${et} ${tip}`.toLowerCase())}"><i class="fa-solid ${ic}"></i><span class="ecos-panel-et"><b>${etiqueta}</b><small>${escH(tip)}</small></span></button>`;
+      return `<button type="button" data-action="ecos" data-op="${op}" class="ecos-buscable ${activo ? "activo" : ""}" data-tooltip="${escH(tip)}" data-texto="${escH(`${et} ${tip}`.toLowerCase())}"><i class="fa-solid ${ic}"></i><span class="ecos-panel-et"><b>${etiqueta}</b><small>${escH(tip)}</small></span></button>`;
     };
     const taller = verbeApi() ? `<section><h3>Catálogo del Verbe</h3><p>Crea y publica técnicas universales sin seleccionar una hoja ni gastar sus Trazos.</p><button type="button" data-action="editorVerbe">Abrir taller del DM</button></section>` : "";
     const ecos = taller + OPS_PANEL.map(([titulo, ops]) => `<section><h3>${titulo}</h3><div class="ecos-panel-botones">${ops.map(boton).join("")}</div></section>`).join("");

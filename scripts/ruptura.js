@@ -35,7 +35,7 @@ export const ESTADOS_RUPTURA = {
 export const DEFENSAS = {
   coraza: { nombre: "Coraza", img: `${S}statuses/marked.svg`, quiebra: "Brecha",
     texto: "CA altísima: quitina, escamas, placas o una guardia de hierro. La Brecha (−2 CA cada una) la ablanda; Quebrado la anula un turno." },
-  fortaleza: { nombre: "Fortaleza", img: `${S}statuses/blessed.svg`, quiebra: "Grieta",
+  fortaleza: { nombre: "Fortaleza", img: "icons/svg/holy-shield.svg", quiebra: "Grieta",
     texto: "Salvaciones altísimas: un cuerpo o una voluntad que no ceden. La Grieta (−2 a sus salvaciones cada una) la ablanda; Quebrado la anula un turno." },
   piel: { nombre: "Cuerpo sordo", img: `${S}statuses/petrified.svg`, quiebra: "Quebrado",
     texto: "Resistencia a los golpes de armas (contundente, cortante y perforante). El Verbe con elemento entra entero; Quebrado le quita las resistencias un turno." }
@@ -367,6 +367,8 @@ if (globalThis.Hooks) {
     import("./acciones-comunes.js").then(m => m.paginaReglas("guiaRuptura", "16 · Ablandar: Coraza, Fortaleza, Brecha y Grieta", guiaRupturaHTML())).catch(err => console.error(`${MOD} | guía de ruptura`, err));
     try {
       if (leer("defensasCampana", "auto") === "no") { for (const a of game.actors) if (efectoActual(a)) await efectoActual(a).delete(); return; }
+      // 3.45: el icono de Fortaleza apuntaba a un archivo que el sistema ya no trae (se veía roto).
+      for (const a of game.actors) for (const ef of a.effects) if (ef.getFlag(MOD, "defensa") && String(ef.img ?? "").endsWith("blessed.svg")) await ef.update({ img: DEFENSAS.fortaleza.img }).catch(() => null);
       // 3.34: arregla los efectos de defensa duplicados y quita la defensa automática a los aliados (el equipo del Verbe).
       for (const a of game.actors) {
         const f = a.getFlag(MOD, "defensa");

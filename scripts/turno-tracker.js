@@ -54,9 +54,9 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 const gmActivo = () => game.user === game.users.activeGM;
 const velocidadDe = actor => Number(actor?.system?.attributes?.movement?.walk) || 0;
 const derribado = actor => !!actor?.statuses?.has?.("prone");
-const combateActivo = () => (game.combat?.started ? game.combat : null);
+export const combateActivo = () => (game.combat?.started ? game.combat : null);
 const combatienteDe = (combat, tokenDoc) => combat?.combatants?.find?.(c => c.tokenId === tokenDoc?.id) ?? null;
-const datosTurno = (combat, cid) => {
+export const datosTurno = (combat, cid) => {
   // Se reinicia al empezar su turno: la reacción gastada fuera de su turno sigue gastada hasta entonces.
   return combat?.getFlag?.(MOD, "turnoDnD")?.[cid] ?? null;
 };

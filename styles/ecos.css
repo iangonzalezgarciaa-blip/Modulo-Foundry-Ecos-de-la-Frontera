@@ -777,3 +777,28 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-balance-trivial { background: rgba(120,120,120,.2); } .ecos-balance-bajo { background: rgba(60,140,60,.2); }
 .ecos-balance-moderado { background: rgba(200,160,30,.25); } .ecos-balance-alto { background: rgba(220,110,20,.3); }
 .ecos-balance-letal { background: rgba(190,20,20,.35); color: #fff; }
+
+/* 3.45 · Menú del DM: los botones miden lo mismo; la descripción se corta en 3 líneas (entera al pasar el ratón). */
+.ecos-panel-dm .ecos-panel-botones button { height: auto; min-height: 3.6em; overflow: hidden; align-self: stretch; }
+.ecos-panel-dm .ecos-panel-et { flex: 1; }
+.ecos-panel-dm .ecos-panel-et small { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.25; }
+/* 3.45 · Ventanas del módulo: se desplazan con la rueda y no pasan del alto de la pantalla. */
+.application:has(.ecos-dialogo), .application:has(.ecos-balance), .application:has(.ecos-relojes), .application:has(.ecos-subir-nivel), .application:has(.ecos-capas) { max-height: 94vh; }
+.application:has(.ecos-dialogo) .window-content, .application:has(.ecos-balance) .window-content, .application:has(.ecos-relojes) .window-content,
+.application:has(.ecos-subir-nivel) .window-content, .application:has(.ecos-capas) .window-content { overflow-y: auto; }
+/* 3.45 · Panel de acciones a la izquierda */
+#ecos-panel-acciones { position: fixed; left: 76px; top: 300px; z-index: 65; width: 236px; background: rgba(18, 16, 22, 0.88); color: #eee; border: 1px solid rgba(255, 210, 120, 0.35);
+  border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,.5); font-size: 12px; user-select: none; }
+#ecos-panel-acciones header { display: flex; align-items: center; gap: 6px; padding: 5px 7px; cursor: move; border-bottom: 1px solid rgba(255,255,255,.12); font-size: 13px; }
+#ecos-panel-acciones header img { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); object-fit: cover; }
+#ecos-panel-acciones header b { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#ecos-panel-acciones header button { width: 22px; height: 22px; line-height: 1; padding: 0; background: transparent; color: #eee; border: 1px solid rgba(255,255,255,.25); }
+#ecos-panel-acciones .ecos-pa-turno { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 7px 2px; align-items: center; }
+#ecos-panel-acciones .ecos-pa-pip { flex: 1 1 30%; padding: 2px 4px; font-size: 11px; line-height: 1.5; background: rgba(70, 150, 90, .55); color: #fff; border: 1px solid rgba(255,255,255,.25); border-radius: 10px; }
+#ecos-panel-acciones .ecos-pa-pip.gastada { background: rgba(110, 110, 110, .4); text-decoration: line-through; opacity: .75; }
+#ecos-panel-acciones .ecos-pa-mov { flex: 1 1 100%; text-align: center; opacity: .9; }
+#ecos-panel-acciones .ecos-pa-nota, #ecos-panel-acciones .ecos-pa-vacio { margin: 4px 8px; opacity: .7; font-size: 11px; }
+#ecos-panel-acciones .ecos-pa-acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 6px 7px 8px; }
+#ecos-panel-acciones .ecos-pa-acciones button { display: flex; align-items: center; gap: 5px; padding: 3px 5px; font-size: 11px; line-height: 1.4; text-align: left; background: rgba(255,255,255,.07); color: #eee; border: 1px solid rgba(255,255,255,.15); border-radius: 5px; }
+#ecos-panel-acciones .ecos-pa-acciones button:hover { background: rgba(255, 210, 120, .2); border-color: rgba(255, 210, 120, .55); }
+#ecos-panel-acciones .ecos-pa-acciones button i { width: 14px; text-align: center; color: #ffd27a; }

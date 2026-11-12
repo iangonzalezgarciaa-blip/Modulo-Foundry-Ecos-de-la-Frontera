@@ -40,7 +40,7 @@ export async function avanzar(id, paso = 1, motivo = "") {
   const F = datos()?.facciones?.find(f => f.id === id);
   if (!F) return;
   const E = estado(), antes = E[id] ? { ...E[id] } : undefined;
-  const m = moverReloj(E[id]?.valor, F.segmentos, paso);
+  const m = moverReloj(E[id]?.valor ?? (Number(F.inicio) || 0), F.segmentos, paso);
   E[id] = { valor: m.valor, dia: diaHoy() };
   await game.settings.set(MOD, "relojesFaccion", E);
   const txt = `<p><b>${esc(F.nombre)}</b>: reloj ${m.valor}/${m.segmentos}${motivo ? ` (${esc(motivo)})` : ""}. ${relojSVG(m.valor, m.segmentos, 26)}</p>${m.lleno ? `<p><b>¡Se llenó!</b> ${esc(F.alLlenar ?? "")}</p>` : ""}`;
@@ -52,7 +52,12 @@ export async function abrirRelojes() {
   const D = datos();
   if (!D?.facciones?.length) return ui.notifications.warn("Faltan las facciones en el mundo (bandera faccionesMundo de un diario).");
   const E = estado(), regiones = [...new Set(D.facciones.map(f => f.region))];
-  const fila = f => { const v = E[f.id]?.valor ?? 0; return `<tr data-id="${f.id}"><td>${relojSVG(v, f.segmentos, 28)}</td><td><b>${esc(f.nombre)}</b><br><small>${esc(f.meta ?? "")}</small></td>
+  // 3.45: cada facción enlaza a su página del diario de facciones y muestra quiénes son y qué la mueve.
+  const diario = game.journal?.find(j => j.getFlag(MOD, "clave") === D.diario) ?? game.journal?.find(j => /Facciones del mundo/.test(j.name));
+  const paginaDe = r => diario?.pages?.find(p => p.name.endsWith(r));
+  const valorDe = f => E[f.id]?.valor ?? (Number(f.inicio) || 0);
+  const fila = f => { const v = valorDe(f), pg = paginaDe(f.region); return `<tr data-id="${f.id}"><td>${relojSVG(v, f.segmentos, 28)}</td><td><b>${esc(f.nombre)}</b>${pg ? ` <a data-pagina="${pg.id}" title="Abrir en el diario"><i class="fa-solid fa-book-open"></i></a>` : ""}<br><small>${esc(f.meta ?? "")}</small>
+    <details><summary><small>Más</small></summary><small>${esc(f.quienes ?? "")}<br><b>Avanza si:</b> ${esc(f.avanza ?? "")}<br><b>Retrocede si:</b> ${esc(f.retrocede ?? "")}<br><b>Cuando se llena:</b> ${esc(f.alLlenar ?? "")}</small></details></td>
     <td class="ecos-reloj-num">${v}/${f.segmentos}</td><td><button type="button" data-r="menos" title="Retroceder 1">−</button><button type="button" data-r="mas" title="Avanzar 1">+</button>
     <input type="number" data-r="exacto" min="0" max="${f.segmentos}" value="${v}" title="Poner a mano" style="width:3.5em"></td>
     <td><small>${f.reaccionaFama ? "Fama · " : ""}${f.cadaDias ? `cada ${f.cadaDias} días` : ""}</small></td></tr>`; };
@@ -63,6 +68,8 @@ export async function abrirRelojes() {
   await dlg.render(true);
   const el = dlg.element;
   el?.addEventListener("click", async ev => {
+    const l = ev.target.closest("a[data-pagina]");
+    if (l && diario) { ev.preventDefault(); return diario.sheet.render(true, { pageId: l.dataset.pagina }); }
     const b = ev.target.closest("button[data-r]"); if (!b) return;
     ev.preventDefault();
     const id = b.closest("tr")?.dataset.id;
@@ -71,7 +78,7 @@ export async function abrirRelojes() {
   });
   el?.addEventListener("change", async ev => {
     const i = ev.target.closest("input[data-r='exacto']"); if (!i) return;
-    const id = i.closest("tr")?.dataset.id, v = estado()[id]?.valor ?? 0;
+    const id = i.closest("tr")?.dataset.id, f0 = D.facciones.find(f => f.id === id), v = estado()[id]?.valor ?? (Number(f0?.inicio) || 0);
     await avanzar(id, Number(i.value) - v, "puesto a mano");
     dlg.close(); abrirRelojes();
   });

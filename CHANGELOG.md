@@ -1,5 +1,16 @@
 # Historial de cambios
 
+## 3.45.0 — 2026-11-11
+
+- **Panel de acciones a la izquierda** (pedido del autor): sigue a la ficha seleccionada y cambia al seleccionar otro token. Muestra el turno igual que la barra de iniciativa (Acción, Adicional y Reacción —clic para devolverla— y el movimiento que queda) y las acciones estándar de D&D con su explicación al pasar el ratón: Atacar, Magia, Correr, Desengancharse, **Esquivar**, Ayudar, Esconderse, Buscar, Estudiar, Influir, Usar un objeto, Preparar y Ataque de oportunidad. Se actualiza solo, se arrastra desde su cabecera, se pliega y recuerda dónde lo dejaste. Se apaga en la configuración del módulo.
+- **Ventanas:** todas las ventanas de diálogo se agrandan o achican desde la esquina, y las del módulo se desplazan con la rueda sin pasar del alto de la pantalla.
+- **Menú del DM:** las descripciones de los botones ya no se descuadran (se cortan en tres líneas y se leen enteras al pasar el ratón). El suceso de las tablas de la estación se llama «Suceso de la estación» para no confundirlo con el «Suceso del día» de siempre.
+- **Icono de Fortaleza arreglado** (apuntaba a un archivo que el sistema ya no trae); los efectos ya puestos se corrigen solos.
+- **Acciones de cualquiera en todos los PNJ**, sin excepción (Acciones de Fuerza, Destreza, Constitución, Inteligencia, Sabiduría y Carisma); se ponen solas una vez al cargar el mundo.
+- **Reliquias:** el almacén queda en **dos carpetas**: «1 · Manual del DM» (qué es, qué hace en cada etapa, cómo se despierta —oculto al jugador— y el gancho de su historia) y «2 · Para entregar» (lo que ve el jugador: lo que se cuenta y lo que hace en su etapa, sin cómo despertarla), con **Subir etapa (DM)** y **Bajar (DM)** en la cabecera. Las copias «por etapa» se quitan al volver a correr el almacén. Los botones de la cabecera ya no arrastran la ventana en lugar de responder.
+- **Relojes de facción:** cada facción enlaza a su página del diario de facciones y muestra quiénes son, qué la hace avanzar o retroceder y qué pasa al llenarse; admite un valor inicial.
+- Prueba de mesa nueva en el Diagnóstico (75).
+
 ## 3.44.0 — 2026-11-11
 
 - **Balance del encuentro al arrastrar una criatura** (pedido del autor): al poner en la escena una criatura hostil sale una ventana con el grupo (marcas qué PJ cuentan; recuerda tu elección), el presupuesto de D&D 2024 (bajo, moderado y alto), cuánto pesa lo que hay en la escena y la etiqueta **Trivial, Bajo, Moderado, Alto o LETAL**. Avisa también si **una criatura sola es letal** (VD 3 o más por encima del nivel más alto del grupo).

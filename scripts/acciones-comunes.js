@@ -362,13 +362,24 @@ if (globalThis.Hooks) {
     try {
       game.settings.register(MOD, "accionesComunes", { name: "Acciones de cualquiera en las hojas", hint: "Golpe sin armas, Presa, Empujón, Zancadilla, Fintar, Esquivar, Evaluar y el resto: se añaden a cada hoja nueva o importada, a los PJ al cargar el mundo y a los PNJ al entrar en combate o en una escena.",
         scope: "world", config: true, type: Boolean, default: true });
+      game.settings.register(MOD, "accionesPNJVersion", { scope: "world", config: false, type: Number, default: 0 });
     } catch { /* ya registrado */ }
   });
   Hooks.once("ready", async () => {
     const api = (game.modules.get(MOD).api ??= {});
     api.acciones = { enHoja: asegurarAccionesComunes, enTodas: accionesEnTodas, guia: asegurarGuiaAcciones };
     if (!soyDM()) return;
-    try { await asegurarGuiaAcciones(); for (const a of game.actors ?? []) if (a.type === "character") await asegurarAccionesComunes(a); }
+    try {
+      await asegurarGuiaAcciones();
+      for (const a of game.actors ?? []) if (a.type === "character") await asegurarAccionesComunes(a);
+      // 3.45 (pedido del autor): también en todos los PNJ, sin excepción. Una vez por versión de las acciones.
+      let hecha = 0; try { hecha = Number(game.settings.get(MOD, "accionesPNJVersion")) || 0; } catch { /* sin ajuste */ }
+      if (hecha < VERSION_ACCIONES) {
+        let n = 0; for (const a of game.actors ?? []) if (a.type === "npc") n += await asegurarAccionesComunes(a);
+        await game.settings.set(MOD, "accionesPNJVersion", VERSION_ACCIONES);
+        if (n) ui.notifications.info(`Acciones de cualquiera puestas en ${n} PNJ.`);
+      }
+    }
     catch (err) { console.error(`${MOD} | acciones de cualquiera`, err); }
   });
   // 3.36: al subir de nivel o sumar un rasgo, las acciones de cualquiera se rehacen si cambia algún bono de clase.

@@ -339,3 +339,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 11-nov-2026 | Mejora | Claude | Suceso del día automático y botones Deshacer en lo automático. Release v3.42.0 | 3.42.0 |
 | 11-nov-2026 | Mejora | Claude | Relojes de facción, defensa a la vista, tokens a silueta y viajes por zonas. Release v3.43.0 | 3.43.0 |
 | 11-nov-2026 | Mejora | Claude | Balance del encuentro al arrastrar criaturas, con recomendación interesante, trivial y alta. Release v3.44.0 | 3.44.0 |
+| 11-nov-2026 | Mejora | Claude | Panel de acciones a la izquierda, ventanas redimensionables con rueda, reliquias en dos carpetas y arreglos. Release v3.45.0 | 3.45.0 |
