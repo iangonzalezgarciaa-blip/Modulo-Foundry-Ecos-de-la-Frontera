@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 3.44.0 — 2026-11-11
+
+- **Balance del encuentro al arrastrar una criatura** (pedido del autor): al poner en la escena una criatura hostil sale una ventana con el grupo (marcas qué PJ cuentan; recuerda tu elección), el presupuesto de D&D 2024 (bajo, moderado y alto), cuánto pesa lo que hay en la escena y la etiqueta **Trivial, Bajo, Moderado, Alto o LETAL**. Avisa también si **una criatura sola es letal** (VD 3 o más por encima del nivel más alto del grupo).
+- Siempre trae tres recomendaciones con criaturas de tu mundo (primero de la misma carpeta): **Interesante** (la recomendada: entre moderado y alto, de 1 a 2 enemigos por PJ, sin pasar del nivel del grupo), **Trivial** (para ritmo o narración) y **Alto**, cada una con **Colocar** (pone los tokens junto al que arrastraste) y **Deshacer lo colocado**; **Quitar el token que puse** borra el que arrastraste. La guía de qué lo hace interesante va en la misma ventana: dos papeles o más, defensas que se abren con Brecha o Grieta, terreno y un objetivo además de matar.
+- Se apaga en la configuración del módulo o por escena («No preguntar más en esta escena»), y se abre a mano desde Menú del DM → Mesa → «Balance del encuentro».
+- Prueba de mesa nueva en el Diagnóstico (74).
+
 ## 3.43.0 — 2026-11-11
 
 - **Relojes de facción** (aprobado por el autor): Menú del DM → Mesa → «Relojes de facción». Cada facción del mundo tiene su reloj (dibujado en segmentos), agrupadas por región. Avanzan solos cuando un PJ sube de nivel de fama (las que reaccionan a la fama) o cada cierto número de días (las que tienen ritmo propio); cada avance te llega en un susurro con **Deshacer**, y cuando uno se llena, qué pasa. En la ventana los mueves a mano con −, + o escribiendo el número. Las facciones y sus textos son de tu campaña: se leen de un diario de tu mundo.

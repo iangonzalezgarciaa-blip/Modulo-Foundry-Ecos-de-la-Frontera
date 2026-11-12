@@ -771,3 +771,9 @@ details.ecos-verbe-tec[open] > summary { background: rgba(45, 123, 224, 0.12); }
 .ecos-relojes button[data-r] { width: 2em; line-height: 1.4; margin: 0 1px; }
 .ecos-reloj { color: var(--color-text-primary, #222); vertical-align: middle; }
 .ecos-reloj-num { font-weight: bold; text-align: center; }
+
+/* 3.44 · Balance del encuentro */
+.ecos-balance-clase { font-weight: bold; padding: 4px 6px; border-radius: 4px; background: rgba(0,0,0,.08); }
+.ecos-balance-trivial { background: rgba(120,120,120,.2); } .ecos-balance-bajo { background: rgba(60,140,60,.2); }
+.ecos-balance-moderado { background: rgba(200,160,30,.25); } .ecos-balance-alto { background: rgba(220,110,20,.3); }
+.ecos-balance-letal { background: rgba(190,20,20,.35); color: #fff; }
