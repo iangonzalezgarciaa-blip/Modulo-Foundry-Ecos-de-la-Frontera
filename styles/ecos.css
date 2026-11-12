@@ -1143,3 +1143,9 @@ button.ecos-inspiracion { margin-top: 4px; background: linear-gradient(90deg, #f
 .ecos-suceso-bot { display: flex; gap: 4px; margin-top: 4px; }
 .ecos-suceso-bot button { flex: 1; line-height: 22px; font-size: 0.85em; }
 .ecos-suceso-res { font-size: 0.92em; }
+
+/* 3.61 · Estados enlazados y «Escuchando los cuerpos» */
+a.ecos-estado-link { color: inherit; text-decoration: underline dotted; text-underline-offset: 2px; cursor: help; font-weight: 600; }
+a.ecos-estado-link:hover { color: #b8862b; text-decoration-style: solid; }
+#ecos-escuchar { position: fixed; z-index: 80; transform: translateX(-50%); padding: 3px 9px; border-radius: 6px; background: rgba(20, 8, 10, 0.92); color: #ffd6d6; border: 1px solid #a5453a; font-size: 12px; white-space: nowrap; pointer-events: none; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); }
+#ecos-escuchar i { color: #ff6b6b; }

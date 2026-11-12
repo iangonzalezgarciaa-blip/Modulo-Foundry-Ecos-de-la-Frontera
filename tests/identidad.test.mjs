@@ -15,6 +15,8 @@ test('las 778 técnicas anteriores conservan sus reglas estructuradas e identifi
  Object.assign(corregidas,Object.fromEntries(D.tecnicas.filter(t=>!corregidas[t.id]&&t.item.effects?.some(e=>e.flags?.['ecos-frontera']?.verbe?.propio)).map(t=>[t.id,['3.32: efecto propio automático']])));
  // 3.39 (regla del autor): los trucos de daño de grado 0 cuestan 1 Verbe en el catálogo.
  Object.assign(corregidas,Object.fromEntries(D.tecnicas.filter(t=>!corregidas[t.id]&&Number(t.g)===0&&Number(t.costo)===1&&/\d+d\d+/.test(String(t.dmg??''))).map(t=>[t.id,['3.39: daño cuesta al menos 1 Verbe']])));
+ // 3.61 en adelante (pedidos del autor): cada técnica cambiada a propósito lleva su motivo en `cambios`.
+ Object.assign(corregidas,Object.fromEntries(D.tecnicas.filter(t=>!corregidas[t.id]&&t.cambios?.length).map(t=>[t.id,t.cambios])));
  assert.equal(Object.keys(anterior).length,778);
  for(const[id,huella]of Object.entries(anterior)){const t=D.tecnicas.find(t=>t.id===id);assert.ok(t,id);
   if(corregidas[id]){assert.ok(corregidas[id].length,id);assert.deepEqual(problemasTecnica(t).filter(p=>p.nivel==='error'),[],id);continue;}

@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 3.61.0 — 2026-11-12
+
+- **Información oculta** (pedido del autor): los jugadores ya no ven cómo está cada criatura (Health Estimate queda para el DM; barras y fichas de PNJ ya estaban ocultas). Ajuste «Ocultar cómo están los demás».
+- **Escuchar el cuerpo** (Pulso) pasa a ser un estado de 1 minuto con concentración: «Escuchando los cuerpos» deja ver, al pasar el ratón, los PG y estados exactos de las criaturas a 30 ft; al tocar, además heridas, venenos y Verbe. Las hojas que ya la sabían reciben la versión nueva. El DM puede poner el estado a mano.
+- **Estados enlazados**: diario «Ecos · Estados alterados» con una página por estado (D&D, Verbe, ruptura, defensas y los del módulo). Cada estado nombrado en descripciones, diarios, chat y el panel del Verbe es un enlace a su página. Ajuste «Estados enlazados».
+
 ## 3.60.0 — 2026-11-12
 
 - **Estilos de hoja más oscuros y con textura** (pedido del autor: sin colores brillantes): las hojas con estilo usan el tema oscuro de dnd5e teñido con tonos apagados —Llama (brasa y carbón), Marea (azul de profundidad), Hoja (musgo), Sombra (ciruela y humo), Tormenta (pizarra y latón) y Tinta para PNJ (cuero oscuro y rojo)—, fondo con grano y nubes de textura suaves, marco fino doble y filigrana nueva en las esquinas. «Original» devuelve la hoja y su tema.

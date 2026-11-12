@@ -47,6 +47,8 @@ import "./venenos.js";
 import "./taller.js";
 import "./sorpresa.js";
 import "./escenarios.js";
+import "./estados-enlaces.js";
+import "./info-oculta.js";
 import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";

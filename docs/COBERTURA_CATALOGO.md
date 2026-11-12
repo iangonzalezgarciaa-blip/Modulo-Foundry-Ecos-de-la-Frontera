@@ -1,4 +1,4 @@
-# Cobertura declarada del catálogo 3.60.0
+# Cobertura declarada del catálogo 3.61.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
@@ -14,7 +14,7 @@ El catálogo reúne **949 técnicas y 471 dotes**.
 | Mirada | 60 | 31 |
 | Sello | 77 | 42 |
 | Pacto | 63 | 33 |
-| Pulso | 54 | 31 |
+| Pulso | 54 | 30 |
 | Hilo | 71 | 17 |
 | Quietud | 55 | 29 |
 | Rastro | 56 | 46 |
@@ -205,7 +205,7 @@ El catálogo reúne **949 técnicas y 471 dotes**.
 | `pacto-lechuzas` | Vuelo sin ruido | 2 | pacto | utility | 0 |
 | `pulso-sostener` | Mano que sostiene | 0 | pulso | utility | 0 |
 | `pulso-gris` | Toque gris | 0 | pulso | attack | 0 |
-| `pulso-escuchar` | Escuchar el cuerpo | 0 | pulso | utility | 0 |
+| `pulso-escuchar` | Escuchar el cuerpo | 0 | pulso | utility | 1 |
 | `pulso-cerrar` | Palma que cierra | 1 | pulso | heal | 0 |
 | `pulso-amarga` | Palma amarga | 1 | pulso | attack | 2 |
 | `pulso-restaurar` | Restaurar | 2 | pulso | utility | 0 |

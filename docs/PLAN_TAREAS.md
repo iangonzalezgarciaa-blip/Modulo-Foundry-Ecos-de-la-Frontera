@@ -355,3 +355,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 12-nov-2026 | Mejora | Claude | Festejo del enemigo: terror con su 20, burla con su 1. Release v3.58.0 | 3.58.0 |
 | 12-nov-2026 | Mejora | Claude | Asistente de combate: escenario por escena, bandos, balance con aliados y sucesos por turno. Release v3.59.0 | 3.59.0 |
 | 12-nov-2026 | Mejora | Claude | Estilos de hoja oscuros con textura y filigrana. Release v3.60.0 | 3.60.0 |
+| 12-nov-2026 | Mejora | Claude | Información oculta, Escuchar el cuerpo y estados enlazados al diario. Release v3.61.0 | 3.61.0 |
