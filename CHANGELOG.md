@@ -1,5 +1,19 @@
 # Historial de cambios
 
+## 3.50.0 — 2026-11-12
+
+Lo que D&D base no hace (las 10 propuestas, todas con control del DM para revertir):
+- **Cobertura automática**: paredes y criaturas entre quien ataca y el blanco dan −2 (media) o −5 (tres cuartos) al ataque; se ve en la ventana de la tirada y se borra a mano. Cobertura total, aviso. No se suma a «Ponerse a cubierto».
+- **Terreno difícil, trepar, nadar y arrastrarse**: el movimiento del turno cuenta lo que mide Foundry/dnd5e (regiones de terreno difícil, trepar o nadar sin esa velocidad, espacios ocupados). El DM pone o quita «En terreno difícil» desde la barra del turno y devuelve movimiento.
+- **Saltar** (panel): salto largo y alto con y sin carrera, y el token en modo salto.
+- **Interacción con objeto**: una gratis por turno, marcada en la barra y en el panel.
+- **Un conjuro con espacio por turno** (Manual 2024): aviso antes del segundo, con «Lanzar igual».
+- **Preparar**: guarda la acción y lo que la dispara; «¡Ahora!» gasta la Reacción; «Soltar»; se borra al empezar su turno.
+- **Influir**: CD por la actitud del PNJ (Amistoso 10, Indiferente 15, Hostil 20); el DM pone la actitud desde el panel y la cambia con botones tras la tirada (con Deshacer).
+- **Inspiración heroica**: «Repetir con Inspiración» en las tiradas de d20 de quien la tiene (con Deshacer); el DM la da o la quita desde el panel.
+- **Arrastrar a quien sujetas**: el agarrado viene contigo y cada pie cuesta uno más (salvo que sea dos tamaños más chico), con Deshacer.
+- Ajustes nuevos para apagar cada cosa: «Cobertura automática», «Un conjuro con espacio por turno», «Inspiración heroica: botón», «Arrastrar a quien sujetas».
+
 ## 3.49.0 — 2026-11-12
 
 - **Festejo del 20 al estilo anime de acción**: líneas de foco que vibran, trazo de tinta negra con el brillo naranja, salpicaduras, el retrato en un panel de manga (borde blanco, sombra negra, trama de puntos) con aura, y el grito en letras de impacto con contorno negro. Naranja y negro por defecto; con el Verbe despierto toma el color de su naturaleza. La Pifia va en rojo oscuro.

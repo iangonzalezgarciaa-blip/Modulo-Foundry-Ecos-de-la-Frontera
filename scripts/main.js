@@ -39,6 +39,7 @@ import "./panel-acciones.js";
 import "./ventaja-estados.js";
 import "./reacciones-verbe.js";
 import "./festejo-20.js";
+import "./reglas-dnd.js";
 import { precioVolver335, TEXTO_ACECHADO } from "./muerte-335.js";
 import { explicarEstado, explicarEfecto } from "./estados-explicados.js";
 import { TIENDAS } from "./catalogo.js";

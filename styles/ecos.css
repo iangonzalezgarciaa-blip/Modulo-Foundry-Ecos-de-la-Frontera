@@ -876,3 +876,11 @@ body.ecos-festejo-temblor #board, body.ecos-festejo-temblor #ecos-festejo { anim
 @keyframes ef-chispa { from { opacity: 1; transform: translate(0, 0) scale(1); } to { opacity: 0; transform: translate(var(--x), var(--y)) scale(0.2); } }
 @keyframes ef-temblor { 0%, 100% { translate: 0 0; } 15% { translate: -10px 6px; } 30% { translate: 9px -7px; } 45% { translate: -6px 4px; } 60% { translate: 5px -3px; } 80% { translate: -2px 2px; } }
 @media (prefers-reduced-motion: reduce) { #ecos-festejo, #ecos-festejo * { animation-duration: 0.01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; } }
+
+/* 3.50 · Preparar, controles del DM en el panel e Inspiración heroica */
+.ecos-turno-preparada, .ecos-pa-preparada { margin: 3px 0; padding: 3px 6px; border-left: 3px solid #c58a00; background: rgba(197, 138, 0, 0.12); font-size: 0.9em; }
+.ecos-pa-preparada button { width: auto; margin: 3px 4px 0 0; padding: 0 8px; line-height: 1.6; }
+.ecos-pa-dm { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; margin: 3px 0; font-size: 0.85em; }
+.ecos-pa-dm button { width: auto; flex: 0 0 auto; padding: 0 6px; line-height: 1.6; }
+.ecos-pa-dm button.activa { background: #c58a00; color: #fff; }
+button.ecos-inspiracion { margin-top: 4px; background: linear-gradient(90deg, #ffd23f, #ff9a00); color: #111; font-weight: bold; }

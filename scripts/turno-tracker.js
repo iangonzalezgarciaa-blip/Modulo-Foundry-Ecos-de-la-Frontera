@@ -13,21 +13,43 @@
  */
 const MOD = "ecos-frontera";
 export const DESENGANCHE = "ecosDesenganche";
+export const TERRENO = "ecosTerrenoDificil";
 export const ESTADO_DESENGANCHE = { [DESENGANCHE]: { name: "Desenganchado", img: "icons/svg/wingfoot.svg", dura: 1,
-  texto: "Se desenganchó: su movimiento no provoca ataques de oportunidad hasta el final de su turno." } };
-export const ACCIONES_DND = { accion: "Acción", adicional: "Acción adicional", reaccion: "Reacción" };
+  texto: "Se desenganchó: su movimiento no provoca ataques de oportunidad hasta el final de su turno." },
+  // 3.50: el DM lo pone a mano donde no hay región de terreno difícil; se quita igual (clic en el estado o en la barra del turno).
+  [TERRENO]: { name: "En terreno difícil", img: "icons/svg/thorn-vine.svg", dura: 0,
+    texto: "Pisa terreno difícil (escombros, barro, maleza, nieve…): cada pie que se mueve cuesta uno más. Lo pone y lo quita el DM." } };
+export const ACCIONES_DND = { accion: "Acción", adicional: "Acción adicional", reaccion: "Reacción", interaccion: "Interacción con objeto" };
 export const ACCIONES_VERBE = { vAccion: "Acción Verbe", vAdicional: "Adicional Verbe", vReaccion: "Reacción Verbe" };
 /** Rasgos que dejan desengancharse como acción adicional (Acción astuta, Escape ágil, Paso del viento…). */
 export const DESENGANCHE_ADICIONAL = /acci[oó]n astuta|cunning action|escape [aá]gil|nimble escape|paso del viento|step of the wind|desenganche r[aá]pido/i;
 
 /* ---------------- Puro ---------------- */
-export const turnoVacio = (ronda = 0, turno = 0) => ({ ronda, turno, usado: 0, extra: 0, hist: [], accion: false, adicional: false, reaccion: false, levantado: false });
+export const turnoVacio = (ronda = 0, turno = 0) => ({ ronda, turno, usado: 0, extra: 0, hist: [], accion: false, adicional: false, reaccion: false, interaccion: false, levantado: false });
 /** Lo que le queda de movimiento. */
 export function movimientoRestante(t, velocidad) {
   return Math.max(0, (Number(velocidad) || 0) + (Number(t?.extra) || 0) - (Number(t?.usado) || 0));
 }
 /** Lo que cuesta un tramo: el doble arrastrándose (Derribado sin levantarse). */
 export const costoTramo = (pies, { derribado = false } = {}) => Math.max(0, Number(pies) || 0) * (derribado ? 2 : 1);
+/**
+ * 3.50 · Lo que cuesta de verdad un tramo. `costo` es lo que mide Foundry/dnd5e (regiones de terreno difícil, trepar o nadar
+ * sin esa velocidad, arrastrarse, espacios ocupados); si no viene, se usa la distancia. Encima se suma, un pie más por pie:
+ * Derribado sin moverse como «arrastrarse» (dnd5e no lo cuenta), «En terreno difícil» puesto a mano (si Foundry no lo midió
+ * ya) y arrastrar a quien sujetas (salvo que sea dos tamaños más chico). Puro.
+ */
+export function costoReal({ distancia = 0, costo = null, derribado = false, accion = "walk", terrenoManual = false, arrastra = false } = {}) {
+  const d = Math.max(0, Number(distancia) || 0);
+  const base = Number.isFinite(Number(costo)) && costo !== null ? Math.max(0, Number(costo)) : d;
+  let extra = 0;
+  if (derribado && accion !== "crawl") extra += d;
+  if (terrenoManual && base <= d) extra += d;
+  if (arrastra) extra += d;
+  return base + extra;
+}
+const TAMANOS = ["tiny", "sm", "med", "lg", "huge", "grg"];
+/** Arrastrar cuesta el doble salvo que quien es arrastrado sea dos tamaños (o más) más chico. Puro. */
+export const arrastreCuesta = (yo, otro) => (TAMANOS.indexOf(yo) - TAMANOS.indexOf(otro)) < 2;
 /** Separación entre dos tokens en pies (la casilla más cercana, como mide D&D en cuadrícula). Rectángulos en píxeles. */
 export function separacionPies(a, b, gridPx = 100, gridPies = 5) {
   const dx = Math.max(0, Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) - (a.w + b.w) / 2);
@@ -118,9 +140,10 @@ export function renderBarra() {
     const pct = total ? Math.round(100 * queda / total) : 0;
     BARRA.innerHTML = `<div class="ecos-turno-cab"><b>Turno de ${esc(c.name)}</b>${derribado(actor) ? ' <span class="ecos-turno-aviso">Derribado: arrastrarse cuesta el doble</span>' : ""}</div>
       <div class="ecos-turno-mov" data-tooltip="Se descuenta solo al mover el token. Correr (Dash) suma tu velocidad otra vez."><div style="width:${pct}%"></div><span>Movimiento: ${queda} de ${total} ft</span></div>
-      <div class="ecos-turno-pips">${pip("accion", "Acción", t.accion, puede, "Atacar, lanzar un conjuro, Correr, Desengancharse, Esquivar, Ayudar, Esconderse, usar un objeto…")}${pip("adicional", "Adicional", t.adicional, puede, "Solo si algo te da una acción adicional: un conjuro, un rasgo de clase, la segunda arma…")}${pip("reaccion", actor.statuses?.has?.("acechado") ? "Sin reacción (0 PG)" : "Reacción", t.reaccion || actor.statuses?.has?.("acechado"), puede, "Una por ronda: el ataque de oportunidad, un conjuro de reacción… Se recupera al empezar tu turno. A 0 PG no hay reacciones.")}</div>
+      <div class="ecos-turno-pips">${pip("accion", "Acción", t.accion, puede, "Atacar, lanzar un conjuro, Correr, Desengancharse, Esquivar, Ayudar, Esconderse, usar un objeto…")}${pip("adicional", "Adicional", t.adicional, puede, "Solo si algo te da una acción adicional: un conjuro, un rasgo de clase, la segunda arma…")}${pip("reaccion", actor.statuses?.has?.("acechado") ? "Sin reacción (0 PG)" : "Reacción", t.reaccion || actor.statuses?.has?.("acechado"), puede, "Una por ronda: el ataque de oportunidad, un conjuro de reacción… Se recupera al empezar tu turno. A 0 PG no hay reacciones.")}${pip("interaccion", "Objeto", t.interaccion, puede, "Una interacción con un objeto gratis por turno: abrir una puerta, sacar algo de la mochila, recoger lo que cayó. La segunda gasta tu Acción (Usar un objeto).")}</div>
+      ${t.preparada ? `<div class="ecos-turno-preparada">⏳ Preparado: <b>${esc(t.preparada.que)}</b>${t.preparada.cuando ? ` cuando ${esc(t.preparada.cuando)}` : ""}</div>` : ""}
       ${despierto && v ? `<div class="ecos-turno-pips verbe">${pip("vAccion", `Acción Verbe ${v.usadas}/${v.max}`, !v.accionLibre, false, "La acción Verbe va aparte de las de D&D: la gastan las técnicas.")}${pip("vAdicional", "Adicional Verbe", !v.adicionalLibre, false, "La gastan las técnicas de acción adicional.")}${pip("vReaccion", "Reacción Verbe", !v.reaccionLibre, false, "Sustitución, las defensas y los choques.")}</div>` : ""}
-      ${puede ? `<div class="ecos-turno-botones"><button type="button" data-turno="correr" data-tooltip="Gasta tu Acción: sumas tu velocidad otra vez este turno.">Correr</button><button type="button" data-turno="desenganche" data-tooltip="Gasta tu Acción: este turno tu movimiento no provoca ataques de oportunidad.">Desengancharse</button><button type="button" data-turno="esquivar" data-tooltip="Gasta tu Acción: hasta tu próximo turno los ataques contra ti tienen desventaja y tienes ventaja en salvaciones de DES.">Esquivar</button>${game.user.isGM ? `<button type="button" data-turno="devolver" data-tooltip="Deshace el último movimiento contado (no mueve el token).">↶ Devolver movimiento</button><button type="button" data-turno="mas5" data-tooltip="Le da 5 ft más.">+5 ft</button><button type="button" data-turno="reiniciar" data-tooltip="Vuelve a empezar el turno: todo el movimiento y las acciones.">Reiniciar</button>` : ""}</div>` : ""}`;
+      ${puede ? `<div class="ecos-turno-botones"><button type="button" data-turno="correr" data-tooltip="Gasta tu Acción: sumas tu velocidad otra vez este turno.">Correr</button><button type="button" data-turno="desenganche" data-tooltip="Gasta tu Acción: este turno tu movimiento no provoca ataques de oportunidad.">Desengancharse</button><button type="button" data-turno="esquivar" data-tooltip="Gasta tu Acción: hasta tu próximo turno los ataques contra ti tienen desventaja y tienes ventaja en salvaciones de DES.">Esquivar</button>${game.user.isGM ? `<button type="button" data-turno="devolver" data-tooltip="Deshace el último movimiento contado (no mueve el token).">↶ Devolver movimiento</button><button type="button" data-turno="mas5" data-tooltip="Le da 5 ft más.">+5 ft</button><button type="button" data-turno="reiniciar" data-tooltip="Vuelve a empezar el turno: todo el movimiento y las acciones.">Reiniciar</button><button type="button" data-turno="terreno" data-tooltip="Pone o quita «En terreno difícil» a quien actúa (si no hay una región que ya lo marque): cada pie cuesta uno más.">${actor.statuses?.has?.(TERRENO) ? "✓ " : ""}Terreno difícil</button>` : ""}</div>` : ""}`;
   } catch (err) { console.warn(`${MOD} | barra del turno`, err); }
 }
 const renderLuego = globalThis.foundry?.utils?.debounce ? foundry.utils.debounce(renderBarra, 100) : renderBarra;
@@ -138,6 +161,7 @@ async function clicBarra(ev) {
   if (acc === "devolver") return cambiarTurno(c.id, { op: "devolver" });
   if (acc === "mas5") return cambiarTurno(c.id, { op: "mas", pies: 5 });
   if (acc === "reiniciar") return cambiarTurno(c.id, { op: "reiniciar" });
+  if (acc === "terreno") return actor.toggleStatusEffect(TERRENO).catch(() => null);
 }
 
 /** Correr, Desengancharse o Esquivar desde la barra o el menú: marca la acción y pone su efecto. */
@@ -198,7 +222,7 @@ async function preguntarMovimiento(doc, destino, { oportunidad = [], falta = 0, 
   return true;
 }
 /** Decide si hay que preguntar. Devuelve false para frenar el movimiento mientras se pregunta. */
-function revisarMovimiento(doc, destino, opciones = {}) {
+function revisarMovimiento(doc, destino, opciones = {}, medida = null) {
   if (opciones?.ecosMovOk || !leer("avisosMovimiento", true)) return;
   const combat = combateActivo(), actor = doc?.actor;
   if (!combat || !actor || !destino || (destino.x === undefined && destino.y === undefined)) return;
@@ -215,8 +239,8 @@ function revisarMovimiento(doc, destino, opciones = {}) {
   if (c && combat.combatant?.id === c.id) {
     const t = datosTurno(combat, c.id) ?? turnoVacio(combat.round, combat.turn);
     queda = movimientoRestante(t, velocidadDe(actor));
-    const pies = Math.round(Math.max(Math.abs(despues.x - antes.x), Math.abs(despues.y - antes.y)) / g.gridPx) * g.gridPies;
-    costo = costoTramo(pies, { derribado: derribado(actor) });
+    const pies = Number.isFinite(Number(medida?.distance)) ? Number(medida.distance) : Math.round(Math.max(Math.abs(despues.x - antes.x), Math.abs(despues.y - antes.y)) / g.gridPx) * g.gridPies;
+    costo = costoReal({ distancia: pies, costo: medida?.cost ?? null, derribado: derribado(actor), accion: medida?.accion ?? doc.movementAction, terrenoManual: actor.statuses?.has?.(TERRENO), arrastra: arrastrados(doc).some(a => a.cuesta) });
     falta = costo - queda;
   }
   if (!oportunidad.length && falta <= 0) return;
@@ -226,11 +250,36 @@ function revisarMovimiento(doc, destino, opciones = {}) {
 
 /* ---------- Al mover: se descuenta ---------- */
 const DESDE = new Map();
-async function contarMovimiento(doc, pies) {
+async function contarMovimiento(doc, pies, medida = null) {
   const combat = combateActivo(), c = combatienteDe(combat, doc);
   if (!c || combat.combatant?.id !== c.id || !pies) return;
-  const costo = costoTramo(pies, { derribado: derribado(doc.actor) });
+  const arr = arrastrados(doc);
+  const costo = costoReal({ distancia: pies, costo: medida?.cost ?? null, derribado: derribado(doc.actor), accion: medida?.accion ?? doc.movementAction,
+    terrenoManual: doc.actor?.statuses?.has?.(TERRENO), arrastra: arr.some(a => a.cuesta) });
   await cambiarTurno(c.id, { op: "mover", pies: costo });
+  if (arr.length && medida?.dx !== undefined && leer("arrastrarAgarrado", true)) await llevarAgarrados(doc, arr, medida.dx, medida.dy).catch(err => console.error(`${MOD} | arrastre`, err));
+}
+/** 3.50 · A quién sujeta este token: los que tienen «Agarrado» puesto por algo suyo (su Presa o un rasgo). */
+function arrastrados(doc) {
+  const actor = doc?.actor;
+  if (!actor || !canvas?.tokens) return [];
+  const yo = actor.system?.traits?.size ?? "med";
+  return canvas.tokens.placeables.filter(t => t.document !== doc && t.actor?.statuses?.has?.("grappled")
+    && t.actor.effects?.some?.(e => e.statuses?.has?.("grappled") && String(e.origin ?? "").startsWith(actor.uuid)))
+    .map(t => ({ tok: t, cuesta: arrastreCuesta(yo, t.actor.system?.traits?.size ?? "med") }));
+}
+/** El agarrado viene contigo: se mueve lo mismo que tú. Con «Deshacer» para el DM. */
+async function llevarAgarrados(doc, arr, dx, dy) {
+  if (!dx && !dy) return;
+  const { botonDeshacer, fotografia } = await import("./deshacer.js");
+  const fotos = [];
+  for (const { tok } of arr) {
+    fotos.push(fotografia(tok.document, ["x", "y"]));
+    await tok.document.update({ x: tok.document.x + dx, y: tok.document.y + dy }, { ecosMovOk: true, ecosArrastre: true });
+  }
+  await ChatMessage.create({ whisper: game.users.filter(u => u.isGM || doc.actor?.testUserPermission?.(u, "OWNER")).map(u => u.id), speaker: ChatMessage.getSpeaker({ token: doc }),
+    content: `<p>🤼 <b>${esc(doc.name)}</b> arrastra a ${arr.map(a => `<b>${esc(a.tok.name)}</b>`).join(", ")}${arr.some(a => a.cuesta) ? " (cada pie le cuesta uno más)" : ""}.</p>${botonDeshacer()}`,
+    flags: { [MOD]: { deshacer: { cambios: fotos, borrar: [] } } } });
 }
 
 /* ---------- Al empezar el turno ---------- */
@@ -274,6 +323,7 @@ async function preguntarIniciativa(combatant) {
 if (globalThis.Hooks) {
   Hooks.once("init", () => {
     const reg = (k, name, hint, def = true, scope = "world") => { try { game.settings.register(MOD, k, { name, hint, scope, config: true, type: Boolean, default: def, onChange: () => renderLuego() }); } catch { /* ya */ } };
+    reg("arrastrarAgarrado", "Arrastrar a quien sujetas", "Al mover a quien tiene a alguien Agarrado, el agarrado viene con él y cada pie cuesta uno más (salvo que sea dos tamaños más chico). Con «Deshacer» en el chat.");
     reg("trackerTurno", "Turno a la vista", "Bajo el carrusel de iniciativa: el movimiento que le queda a quien actúa y sus acciones de D&D y del Verbe. El DM devuelve movimiento.");
     reg("avisosMovimiento", "Avisos antes de mover", "Ataque de oportunidad al alejarte de un enemigo (con el menú para desengancharte) y aviso si el movimiento no te alcanza.");
     reg("avisosMovimientoDM", "Avisos antes de mover · también al DM", "Que los avisos salgan también cuando el DM mueve a sus PNJ.", false);
@@ -300,7 +350,9 @@ if (globalThis.Hooks) {
   Hooks.on("preMoveToken", (doc, movement, operation) => {
     hayPreMove = true;
     const dest = movement?.destination ?? {};
-    return revisarMovimiento(doc, dest, { ecosMovOk: operation?.ecosMovOk || movement?.updateOptions?.ecosMovOk });
+    const w = movement?.passed?.waypoints ?? [];
+    return revisarMovimiento(doc, dest, { ecosMovOk: operation?.ecosMovOk || movement?.updateOptions?.ecosMovOk },
+      { distance: movement?.passed?.distance, cost: movement?.passed?.cost, accion: w.at?.(-1)?.action ?? dest.action ?? doc.movementAction });
   });
   Hooks.on("preUpdateToken", (doc, cambios, opciones) => {
     if (!("x" in cambios || "y" in cambios)) return;
@@ -313,15 +365,18 @@ if (globalThis.Hooks) {
   Hooks.on("moveToken", (doc, movement) => {
     hayMove = true;
     if (!gmActivo()) return;
-    const pies = Number(movement?.passed?.distance ?? movement?.passed?.cost) || 0;
-    contarMovimiento(doc, pies).catch(err => console.error(`${MOD} | movimiento`, err));
+    if (movement?.updateOptions?.ecosArrastre) return; // el arrastrado no gasta su movimiento
+    const pies = Number(movement?.passed?.distance ?? movement?.passed?.cost) || 0, w = movement?.passed?.waypoints ?? [];
+    const o = movement?.origin ?? {}, d = movement?.destination ?? {};
+    contarMovimiento(doc, pies, { cost: movement?.passed?.cost, accion: w.at?.(-1)?.action ?? d.action ?? doc.movementAction,
+      dx: (Number(d.x) || 0) - (Number(o.x) || 0), dy: (Number(d.y) || 0) - (Number(o.y) || 0) }).catch(err => console.error(`${MOD} | movimiento`, err));
   });
-  Hooks.on("updateToken", (doc, cambios) => {
-    if (hayMove || !gmActivo() || !("x" in cambios || "y" in cambios)) return;
+  Hooks.on("updateToken", (doc, cambios, opciones) => {
+    if (hayMove || !gmActivo() || !("x" in cambios || "y" in cambios) || opciones?.ecosArrastre) return;
     const d = DESDE.get(doc.uuid); DESDE.delete(doc.uuid);
     if (!d) return;
     const g = canvas.grid.size, pies = Math.round(Math.max(Math.abs(doc.x - d.x), Math.abs(doc.y - d.y)) / g) * (canvas.scene?.grid?.distance ?? 5);
-    contarMovimiento(doc, pies).catch(err => console.error(`${MOD} | movimiento`, err));
+    contarMovimiento(doc, pies, { dx: doc.x - d.x, dy: doc.y - d.y }).catch(err => console.error(`${MOD} | movimiento`, err));
   });
   // Lo que se usa marca la acción de D&D (las técnicas del Verbe gastan su propia economía).
   Hooks.on("createChatMessage", msg => {

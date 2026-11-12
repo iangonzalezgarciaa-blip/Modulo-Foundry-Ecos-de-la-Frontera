@@ -344,3 +344,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 12-nov-2026 | Mejora | Claude | Festejo del 20 natural a pantalla completa (propio). Release v3.47.0 | 3.47.0 |
 | 12-nov-2026 | Mejora | Claude | Relojes: el conteo por días parte del valor inicial. Release v3.48.0 | 3.48.0 |
 | 12-nov-2026 | Mejora | Claude | Festejo del 20 al estilo anime de acción, con fuente propia. Release v3.49.0 | 3.49.0 |
+| 12-nov-2026 | Mejora | Claude | Las 10 propuestas de D&D: cobertura, terreno, saltar, interacción, un conjuro por turno, preparar, influir, inspiración y arrastre. Release v3.50.0 | 3.50.0 |

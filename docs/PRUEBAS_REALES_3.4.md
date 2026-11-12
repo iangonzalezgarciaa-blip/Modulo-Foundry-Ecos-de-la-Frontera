@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.49.0
+# Preparar la primera prueba real · 3.50.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -342,151 +342,157 @@ En el panel del Verbe → Ayuda rápida, abre «Tutorial»: explica el Control, 
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 56. 3.47/3.49 · Festejo del 20 natural (estilo anime de acción)
+### 56. 3.50 · Lo que D&D base no hace
+
+En combate: (1) ataca a un enemigo detrás de una pared o de otra criatura: la tirada trae −2 o −5 y el chat dice por qué. (2–3) Pasa por una región de terreno difícil o pon «Terreno difícil» en la barra del turno: el movimiento cuenta el doble; trepar o nadar sin esa velocidad también. (4) Panel → Saltar: tabla de salto y modo salto. (5) Marca «Objeto» en la barra. (6) Lanza dos conjuros con espacio en el mismo turno: avisa con «Lanzar igual». (7) Preparar: anota la acción; «¡Ahora!» gasta la Reacción; se borra en su turno. (8) Marca a un PNJ y usa Influir: te llega la CD de su actitud y botones para cambiarla; pon su actitud en el panel. (9) Dale Inspiración a un PJ desde el panel: en su tirada sale «Repetir con Inspiración» (con Deshacer). (10) Agarra a alguien con Presa y muévete: viene contigo y cuesta el doble (con Deshacer).
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
+### 57. 3.47/3.49 · Festejo del 20 natural (estilo anime de acción)
 
 Se ve con líneas de foco, trazo de tinta, panel de manga con aura y letras de impacto, naranja y negro (o el color de la naturaleza del Verbe). Menú del DM → Mesa → «Festejo del 20» → «Probar (solo yo)» con un token seleccionado: sale el corte a pantalla completa con su retrato y «¡CRÍTICO!»; un clic lo salta. «Lanzar un 20 a todos»: lo ven los jugadores conectados. Un jugador saca un 20 natural en un ataque: lo ven todos; en la salvación de muerte dice «¡SE LEVANTA!»; un 1 es «¡PIFIA!» en rojo. En el panel de acciones, la estrella pone la frase propia del personaje. Apaga el temblor en tus ajustes y el festejo entero en los del mundo.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 57. 3.46 · Ventaja y desventaja por estados
+### 58. 3.46 · Ventaja y desventaja por estados
 
 Pon a un enemigo Derribado y atácalo desde una casilla pegada: la ventana de la tirada ya viene en Ventaja y el chat dice por qué; desde lejos, Desventaja. Usa Esquivar con un PJ y atácalo: Desventaja. Marca a un aliado (T) y usa Ayudar en el panel: queda «Ayudado» y su próxima tirada sale con Ventaja (y se gasta). Esconderse tira Sigilo y deja Escondido con 15 o más; al atacar se pierde. Cambia el modo a mano en la ventana: respeta lo que elijas.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 58. 3.46 · Reacciones del Verbe a la vista
+### 59. 3.46 · Reacciones del Verbe a la vista
 
 En combate, con un PJ despierto que conozca una reacción de alcance (Coser la herida, 18 m) a menos de 60 ft de un aliado: que un enemigo ataque al aliado. A su jugador (o a ti si es PNJ) le llega «Reacción Verbe» con la distancia, el costo y el botón Usar, y su retrato brilla en el carrusel 30 s. Aléjalo a más de 60 ft y repite: no avisa.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 59. 3.46 · Botón «Acciones disponibles» en la barra izquierda
+### 60. 3.46 · Botón «Acciones disponibles» en la barra izquierda
 
 Bajo el botón del Verbe (gota) está el de Acciones (puño): un clic muestra u oculta el panel de acciones; Mayús+clic abre la ventana completa de Acción estándar de la ficha seleccionada.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 60. 3.46 · Reliquias con aspecto, qué es y su hito
+### 61. 3.46 · Reliquias con aspecto, qué es y su hito
 
 Corre «Almacén de reliquias» en el Menú del DM. Abre una copia de «2 · Para entregar»: muestra Aspecto y Qué es, y no dice cómo se despierta. Su manual (carpeta 1) trae el hito propio para llegar a Resonante.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 61. 3.45 · Panel de acciones, ventanas y reliquias
+### 62. 3.45 · Panel de acciones, ventanas y reliquias
 
 A la izquierda está el panel «Acciones»: selecciona un token y cambia; en combate marca Acción, Adicional y Reacción (clic otra vez para devolverla) y descuenta el movimiento; prueba Esquivar, Correr y Desengancharse (con Mayús gasta la Adicional). Arrástralo desde su cabecera y plégalo. Abre cualquier ventana del módulo: se agranda desde la esquina y se desplaza con la rueda. Menú del DM: las descripciones ya no se descuadran (entera al pasar el ratón). Corre «Almacén de reliquias»: quedan dos carpetas (Manual del DM y Para entregar) y en una copia para entregar el botón «Subir etapa (DM)» funciona. El icono de Fortaleza se ve bien. Abre un PNJ cualquiera: tiene las Acciones de Fuerza, Destreza, etc.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 62. 3.44 · Balance del encuentro al arrastrar
+### 63. 3.44 · Balance del encuentro al arrastrar
 
 Arrastra a la escena una criatura hostil de VD alto (por ejemplo VD 5 con el grupo en nivel 2): sale «Balance del encuentro» con el grupo marcado, la etiqueta LETAL y el aviso de criatura letal por sí sola. Desmarca un PJ y mira cómo cambia. Pulsa «Colocar» en «Interesante» (aparecen junto al token) y luego «Deshacer lo colocado»; «Quitar el token que puse» lo borra. Marca «No preguntar más en esta escena» y arrastra otra: ya no sale. Menú del DM → Mesa → «Balance del encuentro» lo abre a mano.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 63. 3.43 · Relojes, defensa a la vista, siluetas y viajes
+### 64. 3.43 · Relojes, defensa a la vista, siluetas y viajes
 
 Menú del DM → Mesa: «Relojes de facción» (mueve uno con + y −, escribe un número; cada cambio te llega con Deshacer), «Viaje por zonas» (3 días en el bosque, ritmo rápido: mira el resumen, arma un encuentro y pulsa Deshacer: el reloj vuelve), «Tokens a silueta» (pasa dos y luego «Deshacer todas»). En la escena, una criatura con Coraza tiene anillo azul y «C+n»; en Configuración del módulo, «Defensa a la vista» cambia quién la ve.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 64. 3.42 · Suceso del día y Deshacer
+### 65. 3.42 · Suceso del día y Deshacer
 
 Avanza el reloj al día siguiente: te llega un susurro «Suceso del día» con la tabla de la estación y los botones Otro, Elegir a mano, Deshacer, Volver al anterior y Contar a la mesa; pruébalos todos. Menú del DM → Mesa → «Suceso del día» apaga el automático. Después, cruza una capa del Abismo y pulsa «Deshacer» en el resumen: el Agotamiento, los PG y el Envenenado vuelven a como estaban. Lo mismo con un mensaje de fama.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 65. 3.41 · Capas del Abismo
+### 66. 3.41 · Capas del Abismo
 
 Menú del DM → Mesa → «Capas del Abismo»: pon la escena en la capa 3 y guarda. «Cruzar hacia afuera» de la 3 a la 0 con un PJ: tira tres salvaciones de CON (capas 3, 2 y 1; la 1 solo si marcas «más de un día» o «durmió») y aplica Agotamiento, daño y Envenenado; lo que no es número te llega en un susurro. Marca «durmió» y mira que cobre como una capa más honda. «Amanecer: la llamada» en la capa 3 tira Sabiduría CD 13.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 66. 3.39 · La barra del turno desde el jugador
+### 67. 3.39 · La barra del turno desde el jugador
 
 Con un jugador conectado y su PJ en su turno: que marque y desmarque «Acción» en la barra, que use Correr (el movimiento sube) y Desengancharse. Antes no le hacía nada; ahora cambia para todos. Si está Derribado al empezar, «Me levanto» descuenta la mitad del movimiento.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 67. 3.39 · La salvación extra a 0 PG
+### 68. 3.39 · La salvación extra a 0 PG
 
 Deja a un PJ a 0 PG en combate y pasa a su turno: tras la salvación de muerte del turno, a su jugador le sale «¿gastas tu acción para otra con ventaja?». Antes no salía nunca. Si falla, +1 Agotamiento.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 68. 3.39 · Lo que entrena un clon
+### 69. 3.39 · Lo que entrena un clon
 
 Con un PJ que tenga una técnica de clones: crea un clon, avanza el reloj del mundo 8 horas y disípalo. La ventana de recuerdos sugiere las horas: al enviar, el chat dice +1 día de entrenamiento guardado (o el entrenamiento de su naturaleza se acorta). El panel muestra los días guardados; al aprender o cultivar una técnica se gastan solos. Dos clones con 40 h el mismo día: solo cuenta hasta su competencia.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 69. 3.26 · El diario de cada sangre
+### 70. 3.26 · El diario de cada sangre
 
 Abre el panel del Verbe de un PJ, pestaña DM, «Naturalezas y linaje»: cambia el linaje en la lista. Debe abrirse la ventana «Sangre · …» con el resumen y el botón «Abrir su diario», que lleva a su página de «Mundo 11 · Las sangres de los dioses». Lo mismo al elegir un ojo en «Despertar un ojo» y al despertar a alguien. El botón «Su diario» la vuelve a abrir.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 70. 3.26 · El pase del DM
+### 71. 3.26 · El pase del DM
 
 Con un jugador conectado, que marque a un PNJ (T) y use una «Acción de Carisma» (Fintar) o una técnica. Al DM le llega «¿Le afecta?»: desmarca o da el pase. Con pase, la acción sigue normal; sin pase, no se gasta nada y el jugador recibe en privado «no le afecta». Con el DM usando la acción, o sin objetivo, no pregunta.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 71. 3.26 · Aprender conjuros
+### 72. 3.26 · Aprender conjuros
 
 En la hoja de un PJ con clase que lanza conjuros, pestaña Conjuros: arriba aparece «Aprender conjuros». Abre el buscador con su lista (D&D y PF2e mezclados) y suma lo elegido. En «Reglas de la casa» aparece «15 · Conjuros: cómo sumarlos a tu hoja».
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 72. 3.9 · Música de YouTube
+### 73. 3.9 · Música de YouTube
 
 En Mesa Ecos → Control, pega un enlace de YouTube y pulsa Reproducir: un jugador debe oírlo y ver el recuadro abajo a la izquierda. Pausa y Seguir: los dos en el mismo punto. El jugador recarga: retoma donde iba. Añade dos a la cola: al terminar uno suena el siguiente. El volumen y «Silenciar» del jugador solo cambian lo suyo. El recuadro se mueve desde su barra y cambia de tamaño desde la esquina o con − y +; al recargar vuelve donde lo dejaste.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 73. 3.10 · Foundry 14 y dnd5e 6 sin midi-qol
+### 74. 3.10 · Foundry 14 y dnd5e 6 sin midi-qol
 
 Con un PJ despierto, usa una técnica de ataque marcando un enemigo: debe salir la ventana Normal / Ventaja / Desventaja y tirar el ataque; luego el daño desde la tarjeta. Usa una de salvación con área: debe pedirte colocar la región. Saca un 1 natural con un PJ: debe ofrecer la Moneda Antigua. En combate, una tirada de d20 debe proponer la tabla del d20.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 74. 3.10 · Mis técnicas: filtros, favoritas y paso a paso
+### 75. 3.10 · Mis técnicas: filtros, favoritas y paso a paso
 
 Abre el panel del Verbe → Mis técnicas. Pulsa los filtros por tipo (Ataque, Salvación…): la lista cambia y el número coincide. Marca una estrella: esa técnica sube arriba y sigue marcada al reabrir. Despliega «Así se resuelve, paso a paso»: debe mostrar el bono de ataque o la CD y el daño de la ficha.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 75. 3.10 · Repetir canción
+### 76. 3.10 · Repetir canción
 
 En Mesa Ecos → Control, pon un video corto y pulsa «Repetir: no» para que diga «sí». Al terminar, debe volver a empezar para todos a la vez. Desactívalo: al terminar debe pasar al siguiente de la cola.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 76. 3.11 · Compendios del Verbe
+### 77. 3.11 · Compendios del Verbe
 
 Recarga el mundo como DM. En «Reglas de la casa» debe aparecer «11 · Compendio del Verbe» con ramas, naturalezas y dotes, y un diario «Ecos · Compendio del Verbe (solo DM)». Un jugador sin personaje despertado no ve ninguno de los dos; uno con personaje despertado ve solo el primero. Haz una prueba de habilidad: la consola no debe mostrar errores de adv-reminder.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 77. 3.12 · Acciones de cualquiera, el 20 y el 1, armas y mercader
+### 78. 3.12 · Acciones de cualquiera, el 20 y el 1, armas y mercader
 
 Abre la hoja de un PJ: debe tener Golpe sin armas y «Acciones de Fuerza… de Carisma». Usa Presa con un enemigo marcado: salva FUE o DES y, si falla, queda Agarrado. Saca un 20 en un ataque: el daño se duplica (crítico del Manual, desde 3.14) y además sale la tabla del 20. Usa una técnica de Cuerpo: pregunta «¿Con qué atacas?». Con espada y escudo, una técnica con Gestos avisa de las manos. En Mesa Ecos → Control, sortea el mercader extraño y compra algo con Monedas Antiguas. En el panel del Verbe, «Cambiar Monedas» da 1 Trazo por Moneda, como mucho 2 en cada nivel.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 78. 3.13 · Combate táctico y diarios ordenados
+### 79. 3.13 · Combate táctico y diarios ordenados
 
 Recarga el mundo como DM. En «Reglas de la casa» debe aparecer «14 · Combate táctico», y los diarios «Ecos · …» del DM que estaban sueltos deben estar en «Mesa, tramas y personajes [DM]», numerados. En Mesa Ecos → Control, «Combate táctico» debe estar encendido. Pon a un PJ y un aliado en lados opuestos de un enemigo: el ataque cuerpo a cuerpo del PJ suma +2 «Desprevenido». Usa Fintar: si el enemigo falla, queda Desprevenido. Marca a un PNJ como secuaz y hazle 1 de daño: cae a 0 PG. Marca a un líder enemigo y déjalo a 0 PG: el DM recibe en privado las salvaciones de moral. Usa Evaluar al enemigo con un blanco marcado: llega un susurro con lo que ganaste.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 79. 3.14 · D&D primero
+### 80. 3.14 · D&D primero
 
 Saca un 20 natural en un ataque: los dados de daño se tiran dos veces (crítico del Manual) y además sale la tabla del 20. En la hoja de un pícaro o bardo con Pericia en Engaño, usa Fintar: la CD de la tarjeta es 8 + su Engaño, mayor que la de un guerrero con el mismo Carisma. Presa sigue con 8 + FUE + competencia. Ponte detrás de una mesa y usa Ponerse a cubierto: queda cobertura de tres cuartos (+5), no media. En «12 · Lo que cualquiera puede intentar», cada fila dice si es regla base del Manual o de Ecos.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-### 80. 3.15 · Conjuros de PF2e, la lupa y Resonancia
+### 81. 3.15 · Conjuros de PF2e, la lupa y Resonancia
 
 Recarga el mundo como DM y espera un minuto: aparece el compendio «Conjuros de PF2e (Ecos)» con carpetas por nivel, y «Listas de conjuros de PF2e (Ecos)» con el glosario. En la hoja de un mago, en el libro de conjuros, pulsa la lupa de Nivel 1: el buscador muestra conjuros de D&D y de PF2e de la lista de mago. Elige uno: si te quedan gratis, entra sin coste; si no, pide copiarlo por 50 po y 2 horas por nivel. Despierta el Verbe de una hoja: recibe la dote «Resonancia del Verbe». Con naturaleza Fuego, la CD de un conjuro de fuego sube 1 en la hoja y su ataque suma +1. Con naturaleza Agua, Curar heridas cura 1 PG más por dado.
 

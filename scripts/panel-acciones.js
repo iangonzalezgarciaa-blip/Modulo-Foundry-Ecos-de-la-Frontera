@@ -6,11 +6,12 @@
  */
 import { ACCIONES_BASICAS } from "./accion-estandar.js";
 import { ayudar, esconderse } from "./ventaja-estados.js";
+import { saltar, preparar, dispararPreparada, influir, ponerActitud, alternarInspiracion, NOMBRE_ACTITUD } from "./reglas-dnd.js";
 import { ACCIONES_DND, accionEstandar, cambiarTurno, combateActivo, datosTurno, turnoVacio, movimientoRestante } from "./turno-tracker.js";
 const MOD = "ecos-frontera";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const ICONO = { atacar: "fa-hand-fist", magia: "fa-wand-sparkles", correr: "fa-person-running", desenganche: "fa-person-walking-arrow-right", esquivar: "fa-shield-halved",
-  ayudar: "fa-handshake-angle", esconderse: "fa-user-ninja", buscar: "fa-magnifying-glass", estudiar: "fa-book-open", influir: "fa-comments", objeto: "fa-flask", preparar: "fa-hourglass-half", oportunidad: "fa-bolt" };
+  saltar: "fa-person-running", ayudar: "fa-handshake-angle", esconderse: "fa-user-ninja", buscar: "fa-magnifying-glass", estudiar: "fa-book-open", influir: "fa-comments", objeto: "fa-flask", preparar: "fa-hourglass-half", oportunidad: "fa-bolt" };
 const leerLS = (k, d) => { try { return JSON.parse(localStorage.getItem(`${MOD}.${k}`)) ?? d; } catch { return d; } };
 const guardarLS = (k, v) => { try { localStorage.setItem(`${MOD}.${k}`, JSON.stringify(v)); } catch { /* sin almacenamiento */ } };
 const velocidad = a => Number(a?.system?.attributes?.movement?.walk) || 30;
@@ -27,9 +28,11 @@ function html(actor) {
   const mov = t ? `${movimientoRestante(t, velocidad(actor))} / ${velocidad(actor) + (Number(t.extra) || 0)} ft` : `${velocidad(actor)} ft`;
   const plegado = leerLS("panelPlegado", false);
   return `<header data-arrastre><img src="${esc(actor.img)}" alt=""><b>${esc(actor.name)}</b>${actor.isOwner ? `<button type="button" data-festejo title="Tu frase del 20 y del 1 natural (festejo a pantalla completa)"><i class="fa-solid fa-star"></i></button>` : ""}<button type="button" data-plegar title="${plegado ? "Desplegar" : "Plegar"}">${plegado ? "+" : "–"}</button></header>
-    ${plegado ? "" : `<div class="ecos-pa-turno">${["accion", "adicional", "reaccion"].map(pip).join("")}<span class="ecos-pa-mov" title="Movimiento que queda"><i class="fa-solid fa-shoe-prints"></i> ${mov}</span></div>
+    ${plegado ? "" : `<div class="ecos-pa-turno">${["accion", "adicional", "reaccion", "interaccion"].map(pip).join("")}<span class="ecos-pa-mov" title="Movimiento que queda"><i class="fa-solid fa-shoe-prints"></i> ${mov}</span></div>
+    ${t?.preparada ? `<div class="ecos-pa-preparada">⏳ <b>${esc(t.preparada.que)}</b>${t.preparada.cuando ? ` cuando ${esc(t.preparada.cuando)}` : ""}<br><button type="button" data-preparada="si" title="Se cumplió: gasta tu Reacción">¡Ahora!</button><button type="button" data-preparada="no" title="Soltar lo preparado">Soltar</button></div>` : ""}
+    ${game.user.isGM ? `<div class="ecos-pa-dm">${actor.type === "character" ? `<button type="button" data-inspiracion title="Dar o quitar Inspiración heroica">${actor.system?.attributes?.inspiration ? "★ Inspiración" : "☆ Inspiración"}</button>` : `<span title="Su actitud hacia los PJ: la CD de Influir">Actitud:</span>${Object.keys(NOMBRE_ACTITUD).map(k => `<button type="button" data-actitud="${k}" class="${(actor.getFlag(MOD, "actitud") ?? "indiferente") === k ? "activa" : ""}">${NOMBRE_ACTITUD[k]}</button>`).join("")}`}</div>` : ""}
     ${c ? "" : `<p class="ecos-pa-nota">Fuera de combate: las acciones se cuentan solo en un combate.</p>`}
-    <div class="ecos-pa-acciones">${ACCIONES_BASICAS.map(a => `<button type="button" data-accion="${a.id}" title="${esc(a.n)} · ${a.tipo === "reaction" ? "Reacción" : "Acción"}\n${esc(a.que)}"><i class="fa-solid ${ICONO[a.id] ?? "fa-circle"}"></i><span>${esc(a.n)}</span></button>`).join("")}</div>`}`;
+    <div class="ecos-pa-acciones"><button type="button" data-accion="saltar" title="Saltar · movimiento\nCalcula tu salto largo y alto (con y sin carrera) y pone el token en modo salto."><i class="fa-solid ${ICONO.saltar}"></i><span>Saltar</span></button>${ACCIONES_BASICAS.map(a => `<button type="button" data-accion="${a.id}" title="${esc(a.n)} · ${a.tipo === "reaction" ? "Reacción" : "Acción"}\n${esc(a.que)}"><i class="fa-solid ${ICONO[a.id] ?? "fa-circle"}"></i><span>${esc(a.n)}</span></button>`).join("")}</div>`}`;
 }
 let panel = null;
 function pintar() {
@@ -48,7 +51,11 @@ async function alClic(ev) {
   const pl = ev.target.closest("[data-plegar]"); if (pl) { guardarLS("panelPlegado", !leerLS("panelPlegado", false)); return pintar(); }
   const p = ev.target.closest("[data-pip]");
   if (p) { const combat = combateActivo(), c = combat?.combatants?.find?.(x => x.actor === actor || x.actorId === actor.id); if (c) await cambiarTurno(c.id, { op: "alternar", clave: p.dataset.pip }); return; }
+  const pr = ev.target.closest("[data-preparada]"); if (pr) return dispararPreparada(actor, { cancelar: pr.dataset.preparada === "no" });
+  if (ev.target.closest("[data-inspiracion]")) return alternarInspiracion(actor);
+  const ac = ev.target.closest("[data-actitud]"); if (ac) return ponerActitud(actor, ac.dataset.actitud);
   const b = ev.target.closest("[data-accion]"); if (!b) return;
+  if (b.dataset.accion === "saltar") return saltar(actor);
   const a = ACCIONES_BASICAS.find(x => x.id === b.dataset.accion);
   if (!a) return;
   if (["atacar", "magia", "objeto"].includes(a.id)) return game.modules.get(MOD)?.api?.accionEstandar?.(actor) ?? ui.notifications.info("Usa el arma, el conjuro o el objeto desde la hoja.");
@@ -56,6 +63,8 @@ async function alClic(ev) {
   // 3.46: Ayudar pone «Ayudado» en el aliado marcado; Esconderse tira Sigilo y deja Escondido si llega a 15.
   if (a.id === "ayudar") return ayudar(actor, { gastar: true });
   if (a.id === "esconderse") return esconderse(actor, { gastar: true });
+  if (a.id === "preparar") return preparar(actor);
+  if (a.id === "influir") return influir(actor);
   // El resto: gasta la acción (o la reacción) y lo anuncia; la prueba la pide el DM.
   const combat = combateActivo(), c = combat?.combatants?.find?.(x => x.actor === actor || x.actorId === actor.id), clave = a.tipo === "reaction" ? "reaccion" : (ev.shiftKey ? "adicional" : "accion");
   const t = c ? (datosTurno(combat, c.id) ?? turnoVacio()) : null;
