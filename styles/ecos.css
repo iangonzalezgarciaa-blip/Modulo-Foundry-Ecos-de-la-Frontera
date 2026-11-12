@@ -1079,3 +1079,40 @@ button.ecos-inspiracion { margin-top: 4px; background: linear-gradient(90deg, #f
 #ecos-turno .ecos-turno-mov.previa > div { background: linear-gradient(90deg, #b8862b, #e0b35a); }
 #ecos-turno .ecos-turno-mov.previa.falta > div { background: #b5371f; }
 #ecos-turno .ecos-turno-mov.previa.falta > span { color: #ffd0c4; }
+
+/* 3.58 · Festejo del enemigo: terror (su 20) y burla (su 1) */
+#ecos-festejo.ef-terror .ef-velo { background: radial-gradient(circle at 62% 50%, #3d0000 0%, #120000 50%, #000 100%); animation: ef-terror-pulso 1s ease-in-out infinite; }
+#ecos-festejo.ef-terror .ef-flash { background: #8b0000; }
+#ecos-festejo.ef-terror .ef-rayos { opacity: 0.25; filter: hue-rotate(-20deg) saturate(2); }
+#ecos-festejo.ef-terror .ef-aura { background: radial-gradient(ellipse at center, rgba(255, 30, 30, 0.55) 0%, rgba(90, 0, 0, 0.5) 40%, transparent 70%); animation: ef-terror-pulso 1s ease-in-out infinite; }
+#ecos-festejo.ef-terror .ef-retrato img { filter: grayscale(0.6) contrast(1.4) brightness(0.8) sepia(0.6) hue-rotate(-30deg) saturate(3); animation: ef-terror-glitch 0.9s steps(2) infinite, ef-zoom 3s ease-out both; }
+#ecos-festejo.ef-terror .ef-grito { color: #ff2b2b; -webkit-text-stroke: 3px #000; text-shadow: 0 0 18px #ff0000, 0 6px 0 #300; animation: ef-terror-tiembla 0.12s linear infinite; }
+#ecos-festejo.ef-terror .ef-nombre { background: #000; color: #ff4d4d; }
+#ecos-festejo.ef-terror .ef-chispas i { background: #ff2020; box-shadow: 0 0 10px 4px #ff0000; }
+#ecos-festejo .ef-grietas { position: absolute; inset: 0; pointer-events: none; opacity: 0.85; animation: ef-flash 0.25s 0.15s reverse both;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.55' stroke-width='.35'%3E%3Cpath d='M58 46 L70 30 L74 12 L80 0 M58 46 L84 40 L100 44 M58 46 L66 62 L62 80 L70 100 M58 46 L40 52 L22 48 L0 56 M58 46 L48 30 L36 22 L30 0 M70 30 L78 34 M66 62 L80 70 L90 86 M40 52 L36 68 L20 80'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat; }
+#ecos-festejo .ef-latido { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 18vw 6vw rgba(120, 0, 0, 0.85); animation: ef-latido 1s ease-in-out infinite; }
+#ecos-festejo .ef-gotas i { position: absolute; top: 0; width: 1.2vw; height: var(--h); background: linear-gradient(#5a0000, #b30000); border-radius: 0 0 50% 50% / 0 0 30% 30%; transform-origin: top; animation: ef-gota 1.6s var(--d) ease-in both; opacity: 0.9; }
+#ecos-festejo .ef-amenaza { position: absolute; left: 6vw; bottom: 9vh; font-family: "EcosImpacto", serif; font-size: clamp(22px, 3vw, 46px); color: #ffb3b3; letter-spacing: 0.12em; text-shadow: 0 0 10px #f00; opacity: 0; animation: ef-aparece 0.6s 0.9s ease-out both; }
+#ecos-festejo.ef-burla .ef-velo { background: radial-gradient(circle at 40% 50%, #fffbe0 0%, #fff27a 25%, #ff9ecb 60%, #8a5cff 100%); }
+#ecos-festejo.ef-burla .ef-rayos { opacity: 0.4; }
+#ecos-festejo.ef-burla .ef-retrato img { filter: grayscale(0.4); transform: rotate(8deg); }
+#ecos-festejo.ef-burla .ef-grito { color: #fff27a; -webkit-text-stroke: 3px #2a1640; text-shadow: 0 6px 0 #ff5fa2; animation: ef-boing 0.7s cubic-bezier(0.3, 1.8, 0.5, 1) both; }
+#ecos-festejo.ef-burla .ef-nombre { background: #2a1640; color: #fff; }
+#ecos-festejo.ef-burla .ef-texto { top: 30%; }
+#ecos-festejo .ef-burla-caja { position: absolute; left: 30vw; bottom: 0; width: 21vw; max-width: 300px; z-index: 3; animation: ef-entra-abajo 0.45s 0.15s cubic-bezier(0.3, 1.6, 0.5, 1) both; }
+#ecos-festejo .ef-duende { width: 100%; height: auto; filter: drop-shadow(0 8px 0 rgba(0, 0, 0, 0.35)); }
+#ecos-festejo .ef-duende-cabeza { transform-origin: 110px 170px; animation: ef-risa 0.32s ease-in-out infinite alternate; }
+#ecos-festejo .ef-duende-cuerpo { transform-origin: 110px 250px; animation: ef-salta 0.32s ease-in-out infinite alternate; }
+#ecos-festejo .ef-globo { position: absolute; left: 62%; top: -8%; padding: 0.3em 0.7em; border: 4px solid #2a1640; border-radius: 1.2em; background: #fff; color: #2a1640;
+  font-family: "EcosImpacto", sans-serif; font-size: clamp(18px, 2.4vw, 38px); white-space: nowrap; transform: rotate(6deg); animation: ef-boing 0.6s 0.35s cubic-bezier(0.3, 1.8, 0.5, 1) both; }
+@keyframes ef-terror-pulso { 0%, 100% { filter: brightness(0.85); } 50% { filter: brightness(1.25); } }
+@keyframes ef-terror-glitch { 0% { transform: translate(0, 0); } 50% { transform: translate(-4px, 2px) skewX(-2deg); } 100% { transform: translate(3px, -2px); } }
+@keyframes ef-terror-tiembla { 0% { transform: translate(0, 0); } 25% { transform: translate(-2px, 1px); } 50% { transform: translate(2px, -1px); } 75% { transform: translate(-1px, -2px); } }
+@keyframes ef-latido { 0%, 100% { opacity: 0.55; } 15% { opacity: 1; } 30% { opacity: 0.6; } 45% { opacity: 0.95; } }
+@keyframes ef-gota { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes ef-aparece { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes ef-boing { from { transform: scale(0.2) rotate(-12deg); } to { transform: scale(1) rotate(6deg); } }
+@keyframes ef-entra-abajo { from { transform: translateY(70vh); } to { transform: none; } }
+@keyframes ef-risa { from { transform: rotate(-7deg); } to { transform: rotate(7deg) translateY(-4px); } }
+@keyframes ef-salta { from { transform: translateY(0); } to { transform: translateY(-6px); } }

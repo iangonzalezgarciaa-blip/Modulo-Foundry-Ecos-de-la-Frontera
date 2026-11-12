@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.58.0 — 2026-11-12
+
+- **Festejo del enemigo** (pedido del autor): el 20 natural de un PNJ sale para los jugadores como **terror** —oscuridad roja que late, grietas, gotas, retrato en negativo con temblor, «¡GOLPE MORTAL!» y «Prepárense…»— con un retumbe grave, un latido y un chirrido **sintetizados** (sin archivos). Su 1 natural es **burla**: «¡FALLÓ!» y un duendecillo original que se ríe y señala, con un trombón triste sintetizado.
+- Ajuste «Festejo del enemigo: terror y burla» (encendido); Menú del DM → Festejo del 20: botones para lanzarlos a mano. Solo lo ve quien ve la tirada (si el DM tira en privado, no sale a los jugadores).
+
 ## 3.57.0 — 2026-11-12
 
 - **Menú de acciones con pestañas** (panel de la barra izquierda y ventana «Acción estándar»): arriba, **Acción / Adicional / Reacción / Fuera de combate** (y Legendarias en los PNJ que las tienen), con cuántas hay y tachadas si ya las gastaste. Se arma solo con la hoja de PJ o PNJ: en Acción, Atacar (armas), Magia (conjuros preparados; apagados si no hay espacio), De tu hoja y De cualquiera; en Adicional y Reacción, lo de la hoja y las acciones de cualquiera (Apuntar, Fintar, Aguantar, Ponerse a cubierto, Interponerse…); Fuera de combate: descansos, Taller, rituales y lo que lleva minutos u horas. Clic usa la actividad.

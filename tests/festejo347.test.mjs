@@ -15,7 +15,9 @@ test('3.47 · el 1 es Pifia salvo que se apague; iniciativa, concentración y da
   for (const t of ['initiative', 'concentration', 'damage', null]) assert.equal(festejoDe({ natural: 20, tipo: t }), null, String(t));
 });
 test('3.47 · solo PJ por defecto; «solo ataques» deja fuera pruebas y salvaciones', () => {
-  assert.equal(festejoDe({ natural: 20, tipo: 'attack', esPJ: false }), null);
+  // 3.58: el PNJ ya no queda fuera: su 20 es terror (salvo que el DM apague «Festejo del enemigo»).
+  assert.equal(festejoDe({ natural: 20, tipo: 'attack', esPJ: false, enemigo: false }), null);
+  assert.equal(festejoDe({ natural: 20, tipo: 'attack', esPJ: false }).modo, 'terror');
   assert.ok(festejoDe({ natural: 20, tipo: 'attack', esPJ: false, quien: 'todos' }));
   assert.equal(festejoDe({ natural: 20, tipo: 'save', soloAtaques: true }), null);
   assert.ok(festejoDe({ natural: 20, tipo: 'death', soloAtaques: true }));
