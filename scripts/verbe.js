@@ -700,6 +700,18 @@ export function ramaAbierta(actor, rama) {
   if (e.principal === rama || (e.ordenRamas ?? []).includes(rama) || Number(e.rangos?.[rama]) > 0) return true;
   return itemsTecnica(actor).some(i => i.getFlag?.(MOD, F)?.rama === rama);
 }
+/** 3.66 (regla del autor: «todo lo que se compra con Trazos lleva días de entrenamiento»): rangos de rama y Control. */
+export const planRango = n => ({ unidad: "dias", bloque: 1, exitos: Math.max(1, Number(n) || 1), cd: 11 + Math.max(1, Number(n) || 1) });
+export const planControl = v => ({ unidad: "dias", bloque: 1, exitos: Number(v) >= 2 ? 3 : 2, cd: Number(v) >= 2 ? 15 : 13 });
+const entrenarConTrazos = () => ajuste("trazosConEntreno", true);
+async function empezarEntreno(actor, id, { nombre, plan, trazos: t, extra = {}, texto, mesa }) {
+  const e = estado(actor);
+  await guardar(actor, { gastados: (Number(e.gastados) || 0) + t, entrenosDote: { [id]: { id, nombre, ...plan, trazos: t, progreso: 0, intentos: 0, desde: Number(game.time?.worldTime) || 0, ...extra } },
+    historial: hist(e, texto), compras: compra(e, id.split(":")[0], { id, ...extra }, t, texto) });
+  aLaMesa(actor, "✦ Empieza a entrenar", `<p>${escH(actor.name)} ${escH(mesa)}: ${escH(textoPlan(plan))}, CD ${plan.cd}. Un 20 natural lo termina al instante. Sigue en «Entrenando».</p>`);
+  refrescarPanel(actor.id);
+  return true;
+}
 /** 3.65: abrir una rama entrenando: 2 Trazos y 2 días buenos (Control del Verbe, CD 13). Respeta las ramas de su etapa. */
 export const PLAN_RAMA = { unidad: "dias", bloque: 1, exitos: 2, cd: 13, trazos: 2 };
 export function abrirRama(actor, rama) { return serializarActor(actor, async () => {
@@ -1014,6 +1026,8 @@ export function costoUso(actor, meta, grado, { infusion = null } = {}) {
   let c = meta.costoBase === undefined ? costoGrado(grado) : Number(meta.costoBase) + costoGrado(grado) - costoGrado(meta.g);
   const cul = e.cultivos?.[meta.id];
   if (cul) c -= (cul.mejoras ?? []).filter(m => m === "verbe").length;
+  // 3.66 (regla del autor): una técnica de 0 Verbe mejorada cuesta 1 Verbe por cada mejora (lo que gana, lo paga).
+  if (cul && Number(meta.g) === 0 && costoGrado(grado) === 0) c += (cul.mejoras ?? []).filter(m => m !== "verbe").length;
   if (tieneDote(actor, "maestria-control") && e.maestria === meta.rama) c -= 1;
   if (meta.rama === "sangre" && rangoDon(actor, "sangre") >= 3) c -= 1;
   const her = herenciaDe(actor);
@@ -2162,7 +2176,7 @@ async function aprobarInterno(pid, si = true) {
 /* ------------------------------------------------------------------ */
 
 export function subirRango(actor, ...args) { return serializarActor(actor, () => subirRangoInterno(actor, ...args)); }
-async function subirRangoInterno(actor, rama) {
+async function subirRangoInterno(actor, rama, { aprobadoYa = false } = {}) {
   if (!D.ramas.some(r => r.id === rama)) return false;
   const r = rangoDe(actor, rama);
   if (r >= ultimoRango()) return rechazar(`Ya es ${nombreRango(r)}: es el rango más alto.`);
@@ -2172,6 +2186,9 @@ async function subirRangoInterno(actor, rama) {
   const c = costoRango(actor, rama, r + 1);
   const { libres } = trazos(actor);
   if (libres < c) return rechazar(`Cuesta ${c} Trazos y tiene ${libres}.`, "warn");
+  if (estado(actor)?.entrenosDote?.[`rango:${rama}`]) return rechazar("Ya está entrenando ese rango: sigue en «Entrenando».", "warn");
+  if (entrenarConTrazos() && !aprobadoYa) return empezarEntreno(actor, `rango:${rama}`, { nombre: `${nombreRama(rama)}: ${sig.nombre}`, plan: planRango(r + 1), trazos: c, extra: { rama, a: r + 1 },
+    texto: `Empieza a entrenar ${nombreRama(rama)} ${sig.nombre} (${c} Trazos)`, mesa: `paga ${c} Trazos y empieza a entrenar el rango ${sig.nombre} en ${nombreRama(rama)}` });
   const e = estado(actor);
   const orden = [...(e.ordenRamas ?? [])];
   if (!orden.includes(rama)) orden.push(rama);
@@ -2282,7 +2299,14 @@ async function elegirModoEntreno(titulo, texto) {
       <p class="ecos-nota">Solo: Control del Verbe o Sabiduría (por instinto). Con un maestro o un compañero que te guía, puedes elegir otra característica.</p></div>`,
     buttons: [{ action: "ok", label: "Tirar", icon: "fa-solid fa-dice-d20", default: true, callback: (_e, b) => b.form.elements.modo.value }, { action: "no", label: "Cancelar", callback: () => null }], rejectClose: false }).catch(() => null);
 }
-const doteOEntreno = (actor, id) => D.dotes.find(x => x.id === id) ?? (String(id).startsWith("rama:") ? { id, nombre: estado(actor)?.entrenosDote?.[id]?.nombre ?? `Abrir la rama ${nombreRama(String(id).slice(5))}`, rama: String(id).slice(5) } : null);
+const doteOEntreno = (actor, id) => {
+  const d = D.dotes.find(x => x.id === id); if (d) return d;
+  const ent = estado(actor)?.entrenosDote?.[id], [tipo, cual] = String(id).split(":");
+  if (tipo === "rama") return { id, tipo, nombre: ent?.nombre ?? `Abrir la rama ${nombreRama(cual)}`, rama: cual };
+  if (tipo === "rango") return { id, tipo, nombre: ent?.nombre ?? `Rango en ${nombreRama(cual)}`, rama: cual, a: ent?.a };
+  if (tipo === "control") return { id, tipo, nombre: ent?.nombre ?? "Control del Verbe", v: ent?.v };
+  return null;
+};
 export function entrenarDote(actor, id, { modo = null } = {}) { return serializarActor(actor, async () => {
   const ent = estado(actor)?.entrenosDote?.[id], dote = doteOEntreno(actor, id);
   if (!ent || !dote) return rechazar("No está entrenando esa dote.", "warn");
@@ -2305,6 +2329,19 @@ async function terminarEntrenoDote(actor, id, nota = "") {
   if (!dote || !e?.entrenosDote?.[id]) return false;
   await actor.update(Object.fromEntries([quitar(`flags.${MOD}.${F}.entrenosDote.${id}`)]));
   const e2 = estado(actor);
+  if (dote.tipo === "rango") {
+    const e3 = estado(actor), orden = [...new Set([...(e3.ordenRamas ?? []), dote.rama])];
+    await guardar(actor, { rangos: { [dote.rama]: Math.max(rangoDe(actor, dote.rama), Number(dote.a) || 1) }, ordenRamas: orden, historial: hist(e3, `${dote.nombre}${nota ? ` · ${nota}` : ""}`) });
+    await refrescar(actor); await asegurarAEDotes(actor);
+    aLaMesa(actor, "✦ Rango ganado", `<p>${escH(actor.name)}: <b>${escH(dote.nombre)}</b>${nota ? ` (${escH(nota)})` : ""}.</p>`, { soloDueno: true });
+    refrescarPanel(actor.id); return true;
+  }
+  if (dote.tipo === "control") {
+    await actor.update(sistema.datosControl({ rango: Math.max(sistema.control(actor), Number(dote.v) || 1) }));
+    await guardar(actor, { historial: hist(estado(actor), `${dote.nombre}${nota ? ` · ${nota}` : ""}`) });
+    aLaMesa(actor, "✦ Control entrenado", `<p>${escH(actor.name)}: <b>${escH(dote.nombre)}</b>${nota ? ` (${escH(nota)})` : ""}.</p>`, { soloDueno: true });
+    refrescarPanel(actor.id); return true;
+  }
   if (dote.rama && !D.dotes.some(x => x.id === id)) {
     await guardar(actor, { abiertas: [...new Set([...(e2.abiertas ?? []), dote.rama])], ordenRamas: [...new Set([...(e2.ordenRamas ?? []), dote.rama])], historial: hist(e2, `Abre la rama ${nombreRama(dote.rama)}${nota ? ` · ${nota}` : ""}`) });
     aLaMesa(actor, "✦ Rama abierta", `<p>${escH(actor.name)} abre la rama <b>${escH(nombreRama(dote.rama))}</b>${nota ? ` (${escH(nota)})` : ""}: ya puede aprender sus técnicas según su rango.</p>`, { soloDueno: true });
@@ -2370,6 +2407,9 @@ async function comprarControlInterno(actor) {
   if (v === 1 && nivelDe(actor) < 5) return rechazar("La pericia en Control pide nivel 5.", "warn");
   const { libres } = trazos(actor);
   if (libres < costo) return rechazar(`Cuesta ${costo} Trazos y tiene ${libres}.`, "warn");
+  if (estado(actor)?.entrenosDote?.["control:cvb"]) return rechazar("Ya está entrenando su Control: sigue en «Entrenando».", "warn");
+  if (entrenarConTrazos()) return empezarEntreno(actor, "control:cvb", { nombre: `Control del Verbe: ${v === 0 ? "competencia" : "pericia"}`, plan: planControl(v + 1), trazos: costo, extra: { v: v + 1 },
+    texto: `Empieza a entrenar el Control (${v === 0 ? "competencia" : "pericia"}, ${costo} Trazos)`, mesa: `paga ${costo} Trazos y empieza a entrenar su Control del Verbe (${v === 0 ? "competencia" : "pericia"})` });
   const e = estado(actor);
   const texto = `Control: ${v === 0 ? "competencia" : "pericia"} (${costo} Trazos)`;
   await guardar(actor, { gastados: (Number(e.gastados) || 0) + costo, historial: hist(e, texto), compras: compra(e, "control", { v: v + 1 }, costo, texto) },
@@ -3902,7 +3942,7 @@ export async function usoRapido(actor) {
     <details class="ecos-uso-ayuda"><summary>¿Cómo funcionan las acciones del Verbe?</summary><ul>
       <li><b>Acción Verbe:</b> cada turno tienes ${maxAccionesVerbe(actor) === 1 ? "una" : maxAccionesVerbe(actor)} para las técnicas de Acción. No gasta tu Acción de D&D: puedes atacar y además usar una técnica.</li>
       <li><b>Acción adicional Verbe:</b> una por turno para las técnicas de Acción adicional. No gasta tu Acción adicional de D&D ni tu acción Verbe.</li>
-      <li><b>Reacción Verbe:</b> una por ronda, para técnicas de reacción, Sustitución, las defensas y el Choque. Tu Reacción de D&D (ataque de oportunidad, Escudo…) queda aparte.</li>
+      <li><b>Reacción Verbe:</b> una por ronda, aparte de tu Reacción de D&D (ataque de oportunidad, Escudo…). La gastan las técnicas de reacción (Sustitución, Liberar el Velo), las defensas y el <b>Choque</b>: con la reacción Verbe transformas en reacción una técnica tuya de acción o de acción adicional y la lanzas contra la que viene, generando un choque de técnicas.</li>
       <li><b>El orden del turno no cambia:</b> la iniciativa es la de siempre. Las tres se renuevan al empezar tu turno. Desde el nivel 11 tienes dos acciones Verbe por turno.</li>
       <li><b>Gratuito:</b> pagar Verbe, mantener una técnica activa o una concentración, y leer tu panel. Moverte e interactuar con un objeto siguen siendo de D&D.</li>
       <li><b>Más de un turno</b> (1 minuto o más): no caben en un combate; úsalas antes o después.</li></ul></details>`;
@@ -4496,7 +4536,9 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
         ? `Rango <b>${nombreRango(rg)}</b> · por nivel y rango llegas hasta <b>grado ${Math.min(gradoMax(a), rangoGrado(rg))}</b>${rg >= 2 ? ` · +${rg - 1} dado${rg > 2 ? "s" : ""} al dañar o curar` : ""}.`
         : "<b>Cerrada</b>.";
       const ayudaSig = sig ? `${sig.nombre}: aprendes hasta grado ${sig.grado}${rg + 1 >= 2 ? `, sus técnicas que dañan o curan tiran ${rg} dado${rg > 1 ? "s" : ""} más` : ""}. Pide nivel ${sig.nivel}. Cuesta ${c} Trazo${c === 1 ? "" : "s"}${extra}.` : "";
-      const boton = (sig && abierta) ? `<button type="button" data-action="rango" data-rama="${r.id}" ${puede ? "" : "disabled"} data-tooltip="${escH(ayudaSig)}">Subir a ${sig.nombre} · ${c} Trazo${c === 1 ? "" : "s"}</button>${faltaNivel ? ` <span class="ecos-nota">Necesitas nivel ${sig.nivel}.</span>` : faltanTrazos ? ` <span class="ecos-nota">Te faltan ${faltanTrazos} Trazos.</span>` : ""}`
+      const entR = e.entrenosDote?.[`rango:${r.id}`];
+      const boton = entR ? `<span class="ecos-verbe-pill">Entrenando ${escH(entR.nombre ?? "")} ${entR.progreso}/${entR.exitos}</span> <button type="button" data-action="entrenarDote" data-id="rango:${r.id}">Entrenar</button>`
+        : (sig && abierta) ? `<button type="button" data-action="rango" data-rama="${r.id}" ${puede ? "" : "disabled"} data-tooltip="${escH(ayudaSig)}">Subir a ${sig.nombre} · ${c} Trazo${c === 1 ? "" : "s"}</button>${faltaNivel ? ` <span class="ecos-nota">Necesitas nivel ${sig.nivel}.</span>` : faltanTrazos ? ` <span class="ecos-nota">Te faltan ${faltanTrazos} Trazos.</span>` : ""}`
         : (abierta ? `<span class="ecos-nota">Es el rango más alto.</span>` : "");
       return `<section class="ecos-verbe-rama ${abierta ? "" : "cerrada"}">
         <header><b>${r.nombre}</b>${principal ? " <span class='ecos-verbe-pill'>principal</span>" : ""}${e.segunda === r.id ? " <span class='ecos-verbe-pill'>segunda</span>" : ""}
@@ -4520,7 +4562,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       <p>${combosDe(a).size ? `Combinaciones abiertas: ${[...combosDe(a)].map(nombreNat).join(", ")}. Todas sus técnicas aparecen en Aprender; las de mayor grado muestran sus requisitos.` : "Naturaleza combinada abre una combinación desde nivel 9 con maestro; Tercera naturaleza abre otro elemento desde nivel 7 con maestro. Una tercera naturaleza no concede por sí sola una combinación."}</p></section>
       <h3>Afinidad con tu naturaleza</h3><p class="ecos-nota">Qué tan bien manejas tu elemento. Entrenada: sus técnicas tiran 1 dado más y sus estados duran el doble. Maestra: 2 dados más, y quien falla contra ella no resiste su daño.</p><ul>${af || "<li>Primero elige tu naturaleza (Inicio).</li>"}</ul>
       <section class="ev-naturalezas"><h3>Tradiciones y vínculos</h3><p>${(e.tradiciones??[]).map(id=>escH(D.tradicionesShinobi?.find(t=>t.id===id)?.nombre??id)).join(", ")||"El DM concede los aprendizajes secretos cuando los ganas en la historia."}</p>${e.vasija?.bestia?`<p>Bestia: ${escH(D.bestiasShinobi?.find(b=>b.id===e.vasija.bestia)?.nombre??e.vasija.bestia)} · vínculo ${e.vasija.vinculo}.</p>`:""}${conoce(a,"pulso-centenar-sello")?`<p>Sello del centenar: ${Number(e.reservaSellada)||0}/${2*nivelDe(a)+sumaEf(a,ef=>ef.depositoExtra?competencia(a):0)} almacenados. <input name="depositarVerbe" type="number" min="1" value="1" style="width:5em"><button type="button" data-action="almacenar">Almacenar desde mi Verbe</button></p>`:""}</section>
-      <h3>Control del Verbe ${ayuda("control")}</h3><p>${["Sin competencia", "Competente", "Pericia"][Math.min(2, ctl)]}. ${ctl < 2 ? `<button type="button" data-action="control" data-tooltip="${ctl === 0 ? "Sumas tu competencia a las pruebas de Control" : "Sumas el doble de tu competencia"}">${ctl === 0 ? "Volverte competente · 2 Trazos" : "Pericia · 3 Trazos (nivel 5)"}</button>` : ""}</p>
+      <h3>Control del Verbe ${ayuda("control")}</h3><p>${["Sin competencia", "Competente", "Pericia"][Math.min(2, ctl)]}. ${estado(this.actor)?.entrenosDote?.["control:cvb"] ? `<span class="ecos-verbe-pill">Entrenando ${estado(this.actor).entrenosDote["control:cvb"].progreso}/${estado(this.actor).entrenosDote["control:cvb"].exitos}</span> <button type="button" data-action="entrenarDote" data-id="control:cvb">Entrenar</button>` : ctl < 2 ? `<button type="button" data-action="control" data-tooltip="${ctl === 0 ? "Sumas tu competencia a las pruebas de Control" : "Sumas el doble de tu competencia"}">${ctl === 0 ? "Volverte competente · 2 Trazos" : "Pericia · 3 Trazos (nivel 5)"}</button>` : ""}</p>
       <h3>Ocho Cerrojos</h3><p class="ecos-nota">Un estado de Cuerpo: pegas más fuerte y más rápido, pagando PG cada turno y Agotamiento al cerrar. <a class="ecos-verbe-guia" data-action="guia" data-s="siete-cerrojos"><i class="fa-solid fa-book-open"></i> Guía</a></p>
       <p>${cerr ? `Sabes hasta el ${cerr}.` : "No sabes ninguno."} ${sigC ? `<button type="button" data-action="aprenderCerrojo" data-tooltip="${escH(`${sigC.nombre}: ${sigC.da}. Grado ${sigC.grado}.`)}">Aprender el ${sigC.n} · ${escH(sigC.nombre)} · ${sigC.grado} Trazo${sigC.grado === 1 ? "" : "s"}</button>` : ""}</p>`;
   }
@@ -4661,7 +4703,8 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     const dts = Object.values(e.entrenosDote ?? {}).map(x => {
       const d = D.dotes.find(y => y.id === x.id);
       const bloqueado = x.unidad === "dias" && x.ultimoDia === hoy;
-      return `<li><b>${escH(d?.nombre ?? x.nombre ?? x.id)}</b> · ${x.rama && !d ? "abrir rama" : "dote entrenada"} · ${x.progreso}/${x.exitos} · ${escH(textoPlan(x))} · CD ${x.cd}
+      const clase = d ? "dote entrenada" : { rama: "abrir rama", rango: "rango de rama", control: "Control del Verbe" }[String(x.id).split(":")[0]] ?? "entrenamiento";
+      return `<li><b>${escH(d?.nombre ?? x.nombre ?? x.id)}</b> · ${clase} · ${x.progreso}/${x.exitos} · ${escH(textoPlan(x))} · CD ${x.cd}
         ${bloqueado ? "<small>Hoy ya entrenó.</small>" : `<button type="button" data-action="entrenarDote" data-id="${escH(x.id)}"><i class="fa-solid fa-dice-d20"></i> Entrenar ${x.unidad === "horas" ? `(${x.bloque} h)` : "hoy"}</button>`}
         <button type="button" data-action="cancelarDote" data-id="${escH(x.id)}">Dejar</button>${dm() ? ` <button type="button" data-action="terminarDote" data-id="${escH(x.id)}">Dar por aprendida (DM)</button>` : ""}</li>`;
     }).join("");
@@ -5379,6 +5422,7 @@ Hooks.once("init", () => {
   game.settings.register(MOD, "dadoControl", { name: "Verbe: dado de control", hint: "A todo costo de Verbe se le suma el dado de control de su etapa: Aprendiz +1d4, Practicante +1d3, Iniciado +1d2, Pleno +1d2−1. El dado nunca impide usar la técnica: si no alcanza, se lleva hasta el límite.", scope: "world", config: true, type: Boolean, default: true });
   game.settings.register(MOD, "dotesEntrenadas", { name: "Verbe: dotes entrenadas", hint: "Las dotes que no son dones se entrenan (horas o días, una tirada por bloque; un 20 natural las da al instante). Apagado: se compran y se tienen ya.", scope: "world", config: true, type: Boolean, default: true });
   game.settings.register(MOD, "dotesTipoManual", { scope: "world", config: false, type: Object, default: {} });
+  game.settings.register(MOD, "trazosConEntreno", { name: "Verbe: rangos y Control se entrenan", hint: "Subir un rango de rama o el Control del Verbe se paga con Trazos y se entrena días (una tirada por día; un 20 natural lo termina). Apagado: se tiene al pagar.", scope: "world", config: true, type: Boolean, default: true });
   game.settings.register(MOD, "aviso365", { scope: "world", config: false, type: Boolean, default: false });
   game.settings.register(MOD, "ramasCerradas", { name: "Verbe: las ramas no se abren solas", hint: "Además de la principal, una rama se abre entrenando («Abrir rama»: 2 Trazos y 2 días), con una dote, o la abre el DM o un maestro. Las que ya empezó siguen abiertas. Apagado: toda rama queda abierta en Novato.", scope: "world", config: true, type: Boolean, default: true });
   game.settings.register(MOD, "verbeAprenderDias", {

@@ -166,7 +166,7 @@ export function economiaVerbe(e, combate) {
 export const TIEMPOS_EXPLICADOS = {
   A: ["Acción Verbe", "Usa tu acción Verbe del turno: no gasta tu Acción de D&D. Una por turno."],
   AA: ["Acción adicional Verbe", "Usa tu acción adicional Verbe del turno: no gasta tu Acción adicional de D&D ni tu acción Verbe. Una por turno."],
-  R: ["Reacción Verbe", "Usa tu reacción Verbe (una por ronda): no gasta tu Reacción de D&D. Sustitución y Choque la usan."],
+  R: ["Reacción Verbe", "Una por ronda y aparte de tu Reacción de D&D. Responde a algo que pasa fuera de tu turno: las técnicas de reacción (Sustitución, Liberar el Velo…) la gastan, y con ella transformas en reacción una técnica de acción o de acción adicional para lanzarla contra la que viene y generar un choque de técnicas."],
   "1 min": ["1 minuto", "Fuera del turno: no cabe en un combate de 6 segundos."],
   "10 min": ["10 minutos", "Fuera de combate."],
   "1 h": ["1 hora", "Fuera de combate."],

@@ -1,5 +1,14 @@
 # Historial de cambios
 
+## 3.66.0 — 2026-11-12
+
+- **Todo lo que se compra con Trazos se entrena** (regla del autor): subir un rango de rama (días buenos según el rango, CD 11 + rango) y el Control del Verbe (competencia 2 días CD 13; pericia 3 días CD 15) quedan en «Entrenando» con una tirada por día; un 20 natural lo termina. El DM: «Dar por aprendida». Ajuste «Verbe: rangos y Control se entrenan».
+- **Toda técnica es mística** (ley del autor): 32 utilidades mundanas (Higiene de las manos, Memoria de la receta, Nudo del porteador, Pausa muscular…) se retiran del aprendizaje nuevo; quien ya las sabe las conserva.
+- **Papel que estalla**: pegar el sello es tu interacción con un objeto (o una acción); detonarlo es una acción adicional a 36 m (120 ft) y ahí se paga el Verbe.
+- **Liberar el Velo** (antes Romper el Velo): reacción Verbe contra la CD de quien lo hizo.
+- **Mejoras en técnicas de 0 Verbe**: cada mejora cultivada suma 1 Verbe a su coste.
+- **Reacción Verbe** explicada: una por ronda, aparte de la de D&D; la gastan las técnicas de reacción y el choque, en el que transformas en reacción una técnica de acción o adicional para lanzarla contra la que viene.
+
 ## 3.65.0 — 2026-11-12
 
 - **Familia y linaje son lo mismo** (pedido del autor): se quita «Familia de nacimiento» del despertar y del panel del DM; la familia sale del linaje (las dadas antes por historia se conservan).

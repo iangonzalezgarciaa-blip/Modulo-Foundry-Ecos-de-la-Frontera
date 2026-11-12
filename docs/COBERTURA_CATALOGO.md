@@ -1,4 +1,4 @@
-# Cobertura declarada del catálogo 3.65.0
+# Cobertura declarada del catálogo 3.66.0
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 
@@ -122,7 +122,7 @@ El catálogo reúne **949 técnicas y 474 dotes**.
 | `madera-muro` | Muro de troncos | 4 | forma | utility | 0 |
 | `velo-susurro` | Susurro falso | 0 | velo | utility | 0 |
 | `velo-punzada` | Punzada | 0 | velo | save | 0 |
-| `velo-romper` | Romper el Velo | 0 | velo | utility | 0 |
+| `velo-romper` | Liberar el Velo | 0 | velo | utility | 0 |
 | `velo-miedo` | Rostro del miedo | 1 | velo | save | 1 |
 | `velo-parpados` | Párpados de plomo | 1 | velo | save | 1 |
 | `velo-imagen` | Imagen falsa | 1 | velo | utility | 0 |

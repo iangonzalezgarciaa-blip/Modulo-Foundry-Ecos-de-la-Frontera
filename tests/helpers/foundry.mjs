@@ -104,7 +104,7 @@ export class MockActor {
 export function resetEnvironment() {
   settings.clear(); settings.set('capaVExtra', []); settings.set('capaVPendientes', []);
   // 3.64: las pruebas antiguas miden la economía sin el dado de control ni las dotes entrenadas (tienen las suyas).
-  settings.set('dadoControl', false); settings.set('dotesEntrenadas', false); settings.set('ramasCerradas', false);
+  settings.set('dadoControl', false); settings.set('dotesEntrenadas', false); settings.set('ramasCerradas', false); settings.set('trazosConEntreno', false);
   messages.length = 0; notices.length = 0;
   const gm = { id: 'gm', isGM: true, isSelf: true, active: true };
   const player = { id: 'player', isGM: false, isSelf: false, active: true };

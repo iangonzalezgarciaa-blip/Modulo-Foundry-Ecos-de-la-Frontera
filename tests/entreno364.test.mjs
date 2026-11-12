@@ -147,3 +147,41 @@ test('3.65 · las ramas no se abren solas; abrir una rama entrenando', async () 
   assert.equal(V.ramaAbierta(a, 'velo'), true); assert.ok(V.estado(a).abiertas.includes('velo'));
   assert.equal(await V.abrirRama(a, 'pulso'), false, 'Pulso se abre con su dote');
 });
+
+test('3.66 · subir un rango y el Control también se entrena', async () => {
+  const H = await import('./helpers/foundry.mjs');
+  const V = await import('../scripts/verbe.js');
+  H.resetEnvironment(); V.usarDatos(D, 'activo'); game.user = game.users.get('gm');
+  H.settings.set('trazosConEntreno', true);
+  const a = new H.MockActor(5, { valor: 10, etapa: 2, principal: 'forma', ordenRamas: ['forma'], rangos: { forma: 1 } });
+  const antes = V.trazos(a).libres, r0 = V.rangoDe(a, 'forma');
+  await V.subirRango(a, 'forma');
+  assert.equal(V.rangoDe(a, 'forma'), r0, 'no sube hasta entrenar');
+  assert.ok(V.estado(a).entrenosDote['rango:forma']); assert.ok(V.trazos(a).libres < antes);
+  await V.terminarDoteYa(a, 'rango:forma');
+  assert.equal(V.rangoDe(a, 'forma'), r0 + 1);
+  assert.deepEqual(V.planRango(2), { unidad: 'dias', bloque: 1, exitos: 2, cd: 13 }); assert.equal(V.planControl(2).cd, 15);
+  await V.comprarControl(a);
+  assert.ok(V.estado(a).entrenosDote['control:cvb']);
+  await V.terminarDoteYa(a, 'control:cvb');
+  assert.equal(a.system.skills.cvb.value, 1);
+});
+
+test('3.66 · técnicas mundanas retiradas, Papel que estalla, Liberar el Velo y mejoras de 0 Verbe', async () => {
+  const D3 = readCatalog();
+  const tid = id => D3.tecnicas.find(t => t.id === id);
+  assert.equal(tid('vida-pulso-higiene-manos').retirada, true); assert.ok(tid('vida-pulso-higiene-manos').cambios.length);
+  assert.ok(!tid('vida-velo-cartel-luminoso').retirada, 'las místicas siguen');
+  assert.equal(D3.ajustes366.retiradas, 32);
+  const pe = tid('sello-estalla'); assert.equal(pe.t, 'AA'); assert.equal(pe.item.system.activation.type, 'bonus'); assert.match(pe.e, /interacción con un objeto/);
+  const lv = tid('velo-romper'); assert.equal(lv.n, 'Liberar el Velo'); assert.equal(lv.t, 'R'); assert.equal(lv.item.system.activation.type, 'reaction');
+  const H = await import('./helpers/foundry.mjs');
+  const V = await import('../scripts/verbe.js');
+  H.resetEnvironment(); V.usarDatos(D3, 'activo'); game.user = game.users.get('gm');
+  const g0 = D3.tecnicas.find(t => t.g === 0 && !t.retirada && !t.costoBase && !Object.values(t.item.system.activities).some(a => a.damage?.parts?.length || a.healing));
+  const a = new H.MockActor(5, { valor: 10 });
+  const meta = g0.item.flags['ecos-frontera'].verbe;
+  const base = V.costoUso(a, meta, 0);
+  V.estado(a).cultivos = { [g0.id]: { nivel: 2, mejoras: ['dado', 'cd'] } };
+  assert.equal(V.costoUso(a, meta, 0), base + 2, 'cada mejora de una técnica de 0 Verbe cuesta 1');
+});
