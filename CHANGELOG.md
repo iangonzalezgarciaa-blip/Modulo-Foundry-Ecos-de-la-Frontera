@@ -1,5 +1,14 @@
 # Historial de cambios
 
+## 3.79.0 — 2026-11-13
+
+- **Derroche según tu Control (regla del autor, 13-nov-2026: «que tengan que entrenar para no desperdiciar»):** el dado que se suma a cada costo de Verbe sale ahora del bono de tu **Control del Verbe**, no de la etapa: +2 o menos **+1d6** · +3–4 +1d4 · +5–6 +1d3 · +7–8 +1d2 · +9–10 +1d2−1 · +11 o más, nada. Mucha reserva (CON) con poco control derrocha mucho; poca reserva con buen control gasta lo justo.
+- **Ejercicio de control** en «Entrenando» (el ejercicio de goteo: llenar un cuenco gota a gota con el Verbe): un día, Control del Verbe contra CD 12, luego 14 y 16; con 5 días buenos (3 con un sensei; un 20 cuenta doble) dominas un nivel: **+1 a Control del Verbe, hasta +3**. Trae «Deshacer» en el chat.
+- «Entrenando» muestra tu Control y cuánto derrochas; el **Plan de estudios del sensei** suma el paso 1.5 (el ejercicio) y explica el derroche; la tarjeta de costo dice «incluye el derroche».
+- **Prueba combinada en el mundo (3.78):** 63 de 79 técnicas con requisito bien; los 15 rechazos eran de la prueba (la PJ de prueba sin clase tenía 0 PG máximos y un par de ojos ya sacrificado), no del módulo. Estilos de combate otra vez bien; la revisión de mesa, 13 de 13.
+- **Arreglado:** «El sueño que no termina» (y cualquier Inconsciente) fallaba con «_id dnd5eprone000000 already exists»: dnd5e pone Derribado con un id fijo y chocaba si ya estaba o se creaba a la vez. Ahora un estado de id fijo que ya está, o va en camino, no se crea dos veces.
+- **Arreglado:** las **reliquias de nivel 9+ no se podían sintonizar** en dnd5e 6 (borra la «sintonía requerida» de un equipo que no es mágico), así que nunca se podían usar. Ahora son mágicas y piden sintonía; las que ya están en el mundo (fichas, carpetas del almacén y compendio) se corrigen solas al abrir el mundo el DM.
+
 ## 3.78.0 — 2026-11-13
 
 - **Prueba combinada en el mundo (3.77):** revisión de mesa 13 de 13 grupos bien (también los que estaban pendientes); estilos de combate funcionando en la ficha (Forma que estalla, Manos que cierran, Paso que golpea, Presa marcada con su marca y 1 Verbe, El punto débil, Ojo que anticipa y Furia de la bestia que se ponen y se quitan solos); 371 técnicas con requisito usadas bien.

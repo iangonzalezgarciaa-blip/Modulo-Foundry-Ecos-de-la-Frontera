@@ -14,13 +14,46 @@ export const DADO_CONTROL = {
 };
 /** El dado de control de una etapa (0 = dormido: se trata como Aprendiz si llega a usar). Puro. */
 export const dadoControl = etapa => DADO_CONTROL[Math.max(1, Math.min(4, Number(etapa) || 1))];
-/** Tira el dado de control. `azar` devuelve [0, 1). Puro salvo el azar. */
-export function tirarControl(etapa, azar = Math.random) {
-  const d = dadoControl(etapa), dado = Math.min(d.caras, Math.floor(azar() * d.caras) + 1);
+/**
+ * 3.79 (regla del autor, 13-nov-2026: «que tengan que entrenar para no desperdiciar»): el derroche sale del bono de tu
+ * Control del Verbe, no de la etapa. Mucha reserva y poco control derrocha; poca reserva y buen control gasta lo justo.
+ *   +2 o menos: +1d6 · +3–4: +1d4 · +5–6: +1d3 · +7–8: +1d2 · +9–10: +1d2−1 · +11 o más: nada.
+ */
+export const DERROCHE = [
+  { hasta: 2, formula: "1d6", caras: 6, resta: 0 }, { hasta: 4, formula: "1d4", caras: 4, resta: 0 }, { hasta: 6, formula: "1d3", caras: 3, resta: 0 },
+  { hasta: 8, formula: "1d2", caras: 2, resta: 0 }, { hasta: 10, formula: "1d2−1", caras: 2, resta: 1 }, { hasta: Infinity, formula: "0", caras: 0, resta: 0 }
+];
+/** El dado de derroche según el bono total de Control del Verbe. Puro. */
+export const dadoDerroche = bono => DERROCHE.find(d => (Number(bono) || 0) <= d.hasta);
+const comoDado = x => (x && typeof x === "object" ? x : dadoControl(x));
+/** Tira el dado de derroche (o el de una etapa, para lo antiguo). `azar` devuelve [0, 1). Puro salvo el azar. */
+export function tirarControl(etapaODado, azar = Math.random) {
+  const d = comoDado(etapaODado);
+  if (!d.caras) return { formula: d.formula, dado: 0, valor: 0 };
+  const dado = Math.min(d.caras, Math.floor(azar() * d.caras) + 1);
   return { formula: d.formula, dado, valor: Math.max(0, dado - d.resta) };
 }
-/** Texto del coste con su dado: «2 + 1d4». Puro. */
-export const textoCostoControl = (costo, etapa, activo = true) => activo ? `${costo} + ${dadoControl(etapa).formula}` : `${costo}`;
+/** Texto del coste con su dado: «2 + 1d4» (o solo «2» si ya no derrocha). Puro. */
+export const textoCostoControl = (costo, etapaODado, activo = true) => { const d = comoDado(etapaODado); return activo && d.caras ? `${costo} + ${d.formula}` : `${costo}`; };
+
+/* ---------- 3.79 · Ejercicio de control (pedido del autor) ---------- */
+/** Ejercicio de goteo: llenar un cuenco gota a gota con el Verbe. Cada nivel dominado da +1 a Control del Verbe (hasta +3). */
+export const TOPE_EJERCICIO = 3;
+export const CD_EJERCICIO = nivel => 12 + 2 * (Number(nivel) || 0);
+export const diasEjercicio = ({ sensei = false } = {}) => (sensei ? 3 : 5);
+/** Un día de ejercicio. Éxito +1 día bueno (20 natural, 2); al juntar los días, +1 nivel. Puro: `c` = {nivel, puntos, ultimoDia}. */
+export function diaEjercicio(c = {}, { total, natural = null, dia, sensei = false }) {
+  const s = { nivel: Number(c.nivel) || 0, puntos: Number(c.puntos) || 0, ultimoDia: c.ultimoDia ?? null };
+  if (s.nivel >= TOPE_EJERCICIO) return { ok: false, motivo: `Ya domina el ejercicio de control (+${TOPE_EJERCICIO} a Control del Verbe).`, estado: s };
+  if (s.ultimoDia === dia) return { ok: false, motivo: "Hoy ya hizo el ejercicio de control: mañana puede seguir.", estado: s };
+  const cd = CD_EJERCICIO(s.nivel), exito = natural === 20 || (natural !== 1 && Number(total) >= cd);
+  s.puntos += exito ? (natural === 20 ? 2 : 1) : 0;
+  s.ultimoDia = dia;
+  const meta = diasEjercicio({ sensei });
+  let sube = false;
+  if (s.puntos >= meta) { s.nivel += 1; s.puntos = 0; sube = true; }
+  return { ok: true, exito, natural, cd, meta, sube, estado: s };
+}
 
 /* ---------- Dotes entrenadas ---------- */
 /** Las categorías y dotes que son dones (de nacimiento, de sangre, de la naturaleza o concedidos por el DM). */

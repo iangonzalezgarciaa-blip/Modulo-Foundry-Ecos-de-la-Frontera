@@ -16,7 +16,7 @@ async function cargar(){
  carga=(async()=>{const res=await fetch(`modules/${MOD}/data/reliquias.txt`);if(!res.ok)throw Error('No se pudo cargar el catálogo de reliquias.');
   const bin=Uint8Array.from(atob((await res.text()).trim()),c=>c.charCodeAt(0)),key=new TextEncoder().encode(MOD);
   for(let i=0;i<bin.length;i++)bin[i]^=key[i%key.length]^(i&255);
-  datos=JSON.parse(await new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'))).text());return datos;
+  datos=JSON.parse(await new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'))).text());for(const r of datos.reliquias??[])if(r.item)r.item=conMagia(r.item,r.nivel);return datos;
  })().catch(err=>{carga=null;throw err;});return carga;
 }
 export async function asegurarCompendioReliquias(){
@@ -35,6 +35,18 @@ export async function asegurarCompendioReliquias(){
  return pack;
 }
 /** Solo sustituye una descripción generada reconocible; no toca reglas ni estado de la copia. */
+/** 3.79 (prueba combinada): dnd5e 6 borra la «sintonía requerida» de un equipo que no es mágico (propiedad «mgc»), así que
+ *  las reliquias de nivel 9+ no se podían sintonizar ni usar. Las de nivel 9+ son mágicas y piden sintonía. Puro. */
+export function conMagia(item,nivel){
+ if(!item||Number(nivel)<9)return item;const props=[...(item.system?.properties??[])];
+ return {...item,system:{...(item.system??{}),attunement:'required',properties:props.includes('mgc')?props:[...props,'mgc']}};
+}
+export function cambiosMagia(item){
+ const m=meta(item),nivel=Number(m?.nivel??item?.flags?.[MOD]?.almacen?.nivel);if(!m||!(nivel>=9))return null;
+ const src=item._source?.system??item.system??{},props=[...(src.properties??[])];
+ if(props.includes('mgc')&&src.attunement==='required')return null;
+ return {'system.properties':props.includes('mgc')?props:[...props,'mgc'],'system.attunement':'required'};
+}
 export function cambiosTextoReliquia(item,D=datos){
  const m=meta(item),r=D?.reliquias.find(r=>r.id===m?.id);if(!r)return null;
  const actual=item.system?.description?.value??'',nuevo=r.item.system.description.value;
@@ -42,11 +54,13 @@ export function cambiosTextoReliquia(item,D=datos){
  if(item.name!==r.nombre&&compat?.nombre===huellaTexto(item.name))cambios.name=r.nombre;
  const conocida=huellaTexto(actual),bases=[m.textoHuella,D.textosAnteriores?.[m.id],compat?.descripcion].filter(Boolean);
  if(actual!==nuevo&&bases.includes(conocida))Object.assign(cambios,{'system.description.value':nuevo,[`flags.${MOD}.reliquia.textoVersion`]:r.item.flags[MOD].reliquia.textoVersion,[`flags.${MOD}.reliquia.textoHuella`]:huellaTexto(nuevo)});
+ Object.assign(cambios,cambiosMagia(item)??{});
  return Object.keys(cambios).length?cambios:null;
 }
 export async function actualizarTextosReliquias(){
  if(!game.user.isGM)return 0;const D=await cargar();let n=0;
  for(const a of actoresPresentes())for(const i of a.items){const cambios=cambiosTextoReliquia(i,D);if(cambios){await i.update(cambios);n++;}}
+ for(const i of game.items??[]){const cambios=cambiosMagia(i);if(cambios){await i.update(cambios);n++;}}
  return n;
 }
 function htmlDiario(D){return `<h1>Reliquias · guía del DM</h1><p>${esc(D.alcance)}</p><p>Las cifras y efectos jugables son adaptación de Nimerios. La clasificación de archivo no es un grado del Verbe. Todas las reliquias requieren autorización del DM, equipo y el nivel de su ficha; desde nivel 9 también sintonía. Se comparte un uso de familia y uno de reliquia mayor por Descanso Largo. Un ritual requiere otro permiso para cada activación. Los consumibles no se reponen. Para entregar o preparar un ritual, abre Verbe → DM → Compendio de reliquias.</p>${D.dossiers.map(d=>`<h2>${esc(d.nombre)}</h2><p>${esc(d.texto)}</p>`).join('')}${D.reliquias.map(r=>`<details><summary>${esc(r.nombre)} · ${esc(r.origen)} · nivel ${r.nivel}</summary>${r.item.system.description.value}</details>`).join('')}`;}

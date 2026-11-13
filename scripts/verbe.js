@@ -39,7 +39,7 @@ import { ETAPAS, ETAPA_MAX, etapaDe, datosEtapa, permisoEtapa, DESCUBRIR, MODOS_
 import { CAMPOS_TECNICA, CAMPOS_DOTE, leerCamposTecnica, leerCamposDote, diferencias, aplicarEdicionTecnica, catalogoConEdiciones } from "./verbe-ediciones.js";
 import { MEJORAS, opcionesCultivo, aplicarCultivoUtilidad } from "./verbe-training.js";
 import { comoSubirHTML } from "./plan-sensei.js";
-import { tirarControl, textoCostoControl, tipoDote as tipoDotePuro, planDote, textoPlan, practicarDote, ACTIVIDADES_CRECIMIENTO, CD_CRECIMIENTO, puntosPorTrazo, diaCrecimiento, TOPE_CRECIMIENTO_NIVEL } from "./verbe-entreno.js";
+import { tirarControl, textoCostoControl, dadoDerroche, diaEjercicio, CD_EJERCICIO, diasEjercicio, TOPE_EJERCICIO, tipoDote as tipoDotePuro, planDote, textoPlan, practicarDote, ACTIVIDADES_CRECIMIENTO, CD_CRECIMIENTO, puntosPorTrazo, diaCrecimiento, TOPE_CRECIMIENTO_NIVEL } from "./verbe-entreno.js";
 import { presupuestoCorto } from "./rest-core.js";
 import { sistema } from "./sistema/index.js";
 import { aplicarEnUsuario } from "./mesa-propio.js";
@@ -1266,7 +1266,7 @@ function notaPersonal(actor, tec, extra, inf, cul) {
   if(tec.id&&dadosExtraBrutos(actor,tec,inf)>limiteDadosExtra(tec.g))p.push("los dados adicionales exceden el tope; el DM puede reorientar el último cultivo sin volver a cobrar");
   if (inf) p.push(`infundida con ${nombreNat(inf)}`);
   if (cul?.nivel) p.push(`cultivada: ${NIVEL_CULTIVO[cul.nivel]}${cul.mejoras?.length ? ` (${cul.mejoras.map(m => MEJORAS[m] ?? `infusión fija: ${nombreNat(cul.infusionFija)}`).join(", ")})` : ""}`);
-  p.push(`cuesta ${textoCostoControl(costoUso(actor, tec, tec.g, { infusion: inf }), etapaDe(estado(actor)), ajuste("dadoControl", true))} Verbe`);
+  p.push(`cuesta ${textoCostoControl(costoUso(actor, tec, tec.g, { infusion: inf }), derrocheDe(actor), ajuste("dadoControl", true))} Verbe`);
   return `<p class="ecos-verbe-nota"><em>${p.join(" · ")}.</em></p>`;
 }
 
@@ -1789,8 +1789,8 @@ export function alConsumir(activity, usageConfig, messageConfig, updates) {
     if(!concentracion.ok){avisoUso(concentracion.motivo);return false;}
     const fuerte = meta.fuerte ? extraContraFuerte(actor) : { extra: 0, quien: null };
     const costoBase = costoUso(actor, meta, grado, { infusion: meta.infusion }) + fuerte.extra;
-    // 3.64 (regla del autor): a todo costo de Verbe se le suma el dado de control de su etapa.
-    const control = ajuste("dadoControl", true) ? tirarControl(etapaDe(e), () => (CONFIG.Dice?.randomUniform ?? Math.random)()) : null;
+    // 3.64 (regla del autor): a todo costo de Verbe se le suma un dado de derroche. 3.79: sale de tu Control del Verbe.
+    const control = ajuste("dadoControl", true) ? tirarControl(derrocheDe(actor), () => (CONFIG.Dice?.randomUniform ?? Math.random)()) : null;
     let costo = costoBase + (control?.valor ?? 0);
     const replica = usageConfig?.ecosReplica === true;
     if (replica && (grado > capacidadReplicas(actor) || meta.dividirVerbe || meta.ritual || meta.liberarReserva || meta.prestamo || e.accionReplicaUsada || !efectoV(actor,"replicas") || Object.values(item.system.activities ?? {}).some(a=>a.type === "utility"))) { avisoUso("Las réplicas comparten una acción ofensiva, respetan su límite de grado y no duplican poderes o recursos especiales."); return false; }
@@ -2399,9 +2399,34 @@ export function diaDeCrecimiento(actor, { actividad = "meditar", sensei = false,
   return r;
 }); }
 
+/** 3.79: el dado de derroche de este personaje, según el bono total de su Control del Verbe (si la hoja no lo tiene, el de su etapa). */
+export function derrocheDe(actor) {
+  const t = Number(actor?.system?.skills?.cvb?.total);
+  return Number.isFinite(t) ? dadoDerroche(t) : etapaDe(estado(actor));
+}
+/** 3.79 · Un día de Ejercicio de control (goteo): Control del Verbe contra CD 12, 14 o 16; cada nivel dominado, +1 a Control. */
+export function ejercicioControl(actor, { sensei = false } = {}) { return serializarActor(actor, async () => {
+  const e = estado(actor);
+  if (!e?.despierto) return rechazar("Su Verbe todavía no despertó.", "warn");
+  const c = e.ejercicioControl ?? {}, dia = diaMundo(), cd = CD_EJERCICIO(c.nivel);
+  if ((Number(c.nivel) || 0) >= TOPE_EJERCICIO) return rechazar(`Ya domina el ejercicio de control (+${TOPE_EJERCICIO} a Control del Verbe).`, "warn");
+  if (c.ultimoDia === dia) return rechazar("Hoy ya hizo el ejercicio de control: mañana puede seguir.", "warn");
+  const res = await sistema.tirarHabilidad(actor, "cvb", { target: cd }, {}, { data: { flavor: `Ejercicio de control (goteo) · Control del Verbe (CD ${cd})` } });
+  const roll = Array.isArray(res) ? res[0] : res; if (!roll) return false;
+  const natural = Number(roll.dice?.[0]?.results?.find(x => x.active)?.result ?? roll.d20?.total) || null;
+  const r = diaEjercicio(c, { total: roll.total, natural, dia, sensei });
+  if (!r.ok) return rechazar(r.motivo, "warn");
+  const antes = { [`flags.${MOD}.${F}.ejercicioControl`]: e.ejercicioControl ?? null };
+  await guardar(actor, { ejercicioControl: r.estado, historial: hist(e, `Ejercicio de control: ${r.exito ? "avanza" : "no avanza"}${r.sube ? ` · domina el nivel ${r.estado.nivel}` : ""}`) });
+  if (r.sube) await ajustarControl(actor);
+  aLaMesa(actor, "Ejercicio de control", `<p>${escH(actor.name)} saca <b>${roll.total}</b> contra CD ${r.cd}${natural === 20 ? " (20 natural: cuenta doble)" : ""}. ${r.exito ? "El cuenco se llena sin derramar: el día cuenta." : "Se le derrama: hoy no avanza."} ${r.sube ? `<b>Domina el nivel ${r.estado.nivel}:</b> +1 a Control del Verbe, derrocha menos.` : `Lleva ${r.estado.puntos}/${r.meta} días buenos.`}</p>${botonDeshacer()}`,
+    { soloDueno: true, flags: { deshacer: { cambios: [{ uuid: actor.uuid, antes }] } } });
+  refrescarPanel(actor.id);
+  return r;
+}); }
 export async function ajustarControl(actor) {
   const b = (tieneDote(actor, "control-fino") ? 1 : 0) + (tieneDote(actor, "control-legendario") ? 4 : tieneDote(actor, "maestria-control") ? 2 : 0)
-    + sumaEf(actor, ef => ef.control);
+    + sumaEf(actor, ef => ef.control) + (Number(estado(actor)?.ejercicioControl?.nivel) || 0);
   const ability = tieneDote(actor, "control-instinto") ? "wis" : tieneDote(actor, "control-presencia") ? "cha" : null;
   await actor.update(sistema.datosControl({ bono: b, ability }));
 }
@@ -4086,6 +4111,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       async tipoDote(ev, t) { ev?.preventDefault?.(); ev?.stopPropagation?.(); if (await marcarTipoDote(t.dataset.id, t.dataset.tipo)) this.render(); },
       abrirRama(ev, t) { ev?.preventDefault?.(); correr(this, abrirRama(this.actor, t.dataset.rama)); },
       async ctlCar(ev, t) { ev?.preventDefault?.(); if (await caracteristicaControl(this.actor, t.dataset.car)) this.render(); },
+      ejercicio(ev) { ev?.preventDefault?.(); correr(this, ejercicioControl(this.actor, { sensei: !!this.element.querySelector('[name="ejercicioSensei"]')?.checked })); },
       crecer(ev, t) { ev?.preventDefault?.(); correr(this, diaDeCrecimiento(this.actor, { actividad: valorDe(this, "crecerActividad") || "meditar", sensei: !!this.element.querySelector('[name="crecerSensei"]')?.checked, companero: !!this.element.querySelector('[name="crecerCompanero"]')?.checked })); },
       afinidad(ev, t) { correr(this, subirAfinidad(this.actor, t.dataset.nat)); },
       control() { correr(this, comprarControl(this.actor)); },
@@ -4688,7 +4714,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       t.req && !(t.sec === "sangre" && !dm()) ? escH(t.req) : null].filter(Boolean).join(" · ") || "—";
     const f = (k, v) => `<th>${k}</th><td>${v}</td>`;
     const conocida=conoce(a,t.id),uso=previsualizarUso(a,meta);
-    return `<div class="ev-contraste-recursos"><div><b>${t.incl?"Incluida con su Mirada":`Aprender · ${t.trazos} Trazos`}</b><p>${conocida?"Ya está en tu repertorio.":r.ok?(r.probar?"Primero prueba si tu elemento responde.":r.pideDM?"Necesita aprobación del DM.":"Cumples los requisitos de aprendizaje."):escH(textoClaro(r.motivo))}</p></div><div><b>Usar · ${textoCostoControl(uso.costo, etapaDe(estado(a)), ajuste("dadoControl", true))} Verbe al grado base</b>${!conocida?'<p>Primero debes aprenderla. Este precio corresponde a su uso posterior.</p>':D.defensas?.[id]?'<p>Es una defensa: espera su disparador. El coste definitivo depende del ataque recibido.</p>':estadoUsoHTML(uso)}</div></div>
+    return `<div class="ev-contraste-recursos"><div><b>${t.incl?"Incluida con su Mirada":`Aprender · ${t.trazos} Trazos`}</b><p>${conocida?"Ya está en tu repertorio.":r.ok?(r.probar?"Primero prueba si tu elemento responde.":r.pideDM?"Necesita aprobación del DM.":"Cumples los requisitos de aprendizaje."):escH(textoClaro(r.motivo))}</p></div><div><b>Usar · ${textoCostoControl(uso.costo, derrocheDe(a), ajuste("dadoControl", true))} Verbe al grado base</b>${!conocida?'<p>Primero debes aprenderla. Este precio corresponde a su uso posterior.</p>':D.defensas?.[id]?'<p>Es una defensa: espera su disparador. El coste definitivo depende del ataque recibido.</p>':estadoUsoHTML(uso)}</div></div>
       <h3>Qué hace</h3>${efectoHTML(textoDe(t))}
       <h3>Cómo se usa</h3><p>${escH(resolucionTexto(t))}</p>${D.defensas?.[id]?'<p><b>Defensa reactiva:</b> se elige cuando se ofrece contra una amenaza válida, antes del choque. Conserva los requisitos de objeto, visibilidad y reacción de su ficha. El DM resuelve las posiciones que no se muevan automáticamente.</p>':""}
       <details class="ev-datos-avanzados" open><summary>Qué cuesta y qué necesitas</summary>
@@ -4732,10 +4758,17 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
       <label>Qué haces <select name="crecerActividad">${Object.entries(ACTIVIDADES_CRECIMIENTO).map(([k, v]) => `<option value="${k}">${escH(v.nombre)} (${CARS[v.car] ?? v.car})</option>`).join("")}</select></label>
       <label class="ecos-check"><input type="checkbox" name="crecerSensei"> Con un maestro (sensei)</label> <label class="ecos-check"><input type="checkbox" name="crecerCompanero"> Con un compañero</label>
       <p>${c.ultimoDia === hoy ? "<small>Hoy ya entrenó o meditó: mañana puede seguir.</small>" : `<button type="button" data-action="crecer"><i class="fa-solid fa-person-praying"></i> Entrenar o meditar hoy</button>`}</p></section>`;
+    // 3.79 · Tu derroche y el Ejercicio de control.
+    const ej = e.ejercicioControl ?? {}, nivelEj = Number(ej.nivel) || 0, der = derrocheDe(a), bonoCvb = Number(a.system?.skills?.cvb?.total);
+    const ejercicio = `<section class="ev-bienvenida"><h3>Control: cuánto derrochas</h3>
+      <p>Tu Control del Verbe es <b>${Number.isFinite(bonoCvb) ? (bonoCvb >= 0 ? `+${bonoCvb}` : bonoCvb) : "—"}</b>: cada técnica te cuesta su Verbe <b>${der?.caras ? `+ ${escH(der.formula)}` : "justo, sin derroche"}</b>. Con mucho Verbe y poco control se derrocha; con buen control se gasta lo justo.</p>
+      <p class="ecos-nota">+2 o menos: +1d6 · +3–4: +1d4 · +5–6: +1d3 · +7–8: +1d2 · +9–10: +1d2−1 · +11 o más: nada. Lo bajan las dotes de Control y este ejercicio.</p>
+      <p><b>Ejercicio de goteo:</b> llenar un cuenco gota a gota con el Verbe, sin derramar. Un día: Control del Verbe contra CD ${CD_EJERCICIO(nivelEj)}. Con ${diasEjercicio()} días buenos (${diasEjercicio({ sensei: true })} con un sensei) dominas un nivel: +1 a Control (hasta +${TOPE_EJERCICIO}). Llevas el nivel <b>${nivelEj}</b> y ${Number(ej.puntos) || 0} días buenos.</p>
+      <p>${nivelEj >= TOPE_EJERCICIO ? "<small>Ya lo domina por completo.</small>" : ej.ultimoDia === hoy ? "<small>Hoy ya hizo el ejercicio: mañana puede seguir.</small>" : `<label class="ecos-check"><input type="checkbox" name="ejercicioSensei"> Con un sensei</label> <button type="button" data-action="ejercicio"><i class="fa-solid fa-droplet"></i> Hacer el ejercicio hoy</button>`}</p></section>`;
     const et = datosEtapa(etapaDe(e));
     const etapaHTML = `<section class="ev-bienvenida"><h3>Tu etapa: ${escH(et.nombre)}</h3><p>${escH(et.texto)}</p>${comoSubirHTML(et.n, escH)}<p class="ecos-nota">El plan completo está en «Reglas de la casa» → 19 · Plan de estudios del sensei.</p></section>`;
     return `${intro("Lo que estás entrenando.", "Las técnicas se practican un día del calendario cada una. Las dotes entrenadas, por bloques de horas o por días. Un 20 natural las da al instante.", "", "tecnicas-y-grados")}${etapaHTML}
-      ${tecs || dts || nat ? `<ul class="ecos-verbe-lista">${tecs}${dts}${nat}</ul>` : "<p>No estás entrenando nada. Elige una técnica en «Aprender técnicas» o una dote entrenada en «Mejorar → Dotes».</p>"}${crecer}`;
+      ${tecs || dts || nat ? `<ul class="ecos-verbe-lista">${tecs}${dts}${nat}</ul>` : "<p>No estás entrenando nada. Elige una técnica en «Aprender técnicas» o una dote entrenada en «Mejorar → Dotes».</p>"}${ejercicio}${crecer}`;
   }
 
   #dotes() {
@@ -5435,7 +5468,7 @@ Hooks.once("init", () => {
   // Ediciones del DM sobre el catálogo del módulo: solo las diferencias, para que una actualización no las borre.
   game.settings.register(MOD, "capaVSangre", { scope: "world", config: false, type: String, default: "" });
   game.settings.register(MOD, AJ.ediciones, { scope: "world", config: false, type: Object, default: { tecnicas: {}, dotes: {} } });
-  game.settings.register(MOD, "dadoControl", { name: "Verbe: dado de control", hint: "A todo costo de Verbe se le suma el dado de control de su etapa: Aprendiz +1d4, Practicante +1d3, Iniciado +1d2, Pleno +1d2−1. El dado nunca impide usar la técnica: si no alcanza, se lleva hasta el límite.", scope: "world", config: true, type: Boolean, default: true });
+  game.settings.register(MOD, "dadoControl", { name: "Verbe: derroche al usar (dado según tu Control)", hint: "A todo costo de Verbe se le suma un dado de derroche según el bono de Control del Verbe: +2 o menos +1d6, +3–4 +1d4, +5–6 +1d3, +7–8 +1d2, +9–10 +1d2−1, +11 nada. Se baja con dotes de Control y con el Ejercicio de control (Entrenando). El dado nunca impide usar la técnica: si no alcanza, se lleva hasta el límite.", scope: "world", config: true, type: Boolean, default: true });
   game.settings.register(MOD, "dotesEntrenadas", { name: "Verbe: dotes entrenadas", hint: "Las dotes que no son dones se entrenan (horas o días, una tirada por bloque; un 20 natural las da al instante). Apagado: se compran y se tienen ya.", scope: "world", config: true, type: Boolean, default: true });
   game.settings.register(MOD, "dotesTipoManual", { scope: "world", config: false, type: Object, default: {} });
   game.settings.register(MOD, "trazosConEntreno", { name: "Verbe: rangos y Control se entrenan", hint: "Subir un rango de rama o el Control del Verbe se paga con Trazos y se entrena días (una tirada por día; un 20 natural lo termina). Apagado: se tiene al pagar.", scope: "world", config: true, type: Boolean, default: true });

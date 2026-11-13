@@ -25,7 +25,7 @@ export function planSenseiHTML() {
 <p><em>Lo que un maestro del Verbe enseña, en orden, para llevar a un alumno desde el despertar hasta poder enseñar él mismo. Tú pones el relato; aquí está lo mecánico: qué botón, cuántos Trazos, cuántos días, qué tirada.</em></p>
 <h2>Cómo leer este plan</h2><ul>
 <li><b>Trazos</b>: se ganan 4 por nivel (y al despertar, 4 × nivel + 4). Con «Entrenando → Entrenar o meditar» se ganan hasta 2 más por nivel (5 días buenos; 4 con un compañero; 3 con el sensei).</li>
-<li><b>Verbe</b>: lo que gasta cada uso. Desde 3.64 cada uso suma el <b>dado de control</b> de su etapa: Aprendiz +1d4, Practicante +1d3, Iniciado +1d2, Pleno +1d2−1. Subir de etapa es, también, aprender a no desperdiciar.</li>
+<li><b>Verbe</b>: lo que gasta cada uso. Cada uso suma un <b>dado de derroche</b> según el bono de <b>Control del Verbe</b> (3.79): +2 o menos +1d6 · +3–4 +1d4 · +5–6 +1d3 · +7–8 +1d2 · +9–10 +1d2−1 · +11 nada. Mucha reserva no sirve si se derrama: el sensei enseña primero a no desperdiciar.</li>
 <li><b>Aprender una técnica</b>: pagar sus Trazos y estudiarla días (Control del Verbe CD 10 + grado; tantos días buenos como su grado + 1).</li>
 <li><b>Dotes entrenadas</b>: pagar sus Trazos y entrenarlas horas o días (una tirada por bloque; un 20 natural la da al instante). Los <b>dones</b> (de nacimiento o de sangre) no se entrenan.</li>
 <li><b>Etapa</b>: la abre el DM («Abrir la siguiente etapa») cuando el alumno supera la prueba de su paso.</li></ul>
@@ -40,6 +40,7 @@ ${tabla([
   fila("1.2", "Otra técnica de grado 0 y una de grado 1.", "Aprender técnicas → grado 0 y 1 de la misma rama.", "1–2 Trazos cada una · 1 o 2 días buenos (CD 10–11)."),
   fila("1.3", "Ejercicio diario: meditar.", "Entrenando → Entrenar o meditar (Sabiduría CD 15), con el sensei marcado.", "Un día por intento; 3 días buenos = 1 Trazo."),
   fila("1.4", "Control: no derrochar.", "Mejorar → Dotes entrenadas → <b>Práctica de Control</b> (+1 a Control del Verbe).", "2 Trazos · 4 h (CD 12)."),
+  fila("1.5", "El ejercicio de goteo: llenar un cuenco gota a gota con el Verbe, sin derramar.", "Entrenando → <b>Ejercicio de control</b>: Control del Verbe CD 12, luego 14 y 16. Cada nivel dominado da +1 a Control y baja el derroche.", "5 días buenos por nivel (3 con el sensei) · hasta +3."),
   fila("Prueba", "Paso a Practicante.", "Pide maestro, 3 técnicas y nivel 3. Una semana de entrenamiento y Control del Verbe CD 13.", "Si la supera: DM → «Abrir la siguiente etapa».")
 ])}
 <h2>Fase 2 · Practicante (meses 2 a 6)</h2>

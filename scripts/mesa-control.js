@@ -8,6 +8,7 @@
  */
 import { sistema } from "./sistema/index.js";
 const CREANDO = new Set(); // 3.78: estados que se están creando ahora (actor:estado), para no crearlos dos veces.
+const FIJOS = new Set(); // 3.79: efectos de id fijo (dnd5eprone000000…) que se están creando ahora (actor:id).
 const MOD = "ecos-frontera";
 const AJ = { ventaja: "preguntarVentaja", estados: "preguntarEstados", moneda: "pausaMoneda" };
 const ajuste = k => { try { return game.settings.get(MOD, k); } catch { return null; } };
@@ -179,6 +180,24 @@ function preCrearEfecto(efecto, data, opciones, userId) {
   return false;
 }
 
+/**
+ * 3.79 (prueba combinada, «El sueño que no termina»): dnd5e pone los estados que arrastra otro (Inconsciente → Derribado)
+ * con un id fijo («dnd5eprone000000»). Si ya estaba, o se estaba creando a la vez, Foundry fallaba con «_id already exists».
+ * Un efecto de id fijo que ya está (o va en camino) no se vuelve a crear: el estado ya lo tiene. Puro.
+ */
+export const idFijo = (id, keepId = false) => !!id && (!!keepId || /^dnd5e[a-z]+0*$/i.test(String(id)));
+export function idRepetido({ id, keepId = false, existe = false, reservado = false } = {}) {
+  return idFijo(id, keepId) && (!!existe || !!reservado);
+}
+function evitarIdRepetido(efecto, data, opciones, userId) {
+  const actor = efecto?.parent, id = data?._id;
+  if (userId !== game.user.id || !(actor instanceof Actor) || !idFijo(id, opciones?.keepId)) return;
+  const clave = `${actor.uuid}:${id}`;
+  if (idRepetido({ id, keepId: opciones?.keepId, existe: actor.effects.has(id), reservado: FIJOS.has(clave) })) return false;
+  FIJOS.add(clave);
+  setTimeout(() => FIJOS.delete(clave), 3000);
+}
+
 function socketControl(d) {
   if (!d?.ctl) return false;
   if (d.accion === "ctlEstados" && d.para === game.user.id) {
@@ -219,9 +238,10 @@ Hooks.once("ready", () => {
     caja.innerHTML = avisoVentaja(p);
     (el.querySelector(".window-content") ?? el).prepend(caja.firstElementChild);
   });
+  Hooks.on("preCreateActiveEffect", evitarIdRepetido);
   Hooks.on("preCreateActiveEffect", preCrearEfecto);
   game.socket.on(`module.${MOD}`, socketControl);
   (game.modules.get(MOD).api ??= {}).control = { pideConfirmacion, queProvoca, nombreEstado };
 });
 
-export const _prueba = { encolar, resolverGrupo, preCrearEfecto, socketControl, actorDeOrigen };
+export const _prueba = { encolar, resolverGrupo, preCrearEfecto, socketControl, actorDeOrigen, evitarIdRepetido };

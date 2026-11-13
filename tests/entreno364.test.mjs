@@ -113,7 +113,7 @@ test('3.64 · panel: pestaña Entrenando, dotes separadas en dones y entrenadas,
 test('3.64 · plan de estudios del sensei y cómo subir de etapa', async () => {
   const P = await import('../scripts/plan-sensei.js');
   const html = P.planSenseiHTML();
-  for (const t of ['Fase 0', 'Fase 1', 'Fase 2', 'Fase 3', 'Fase 4', 'Práctica de Control', 'Control fino del Verbe', 'Maestro del Verbe', 'dado de control', 'Control del Verbe CD 13', 'CD 15', 'CD 18']) assert.ok(html.includes(t), t);
+  for (const t of ['Fase 0', 'Fase 1', 'Fase 2', 'Fase 3', 'Fase 4', 'Práctica de Control', 'Control fino del Verbe', 'Maestro del Verbe', 'dado de derroche', 'Ejercicio de control', 'Control del Verbe CD 13', 'CD 15', 'CD 18']) assert.ok(html.includes(t), t);
   assert.match(P.comoSubirHTML(1), /Practicante.*CD 13/); assert.match(P.comoSubirHTML(3), /Pleno.*CD 18/);
   assert.match(P.comoSubirHTML(4), /sendas/); assert.match(P.comoSubirHTML(0), /no despertó/);
 });

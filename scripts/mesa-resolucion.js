@@ -7,7 +7,7 @@ const serial=(id,fn)=>{const prev=colas.get(id)??Promise.resolve(),p=prev.catch(
 export function prepararRecibo(actor,item,v,e,meta){
  const complejo=v.grado>=6||v.despues<0||v.replica||meta.ritual||meta.familiaUso||meta.desgasteOjo||meta.sacrificarOjo||meta.costoPG||meta.dividirVerbe||meta.liberarReserva||meta.prestamo||e.reserva===meta.id;
  return {version:1,actorUuid:actor.uuid,itemId:item.id,nonce:v.nonce,ultimoUsoAnterior:e.ultimoUso??null,grado:v.grado,costo:v.costo,antes:v.antes,despues:v.despues,complejo:!!complejo,
-  pasos:[{id:'coste',titulo:'Gasto preparado',detalle:`${v.costo} Verbe${v.control?` (incluye el dado de control ${v.control.formula}: ${v.control.valor}${v.control.tope?', hasta tu límite':''})`:''}. Esperando confirmación del sistema.`}],manualResuelto:false,
+  pasos:[{id:'coste',titulo:'Gasto preparado',detalle:`${v.costo} Verbe${v.control?` (incluye el derroche ${v.control.formula}: ${v.control.valor}${v.control.tope?', hasta tu límite':''})`:''}. Esperando confirmación del sistema.`}],manualResuelto:false,
   pendiente:'Comprueba objetivos, tiradas, estados y desplazamientos. Los efectos narrativos y movimientos que la ficha no automatice se resuelven en mesa.'};
 }
 export function mensajeWorkflow(wf){return wf?._ecosMensaje??game.messages?.get(wf?.itemCardId??wf?.messageId)??null;}
