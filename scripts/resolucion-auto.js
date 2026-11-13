@@ -57,7 +57,7 @@ const modo = () => { try { return game.settings.get(MOD, AJ); } catch { return "
 const esTecnica = item => !!item?.flags?.[MOD]?.verbe?.id;
 const gmPrincipal = () => game.user.isGM && (!game.users.activeGM || game.users.activeGM.isSelf);
 const pg = a => ({ value: Number(a?.system?.attributes?.hp?.value) || 0, temp: Number(a?.system?.attributes?.hp?.temp) || 0 });
-const naturalDe = r => Number(r?.dice?.[0]?.results?.find(x => x.active)?.result ?? r?.d20?.total) || null;
+export const naturalDe = r => Number(r?.dice?.[0]?.results?.find(x => x.active)?.result ?? r?.d20?.total) || null;
 
 /** Pone en la ficha los efectos de la actividad que tocan (los de fallar, o los de salvarse). Devuelve los creados. */
 async function ponerEfectos(actor, activity, salvado = false) {
@@ -109,7 +109,7 @@ export async function aplicarUso(d) {
   const activity = await fromUuid(d.actividad).catch(() => null);
   if (!activity) return;
   const solo = modo() === "tirar";
-  const resultados = [], deshacer = { cambios: [], sumar: [], borrar: [] }, pendientes = [];
+  const resultados = [], deshacer = { cambios: [], sumar: [], borrar: [] }, pendientes = [], danosPor = [];
   for (const o of d.objetivos ?? []) {
     const tok = await fromUuid(o.uuid).catch(() => null), actor = tok?.actor; if (!actor) continue;
     const linea = { nombre: o.nombre ?? tok.name, ataque: o.ataque, ca: o.ca, impacta: o.impacta, critico: o.critico, curacion: o.curacion, efectos: [] };
@@ -125,6 +125,7 @@ export async function aplicarUso(d) {
       if (solo) pendientes.push({ uuid: actor.uuid, danos: o.danos, multiplicador: mult });
       else {
         const a = await aplicar(actor, danos, { multiplicador: mult, curacion: o.curacion });
+        if (!o.curacion) danosPor.push({ uuid: actor.uuid, danos: o.danos, multiplicador: mult }); // 3.75: Cambio de lugar se lo pasa a quien se interpone (lista: un uuid lleva puntos y Foundry expandiría la clave).
         deshacer.sumar.push({ uuid: actor.uuid, sumar: { "system.attributes.hp.value": a.antes.value - a.despues.value, "system.attributes.hp.temp": a.antes.temp - a.despues.temp } });
         Object.assign(linea, { dano: a.delta, pgAntes: a.antes.value, pgDespues: a.despues.value });
       }
@@ -134,11 +135,11 @@ export async function aplicarUso(d) {
     if (!solo && o.salv && !salvado) { const est = await estilosAlFallar({ lanzador: activity.actor, objetivo: actor, activity }); deshacer.borrar.push(...est.map(e => e.uuid)); linea.efectos = [...(linea.efectos ?? []), ...est.map(e => e.name)]; }
     resultados.push(linea);
   }
-  await tarjeta(activity, resultados, deshacer, pendientes);
+  await tarjeta(activity, resultados, deshacer, pendientes, danosPor);
 }
 
 /** La tarjeta «Resolución»: al DM (los PG exactos de un enemigo no se le muestran al jugador). */
-async function tarjeta(activity, resultados, deshacer, pendientes) {
+async function tarjeta(activity, resultados, deshacer, pendientes, danosPor = []) {
   if (!resultados.length) return;
   const botones = pendientes.length
     ? `<p><button type="button" data-ecos-res="aplicar"><i class="fa-solid fa-heart-crack"></i> Aplicar el daño</button></p>`
@@ -146,7 +147,7 @@ async function tarjeta(activity, resultados, deshacer, pendientes) {
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: activity.actor }), whisper: game.users.filter(u => u.isGM).map(u => u.id),
     content: `<section class="ecos-resolucion"><h3>Resolución · ${esc(activity.item?.name)}</h3><ul>${resultados.map(lineaResultado).join("")}</ul>${botones}</section>`,
-    flags: { [MOD]: { deshacer, resolucionAuto: { objetivos: resultados.map(r => r.nombre), uuids: [...new Set([...deshacer.cambios, ...deshacer.sumar].map(c => c.uuid))], pendientes, actividad: activity.uuid } } }
+    flags: { [MOD]: { deshacer, resolucionAuto: { objetivos: resultados.map(r => r.nombre), uuids: [...new Set([...deshacer.cambios, ...deshacer.sumar].map(c => c.uuid))], pendientes, actividad: activity.uuid, danos: danosPor } } }
   });
 }
 

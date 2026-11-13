@@ -50,7 +50,8 @@ export function updateSumar(actual, sumar, max = Infinity) {
   }
   return u;
 }
-async function deshacer(msg) {
+/** 3.75: también lo usan las reacciones de estilo (Leer el golpe, Cambio de lugar) para anular una resolución. */
+export async function deshacer(msg) {
   const d = msg.getFlag(MOD, "deshacer");
   if (!game.user.isGM || !d || msg.getFlag(MOD, "deshecho")) return;
   for (const e of d.cambios ?? []) { const doc = await fromUuid(e.uuid).catch(() => null); if (doc) await doc.update(updateDeshacer(e.antes)).catch(err => console.error(`${MOD} | deshacer`, err)); }

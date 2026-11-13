@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 3.75.0 — 2026-11-13
+
+- **Reacciones de los estilos con aviso (gastan la Reacción Verbe, como pidió el autor):**
+  - **Leer el golpe (Mirada):** si te impactan con la Mirada abierta, te llega «Usar»: el atacante repite el d20 y se queda con el menor; si así falla, la resolución se anula sola.
+  - **Contragolpe (Quietud):** si una criatura a 1,5 m te falla un ataque cuerpo a cuerpo, «Usar» la ataca con tu arma cuerpo a cuerpo equipada.
+  - **Cambio de lugar (Umbral, 2 Verbe):** si impactan a un aliado a 9 m o menos, «Usar» os cambia de lugar y el daño te llega a ti; «Deshacer» devuelve lugares, PG y Verbe (el golpe al aliado se repone con «A mano»).
+  - El aviso caduca a los 30 s y solo lo puede usar el dueño de la ficha o el DM. Velo que no suelta sigue pidiéndose al DM.
+
 ## 3.74.0 — 2026-11-13
 
 - **Lectura clara (pedido del autor):**

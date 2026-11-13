@@ -52,3 +52,24 @@ test('3.73 · Deshacer devuelve Verbe aunque quede en negativo', () => {
   assert.deepEqual(updateSumar({ 'flags.ecos-frontera.verbe.valor': -3 }, { 'flags.ecos-frontera.verbe.valor': 1 }), { 'flags.ecos-frontera.verbe.valor': -2 });
   assert.equal(updateSumar({ 'system.attributes.hp.value': 2 }, { 'system.attributes.hp.value': -8 }, 30)['system.attributes.hp.value'], 0);
 });
+
+test('3.75 · reacciones de estilo con aviso', async () => {
+  const { reaccionesEstilo, leerElGolpe } = await import('../scripts/estilos-auto.js');
+  const S = (...x) => new Set(x);
+  // Leer el golpe: solo si impacta, con la Mirada abierta y la Reacción Verbe libre.
+  assert.deepEqual(reaccionesEstilo({ blanco: { dotes: S('estilo-mirada'), miradaAbierta: true, reaccionLibre: true }, impacta: true }), [{ tipo: 'leer', reactor: 'blanco' }]);
+  assert.deepEqual(reaccionesEstilo({ blanco: { dotes: S('estilo-mirada'), miradaAbierta: false, reaccionLibre: true }, impacta: true }), []);
+  assert.deepEqual(reaccionesEstilo({ blanco: { dotes: S('estilo-mirada'), miradaAbierta: true, reaccionLibre: false }, impacta: true }), []);
+  // Contragolpe: falla cuerpo a cuerpo a 5 ft.
+  assert.deepEqual(reaccionesEstilo({ blanco: { dotes: S('estilo-quietud-2'), reaccionLibre: true }, cuerpoACuerpo: true, distAtacante: 5, impacta: false }), [{ tipo: 'contragolpe', reactor: 'blanco' }]);
+  assert.deepEqual(reaccionesEstilo({ blanco: { dotes: S('estilo-quietud-2'), reaccionLibre: true }, cuerpoACuerpo: true, distAtacante: 10, impacta: false }), []);
+  // Cambio de lugar: aliado a 30 ft o menos, con 2 Verbe.
+  const al = { id: 'a', dotes: S('estilo-umbral-2'), reaccionLibre: true, dist: 25, verbe: 3 };
+  assert.deepEqual(reaccionesEstilo({ blanco: {}, impacta: true, aliados: [al] }), [{ tipo: 'cambio', reactor: 'a' }]);
+  assert.deepEqual(reaccionesEstilo({ blanco: {}, impacta: true, aliados: [{ ...al, verbe: 1 }] }), []);
+  assert.deepEqual(reaccionesEstilo({ blanco: {}, impacta: true, aliados: [{ ...al, dist: 35 }] }), []);
+  // Leer el golpe: se queda el menor.
+  assert.deepEqual(leerElGolpe({ total: 18, natural: 12, nuevo: 5, ca: 15 }), { otro: 11, final: 11, natural: 5, impacta: false });
+  assert.equal(leerElGolpe({ total: 18, natural: 12, nuevo: 15, ca: 15 }).impacta, true);
+  assert.equal(leerElGolpe({ total: 25, natural: 20, nuevo: 20, ca: 30 }).impacta, true, 'dos 20 siguen siendo crítico');
+});

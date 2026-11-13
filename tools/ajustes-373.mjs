@@ -12,7 +12,7 @@ const AUTO = {
   'estilo-velo-2': 'Reacción Verbe: pídesela al DM cuando el objetivo supere la salvación repetida.',
   'estilo-cuerpo': 'Recordatorio en el chat al atacar con Cuerpo.',
   'estilo-cuerpo-2': 'Automática: una vez por turno, los dados de daño de tu técnica de Cuerpo se tiran dos veces y queda el mayor.',
-  'estilo-mirada': 'Reacción Verbe: pídesela al DM cuando te ataquen con la Mirada abierta.',
+  'estilo-mirada': 'Reacción Verbe con aviso (3.75): si te impactan con la Mirada abierta, te llega «Usar»; el atacante repite el d20 y se queda con el menor, y si así falla, el golpe se anula.',
   'estilo-mirada-2': 'Automática: con la Mirada abierta tienes «Ojo que anticipa» (+ competencia a la iniciativa). La Sorpresa la decide el DM.',
   'estilo-sello': 'Recordatorio: el DM duplica los PG y suma +2 a la CA de tus barreras.',
   'estilo-sello-2': 'Automática: si falla la salvación, el objetivo recibe «Sello que corta» (sin reacciones hasta su siguiente turno), con «Deshacer».',
@@ -23,11 +23,11 @@ const AUTO = {
   'estilo-hilo': 'Automática: +2 al daño de tus técnicas de Hilo y de las armas arrojadizas que lanzas.',
   'estilo-hilo-2': 'Recordatorio en el chat al atacar: la cobertura y el alcance largo los ajusta el DM.',
   'estilo-quietud': 'Recordatorio: si impactas con un ataque de oportunidad, el DM baja su velocidad a 0.',
-  'estilo-quietud-2': 'Reacción Verbe: pídesela al DM cuando una criatura a 1,5 m falle un ataque cuerpo a cuerpo contra ti.',
+  'estilo-quietud-2': 'Reacción Verbe con aviso (3.75): si una criatura a 1,5 m te falla un ataque cuerpo a cuerpo, te llega «Usar» y la atacas con tu arma cuerpo a cuerpo equipada.',
   'estilo-rastro': 'Automática: en tu hoja aparece «Presa marcada» (acción adicional, 1 Verbe, concentración). Una vez por turno, +1d6 al daño contra la presa; «Deshacer» devuelve el Verbe y quita la marca.',
   'estilo-rastro-2': 'Automática: tus ataques contra tu presa marcada son críticos con 19 o 20.',
   'estilo-umbral': 'Automática: al usar una técnica de Umbral recibes «Paso que golpea»; tu siguiente ataque del turno tiene ventaja y el efecto se va.',
-  'estilo-umbral-2': 'Reacción Verbe y 2 Verbe: pídesela al DM cuando un ataque vaya a impactar a un aliado a 9 m o menos.',
+  'estilo-umbral-2': 'Reacción Verbe y 2 Verbe, con aviso (3.75): si impactan a un aliado a 9 m o menos, te llega «Usar»; os cambiáis de lugar y el golpe te alcanza a ti, con «Deshacer».',
   'estilo-vasija': 'Automática: transformado (manto o avatar) tienes «Furia de la bestia»: +2 al daño cuerpo a cuerpo y ventaja en pruebas y salvaciones de Fuerza.',
   'estilo-vasija-2': 'Automática: una vez por Descanso Largo, si estás transformado, quedas a 1 PG en vez de caer a 0, con «Deshacer».'
 };
