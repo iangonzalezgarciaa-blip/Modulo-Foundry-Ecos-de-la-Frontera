@@ -68,4 +68,4 @@ Las reliquias solo actualizan nombres o descripciones generados reconocidos por 
 
 La vista previa utiliza el HTML real con personajes ficticios. La verificación estática, los casos automatizados y las simulaciones de técnicas no sustituyen una partida dentro de Foundry 13 con dnd5e 5.2.5, Plutonium y la versión instalada de Midi-QOL. Las macros sin metadatos de tirada dnd5e no disparan automáticamente la tabla del d20.
 
-Huella estructurada de esta revisión: SHA-256 `14e2b0067e364598fce1cbb7d51f737c6e67ea053ad583fe7d44512d68c4a075`. La huella histórica 3.2.0 y las huellas de texto anteriores se conservan para migración y trazabilidad.
+Huella estructurada de esta revisión: SHA-256 `4dada65f17a173b74aab606a6a8318240d8ac17b17554b6c1ec3477b248ec313`. La huella histórica 3.2.0 y las huellas de texto anteriores se conservan para migración y trazabilidad.
