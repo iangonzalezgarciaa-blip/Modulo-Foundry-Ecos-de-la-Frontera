@@ -16,7 +16,7 @@ async function cargar(){
  carga=(async()=>{const res=await fetch(`modules/${MOD}/data/reliquias.txt`);if(!res.ok)throw Error('No se pudo cargar el catálogo de reliquias.');
   const bin=Uint8Array.from(atob((await res.text()).trim()),c=>c.charCodeAt(0)),key=new TextEncoder().encode(MOD);
   for(let i=0;i<bin.length;i++)bin[i]^=key[i%key.length]^(i&255);
-  datos=JSON.parse(await new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'))).text());for(const r of datos.reliquias??[])if(r.item)r.item=conMagia(r.item,r.nivel);return datos;
+  datos=JSON.parse(await new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'))).text());for(const r of datos.reliquias??[])if(r.item)r.item=conIconos(conMagia(r.item,r.nivel));return datos;
  })().catch(err=>{carga=null;throw err;});return carga;
 }
 export async function asegurarCompendioReliquias(){
@@ -28,9 +28,11 @@ export async function asegurarCompendioReliquias(){
  const nuevas=D.reliquias.map(r=>r.item).filter(i=>!pack.index.has(i._id));
  const existentes=pack.getDocuments?await pack.getDocuments():[];
  const cambios=existentes.map(i=>({item:i,cambio:cambiosTextoReliquia(i,D)})).filter(x=>x.cambio);
- if(nuevas.length||cambios.length){const bloqueado=pack.locked;await pack.configure({locked:false});try{
+ const iconos=existentes.some(i=>i.img===ICONO_VIEJO||[...(i.effects??[])].some(e=>e.img===ICONO_VIEJO));
+ if(nuevas.length||cambios.length||iconos){const bloqueado=pack.locked;await pack.configure({locked:false});try{
    if(nuevas.length)await Item.createDocuments(nuevas,{pack:pack.collection,keepId:true});
    for(const {item,cambio} of cambios)await item.update(cambio);
+   for(const item of existentes)await arreglarIconos(item);
  }finally{await pack.configure({locked:bloqueado});}}
  return pack;
 }
@@ -40,6 +42,18 @@ export async function asegurarCompendioReliquias(){
 export function conMagia(item,nivel){
  if(!item||Number(nivel)<9)return item;const props=[...(item.system?.properties??[])];
  return {...item,system:{...(item.system??{}),attunement:'required',properties:props.includes('mgc')?props:[...props,'mgc']}};
+}
+/** 3.79 (prueba combinada): «icons/svg/relic.svg» no existe en Foundry («Invalid Asset» al poner el efecto en la ficha). Puro. */
+export const ICONO_VIEJO='icons/svg/relic.svg',ICONO_RELIQUIA='icons/svg/item-bag.svg',ICONO_EFECTO_RELIQUIA='icons/svg/aura.svg';
+export function conIconos(item){
+ if(!item)return item;
+ return {...item,img:item.img===ICONO_VIEJO?ICONO_RELIQUIA:item.img,effects:(item.effects??[]).map(e=>e?.img===ICONO_VIEJO?{...e,img:ICONO_EFECTO_RELIQUIA}:e)};
+}
+async function arreglarIconos(doc){
+ let n=0;if(doc?.img===ICONO_VIEJO&&doc.documentName==='Item'){await doc.update({img:ICONO_RELIQUIA});n++;}
+ const efs=[...(doc?.effects??[])].filter(e=>e.img===ICONO_VIEJO).map(e=>({_id:e.id,img:ICONO_EFECTO_RELIQUIA}));
+ if(efs.length){await doc.updateEmbeddedDocuments('ActiveEffect',efs);n++;}
+ return n;
 }
 export function cambiosMagia(item){
  const m=meta(item),nivel=Number(m?.nivel??item?.flags?.[MOD]?.almacen?.nivel);if(!m||!(nivel>=9))return null;
@@ -59,8 +73,8 @@ export function cambiosTextoReliquia(item,D=datos){
 }
 export async function actualizarTextosReliquias(){
  if(!game.user.isGM)return 0;const D=await cargar();let n=0;
- for(const a of actoresPresentes())for(const i of a.items){const cambios=cambiosTextoReliquia(i,D);if(cambios){await i.update(cambios);n++;}}
- for(const i of game.items??[]){const cambios=cambiosMagia(i);if(cambios){await i.update(cambios);n++;}}
+ for(const a of actoresPresentes()){for(const i of a.items){const cambios=cambiosTextoReliquia(i,D);if(cambios){await i.update(cambios);n++;}n+=await arreglarIconos(i);}n+=await arreglarIconos(a);}
+ for(const i of game.items??[]){const cambios=cambiosMagia(i);if(cambios){await i.update(cambios);n++;}n+=await arreglarIconos(i);}
  return n;
 }
 function htmlDiario(D){return `<h1>Reliquias · guía del DM</h1><p>${esc(D.alcance)}</p><p>Las cifras y efectos jugables son adaptación de Nimerios. La clasificación de archivo no es un grado del Verbe. Todas las reliquias requieren autorización del DM, equipo y el nivel de su ficha; desde nivel 9 también sintonía. Se comparte un uso de familia y uno de reliquia mayor por Descanso Largo. Un ritual requiere otro permiso para cada activación. Los consumibles no se reponen. Para entregar o preparar un ritual, abre Verbe → DM → Compendio de reliquias.</p>${D.dossiers.map(d=>`<h2>${esc(d.nombre)}</h2><p>${esc(d.texto)}</p>`).join('')}${D.reliquias.map(r=>`<details><summary>${esc(r.nombre)} · ${esc(r.origen)} · nivel ${r.nivel}</summary>${r.item.system.description.value}</details>`).join('')}`;}

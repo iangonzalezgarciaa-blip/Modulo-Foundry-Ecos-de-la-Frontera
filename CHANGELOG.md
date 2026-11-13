@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.80.0 — 2026-11-13
+
+- **Prueba combinada en el mundo (3.79):** **450 de 450 técnicas con requisito bien**, 0 errores; los estilos de combate todos bien (también Aguante de la bestia); revisión de mesa 13 de 13 (el único «falla» era la propia prueba, que esperaba el dado viejo de Aprendiz y no el del Control). Inconsciente ya no choca con Derribado. Reliquias: 74 de 78; **todas las de nivel 9+ ya se sintonizan y se usan**.
+- **Arreglado:** las 4 reliquias con efecto en la ficha (Clavos del Porteador, Dosel del Primer Faro, Clavo del puesto abandonado, Semilla del primer refugio) daban «Invalid Asset icons/svg/relic.svg»: ese icono no existe en Foundry. Ahora las reliquias usan el saco de objetos y sus efectos el aura; las que ya están en el mundo (fichas, efectos puestos, almacén y compendio) se corrigen solas al abrir el mundo el DM.
+
 ## 3.79.0 — 2026-11-13
 
 - **Derroche según tu Control (regla del autor, 13-nov-2026: «que tengan que entrenar para no desperdiciar»):** el dado que se suma a cada costo de Verbe sale ahora del bono de tu **Control del Verbe**, no de la etapa: +2 o menos **+1d6** · +3–4 +1d4 · +5–6 +1d3 · +7–8 +1d2 · +9–10 +1d2−1 · +11 o más, nada. Mucha reserva (CON) con poco control derrocha mucho; poca reserva con buen control gasta lo justo.

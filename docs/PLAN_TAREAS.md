@@ -374,3 +374,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 13-nov-2026 | Mejora | Claude | Arreglo del aviso de reacciones de alcance (pies) tras la prueba con jugadores. Release v3.77.0 | 3.77.0 |
 | 13-nov-2026 | Mejora | Claude | Arreglos de la prueba combinada: estados dobles, notas repetidas y aviso de ascensión. Release v3.78.0 | 3.78.0 |
 | 13-nov-2026 | Mejora | Claude | Derroche según el Control del Verbe y Ejercicio de control. Release v3.79.0 | 3.79.0 |
+| 13-nov-2026 | Mejora | Claude | Icono de las reliquias corregido; prueba combinada 450 de 450. Release v3.80.0 | 3.80.0 |

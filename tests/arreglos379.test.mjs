@@ -29,3 +29,15 @@ test('3.79: las reliquias de nivel 9+ son mágicas y piden sintonía (dnd5e 6 bo
   const lista = { flags, getFlag: (m, k) => flags[m]?.[k], _source: { system: { attunement: 'required', properties: ['mgc'] } } };
   assert.equal(cambiosMagia(lista), null);
 });
+
+test('3.79: ninguna reliquia usa «icons/svg/relic.svg» (no existe en Foundry)', async () => {
+  const { conIconos, ICONO_VIEJO, ICONO_RELIQUIA, ICONO_EFECTO_RELIQUIA } = await import('../scripts/relics.js');
+  const D = decodeCatalog(fs.readFileSync(new URL('../data/reliquias.txt', import.meta.url), 'utf8'));
+  for (const r of D.reliquias) {
+    const it = conIconos(r.item);
+    assert.notEqual(it.img, ICONO_VIEJO, r.id);
+    for (const e of it.effects ?? []) assert.equal(e.img, ICONO_EFECTO_RELIQUIA, r.id);
+  }
+  assert.equal(conIconos({ img: ICONO_VIEJO, effects: [] }).img, ICONO_RELIQUIA);
+  assert.equal(conIconos({ img: 'x.webp' }).img, 'x.webp');
+});
