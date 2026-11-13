@@ -19,7 +19,7 @@ import { donDivino, asegurarNotaPanteon } from "./verbe-divinity.js";
 import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
 import { plantillaEnEscena } from "./verbe-plantillas.js";
-import { objetivosMensaje, filtrarObjetivosMensaje, consumoMensaje, duracionFinita, quitar } from "./compat.js";
+import { objetivosMensaje, filtrarObjetivosMensaje, consumoMensaje, duracionFinita, quitar, duracionSinNulos } from "./compat.js";
 import { cifrasActividad, pasosUso, chipsCifras, tipoUso, actividadDe, TIPOS_USO } from "./verbe-cifras.js";
 import { problemasTecnica } from "./verbe-validate.js";
 import { compendioJugadoresHTML, compendioDMHTML } from "./verbe-compendio.js";
@@ -806,6 +806,7 @@ async function efectosShinobi(actor,item,uso) {
       f.changes=(f.changes??[]).map(c=>/\.damage$/.test(c.key)?{...c,value:`${n}d${g.d}[${g.tipo}]`}:c);}
     delete f._id;f.origin=item.uuid;f.duration??={};f.duration.startTime=game.time.worldTime;
     f.duration.startRound=game.combat?.round;f.duration.startTurn=game.combat?.turn;
+    duracionSinNulos(f.duration); // 3.71: Foundry 14 rompía con «start: null» junto a las claves viejas (31 técnicas de golpe siguiente).
     const concentraciones=actor.effects.filter(e=>e.statuses?.has('concentrating'));
     const concentracion=concentraciones.find(e=>e.getFlag('dnd5e','item')?.id===item.id)??concentraciones.at(-1);
     if(item.system.properties?.has?.('concentration')||item.system.properties?.includes?.('concentration'))fl.deConcentracion=concentracion?.uuid??concentracion?.id??null;
@@ -1153,8 +1154,11 @@ async function explicarUso(actor, item, meta) {
 /** Párrafo de la ficha para las técnicas cargadas (3.3). */
 const fichaCarga = meta => { const c = cargaDe(meta); return c ? `<p class="ev-nota"><b>Cargada.</b> ${escH(textoCarga(c))}</p>` : ""; };
 /** Arma los datos del objeto para este actor a partir de la técnica base. */
+/** 3.71 (prueba en el mundo): dnd5e 6 solo acepta identificadores con a-z, 0-9 y guiones; «rastro-sensor-carmesí» y las técnicas del DM («dm-AbC…») no se podían aprender. Puro. */
+export const identificadorValido = id => String(id ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "") || "tecnica";
 export function datosItem(actor, tec) {
   const data = foundry.utils.deepClone(tec.item);
+  if (data.system) data.system.identifier = identificadorValido(data.system.identifier ?? tec.id);
   const meta = data.flags[MOD][F];
   const e = estado(actor) ?? {};
   const inf = e.infusiones?.[tec.id] ?? null;

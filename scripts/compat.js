@@ -127,3 +127,10 @@ export function puenteRitmoViaje(sistema = globalThis.dnd5e) {
   Object.defineProperty(mov, "getTravelPaceMode", { value: (...args) => viaje.getTravelPaceMode(...args), configurable: true, writable: true });
   return true;
 }
+
+/** 3.71 (prueba en el mundo): una duración copiada de un efecto trae `start: null` en Foundry 14; junto a `startTime` hacía fallar la creación («'time' in null»). Quita las claves nulas. Puro. */
+export function duracionSinNulos(d) {
+  if (!d || typeof d !== "object") return d;
+  for (const k of Object.keys(d)) if (d[k] === null || d[k] === undefined) delete d[k];
+  return d;
+}

@@ -1,5 +1,14 @@
 # Historial de cambios
 
+## 3.71.0 — 2026-11-12
+
+- **Arreglos hallados con la prueba de uso de las 917 técnicas en el mundo:**
+  - 31 técnicas de «golpe siguiente» (Cola de fuego, Puño de piedra, Colmillo de rayo, Puño ebrio…) fallaban al usarse en Foundry 14 («'time' in null»): la duración copiada traía claves vacías. Ya no.
+  - «Sensor carmesí» no se podía aprender (su identificador llevaba tilde) y tampoco las técnicas creadas por el DM (mayúsculas): dnd5e 6 solo acepta a-z, 0-9 y guiones. Ahora el identificador se limpia solo.
+  - Aprobar un estado que el objetivo ya tenía (por ejemplo, Derribado) daba error: ahora dice «ya lo tenía».
+  - «Deshacer» de la resolución y de la Defensa devuelve solo lo suyo: suma lo que quitó en vez de volver a un valor fijo (antes deshacía mal si otra cosa cambiaba los PG entre medio).
+  - La tarjeta de resolución usa su propia marca y no se confunde con el recibo de la tarjeta de D&D.
+
 ## 3.70.0 — 2026-11-12
 
 - **Resolución automática de técnicas (pedido del autor):** al usar una técnica con objetivos marcados, todo se resuelve con un clic. Quien la usa tira sus dados (ataque contra la CA de cada objetivo, 20 natural crítico y 1 natural falla; daño si acierta; o el daño y la cura una vez) y el DM principal lo aplica con las resistencias de D&D y pone los efectos de la técnica. Las salvaciones siguen pasando por la Defensa a pedido y ahora traen el daño (mitad si se salva). Al DM le llega «Resolución · …» con ataque, CA, daño y PG antes → después, con **Deshacer** (devuelve PG y quita efectos) y **A mano** (fijas tú el daño o la cura de cada uno). Ajuste «Técnicas: resolución automática»: tirar y aplicar · solo tirar (botón «Aplicar el daño») · no.

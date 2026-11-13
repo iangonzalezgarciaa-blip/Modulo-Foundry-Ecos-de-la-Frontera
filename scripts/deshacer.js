@@ -20,10 +20,29 @@ export function updateDeshacer(antes) {
   return u;
 }
 export const botonDeshacer = () => `<p><button type="button" data-ecos-deshacer><i class="fa-solid fa-rotate-left"></i> Deshacer</button></p>`;
+/**
+ * 3.71 (prueba en el mundo): los PG se deshacen sumando lo que se quitó, no volviendo a un valor fijo: si entre medio
+ * otra cosa cambió los PG (un estado que quema, otra técnica), «Deshacer» solo devuelve lo suyo. Puro.
+ * `actual` = valores de ahora; `sumar` = { ruta: cantidad }; `max` = PG máximos (para no pasarse).
+ */
+export function updateSumar(actual, sumar, max = Infinity) {
+  const u = {};
+  for (const [r, n] of Object.entries(sumar ?? {})) {
+    let v = (Number(actual?.[r]) || 0) + (Number(n) || 0);
+    if (/hp\.value$/.test(r)) v = Math.min(Number(max) || Infinity, v);
+    u[r] = Math.max(0, v);
+  }
+  return u;
+}
 async function deshacer(msg) {
   const d = msg.getFlag(MOD, "deshacer");
   if (!game.user.isGM || !d || msg.getFlag(MOD, "deshecho")) return;
   for (const e of d.cambios ?? []) { const doc = await fromUuid(e.uuid).catch(() => null); if (doc) await doc.update(updateDeshacer(e.antes)).catch(err => console.error(`${MOD} | deshacer`, err)); }
+  for (const e of d.sumar ?? []) {
+    const doc = await fromUuid(e.uuid).catch(() => null); if (!doc) continue;
+    const actual = Object.fromEntries(Object.keys(e.sumar ?? {}).map(r => [r, foundry.utils.getProperty(doc, r)]));
+    await doc.update(updateSumar(actual, e.sumar, doc.system?.attributes?.hp?.max)).catch(err => console.error(`${MOD} | deshacer`, err));
+  }
   for (const u of d.borrar ?? []) await (await fromUuid(u).catch(() => null))?.delete().catch(() => null);
   await msg.update({ content: `${msg.content}<p><i>Deshecho por el DM.</i></p>`, [`flags.${MOD}.deshecho`]: true });
 }

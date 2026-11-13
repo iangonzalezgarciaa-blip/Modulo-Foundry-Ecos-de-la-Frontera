@@ -91,7 +91,7 @@ async function responder(d) {
     buttons: [{ action: "tirar", label: "Tirar la defensa", icon: "fa-solid fa-dice-d20", default: true, callback: (ev, btn) => new foundry.applications.ux.FormDataExtended(btn.form).object },
       { action: "nada", label: "No defenderse (falla)", icon: "fa-solid fa-xmark", callback: () => ({ nada: true }) }] });
   if (!r) return;
-  const resultados = [], deshacer = { cambios: [], borrar: [] };
+  const resultados = [], deshacer = { cambios: [], sumar: [], borrar: [] };
   for (const [i, o] of fichas.entries()) {
     let total = -Infinity, ok = false;
     if (!r.nada) {
@@ -114,13 +114,13 @@ async function responder(d) {
         await o.actor.applyDamage(d.dano.danos.map(x => ({ ...x, properties: new Set(x.properties ?? []) })), { multiplier: mult }).catch(err => console.error(`${MOD} | defensa`, err));
         const despues = Number(o.actor.system?.attributes?.hp?.value) || 0, tmp = Number(o.actor.system?.attributes?.hp?.temp) || 0;
         res.dano = (antes.value - despues) + (antes.temp - tmp);
-        deshacer.cambios.push({ uuid: o.actor.uuid, antes: { "system.attributes.hp.value": antes.value, "system.attributes.hp.temp": antes.temp } });
+        deshacer.sumar.push({ uuid: o.actor.uuid, sumar: { "system.attributes.hp.value": antes.value - despues, "system.attributes.hp.temp": antes.temp - tmp } });
       }
     }
     resultados.push(res);
   }
   const lineas = resultados.map(x => `<li><b>${esc(x.nombre)}</b>: ${x.ok ? "se defiende" : "no se defiende"}${x.dano ? ` · recibe ${x.dano} de daño` : ""}</li>`).join("");
-  const conDeshacer = deshacer.cambios.length || deshacer.borrar.length;
+  const conDeshacer = deshacer.sumar.length || deshacer.borrar.length;
   const { botonDeshacer } = await import("./deshacer.js");
   await ChatMessage.create({ speaker: { alias: "Defensa" }, content: `<section class="ecos-defensa-resultado"><p>${esc(d.accion)} de ${esc(d.autor)}:</p><ul>${lineas}</ul>${conDeshacer ? botonDeshacer() : ""}</section>`,
     flags: { [MOD]: { defensaResultado: d.id, ...(conDeshacer ? { deshacer } : {}) } } });

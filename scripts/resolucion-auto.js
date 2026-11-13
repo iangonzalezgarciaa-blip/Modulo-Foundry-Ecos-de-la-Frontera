@@ -108,7 +108,7 @@ export async function aplicarUso(d) {
   const activity = await fromUuid(d.actividad).catch(() => null);
   if (!activity) return;
   const solo = modo() === "tirar";
-  const resultados = [], deshacer = { cambios: [], borrar: [] }, pendientes = [];
+  const resultados = [], deshacer = { cambios: [], sumar: [], borrar: [] }, pendientes = [];
   for (const o of d.objetivos ?? []) {
     const tok = await fromUuid(o.uuid).catch(() => null), actor = tok?.actor; if (!actor) continue;
     const linea = { nombre: o.nombre ?? tok.name, ataque: o.ataque, ca: o.ca, impacta: o.impacta, critico: o.critico, curacion: o.curacion, efectos: [] };
@@ -124,7 +124,7 @@ export async function aplicarUso(d) {
       if (solo) pendientes.push({ uuid: actor.uuid, danos: o.danos, multiplicador: mult });
       else {
         const a = await aplicar(actor, danos, { multiplicador: mult, curacion: o.curacion });
-        if (!deshacer.cambios.some(c => c.uuid === actor.uuid)) deshacer.cambios.push({ uuid: actor.uuid, antes: { "system.attributes.hp.value": a.antes.value, "system.attributes.hp.temp": a.antes.temp } });
+        deshacer.sumar.push({ uuid: actor.uuid, sumar: { "system.attributes.hp.value": a.antes.value - a.despues.value, "system.attributes.hp.temp": a.antes.temp - a.despues.temp } });
         Object.assign(linea, { dano: a.delta, pgAntes: a.antes.value, pgDespues: a.despues.value });
       }
     }
@@ -143,13 +143,13 @@ async function tarjeta(activity, resultados, deshacer, pendientes) {
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: activity.actor }), whisper: game.users.filter(u => u.isGM).map(u => u.id),
     content: `<section class="ecos-resolucion"><h3>Resolución · ${esc(activity.item?.name)}</h3><ul>${resultados.map(lineaResultado).join("")}</ul>${botones}</section>`,
-    flags: { [MOD]: { deshacer, resolucion: { objetivos: resultados.map(r => r.nombre), uuids: deshacer.cambios.map(c => c.uuid), pendientes, actividad: activity.uuid } } }
+    flags: { [MOD]: { deshacer, resolucionAuto: { objetivos: resultados.map(r => r.nombre), uuids: [...new Set([...deshacer.cambios, ...deshacer.sumar].map(c => c.uuid))], pendientes, actividad: activity.uuid } } }
   });
 }
 
 /** «A mano»: el DM fija cuánto daño (positivo) o cura (negativo) recibe cada uno; queda en el Deshacer. */
 async function aMano(msg) {
-  const r = msg.getFlag(MOD, "resolucion"); if (!r || !game.user.isGM) return;
+  const r = msg.getFlag(MOD, "resolucionAuto"); if (!r || !game.user.isGM) return;
   const actores = (await Promise.all((r.uuids ?? []).map(u => fromUuid(u).catch(() => null)))).filter(Boolean);
   if (!actores.length) return ui.notifications.warn("No hay a quién ajustar en esta resolución.");
   const { DialogV2 } = foundry.applications.api;
@@ -167,16 +167,16 @@ async function aMano(msg) {
 }
 /** «Aplicar el daño» (modo solo tirar). */
 async function aplicarPendientes(msg) {
-  const r = msg.getFlag(MOD, "resolucion"); if (!r?.pendientes?.length || !game.user.isGM || msg.getFlag(MOD, "aplicado")) return;
-  const deshacer = { cambios: [], borrar: [] }, lineas = [];
+  const r = msg.getFlag(MOD, "resolucionAuto"); if (!r?.pendientes?.length || !game.user.isGM || msg.getFlag(MOD, "aplicado")) return;
+  const deshacer = { cambios: [], sumar: [], borrar: [] }, lineas = [];
   for (const p of r.pendientes) {
     const a = await fromUuid(p.uuid).catch(() => null); if (!a) continue;
     const res = await aplicar(a, p.danos.map(x => ({ ...x, properties: new Set(x.properties ?? []) })), { multiplicador: p.multiplicador });
-    deshacer.cambios.push({ uuid: a.uuid, antes: { "system.attributes.hp.value": res.antes.value, "system.attributes.hp.temp": res.antes.temp } });
+    deshacer.sumar.push({ uuid: a.uuid, sumar: { "system.attributes.hp.value": res.antes.value - res.despues.value, "system.attributes.hp.temp": res.antes.temp - res.despues.temp } });
     lineas.push(`${esc(a.name)}: ${res.delta} PG`);
   }
   await msg.update({ content: `${msg.content.replace(/<p><button type="button" data-ecos-res="aplicar">[\s\S]*?<\/p>/, "")}<p><i>Aplicado: ${lineas.join("; ")}.</i></p>${botonDeshacer()}`,
-    [`flags.${MOD}.aplicado`]: true, [`flags.${MOD}.deshacer`]: deshacer, [`flags.${MOD}.resolucion.uuids`]: deshacer.cambios.map(c => c.uuid) });
+    [`flags.${MOD}.aplicado`]: true, [`flags.${MOD}.deshacer`]: deshacer, [`flags.${MOD}.resolucionAuto.uuids`]: deshacer.sumar.map(c => c.uuid) });
 }
 
 if (globalThis.Hooks) {

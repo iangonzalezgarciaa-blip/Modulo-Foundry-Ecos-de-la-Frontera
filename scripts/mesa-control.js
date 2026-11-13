@@ -146,7 +146,12 @@ async function resolverGrupo(g) {
   const si = await preguntar(g.atacante, info);
   const aplicados = [], negados = [];
   for (const [i, o] of g.objetivos.entries()) {
-    if (si?.[i]) { await o.actor.createEmbeddedDocuments("ActiveEffect", [o.data], { ecosAprobado: true }); aplicados.push(o.actor.name); }
+    if (si?.[i]) {
+      // 3.71 (prueba en el mundo): si ya lo tiene (el mismo efecto o el mismo estado), no se vuelve a crear: Foundry fallaba con «_id already exists».
+      const st = [...(o.data?.statuses ?? [])];
+      if ((o.data?._id && o.actor.effects.has(o.data._id)) || (st.length && st.every(x => o.actor.statuses?.has?.(x)))) { aplicados.push(`${o.actor.name} (ya lo tenía)`); continue; }
+      await o.actor.createEmbeddedDocuments("ActiveEffect", [o.data], { ecosAprobado: true, ...(o.data?._id ? { keepId: true } : {}) }); aplicados.push(o.actor.name);
+    }
     else negados.push(o.actor.name);
   }
   if (negados.length && !si) ChatMessage.create({ whisper: game.users.filter(u => u.isGM).map(u => u.id), content: `<div class="ecos-card"><p>${esc(g.nombre)} no se aplicó a ${negados.map(esc).join(", ")}: nadie respondió. Si correspondía, ponlo a mano.</p></div>` }).catch(() => null);
