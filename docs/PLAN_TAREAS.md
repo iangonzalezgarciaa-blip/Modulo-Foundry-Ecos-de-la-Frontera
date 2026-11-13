@@ -368,3 +368,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 12-nov-2026 | Mejora | Claude | Arreglos de la prueba de uso: golpe siguiente, identificadores, estados repetidos, Deshacer por suma. Release v3.71.0 | 3.71.0 |
 | 12-nov-2026 | Mejora | Claude | Arreglos de la segunda prueba de uso en el mundo (efectos de 31 técnicas en Foundry 14 y Deshacer). Release v3.72.0 | 3.72.0 |
 | 13-nov-2026 | Mejora | Claude | Estilos de combate automáticos con Deshacer y A mano. Release v3.73.0 | 3.73.0 |
+| 13-nov-2026 | Mejora | Claude | Aspecto propio por técnica y dotes con «Qué es» y «Cómo se usa». Release v3.74.0 | 3.74.0 |

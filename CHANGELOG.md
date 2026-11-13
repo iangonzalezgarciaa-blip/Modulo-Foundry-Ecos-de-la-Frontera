@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 3.74.0 — 2026-11-13
+
+- **Lectura clara (pedido del autor):**
+  - **Aspecto propio en cada técnica:** además de su rama y su elemento, dice su forma en la escena (círculo, abanico, línea, cúpula, por contacto, a quemarropa…), lo que se ve al usarla y su nombre. Las 917 técnicas en uso tienen un aspecto distinto.
+  - **Dotes:** cada una dice ahora «Qué es» (don o dote entrenada y para qué sirve su categoría), «Qué ganas» y «Cómo se usa» con una nota concreta en vez de las genéricas: automática (el módulo la aplica sola), uso activo (tiene botón) o en la mesa (avisas al DM cuando se cumple). 427 notas reescritas.
+
 ## 3.73.0 — 2026-11-13
 
 - **Estilos de combate automáticos (respuestas del autor: las reacciones gastan la Reacción Verbe; los números se aplican solos y las reacciones con aviso):**

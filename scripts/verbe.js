@@ -1633,13 +1633,19 @@ export async function asegurarAEDotes(actor) {
     transfer: false, flags: { [MOD]: { [F]: { dotesAE: true } } } }]);
 }
 
+/** 3.74: «Qué es» de una dote: su tipo (don o entrenada) y para qué sirve su categoría. */
+function queEsDoteHTML(dote){
+  const cat=(D?.categoriasDote??[]).find(c=>c.id===dote.cat);
+  const tipo=dote.tipo==='entrenada'?'Dote entrenada':dote.tipo==='don'?'Don':'Dote';
+  return `<h3>Qué es</h3><p>${escH(`${tipo}${cat?` de ${cat.nombre}: ${cat.texto}`:''}.`)}</p>`;
+}
 /** Una dote es también un rasgo en la hoja (las de nacimiento lo dicen). */
 async function rasgoDote(actor, dote) {
   const actual=actor.items.find(i=>i.getFlag(MOD,F)?.dote===dote.id);
   const nace = (D.innatos ?? []).includes(dote.id);
   const p=dote.poder,aid=idFijo(`d${firma(dote.id)}actividad`),eid=idFijo(`d${firma(dote.id)}efecto`);
   const data={ name:dote.nombre,type:'feat',img:iconoDote(dote),effects:[],
-    system:{description:{value:`<h3>Qué ganas</h3>${efectoHTML(dote.textoJ??dote.texto)}<p><b>Para aprender esta dote:</b> ${escH(requisitosDoteTexto(dote))}</p><p>${escH(dote.automatizacion??'Consulta las condiciones en mesa.')}</p>${nace?'<p>Del despertar, sin coste de Trazos.</p>':''}`}},flags:{[MOD]:{[F]:{dote:dote.id}}}};
+    system:{description:{value:`${queEsDoteHTML(dote)}<h3>Qué ganas</h3>${efectoHTML(dote.textoJ??dote.texto)}<h3>Cómo se usa</h3><p>${escH(dote.automatizacion??'Consulta las condiciones en mesa.')}</p><p><b>Para aprender esta dote:</b> ${escH(requisitosDoteTexto(dote))}</p>${nace?'<p>Del despertar, sin coste de Trazos.</p>':''}`}},flags:{[MOD]:{[F]:{dote:dote.id}}}};
   if(p){
     const act={_id:aid,name:dote.nombre,type:p.curacion?'heal':'utility',activation:{type:p.tiempo??'bonus',value:1,override:true},duration:{units:p.duracion?'round':'inst',value:p.duracion?p.duracion/6:null,override:true},range:{units:'self',override:true},target:{affects:{type:'self',count:'1'},template:{},override:true},effects:[],uses:{spent:0,recovery:[]},consumption:{targets:[{type:'itemUses',target:'',value:'1',scaling:{mode:'',formula:''}}],scaling:{allowed:false},spellSlot:false}};
     if(p.curacion)act.healing={number:1,denomination:6,bonus:'',types:['healing'],custom:{enabled:false,formula:''},scaling:{mode:'',number:0,formula:''}};
@@ -4789,7 +4795,7 @@ export class PanelVerbe extends foundry.applications.api.ApplicationV2 {
     if (!d) return "";
     const r = cumpleReqDote(a, d);
     const cat = (D.categoriasDote ?? []).find(x => x.id === d.cat);
-    return `<h3>Qué ganas</h3>${efectoHTML(dotTexto(d))}${d.poder?`<p><b>Uso activo:</b> ${d.poder.costo??0} Verbe. ${estado(a).usosDote?.[d.id]?"Ya lo usaste; vuelve tras un Descanso Largo.":"Actívalo desde su botón cuando cumplas las condiciones."} Comprar esta dote y activar su poder son pasos distintos.</p>`:"<p>La dote queda aprendida. Su beneficio se aplica solo en las condiciones descritas; no siempre está activo.</p>"}<p class="ecos-nota">${escH(d.automatizacion??"Revisa con el DM las condiciones del beneficio.")}</p>
+    return `${queEsDoteHTML(d)}<h3>Qué ganas</h3>${efectoHTML(dotTexto(d))}${d.poder?`<p><b>Uso activo:</b> ${d.poder.costo??0} Verbe. ${estado(a).usosDote?.[d.id]?"Ya lo usaste; vuelve tras un Descanso Largo.":"Actívalo desde su botón cuando cumplas las condiciones."} Comprar esta dote y activar su poder son pasos distintos.</p>`:"<p>La dote queda aprendida. Su beneficio se aplica solo en las condiciones descritas; no siempre está activo.</p>"}<p class="ecos-nota"><b>Cómo se usa:</b> ${escH(d.automatizacion??"Revisa con el DM las condiciones del beneficio.")}</p>
       <table class="ecos-verbe-ficha"><tr><th>Precio</th><td>${d.trazos} Trazos</td><th>Pide</th><td>${escH(textoClaro(requisitosDoteTexto(d)))}</td></tr>
         <tr><th>Tipo</th><td>${escH(cat?.nombre ?? "—")}</td><th>Puedes</th><td>${tieneDote(a, d.id) ? (d.innato ? "la tienes desde que despertaste" : "ya la tienes") : r.ok ? (r.pideDM ? "pedirla al DM" : "sí") : escH(r.motivo)}</td></tr></table>
       ${d.mejora?.length ? `<div class="ecos-verbe-mejora"><b>Se mejora con</b><ul>${d.mejora.map(x => `<li>${escH(x)}</li>`).join("")}</ul></div>` : ""}`;

@@ -93,6 +93,21 @@ export function queEsTexto(t){
  const extra=[t.sinChoque?'No choca: no intercepta técnicas ni se la intercepta.':'',t.nivelMin?`Se aprende desde nivel ${t.nivelMin}.`:''].filter(Boolean).join(' ');
  return `Técnica de ${rama} de grado ${t.g}: ${FRASE_FUNCION[f]}.${extra?` ${extra}`:''}`;
 }
+const ASPECTO_FUNCION={ataque:'Va directa contra el objetivo: el golpe se ve llegar.','ataque con salvación':'Cae sobre el objetivo o la zona y obliga a apartarse a tiempo.',control:'Atrapa al objetivo y no lo suelta mientras dura.','curación':'Deja una calidez que cierra la piel.',defensa:'Se interpone delante de ti un instante.',refuerzo:'Se queda en tu cuerpo como un brillo leve mientras dura.',movimiento:'Te mueve y deja un rastro breve en el aire.',utilidad:'Apenas se nota: un temblor del aire y nada más.','contratécnica':'Choca contra el Verbe ajeno y lo deshace en chispas.'};
+/** La forma del área en la escena (esfera = radio, como en D&D). Puro. */
+export function formaArea(area){
+ const m=String(area??'').match(/^(semiesfera|esfera|cono|línea|cubo|cilindro|muro|cuadrado|aura)\s+(.+)$/);if(!m)return null;
+ const med=m[2].trim();
+ return ({esfera:`Estalla en un círculo de ${med} de radio.`,semiesfera:`Se cierra como una cúpula de ${med}.`,cono:`Sale en abanico desde ti hasta ${med}.`,'línea':`Corre en línea recta: ${med}.`,cubo:`Llena un cubo de ${med} de lado.`,cilindro:`Se alza como una columna de ${med}.`,muro:`Se levanta como un muro de ${med}.`,cuadrado:`Cubre un cuadrado de ${med}.`,aura:`Te rodea como un aura de ${med}.`})[m[1]]??null;
+}
+/** Por dónde va cuando no tiene área. Puro. */
+export function formaAlcance(alc,fn=''){
+ if(alc==='yo')return ['ataque','ataque con salvación','control'].includes(fn)?'Sale de tu propio cuerpo, a quemarropa.':'Nace y se queda en tu cuerpo.';
+ if(alc==='toque')return 'Pasa de tu mano al objetivo por contacto.';
+ if(alc==='vista')return 'Llega hasta donde alcanza tu vista.';
+ if(/^[\d.,]+\s*k?m$/.test(alc))return `Viaja hasta ${alc} de ti.`;
+ return null;
+}
 /** «Aspecto»: cómo se ve al usarla (el de la ficha si lo tiene; si no, el de su rama y su elemento). Puro. */
 export function aspectoTexto(t){
  if(t.aspecto)return t.aspecto;
@@ -100,6 +115,10 @@ export function aspectoTexto(t){
  const nat=String(t.nat??'').split(':')[0];
  if(ASPECTO_NAT[nat])partes.push(ASPECTO_NAT[nat]);
  else{const d=tiposDano(t).find(x=>ASPECTO_DANO[x]);if(d&&t.rama!=='velo')partes.push(ASPECTO_DANO[d]);}
+ // 3.74 (pedido del autor: «Aspecto propio por técnica»): su forma en la escena, lo que hace a la vista y su nombre.
+ const fn=funcionTecnica(t),area=formaArea(t.area),forma=area??formaAlcance(String(t.alc??''),fn);if(forma)partes.push(forma);
+ const f=ASPECTO_FUNCION[fn];if(f&&!(area&&['refuerzo','utilidad'].includes(fn)))partes.push(f);
+ if(t.n)partes.push(`Se la reconoce por lo que dice su nombre: «${t.n}».`);
  const c=String(t.comp??'');
  if(/G/.test(c))partes.push(/V/.test(c)?'Se forma con sellos de manos y una palabra en voz alta.':'Se forma con sellos de manos.');
  else if(/V/.test(c))partes.push('Se dice en voz alta.');
