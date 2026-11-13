@@ -32,6 +32,12 @@ Guía para Ian y para cualquier IA que le ayude. Úsala como contexto: pégale e
 5. Traducir lo que queda en inglés (Pugilista de Claudia, habilidades de Odonata, compendios). Texto de terceros: nombre + resumen propio, no traducción completa.
 6. Recetas y gestor de proyectos de crafting del Verbe.
 7. Gestor de mapas y muros, animaciones, estilos de ficha (definir alcance antes).
+8. **Despertar · nivel (pedido 13-nov):** al despertar, cuando pregunta el nivel/etapa, ofrecer calcularlo **por CR si es un PNJ** o **por nivel si es un jugador** (el diálogo está en `dialogoDespertar` de `scripts/verbe.js`; para PNJ hay escala de CR en `scripts/subir-pnj.js`).
+9. **Naturaleza de elemento como requisito (pedido 13-nov):** las dotes y técnicas de un elemento piden tener desbloqueada al menos la **primera naturaleza de ese elemento**. Si el DM la dio desde el inicio (al despertar), cuenta como desbloqueada. Revisar requisitos en el catálogo (`tools/ajustes-*.mjs` → `npm run catalog:expand`) y la comprobación de requisitos en `scripts/verbe.js`; añadir prueba en `tests/`.
+10. Automatizar proyectos para cuando no haya IA; traducir/animar técnicas importadas de D&D/PF2e (evaluar tamaño).
+
+## Proyecto cerrado
+Cerrado el 13-nov-2026 hasta nueva apertura. Al volver: «retoma desde TRASPASO.md».
 
 ## Dónde está cada cosa
 - Verbe (técnicas, dotes, panel): `scripts/verbe.js`, `verbe-entreno.js` (derroche y ejercicio de control), `verbe-reading.js`.
