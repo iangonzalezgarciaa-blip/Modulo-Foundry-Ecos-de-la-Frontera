@@ -15,24 +15,27 @@ const leerLS = (k, d) => { try { return JSON.parse(localStorage.getItem(`${MOD}.
 const guardarLS = (k, v) => { try { localStorage.setItem(`${MOD}.${k}`, JSON.stringify(v)); } catch { /* sin almacenamiento */ } };
 const velocidad = a => Number(a?.system?.attributes?.movement?.walk) || 30;
 
+/** 3.76: qué es cada marca del turno, para la tarjeta al pasar el ratón. */
+const PIP_TEXTO = { accion: "Acción: una por turno (atacar, lanzar un conjuro, usar un objeto, Correr…).", adicional: "Acción adicional: una por turno, solo si algo te la da.",
+  reaccion: "Reacción: una por ronda, también fuera de tu turno (ataque de oportunidad, conjuros de reacción).", interaccion: "Interacción con un objeto: una gratis por turno (sacar un arma, abrir una puerta); la segunda gasta tu Acción." };
 function tokenActual() { return canvas?.tokens?.controlled?.[0] ?? null; }
 function actorActual() {
   const t = tokenActual();
   return t?.actor ?? game.user.character ?? null;
 }
 function html(actor) {
-  if (!actor) return `<header data-arrastre><i class="fa-solid fa-person-rays"></i> Acciones <button type="button" data-plegar title="Plegar">–</button></header><p class="ecos-pa-vacio">Selecciona un token.</p>`;
+  if (!actor) return `<header data-arrastre><i class="fa-solid fa-person-rays"></i> Acciones <button type="button" data-plegar data-tooltip="Plegar">–</button></header><p class="ecos-pa-vacio">Selecciona un token.</p>`;
   const combat = combateActivo(), c = combat?.combatants?.find?.(x => x.actor === actor || x.actorId === actor.id);
   const t = c ? (datosTurno(combat, c.id) ?? turnoVacio(combat.round, combat.turn)) : null;
-  const pip = k => `<button type="button" class="ecos-pa-pip ${t?.[k] ? "gastada" : ""}" data-pip="${k}" ${c ? "" : "disabled"} title="${ACCIONES_DND[k]}${t?.[k] ? " (gastada: clic para devolverla)" : ""}">${ACCIONES_DND[k]}</button>`;
+  const pip = k => `<button type="button" class="ecos-pa-pip ${t?.[k] ? "gastada" : ""}" data-pip="${k}" ${c ? "" : "disabled"} data-tooltip="${esc(`${PIP_TEXTO[k] ?? ACCIONES_DND[k]}${c ? (t?.[k] ? " Gastada: clic para devolverla." : " Libre: se marca sola al usar algo que la gasta; clic para marcarla a mano.") : " Fuera de combate no se cuenta."}`)}">${ACCIONES_DND[k]}</button>`;
   const mov = t ? `${movimientoRestante(t, velocidad(actor))} / ${velocidad(actor) + (Number(t.extra) || 0)} ft` : `${velocidad(actor)} ft`;
   const plegado = leerLS("panelPlegado", false);
-  return `<header data-arrastre><img src="${esc(actor.img)}" alt=""><b>${esc(actor.name)}</b>${actor.isOwner ? `<button type="button" data-festejo title="Tu frase del 20 y del 1 natural (festejo a pantalla completa)"><i class="fa-solid fa-star"></i></button>` : ""}<button type="button" data-plegar title="${plegado ? "Desplegar" : "Plegar"}">${plegado ? "+" : "–"}</button></header>
-    ${plegado ? "" : `<div class="ecos-pa-turno">${["accion", "adicional", "reaccion", "interaccion"].map(pip).join("")}<span class="ecos-pa-mov" title="Movimiento que queda"><i class="fa-solid fa-shoe-prints"></i> ${mov}</span></div>
-    ${t?.preparada ? `<div class="ecos-pa-preparada">⏳ <b>${esc(t.preparada.que)}</b>${t.preparada.cuando ? ` cuando ${esc(t.preparada.cuando)}` : ""}<br><button type="button" data-preparada="si" title="Se cumplió: gasta tu Reacción">¡Ahora!</button><button type="button" data-preparada="no" title="Soltar lo preparado">Soltar</button></div>` : ""}
-    ${game.user.isGM ? `<div class="ecos-pa-dm">${actor.type === "character" ? `<button type="button" data-inspiracion title="Dar o quitar Inspiración heroica">${actor.system?.attributes?.inspiration ? "★ Inspiración" : "☆ Inspiración"}</button>` : `<span title="Su actitud hacia los PJ: la CD de Influir">Actitud:</span>${Object.keys(NOMBRE_ACTITUD).map(k => `<button type="button" data-actitud="${k}" class="${actitudDe(actor, tokenActual()) === k ? "activa" : ""}">${NOMBRE_ACTITUD[k]}</button>`).join("")}`}</div>` : ""}
+  return `<header data-arrastre><img src="${esc(actor.img)}" alt=""><b>${esc(actor.name)}</b>${actor.isOwner ? `<button type="button" data-festejo data-tooltip="Tu frase del 20 y del 1 natural (festejo a pantalla completa)"><i class="fa-solid fa-star"></i></button>` : ""}<button type="button" data-plegar data-tooltip="${plegado ? "Desplegar" : "Plegar"}">${plegado ? "+" : "–"}</button></header>
+    ${plegado ? "" : `<div class="ecos-pa-turno">${["accion", "adicional", "reaccion", "interaccion"].map(pip).join("")}<span class="ecos-pa-mov" data-tooltip="Movimiento que queda"><i class="fa-solid fa-shoe-prints"></i> ${mov}</span></div>
+    ${t?.preparada ? `<div class="ecos-pa-preparada">⏳ <b>${esc(t.preparada.que)}</b>${t.preparada.cuando ? ` cuando ${esc(t.preparada.cuando)}` : ""}<br><button type="button" data-preparada="si" data-tooltip="Se cumplió: gasta tu Reacción">¡Ahora!</button><button type="button" data-preparada="no" data-tooltip="Soltar lo preparado">Soltar</button></div>` : ""}
+    ${game.user.isGM ? `<div class="ecos-pa-dm">${actor.type === "character" ? `<button type="button" data-inspiracion data-tooltip="Dar o quitar Inspiración heroica">${actor.system?.attributes?.inspiration ? "★ Inspiración" : "☆ Inspiración"}</button>` : `<span data-tooltip="Su actitud hacia los PJ: la CD de Influir">Actitud:</span>${Object.keys(NOMBRE_ACTITUD).map(k => `<button type="button" data-actitud="${k}" class="${actitudDe(actor, tokenActual()) === k ? "activa" : ""}">${NOMBRE_ACTITUD[k]}</button>`).join("")}`}</div>` : ""}
     ${c ? "" : `<p class="ecos-pa-nota">Fuera de combate: las acciones se cuentan solo en un combate.</p>`}
-    <div class="ecos-pa-saltar"><button type="button" data-accion="saltar" title="Saltar · movimiento\nCalcula tu salto largo y alto (con y sin carrera) y pone el token en modo salto."><i class="fa-solid ${ICONO.saltar}"></i> Saltar</button></div>
+    <div class="ecos-pa-saltar"><button type="button" data-accion="saltar" data-tooltip="Saltar · movimiento\nCalcula tu salto largo y alto (con y sin carrera) y pone el token en modo salto."><i class="fa-solid ${ICONO.saltar}"></i> Saltar</button></div>
     <div class="ecos-pa-menu">${htmlAcciones(actor, { filtro: filtroGuardado("panelFiltro"), turno: t, enCombate: !!c })}</div>`}`;
 }
 let panel = null;

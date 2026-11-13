@@ -13,7 +13,8 @@ import { VERSION_PROGRESION, NIVEL_GRADO, limiteEscalado, accesoObtencion, permi
 import { abrirReliquias } from "./relics.js";
 import { actoresPresentes } from './mesa-actores.js';
 import { prepararRecibo, registrarPaso } from "./mesa-resolucion.js";
-import {avanceTexto,efectoHTML,textoClaro,resolucionTexto,duracionTexto,referenciaHTML,glosarioHTML,escTexto,tablaSangreHTML,huellaTexto} from "./verbe-reading.js";
+import {avanceTexto,efectoHTML,textoClaro,resolucionTexto,duracionTexto,referenciaHTML,glosarioHTML,escTexto,tablaSangreHTML,huellaTexto,queEsTexto} from "./verbe-reading.js";
+import {datosTarjeta,tarjetaHTML as tarjetaAccionHTML,frases} from "./accion-estandar.js";
 import { tecnicaChocable, AYUDA_CHOQUE, PASOS_CHOQUE, reaccionDefensiva, conjuroChocable, naturalezaConjuro } from "./verbe-clash.js";
 import { donDivino, asegurarNotaPanteon } from "./verbe-divinity.js";
 import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
@@ -3939,7 +3940,10 @@ export async function usoRapido(actor) {
     const d = i.system?.duration ?? {}, dur = d.units === "inst" ? "instantánea" : d.value ? `${d.value} ${DUR[d.units] ?? d.units}${Number(d.value) > 1 && ["round", "day"].includes(d.units) ? "s" : ""}` : (DUR[d.units] ?? "");
     const conc = (i.system?.properties?.has?.("concentration") || i.system?.properties?.includes?.("concentration")) ? " · concentración" : "";
     const resumen = String(textoDe(tec ?? { texto: "" }) ?? "").split(/(?<=\.)\s/)[0].slice(0, 160);
-    return `<li><button type="button" data-id="${escH(m.id)}" class="ecos-uso-${gastoVerbe(tKey) ?? "largo"}">
+    // 3.76: tarjeta al pasar el ratón: qué es, qué hace, qué se tira al pulsar y qué gasta.
+    let tt = ""; try { const act0 = [...(i.system?.activities?.values?.() ?? [])][0]; const dt = datosTarjeta(actor, i, act0, i.name);
+      tt = tarjetaAccionHTML({ ...dt, quees: tec ? queEsTexto(tec) : dt.quees, hace: frases(textoClaro(textoDe(tec ?? { texto: "" }) ?? "")), gasta: `${tiempo} · ${costo} Verbe${dt.gasta && !/^tu /.test(dt.gasta) ? ` · ${dt.gasta}` : ""}` }); } catch { /* sin tarjeta */ }
+    return `<li><button type="button" data-id="${escH(m.id)}" class="ecos-uso-${gastoVerbe(tKey) ?? "largo"}"${tt ? ` data-tooltip-html="${escH(tt)}" data-tooltip-class="ecos-tt-caja" data-tooltip-direction="RIGHT"` : ""}>
       <span class="nom">${escH(i.name)}</span>
       <small class="gasto"><b>${escH(tiempo)}</b> · ${costo} Verbe · grado ${m.g}${alc ? ` · ${escH(alc)}` : ""}${dur ? ` · dura ${escH(dur)}` : ""}${conc}</small>
       ${expl ? `<small class="expl">${escH(expl)}</small>` : ""}

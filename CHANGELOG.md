@@ -1,5 +1,14 @@
 # Historial de cambios
 
+## 3.76.0 — 2026-11-13
+
+- **Menú de acciones claro (pedido del autor: «la explicación al pasar el ratón es muy poco clara»):**
+  - Cada botón tiene ahora su **tarjeta propia**: Qué es (arma, conjuro de nivel N, rasgo de clase, acción de cualquiera de tal característica —regla del Manual, de Ecos o adaptada de Pathfinder 2e—), **Qué hace** (solo esa acción, no el texto de todo el grupo), **Al pulsar** (tirada de ataque +X contra la CA y el daño; salvación de tal característica contra CD N y lo que pasa si falla; prueba; curación; o «no se tira nada»), **Gasta** (Acción, Adicional, Reacción, usos que quedan, espacio de conjuro) y **Alcance**.
+  - Las acciones de D&D (Correr, Esquivar, Ayudar, Esconderse, Buscar, Estudiar, Influir, Usar un objeto, Preparar, Ataque de oportunidad) dicen qué hace el botón al pulsarlo.
+  - Las pestañas (Acción, Adicional, Reacción, Fuera de combate) y las marcas del turno explican qué son; los botones del panel usan la misma tarjeta.
+  - En el uso rápido del Verbe, cada técnica muestra la misma tarjeta (Qué es, Qué hace, Al pulsar, Gasta).
+  - La lista queda **alineada a la izquierda** (Foundry 14 centraba los botones y se veía descuadrado).
+
 ## 3.75.0 — 2026-11-13
 
 - **Reacciones de los estilos con aviso (gastan la Reacción Verbe, como pidió el autor):**

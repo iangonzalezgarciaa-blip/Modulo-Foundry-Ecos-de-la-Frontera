@@ -370,3 +370,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 13-nov-2026 | Mejora | Claude | Estilos de combate automáticos con Deshacer y A mano. Release v3.73.0 | 3.73.0 |
 | 13-nov-2026 | Mejora | Claude | Aspecto propio por técnica y dotes con «Qué es» y «Cómo se usa». Release v3.74.0 | 3.74.0 |
 | 13-nov-2026 | Mejora | Claude | Reacciones de estilo con aviso: Leer el golpe, Contragolpe y Cambio de lugar. Release v3.75.0 | 3.75.0 |
+| 13-nov-2026 | Mejora | Claude | Tarjeta clara en cada acción del menú y lista alineada. Release v3.76.0 | 3.76.0 |

@@ -7,6 +7,95 @@
 const MOD = "ecos-frontera";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const plano = s => String(s ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+import { textoClaro } from "./verbe-reading.js";
+import { ACCIONES_PLANAS } from "./acciones-comunes.js";
+
+/* ---------------- 3.76 · La tarjeta de cada acción (pedido del autor: «todo clarito») ---------------- */
+const NOMBRE_CAR = { str: "Fuerza", dex: "Destreza", con: "Constitución", int: "Inteligencia", wis: "Sabiduría", cha: "Carisma" };
+const DANO_ES = { acid: "ácido", bludgeoning: "contundente", cold: "frío", fire: "fuego", force: "fuerza", lightning: "rayo", necrotic: "necrótico", piercing: "perforante", poison: "veneno",
+  psychic: "psíquico", radiant: "radiante", slashing: "cortante", thunder: "trueno", healing: "de curación", temphp: "PG temporales", midi: "", none: "" };
+const PERICIA_ES = { acr: "Acrobacias", ani: "Trato con animales", arc: "Arcanos", ath: "Atletismo", dec: "Engaño", his: "Historia", ins: "Perspicacia", itm: "Intimidación", inv: "Investigación",
+  med: "Medicina", nat: "Naturaleza", prc: "Percepción", prf: "Interpretación", per: "Persuasión", rel: "Religión", slt: "Juego de manos", ste: "Sigilo", sur: "Supervivencia" };
+const GASTO = { action: "tu Acción", bonus: "tu Acción adicional", reaction: "tu Reacción", legendary: "una acción legendaria", mythic: "una acción mítica", lair: "la acción de guarida",
+  minute: "minutos fuera de combate", hour: "horas fuera de combate", day: "días fuera de combate", special: "nada de tu turno (durante el movimiento o fuera de combate)" };
+const TIPO_ITEM = { weapon: "Arma", spell: "Conjuro", feat: "Rasgo", consumable: "Consumible", tool: "Herramienta", equipment: "Equipo", loot: "Objeto", container: "Contenedor" };
+/** Corta un texto en la última frase entera que quepa. Puro. */
+export function frases(t, max = 320) {
+  const s = String(t ?? "").trim(); if (s.length <= max) return s;
+  const corte = s.slice(0, max), i = Math.max(corte.lastIndexOf(". "), corte.lastIndexOf(": "));
+  return `${i > 80 ? corte.slice(0, i + 1) : `${corte.trimEnd()}…`}`;
+}
+/**
+ * La tarjeta flotante de una acción: qué es, qué hace, qué se tira al pulsar, qué gasta y a quién llega. Puro.
+ * `d`: { nombre, quees, hace, pulsar, gasta, alcance, nota }
+ */
+export function tarjetaHTML(d) {
+  const fila = (t, v) => (v ? `<p><b>${t}:</b> ${esc(v)}</p>` : "");
+  return `<div class="ecos-tt"><h4>${esc(d.nombre)}</h4>${fila("Qué es", d.quees)}${fila("Qué hace", d.hace)}${fila("Al pulsar", d.pulsar)}${fila("Gasta", d.gasta)}${fila("Alcance", d.alcance)}${d.nota ? `<p class="ecos-tt-nota">${esc(d.nota)}</p>` : ""}</div>`;
+}
+const conjunto = x => (x instanceof Set ? [...x] : Array.isArray(x) ? x : x ? [x] : []);
+/** Fórmulas de daño o curación de una actividad, ya con los números de la hoja (si dnd5e las calculó). */
+function formulas(act, campo = "damage") {
+  const etiquetas = act?.labels?.[campo];
+  if (Array.isArray(etiquetas) && etiquetas.length) return etiquetas.map(l => `${l.formula ?? l.label ?? ""} ${DANO_ES[l.damageType] ?? ""}`.trim()).filter(Boolean);
+  const partes = campo === "healing" ? [act?.healing].filter(Boolean) : (act?.damage?.parts ?? []);
+  return partes.map(p => `${p.formula ?? (p.number ? `${p.number}d${p.denomination}${p.bonus ? ` + ${p.bonus}` : ""}` : p.custom?.formula ?? "")} ${conjunto(p.types).map(t => DANO_ES[t] ?? t).join(" o ")}`.trim()).filter(x => x && x !== "");
+}
+/** Los datos de la tarjeta de una actividad de dnd5e (arma, conjuro, rasgo, objeto, acción de cualquiera). */
+export function datosTarjeta(actor, item, act, nombre) {
+  const comun = item?.flags?.[MOD]?.accionComun, def = comun ? ACCIONES_PLANAS.find(a => a.nombre === act?.name) : null;
+  const nv = Number(item?.system?.level) || 0;
+  let quees = TIPO_ITEM[item?.type] ?? "Rasgo";
+  if (comun) quees = `Acción de cualquiera (${NOMBRE_CAR[def?.grupo] ?? "cualquiera"}) · ${def?.base ? `regla del Manual: ${def.base}` : "de Ecos: se suma al Manual sin quitar nada"}${def?.pf2e ? ` · adaptada de Pathfinder 2e («${def.pf2e}»)` : ""}`;
+  else if (item?.type === "spell") quees = `${nv ? `Conjuro de nivel ${nv}` : "Truco"}${item.system?.school ? ` · ${CONFIG?.DND5E?.spellSchools?.[item.system.school]?.label ?? item.system.school}` : ""}`;
+  else if (item?.type === "weapon") quees = `Arma${act?.attack?.type?.value === "ranged" ? " a distancia" : act?.attack?.type?.value === "melee" ? " cuerpo a cuerpo" : ""}`;
+  else if (item?.type === "feat") quees = `Rasgo${item.system?.type?.value === "class" ? " de clase" : item.system?.type?.value === "race" ? " de especie" : item.system?.type?.value === "feat" ? " (dote)" : ""}`;
+  const hace = frases(textoClaro(plano(act?.description?.chatFlavor) || plano(item?.system?.description?.value) || ""));
+  const efectos = conjunto(act?.effects).map(e => item?.effects?.get?.(e._id ?? e.id)?.name ?? e.effect?.name).filter(Boolean);
+  const pone = efectos.length ? ` Si le afecta, queda: ${efectos.join(", ")}.` : "";
+  let pulsar = "";
+  if (act?.type === "attack") { const d = formulas(act); pulsar = `Tirada de ataque ${act.labels?.toHit ?? ""} contra la CA del objetivo${d.length ? `; si impacta: ${d.join(" + ")}` : ""}.${pone}`.replace(/\s+/g, " "); }
+  else if (act?.type === "save") { const ab = conjunto(act.save?.ability).map(a => NOMBRE_CAR[a] ?? a); const cd = act.save?.dc?.value; const d = formulas(act);
+    pulsar = `El objetivo hace una salvación de ${ab.join(" o ")}${cd ? ` contra CD ${cd}` : ""}${d.length ? `; si falla: ${d.join(" + ")}${act.damage?.onSave === "half" ? " (la mitad si la pasa)" : ""}` : ""}.${pone}`; }
+  else if (act?.type === "check") { const p = conjunto(act.check?.associated).map(x => PERICIA_ES[x] ?? x); const ab = act.check?.ability ? NOMBRE_CAR[act.check.ability] : "";
+    pulsar = `Haces una prueba de ${p.length ? p.join(" o ") : ab || "característica"}${act.check?.dc?.value ? ` contra CD ${act.check.dc.value}` : ""}.${pone}`; }
+  else if (act?.type === "heal") { const h = formulas(act, "healing"); pulsar = `Curas ${h.join(" + ") || "lo que dice"} al objetivo (o a ti).`; }
+  else if (act?.type === "damage") { const d = formulas(act); pulsar = `Tiras el daño: ${d.join(" + ") || "el que dice"} (sin tirada de ataque).${pone}`; }
+  else if (act?.type === "cast") pulsar = "Lanza el conjuro que trae: se resuelve como ese conjuro.";
+  else pulsar = `No se tira nada: se aplica lo que dice${efectos.length ? ` (pone: ${efectos.join(", ")})` : ""}.`;
+  const tipo = act?.activation?.type, gastos = [GASTO[tipo] ? `${GASTO[tipo]}${UNIDAD[tipo] ? ` (${act.activation?.value ?? 1})` : ""}` : ""];
+  const quedan = u => (u?.max ? Number(u.value ?? (Number(u.max) - (Number(u.spent) || 0))) : null);
+  const qi = quedan(item?.system?.uses), qa = quedan(act?.uses);
+  if (qa !== null) gastos.push(`1 uso (te quedan ${qa} de ${act.uses.max})`); else if (qi !== null) gastos.push(`1 uso (te quedan ${qi} de ${item.system.uses.max})`);
+  if (item?.type === "spell" && nv > 0 && !["innate", "atwill"].includes(item.system?.method ?? item.system?.preparation?.mode) && act?.consumption?.spellSlot !== false) gastos.push(`un espacio de conjuro de nivel ${nv} o más`);
+  if (item?.type === "consumable" && item.system?.uses?.autoDestroy) gastos.push(`se gasta (llevas ${item.system?.quantity ?? 1})`);
+  const r = act?.range, tg = act?.target?.affects;
+  const alcance = [r?.units === "self" ? "tú" : r?.units === "touch" ? "toque" : r?.value ? `${r.value} ${r.units === "ft" ? "ft" : r.units ?? ""}`.trim() : r?.special || "",
+    tg?.count ? `${tg.count} ${tg.type === "creature" ? (Number(tg.count) === 1 ? "criatura" : "criaturas") : tg.type ?? ""}`.trim() : ""].filter(Boolean).join(" · ");
+  return { nombre, quees, hace, pulsar, gasta: gastos.filter(Boolean).join(" · "), alcance };
+}
+/** Lo que hace el botón de cada acción de cualquiera de D&D (las de ACCIONES_BASICAS). */
+const PULSAR_BASICA = {
+  correr: "Marca tu Acción y suma tu velocidad al movimiento que te queda (la barra del turno lo cuenta).",
+  desenganche: "Marca tu Acción y te pone «Desenganchado» hasta el final del turno.",
+  esquivar: "Marca tu Acción y te pone «Esquivando» hasta el inicio de tu próximo turno.",
+  ayudar: "Marca tu Acción y pone «Ayudado» al aliado que tengas marcado (T).",
+  esconderse: "Abre tu prueba de Sigilo contra CD 15; si sale, quedas «Escondido».",
+  buscar: "Usa tu acción de cualquiera «Buscar» (prueba de Percepción u otra); en combate marca tu Acción.",
+  estudiar: "Usa tu acción de cualquiera para recordar o descifrar (prueba de Inteligencia); en combate marca tu Acción.",
+  influir: "Abre la prueba contra la CD de la actitud de quien tengas marcado (Amistoso 10, Indiferente 15, Hostil 20).",
+  objeto: "Marca tu Acción y lo anuncia en el chat; la poción o la herramienta se usan desde tu hoja.",
+  preparar: "Te pregunta qué harás y cuándo; queda anotado en el panel con el botón «¡Ahora!», que gasta tu Reacción.",
+  oportunidad: "Marca tu Reacción y lo anuncia en el chat; el ataque lo tiras con tu arma."
+};
+export const tarjetaBasica = a => tarjetaHTML({ nombre: a.n, quees: "Acción de cualquiera (D&D 2024)", hace: a.que, pulsar: PULSAR_BASICA[a.id] ?? "Marca la acción y lo anuncia en el chat.", gasta: a.tipo === "reaction" ? "tu Reacción" : "tu Acción (con Mayús: tu Acción adicional, si algo te la da)" });
+const TEXTO_PESTANA = {
+  accion: "Acción: una por turno. Atacar, lanzar un conjuro, usar un objeto, Correr, Esquivar, Ayudar…",
+  adicional: "Acción adicional: una por turno, solo si algo te la da (un rasgo de clase, un conjuro, pelear con dos armas ligeras).",
+  reaccion: "Reacción: una por ronda, también fuera de tu turno. Ataque de oportunidad, un conjuro de reacción…",
+  legendaria: "Acciones legendarias y de guarida: las gasta la criatura al final del turno de otro.",
+  fuera: "Fuera de combate: lo que lleva minutos u horas (rituales, descansos, trabajos) y lo que no gasta turno."
+};
 
 /** Las acciones que cualquiera puede hacer (D&D 2024), en español y explicadas. `auto`: lo hace el módulo. */
 export const ACCIONES_BASICAS = [
@@ -105,7 +194,7 @@ export function entradasHoja(actor) {
       out.push({ id: `${it.id}.${act.id}`, nombre: varias ? `${it.name}: ${act.name || act.type}` : it.name, img: it.img, eco, comun: !!comun,
         mov: !!comun && DURANTE_MOVIMIENTO.has(String(act.name ?? "").trim()),
         grupo: act.type === "attack" || it.type === "weapon" ? "atacar" : esConjuro ? "magia" : "otras",
-        disponible, motivo, meta, texto: plano(it.system?.description?.value).slice(0, 240) });
+        disponible, motivo, meta, texto: plano(it.system?.description?.value).slice(0, 240), tarjeta: tarjetaHTML(datosTarjeta(actor, it, act, varias ? `${it.name}: ${act.name || act.type}` : it.name)) });
     }
     if (ritual && acts[0]) out.push({ id: `${it.id}.${acts[0].id}`, nombre: `${it.name} (ritual)`, img: it.img, eco: "fuera", grupo: "magia", disponible: true, motivo: "", meta: "Ritual: 10 minutos más, sin gastar espacio", texto: plano(it.system?.description?.value).slice(0, 240) });
   }
@@ -122,9 +211,9 @@ export function htmlAcciones(actor, { filtro = null, turno = null, enCombate = f
   const pestanas = ["accion", "adicional", "reaccion", ...(n.legendaria ? ["legendaria"] : []), "fuera"];
   const f = pestanas.includes(filtro) ? filtro : (enCombate ? "accion" : "fuera");
   const gastada = k => enCombate && turno?.[k];
-  const chip = k => `<button type="button" class="ecos-ae-chip ${k === f ? "activo" : ""} ${gastada(k) ? "gastada" : ""}" data-eco="${k}" data-tooltip="${esc(gastada(k) ? `Ya gastaste tu ${NOMBRE_ECONOMIA[k]} este turno` : NOMBRE_ECONOMIA[k])}">${NOMBRE_ECONOMIA[k]} <small>${n[k] ?? 0}</small></button>`;
-  const fila = e => `<button type="button" class="ecos-ae-e ${e.disponible ? "" : "no"}" data-usar="${esc(e.id)}" data-tooltip="${esc(e.texto || e.nombre)}"><img src="${esc(e.img)}" alt=""><span><b>${esc(e.nombre)}</b>${e.meta || e.motivo ? `<small>${esc([e.meta, e.motivo].filter(Boolean).join(" · "))}</small>` : ""}</span></button>`;
-  const basica = a => `<button type="button" class="ecos-ae-e basica" data-basica="${a.id}" data-tooltip="${esc(a.que)}"><i class="fa-solid ${ICONO_BASICA[a.id] ?? "fa-circle"}"></i><span><b>${esc(a.n)}</b><small>${esc(a.que.length > 70 ? `${a.que.slice(0, 68)}…` : a.que)}</small></span></button>`;
+  const chip = k => `<button type="button" class="ecos-ae-chip ${k === f ? "activo" : ""} ${gastada(k) ? "gastada" : ""}" data-eco="${k}" data-tooltip="${esc(`${gastada(k) ? `Ya gastaste tu ${NOMBRE_ECONOMIA[k]} este turno. ` : ""}${TEXTO_PESTANA[k] ?? NOMBRE_ECONOMIA[k]}`)}">${NOMBRE_ECONOMIA[k]} <small>${n[k] ?? 0}</small></button>`;
+  const fila = e => `<button type="button" class="ecos-ae-e ${e.disponible ? "" : "no"}" data-usar="${esc(e.id)}" ${e.tarjeta ? `data-tooltip-html="${esc(e.tarjeta)}" data-tooltip-class="ecos-tt-caja" data-tooltip-direction="RIGHT"` : `data-tooltip="${esc(e.texto || e.nombre)}"`}><img src="${esc(e.img)}" alt=""><span><b>${esc(e.nombre)}</b>${e.meta || e.motivo ? `<small>${esc([e.meta, e.motivo].filter(Boolean).join(" · "))}</small>` : ""}</span></button>`;
+  const basica = a => `<button type="button" class="ecos-ae-e basica" data-basica="${a.id}" data-tooltip-html="${esc(tarjetaBasica(a))}" data-tooltip-class="ecos-tt-caja" data-tooltip-direction="RIGHT"><i class="fa-solid ${ICONO_BASICA[a.id] ?? "fa-circle"}"></i><span><b>${esc(a.n)}</b><small>${esc(a.que.length > 70 ? `${a.que.slice(0, 68)}…` : a.que)}</small></span></button>`;
   const sec = (t, html, vacio = "") => (html ? `<h4>${t}</h4><div class="ecos-ae-l">${html}</div>` : vacio ? `<p class="ecos-ae-vacio">${vacio}</p>` : "");
   let cuerpo = "";
   if (f === "accion") cuerpo = (gastada("accion") ? `<p class="ecos-ae-aviso">Ya gastaste tu Acción este turno.</p>` : "")
