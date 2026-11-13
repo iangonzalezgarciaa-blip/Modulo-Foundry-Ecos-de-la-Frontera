@@ -25,9 +25,25 @@ export const botonDeshacer = () => `<p><button type="button" data-ecos-deshacer>
  * otra cosa cambió los PG (un estado que quema, otra técnica), «Deshacer» solo devuelve lo suyo. Puro.
  * `actual` = valores de ahora; `sumar` = { ruta: cantidad }; `max` = PG máximos (para no pasarse).
  */
+/**
+ * 3.72 (prueba en el mundo): Foundry guarda las banderas de un mensaje expandiendo las claves con puntos
+ * («system.attributes.hp.value» llega como { system: { attributes: … } }). Sin aplanarlas, «Deshacer» escribía `system: 0`
+ * y dejaba la ficha en 0 PG y CA 10. Puro.
+ */
+export function aplanar(obj, prefijo = "") {
+  const out = {};
+  for (const [k, v] of Object.entries(obj ?? {})) {
+    const r = prefijo ? `${prefijo}.${k}` : k;
+    if (v && typeof v === "object" && !Array.isArray(v)) Object.assign(out, aplanar(v, r));
+    else out[r] = v;
+  }
+  return out;
+}
 export function updateSumar(actual, sumar, max = Infinity) {
   const u = {};
-  for (const [r, n] of Object.entries(sumar ?? {})) {
+  for (const [r, n] of Object.entries(aplanar(sumar))) {
+    // Solo números: nunca se escribe sobre algo que no sea un valor numérico de la ficha.
+    if (!Number.isFinite(Number(n)) || (actual?.[r] !== undefined && actual?.[r] !== null && !Number.isFinite(Number(actual[r])))) continue;
     let v = (Number(actual?.[r]) || 0) + (Number(n) || 0);
     if (/hp\.value$/.test(r)) v = Math.min(Number(max) || Infinity, v);
     u[r] = Math.max(0, v);
@@ -40,7 +56,7 @@ async function deshacer(msg) {
   for (const e of d.cambios ?? []) { const doc = await fromUuid(e.uuid).catch(() => null); if (doc) await doc.update(updateDeshacer(e.antes)).catch(err => console.error(`${MOD} | deshacer`, err)); }
   for (const e of d.sumar ?? []) {
     const doc = await fromUuid(e.uuid).catch(() => null); if (!doc) continue;
-    const actual = Object.fromEntries(Object.keys(e.sumar ?? {}).map(r => [r, foundry.utils.getProperty(doc, r)]));
+    const actual = Object.fromEntries(Object.keys(aplanar(e.sumar)).map(r => [r, foundry.utils.getProperty(doc, r)]));
     await doc.update(updateSumar(actual, e.sumar, doc.system?.attributes?.hp?.max)).catch(err => console.error(`${MOD} | deshacer`, err));
   }
   for (const u of d.borrar ?? []) await (await fromUuid(u).catch(() => null))?.delete().catch(() => null);
