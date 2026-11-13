@@ -73,3 +73,14 @@ test('3.75 · reacciones de estilo con aviso', async () => {
   assert.equal(leerElGolpe({ total: 18, natural: 12, nuevo: 15, ca: 15 }).impacta, true);
   assert.equal(leerElGolpe({ total: 25, natural: 20, nuevo: 20, ca: 30 }).impacta, true, 'dos 20 siguen siendo crítico');
 });
+
+test('3.77 · las reacciones de alcance leen los pies del catálogo', async () => {
+  const { alcancePies, reaccionesEnAlcance } = await import('../scripts/reacciones-verbe.js');
+  assert.equal(alcancePies('60 ft'), 60);
+  assert.equal(alcancePies('30 pies'), 30);
+  assert.equal(alcancePies('18 m'), 60);
+  assert.equal(alcancePies('yo'), 0);
+  assert.equal(alcancePies('vista'), null);
+  // El caso de la prueba en el mundo: «Leer la técnica» (60 ft) a 10 ft del atacado.
+  assert.equal(reaccionesEnAlcance({ tecnicas: [{ id: 'rastro-leer', t: 'R', alc: '60 ft' }], distBlanco: 10, distAtacante: 10 }).length, 1);
+});

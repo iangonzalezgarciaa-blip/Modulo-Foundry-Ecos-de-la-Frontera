@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.77.0 — 2026-11-13
+
+- **Prueba con jugadores conectados** (Harold, Marco y Chucho en sesiones reales, con copias temporales de Claudia y Odonata): 14 de 15 casos bien a la primera vuelta corregida (lo que ve cada jugador, el pase del DM, «Te defiendes» sin la CD, «¿Aplicar Derribado?», iniciativa, barra del turno, salvación extra a 0 PG, festejos para todos, reliquia sin identificar y «Leer el golpe»).
+- **Arreglado: el aviso de Reacción Verbe a la vista nunca salía para las técnicas de alcance.** El catálogo da los alcances en pies («60 ft») y el aviso solo leía metros, así que descartaba todas. Ahora lee pies y metros.
+
 ## 3.76.0 — 2026-11-13
 
 - **Menú de acciones claro (pedido del autor: «la explicación al pasar el ratón es muy poco clara»):**

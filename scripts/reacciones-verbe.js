@@ -15,7 +15,11 @@ const DURA_MS = 30000;
 
 /** «18 m» → 60 ft; «yo» → 0; desconocido → null. 1,5 m = 5 ft. Puro. */
 export function alcancePies(alc) {
-  if (!alc || alc === "yo") return 0;
+  if (!alc || /^(yo|tú|sobre ti|propio)$/i.test(String(alc).trim())) return 0;
+  // 3.77 (prueba con jugadores conectados): el catálogo ya da los alcances en pies («60 ft»); solo se leían metros y
+  // ninguna reacción de alcance avisaba.
+  const ft = String(alc).match(/([\d]+(?:[.,]\d+)?)\s*(?:ft|pies?)\b/i);
+  if (ft) return Math.round(Number(ft[1].replace(",", ".")));
   const m = String(alc).match(/([\d]+(?:[.,]\d+)?)\s*m\b/);
   return m ? Math.round(Number(m[1].replace(",", ".")) * 5 / 1.5) : null;
 }
