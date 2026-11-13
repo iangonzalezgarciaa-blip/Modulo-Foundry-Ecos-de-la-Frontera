@@ -21,7 +21,7 @@ export function accesoObtencion(meta,{dotes=[],nivel=1}={}){
   if(g>=10)requiere.push('ascension-mitica');
   if(g>=11)requiere.push('ascension-trascendente');
   const falta=requiere.find(id=>!dotes.includes(id));
-  return falta?{ok:false,motivo:`Primero completa ${falta.startsWith('senda-')?`la senda de ${meta.rama}, etapa ${falta.endsWith('-4')?'4 (Leyenda)':'3 (Maestría)'}`:falta.replaceAll('-',' ')}.`}:{ok:true};
+  return falta?{ok:false,motivo:`Primero completa ${falta.startsWith('senda-')?`la senda de ${meta.rama}, etapa ${falta.endsWith('-4')?'4 (Leyenda)':'3 (Maestría)'}`:({'ascension-mitica':'la dote «Ascensión mítica» (la da el DM tras la prueba mítica)','ascension-trascendente':'la dote «Ascensión trascendente» (la da el DM tras la prueba trascendente)'})[falta]??falta.replaceAll('-',' ')}.`}:{ok:true};
 }
 export function cuotasPoder(nivel,dotes=[]){
   return {mayores:nivel>=11?(nivel>=16?4:nivel>=13?3:2)+Number(dotes.some(d=>/^senda-.+-4$/.test(d))):0,

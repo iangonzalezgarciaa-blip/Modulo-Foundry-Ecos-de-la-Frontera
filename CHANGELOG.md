@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 3.78.0 — 2026-11-13
+
+- **Prueba combinada en el mundo (3.77):** revisión de mesa 13 de 13 grupos bien (también los que estaban pendientes); estilos de combate funcionando en la ficha (Forma que estalla, Manos que cierran, Paso que golpea, Presa marcada con su marca y 1 Verbe, El punto débil, Ojo que anticipa y Furia de la bestia que se ponen y se quitan solos); 371 técnicas con requisito usadas bien.
+- **Arreglado:** un mismo estado (p. ej. Derribado) pedido dos veces a la vez —por la Defensa y por la resolución— fallaba con «ya existe»; ahora se reserva y la segunda dice «ya lo tenía».
+- La nota de un estilo ya no sale repetida cuando dnd5e tira dos veces la misma tirada.
+- El aviso «Primero completa ascension mitica» dice ahora «Primero completa la dote «Ascensión mítica» (la da el DM tras la prueba mítica)».
+
 ## 3.77.0 — 2026-11-13
 
 - **Prueba con jugadores conectados** (Harold, Marco y Chucho en sesiones reales, con copias temporales de Claudia y Odonata): 14 de 15 casos bien a la primera vuelta corregida (lo que ve cada jugador, el pase del DM, «Te defiendes» sin la CD, «¿Aplicar Derribado?», iniciativa, barra del turno, salvación extra a 0 PG, festejos para todos, reliquia sin identificar y «Leer el golpe»).

@@ -127,7 +127,9 @@ const gastar = (actor, ids) => { const k = claveTurno(game.combat); if (k) for (
 const objetivos = () => [...(game.user?.targets ?? [])].map(t => t.actor).filter(Boolean);
 const esPresa = (lanzador, objetivo) => !!objetivo?.effects?.some(e => !e.disabled && e.getFlag(MOD, "estilos")?.presa === lanzador.uuid);
 const ejecutor = actor => (game.users.activeGM ? game.users.activeGM.isSelf : !!actor?.isOwner);
-const nota = (actor, html, { deshacer = null, aplicar = null } = {}) => ChatMessage.create({
+const recientes = new Map(); // 3.78: dnd5e puede tirar dos veces la misma tirada al usar (la suya y la de la resolución); la nota sale una vez.
+const repetida = (actor, html) => { const k = `${actor?.uuid}|${html}`, t = recientes.get(k); recientes.set(k, Date.now()); return t && Date.now() - t < 4000; };
+const nota = (actor, html, { deshacer = null, aplicar = null } = {}) => (!deshacer && !aplicar && repetida(actor, html)) ? Promise.resolve(null) : ChatMessage.create({
   speaker: ChatMessage.getSpeaker({ actor }),
   content: `<div class="ecos-card ecos-estilo"><p>✦ ${html}</p>${deshacer ? botonDeshacer() : ""}${aplicar ? `<p><button type="button" data-ecos-estilo-aplicar><i class="fa-solid fa-hand"></i> Aplicar</button></p>` : ""}</div>`,
   flags: { [MOD]: { ...(deshacer ? { deshacer } : {}), ...(aplicar ? { estiloAplicar: aplicar } : {}) } }

@@ -7,6 +7,7 @@
  * Cada cosa tiene su ajuste de mundo para apagarla.
  */
 import { sistema } from "./sistema/index.js";
+const CREANDO = new Set(); // 3.78: estados que se están creando ahora (actor:estado), para no crearlos dos veces.
 const MOD = "ecos-frontera";
 const AJ = { ventaja: "preguntarVentaja", estados: "preguntarEstados", moneda: "pausaMoneda" };
 const ajuste = k => { try { return game.settings.get(MOD, k); } catch { return null; } };
@@ -149,8 +150,13 @@ async function resolverGrupo(g) {
     if (si?.[i]) {
       // 3.71 (prueba en el mundo): si ya lo tiene (el mismo efecto o el mismo estado), no se vuelve a crear: Foundry fallaba con «_id already exists».
       const st = [...(o.data?.statuses ?? [])];
-      if ((o.data?._id && o.actor.effects.has(o.data._id)) || (st.length && st.every(x => o.actor.statuses?.has?.(x)))) { aplicados.push(`${o.actor.name} (ya lo tenía)`); continue; }
-      await o.actor.createEmbeddedDocuments("ActiveEffect", [o.data], { ecosAprobado: true, ...(o.data?._id ? { keepId: true } : {}) }); aplicados.push(o.actor.name);
+      // 3.78 (prueba combinada): dos confirmaciones a la vez (Defensa y resolución) podían crear el mismo estado; se reserva antes.
+      const claves = [o.data?._id, ...st].filter(Boolean).map(x => `${o.actor.uuid}:${x}`);
+      if ((o.data?._id && o.actor.effects.has(o.data._id)) || (st.length && st.every(x => o.actor.statuses?.has?.(x))) || claves.some(k => CREANDO.has(k))) { aplicados.push(`${o.actor.name} (ya lo tenía)`); continue; }
+      claves.forEach(k => CREANDO.add(k));
+      try { await o.actor.createEmbeddedDocuments("ActiveEffect", [o.data], { ecosAprobado: true, ...(o.data?._id ? { keepId: true } : {}) }); aplicados.push(o.actor.name); }
+      catch (err) { if (/already exists/i.test(err?.message ?? "")) aplicados.push(`${o.actor.name} (ya lo tenía)`); else throw err; }
+      finally { setTimeout(() => claves.forEach(k => CREANDO.delete(k)), 1500); }
     }
     else negados.push(o.actor.name);
   }
