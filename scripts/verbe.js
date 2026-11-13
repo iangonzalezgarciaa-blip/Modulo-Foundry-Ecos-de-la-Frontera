@@ -19,7 +19,7 @@ import { donDivino, asegurarNotaPanteon } from "./verbe-divinity.js";
 import { VERSION_SHINOBI, accesoShinobi, dividirReserva, depositoReserva } from "./verbe-shinobi.js";
 import { FORMULARIO_UNIVERSAL, validarUniversal } from "./verbe-authoring.js";
 import { plantillaEnEscena } from "./verbe-plantillas.js";
-import { objetivosMensaje, filtrarObjetivosMensaje, consumoMensaje, duracionFinita, quitar, duracionSinNulos } from "./compat.js";
+import { objetivosMensaje, filtrarObjetivosMensaje, consumoMensaje, duracionFinita, quitar, marcarInicio } from "./compat.js";
 import { cifrasActividad, pasosUso, chipsCifras, tipoUso, actividadDe, TIPOS_USO } from "./verbe-cifras.js";
 import { problemasTecnica } from "./verbe-validate.js";
 import { compendioJugadoresHTML, compendioDMHTML } from "./verbe-compendio.js";
@@ -804,9 +804,9 @@ async function efectosShinobi(actor,item,uso) {
     if(grupo)for(const vieja of actor.effects.filter(e=>e.getFlag(MOD,F)?.grupoModo===grupo))await vieja.delete({ecosSinCierre:true});
     if(fl.golpeSiguiente){const g=fl.golpeSiguiente,n=(Number(g.nBase??g.n)||1)+Math.max(0,(Number(uso?.grado)||Number(meta.g)||0)-(Number(meta.g)||0))*(Number(g.sube)||0);
       f.changes=(f.changes??[]).map(c=>/\.damage$/.test(c.key)?{...c,value:`${n}d${g.d}[${g.tipo}]`}:c);}
-    delete f._id;f.origin=item.uuid;f.duration??={};f.duration.startTime=game.time.worldTime;
-    f.duration.startRound=game.combat?.round;f.duration.startTurn=game.combat?.turn;
-    duracionSinNulos(f.duration); // 3.71: Foundry 14 rompía con «start: null» junto a las claves viejas (31 técnicas de golpe siguiente).
+    delete f._id;f.origin=item.uuid;
+    // 3.72: el inicio va donde lo pide cada Foundry (en 14, en `start`); antes 31 técnicas fallaban al poner su efecto.
+    marcarInicio(f,{tiempo:game.time.worldTime,combate:game.combat?.id??null,ronda:game.combat?.round,turno:game.combat?.turn,generacion:game.release?.generation??0});
     const concentraciones=actor.effects.filter(e=>e.statuses?.has('concentrating'));
     const concentracion=concentraciones.find(e=>e.getFlag('dnd5e','item')?.id===item.id)??concentraciones.at(-1);
     if(item.system.properties?.has?.('concentration')||item.system.properties?.includes?.('concentration'))fl.deConcentracion=concentracion?.uuid??concentracion?.id??null;

@@ -134,3 +134,29 @@ export function duracionSinNulos(d) {
   for (const k of Object.keys(d)) if (d[k] === null || d[k] === undefined) delete d[k];
   return d;
 }
+
+/**
+ * 3.72 (prueba en el mundo, Foundry 14.370): el inicio de un efecto ya no está en `duration` sino en `start`
+ * ({ time, combat, round, turn }). Una copia de efecto trae `start: null`, y escribir `duration.startTime` pasaba por el
+ * puente de compatibilidad de Foundry, que hacía `start.time` sobre null («'time' in null»): 31 técnicas no ponían su
+ * efecto. Marca el inicio donde corresponde a cada versión. Puro (el reloj y el combate llegan como opciones).
+ */
+export function marcarInicio(f, { tiempo = 0, combate = null, ronda = null, turno = null, generacion = 0 } = {}) {
+  if (!f || typeof f !== "object") return f;
+  const dur = {};
+  for (const [k, v] of Object.entries(f.duration ?? {})) if (v !== null && v !== undefined && !/^start(Time|Round|Turn)$/.test(k)) dur[k] = v;
+  const r = Number.isFinite(ronda) ? ronda : null, t = Number.isFinite(turno) ? turno : null;
+  if (generacion >= 14 || Object.hasOwn(f, "start")) {
+    f.start = { time: Number(tiempo) || 0, ...(combate ? { combat: combate } : {}), ...(r !== null ? { round: r } : {}), ...(t !== null ? { turn: t } : {}) };
+    f.duration = dur;
+  } else f.duration = { ...dur, startTime: Number(tiempo) || 0, ...(r !== null ? { startRound: r } : {}), ...(t !== null ? { startTurn: t } : {}) };
+  return f;
+}
+/** Segundos de una duración de efecto, en el formato viejo (`seconds`) o en el de Foundry 14 (`value` + `units`). Puro. */
+export function segundosDuracion(d, porDefecto = 60) {
+  if (Number(d?.seconds) > 0) return Number(d.seconds);
+  const f = { second: 1, seconds: 1, minute: 60, minutes: 60, hour: 3600, hours: 3600, day: 86400, days: 86400, round: 6, rounds: 6, turn: 6, turns: 6 }[d?.units];
+  if (f && Number(d?.value) > 0) return Number(d.value) * f;
+  if (Number(d?.rounds) > 0) return Number(d.rounds) * 6;
+  return porDefecto;
+}

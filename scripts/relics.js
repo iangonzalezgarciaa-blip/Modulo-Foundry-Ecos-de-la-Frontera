@@ -1,6 +1,7 @@
 import {huellaTexto} from "./verbe-reading.js";
 import {actoresPresentes} from './mesa-actores.js';
 import {sistema} from './sistema/index.js';
+import {marcarInicio,segundosDuracion} from './compat.js';
 /** Catálogo de reliquias, compendio privado y control de usos nativos. */
 const MOD='ecos-frontera',PACK='world.ecos-reliquias',pendientes=new Map();
 let datos=null,carga=null;
@@ -106,7 +107,7 @@ export async function despuesReliquia(activity,config){
  for(const fuente of fuentes){const data=fuente.toObject?fuente.toObject():foundry.utils.deepClone(fuente);delete data._id;
   for(const c of data.changes)if(/^system\.attributes\.movement\./.test(c.key)&&sistema.velocidad(actor).pies)c.value=String(Number(c.value)/.3);
   const viejos=actor.effects.filter(e=>e.getFlag(MOD,'reliquiaEfecto')?.familia===m.familia);for(const ef of viejos)await ef.delete();
-  data.duration={...data.duration,startTime:game.time.worldTime};data.flags[MOD].reliquiaEfecto.hasta=game.time.worldTime+(Number(data.duration.seconds)||60);
+  const segundos=segundosDuracion(data.duration);marcarInicio(data,{tiempo:game.time.worldTime,combate:game.combat?.id??null,ronda:game.combat?.round,turno:game.combat?.turn,generacion:game.release?.generation??0});data.flags[MOD].reliquiaEfecto.hasta=game.time.worldTime+segundos;
   await actor.createEmbeddedDocuments('ActiveEffect',[data]);
  }
 }

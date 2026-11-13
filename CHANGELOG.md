@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 3.72.0 — 2026-11-12
+
+- **Arreglos hallados con la segunda prueba de uso en el mundo (Foundry 14.370):**
+  - Las 31 técnicas que ponen un efecto sobre quien las usa (golpe siguiente como Puño de piedra o Cola de fuego, clones, guardias de Forma pura, Paso medido…) seguían sin ponerlo: en Foundry 14 el inicio del efecto va en un campo nuevo y escribirlo en el viejo rompía. Ahora se marca donde lo pide cada versión. Lo mismo para los efectos de las reliquias.
+  - **«Deshacer» de la resolución automática y de la Defensa** dejaba al objetivo en 0 PG y CA 10: Foundry guarda las rutas con puntos expandidas y se escribía sobre toda la ficha. Ahora devuelve solo los PG quitados y nunca escribe algo que no sea un número.
+
 ## 3.71.0 — 2026-11-12
 
 - **Arreglos hallados con la prueba de uso de las 917 técnicas en el mundo:**

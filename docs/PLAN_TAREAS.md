@@ -366,3 +366,4 @@ Respuestas del autor del 3 de noviembre de 2026 (ya no están abiertas):
 | 12-nov-2026 | Mejora | Claude | Hilo: la herramienta se busca solo en el inventario. Release v3.69.0 | 3.69.0 |
 | 12-nov-2026 | Mejora | Claude | Resolución automática de técnicas con Deshacer y A mano. Release v3.70.0 | 3.70.0 |
 | 12-nov-2026 | Mejora | Claude | Arreglos de la prueba de uso: golpe siguiente, identificadores, estados repetidos, Deshacer por suma. Release v3.71.0 | 3.71.0 |
+| 12-nov-2026 | Mejora | Claude | Arreglos de la segunda prueba de uso en el mundo (efectos de 31 técnicas en Foundry 14 y Deshacer). Release v3.72.0 | 3.72.0 |
