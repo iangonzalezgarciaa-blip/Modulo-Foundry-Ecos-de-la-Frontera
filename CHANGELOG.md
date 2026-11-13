@@ -1,5 +1,15 @@
 # Historial de cambios
 
+## 3.73.0 — 2026-11-13
+
+- **Estilos de combate automáticos (respuestas del autor: las reacciones gastan la Reacción Verbe; los números se aplican solos y las reacciones con aviso):**
+  - Se suman solos al tirar y lo dice el chat: Forma que estalla y Pulso que hiere (+modificador de Verbe una vez por turno), Manos que cierran (+2 + grado a la curación), Mano de lanzador (+2 con Hilo y armas arrojadizas), Golpe salvaje (dados de Cuerpo dos veces, queda el mayor).
+  - Rastro: «Presa marcada» aparece en la hoja (acción adicional, 1 Verbe, concentración): +1d6 una vez por turno contra la presa y, con El punto débil, crítico con 19 o 20. «Deshacer» devuelve el Verbe y quita la marca.
+  - Efectos que se ponen solos, con «Deshacer»: La duda que queda (Velo) y Sello que corta (Sello) al fallar la salvación; Paso que golpea (Umbral, ventaja en el siguiente ataque); Ojo que anticipa (Mirada abierta: + competencia a la iniciativa); Furia de la bestia (Vasija transformado: +2 al daño cuerpo a cuerpo y ventaja de Fuerza); Aguante de la bestia (una vez por Descanso Largo queda a 1 PG).
+  - Lo que Foundry no puede leer de la escena (cobertura, alcance largo, criaturas del Pacto, barreras, ataques de oportunidad) sale como recordatorio, una vez por turno.
+  - Ajuste «Estilos de combate»: automático · solo recordatorio (el DM pulsa «Aplicar») · no. Las dotes dicen ya qué hace cada una sola.
+- «Deshacer» ya devuelve Verbe aunque la reserva esté en negativo.
+
 ## 3.72.0 — 2026-11-12
 
 - **Arreglos hallados con la segunda prueba de uso en el mundo (Foundry 14.370):**

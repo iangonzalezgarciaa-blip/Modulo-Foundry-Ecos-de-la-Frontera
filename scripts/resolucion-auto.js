@@ -15,6 +15,7 @@
  */
 import { sistema } from "./sistema/index.js";
 import { botonDeshacer } from "./deshacer.js";
+import { estilosAlFallar } from "./estilos-auto.js";
 
 const MOD = "ecos-frontera", AJ = "resolucionAuto";
 export const MODOS_RESOLUCION = { todo: "Tirar y aplicar (con Deshacer y A mano)", tirar: "Solo tirar: el daño se aplica con un botón", no: "No: todo desde la tarjeta de D&D" };
@@ -129,6 +130,8 @@ export async function aplicarUso(d) {
       }
     }
     if (!solo && o.efectos && o.impacta !== false) { const ef = await ponerEfectos(actor, activity, salvado); deshacer.borrar.push(...ef.map(e => e.uuid)); linea.efectos = ef.map(e => e.name); }
+    // 3.73: estilos de combate de Velo y Sello al fallar la salvación (La duda que queda, Sello que corta).
+    if (!solo && o.salv && !salvado) { const est = await estilosAlFallar({ lanzador: activity.actor, objetivo: actor, activity }); deshacer.borrar.push(...est.map(e => e.uuid)); linea.efectos = [...(linea.efectos ?? []), ...est.map(e => e.name)]; }
     resultados.push(linea);
   }
   await tarjeta(activity, resultados, deshacer, pendientes);

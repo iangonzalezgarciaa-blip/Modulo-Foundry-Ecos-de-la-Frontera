@@ -106,6 +106,9 @@ async function responder(d) {
     const res = { nombre: o.nombre, ok };
     const creados = await aplicarResultado(o.actor, d.actividad, ok).catch(err => { console.error(`${MOD} | defensa`, err); return []; });
     deshacer.borrar.push(...(creados ?? []).map(e => e.uuid));
+    // 3.73: estilos de combate de Velo y Sello de quien usó la acción, si no se defendió.
+    if (!ok) { const { estilosAlFallar } = await import("./estilos-auto.js"); const act = await fromUuid(d.actividad).catch(() => null);
+      const est = await estilosAlFallar({ lanzador: act?.actor, objetivo: o.actor, activity: act }); deshacer.borrar.push(...est.map(e => e.uuid)); }
     if (d.dano?.danos?.length) {
       const { multiplicadorSalvacion } = await import("./resolucion-auto.js");
       const mult = multiplicadorSalvacion(ok, d.dano.onSave);

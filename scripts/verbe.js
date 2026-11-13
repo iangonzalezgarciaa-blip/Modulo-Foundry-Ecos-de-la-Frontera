@@ -246,7 +246,7 @@ function susurrarDM(titulo, html) {
   });
 }
 
-function aLaMesa(actor, titulo, html, { soloDueno = false, flags = null } = {}) {
+export function aLaMesa(actor, titulo, html, { soloDueno = false, flags = null } = {}) {
   const data = { content: `<div class="ecos-card ecos-verbe-chat"><h3>${titulo}</h3>${html}</div>`, speaker: ChatMessage.getSpeaker({ actor }) };
   if (flags) data.flags = flags;
   if (soloDueno) data.whisper = [...new Set([...idsGM(), ...game.users.filter(u => !u.isGM && actor.testUserPermission(u, "OWNER")).map(u => u.id)])];
@@ -600,6 +600,8 @@ function beneficiosDotes(actor){
 }
 const doteActiva=(actor,d)=>beneficiosDotes(actor).activas.includes(d?.id);
 const dotesActivas=actor=>beneficiosDotes(actor).activas;
+/** 3.73: ¿tiene esta dote y cumple lo que pide (rango, nivel, dote previa)? Para los estilos de combate automáticos. */
+export const estiloActivo=(actor,id)=>dotesActivas(actor).includes(id);
 const capacidadReplicas=actor=>gradoReplicas(dotesActivas(actor));
 /** El nivel de personaje que pide un grado de técnica. */
 export function nivelParaGrado(g) {

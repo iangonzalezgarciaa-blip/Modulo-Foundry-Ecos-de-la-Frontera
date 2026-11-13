@@ -46,7 +46,7 @@ export function updateSumar(actual, sumar, max = Infinity) {
     if (!Number.isFinite(Number(n)) || (actual?.[r] !== undefined && actual?.[r] !== null && !Number.isFinite(Number(actual[r])))) continue;
     let v = (Number(actual?.[r]) || 0) + (Number(n) || 0);
     if (/hp\.value$/.test(r)) v = Math.min(Number(max) || Infinity, v);
-    u[r] = Math.max(0, v);
+    u[r] = /hp\.(value|temp)$/.test(r) ? Math.max(0, v) : v; // 3.73: el Verbe puede quedar en negativo; solo los PG no bajan de 0.
   }
   return u;
 }
