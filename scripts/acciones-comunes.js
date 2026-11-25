@@ -12,7 +12,7 @@
 import { cambio } from "./compat.js";
 
 const MOD = "ecos-frontera";
-export const VERSION_ACCIONES = 7;
+export const VERSION_ACCIONES = 8;
 const DESPREVENIDO = "ecosDesprevenido";
 const S = "systems/dnd5e/icons/svg/";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -60,8 +60,13 @@ export const ACCIONES = [
       texto: "Te sueltas de una presa (contra la CD de quien te sujeta, como en el Manual) o fuerzas algo: puerta de madera CD 15, reforzada 20, grilletes 20, barrotes 25." },
     { id: "descerrajar", nombre: "Descerrajar", act: "action", tipo: "check", pericias: ["ath"], cdFija: 15, pf2e: null,
       texto: "Fuerzas una puerta, tapa, reja o mecanismo trabado con el cuerpo. Atletismo contra CD 15 (madera reforzada 20, metal 25; el DM ajusta por tamaño, material y herramientas)." },
+    { id: "preparar-esfuerzo", nombre: "Preparar el esfuerzo", act: "bonus", tipo: "utility",
+      efecto: { nombre: "Esfuerzo preparado", img: `${S}abilities/strength.svg`, cambios: [["system.skills.ath.bonuses.check", "add", "2"]], turnos: 1 },
+      texto: "Tensas el cuerpo y preparas el siguiente esfuerzo: +2 a tus pruebas de Atletismo hasta el inicio de tu siguiente turno. Afecta trepar, forzar, sujetar o escapar; no mejora las salvaciones ni se acumula consigo misma." },
     { id: "asegurar-caida", nombre: "Asegurar a quien cae", act: "reaction", tipo: "check", pericias: ["ath"], alcance: 5, pf2e: null,
-      texto: "Cuando una criatura a 5 ft cae o es empujada hacia un borde, usas tu reacción para intentar sujetarla. Necesitas una mano libre. Atletismo contra la CD del DM; con éxito, la frenas o la dejas colgando. Es una reacción común y no sustituye ninguna reacción de clase." }
+      texto: "Cuando una criatura a 5 ft cae o es empujada hacia un borde, usas tu reacción para intentar sujetarla. Necesitas una mano libre. Atletismo contra la CD del DM; con éxito, la frenas o la dejas colgando. Es una reacción común y no sustituye ninguna reacción de clase." },
+    { id: "sujetar-aliado", nombre: "Sujetar a un aliado", act: "reaction", tipo: "check", pericias: ["ath"], alcance: 5, pf2e: null,
+      texto: "Cuando un aliado a 5 ft va a ser desplazado a la fuerza (empujón, arrastre o retroceso), usas tu reacción y una mano libre. Atletismo contra la CD del efecto; con éxito reduces 5 ft el desplazamiento. No evita una caída que ya haya comenzado: para eso usa «Asegurar a quien cae»." }
   ] },
   { car: "dex", acciones: [
     { id: "zancadilla", nombre: "Zancadilla", act: "action", tipo: "save", salv: ["dex"], cdPericia: ["acr"], estado: "prone", alcance: 5, pf2e: "Trip",
@@ -81,9 +86,18 @@ export const ACCIONES = [
       texto: "Arena, ceniza o sal a la cara. Si falla, queda Cegado hasta el final de su próximo turno. Una vez por combate contra la misma criatura: después ya se cuida. Se quita con «Sacudirse»." },
     { id: "apuntar", nombre: "Apuntar", act: "bonus", tipo: "utility", efecto: { nombre: "Apuntando", img: `${S}abilities/dexterity.svg`, cambios: [["system.bonuses.rwak.attack", "add", "2"]] }, pf2e: null,
       texto: "Solo si no te has movido este turno: +2 a tus ataques a distancia hasta el final del turno. Después tu velocidad es 0 hasta el final del turno. Si tu clase tiene Apuntar con firmeza (pícaro), esa es mejor: da ventaja." },
+    { id: "guardia-cerrada", nombre: "Guardia cerrada", act: "bonus", tipo: "utility",
+      efecto: { nombre: "Guardia cerrada", img: "systems/dnd5e/icons/svg/checked-shield.svg", cambios: [["system.attributes.ac.bonus", "add", "1"]], turnos: 1 },
+      texto: "Cierras la postura y proteges los huecos: +1 a la CA hasta el inicio de tu siguiente turno. Para mantenerla no puedes moverte voluntariamente después de activarla; si te desplazas, retira el efecto. No se acumula con otra activación de Guardia cerrada." },
     { id: "interponerse", nombre: "Interponerse", act: "reaction", tipo: "utility", alcance: 5,
       efecto: { nombre: "Protegido", img: "systems/dnd5e/icons/svg/checked-shield.svg", cambios: [["system.attributes.ac.bonus", "add", "2"]], turnos: 1 }, pf2e: null,
       texto: "Cuando una criatura que ves ataca a un aliado que está a 5 ft de ti: el aliado tiene +2 a la CA contra ese ataque (pon este efecto en él). Si aun así impacta, el daño lo recibes tú en vez de él. No puedes si estás Incapacitado, Agarrado o con velocidad 0. Si tienes el estilo de combate Protección o Intercepción, puedes usar ese en su lugar: es la misma reacción." },
+    { id: "desviar-proyectil", nombre: "Desviar proyectil", act: "reaction", tipo: "utility",
+      efecto: { nombre: "Proyectil desviado", img: "systems/dnd5e/icons/svg/checked-shield.svg", cambios: [["system.attributes.ac.bonus", "add", "2"]], turnos: 1 },
+      texto: "Cuando un ataque con arma a distancia te tiene como objetivo, usas tu reacción antes de resolverlo: +2 a tu CA contra ese ataque. Retira el efecto inmediatamente después de resolver ese único ataque. No sirve contra conjuros ni efectos de área." },
+    { id: "aferrar-arma", nombre: "Aferrar el arma", act: "reaction", tipo: "utility",
+      efecto: { nombre: "Arma aferrada", img: `${S}abilities/dexterity.svg`, cambios: [["system.abilities.str.bonuses.save", "add", "2"], ["system.abilities.dex.bonuses.save", "add", "2"]], turnos: 1 },
+      texto: "Cuando una criatura intenta desarmarte, usas tu reacción para aferrar el arma: +2 a la salvación de Fuerza o Destreza contra ese intento. Aplica el efecto antes de tirar y retíralo tras esa salvación; no protege contra otros efectos." },
     { id: "afirmar-pie", nombre: "Afirmar el pie", act: "reaction", tipo: "check", pericias: ["acr", "ath"], alcance: 5, pf2e: null,
       texto: "Cuando un golpe o una maniobra intenta empujarte, arrastrarte o derribarte, usas tu reacción para afirmarte. Acrobacias o Atletismo contra la CD del efecto; con éxito reduces 5 ft el desplazamiento forzado o evitas quedar Derribado, según el caso." },
     { id: "atrapar-al-vuelo", nombre: "Atrapar al vuelo", act: "reaction", tipo: "check", pericias: ["slt"], alcance: 5, pf2e: null,
@@ -100,6 +114,9 @@ export const ACCIONES = [
     { id: "cerrar-garganta", nombre: "Cerrar la garganta", act: "reaction", tipo: "utility",
       efecto: { nombre: "Garganta cerrada", img: `${S}abilities/constitution.svg`, cambios: [["system.abilities.con.bonuses.save", "add", "2"]], turnos: 1 }, pf2e: null,
       texto: "Cuando ves venir humo, gas o un veneno inhalado, cierras la boca y contienes el aire: +2 a la siguiente salvación de Constitución contra ese efecto. No sirve contra venenos ingeridos, contacto ni efectos que ya te afectaron." },
+    { id: "mantener-concentracion", nombre: "Mantener la concentración", act: "reaction", tipo: "utility",
+      efecto: { nombre: "Concentración firme", img: "systems/dnd5e/icons/svg/abilities/constitution.svg", cambios: [["system.abilities.con.bonuses.save", "add", "2"]], turnos: 1 },
+      texto: "Cuando recibes daño mientras mantienes un conjuro, usas tu reacción antes de la salvación de Concentración: +2 a esa salvación de Constitución. Retira el efecto después de resolverla; no mejora otras salvaciones de Constitución." },
     { id: "sacudirse", nombre: "Sacudirse", act: "action", tipo: "check", car: "con", pf2e: null,
       texto: "Terminas un efecto no mágico que te ciega, te ensordece o te envenena (polvo en los ojos, humo, un veneno leve) si superas su CD: la que te pidieron al salvar." },
     { id: "contener-aliento", nombre: "Contener el aliento", act: "special", tipo: "utility", pf2e: null,
@@ -112,6 +129,8 @@ export const ACCIONES = [
       texto: "La acción Estudiar del Manual aplicada a una criatura que ves. Arcanos (constructos, elementales, aberraciones), Historia (humanoides y órdenes), Naturaleza (bestias, plantas, monstruosidades) o Religión (no muertos, infernales, celestiales). CD 10 + su VD; +5 si es única o rara. Si lo logras, el DM te dice una cosa: su salvación más débil, una resistencia, vulnerabilidad o inmunidad, o qué hace mejor. Una más por cada 5 que pases. Lo que no tienes manera de saber, no te lo dice." },
     { id: "identificar-conjuro", nombre: "Identificar conjuro", act: "reaction", tipo: "check", pericias: ["arc"], alcance: 60, cdFija: 15, pf2e: null,
       texto: "Cuando ves a una criatura lanzar un conjuro a 60 ft, intentas reconocerlo al instante: Arcanos contra CD 15 + nivel del conjuro. Con éxito conoces su nombre, escuela y objetivo evidente; con fallo solo sabes que es magia. No lo interrumpes ni sustituyes Contraconjuro." },
+    { id: "leer-tecnica", nombre: "Leer una técnica", act: "reaction", tipo: "check", pericias: ["arc", "inv", "nat"], alcance: 60, pf2e: null,
+      texto: "Cuando ves a una criatura a 60 ft usar una capacidad especial que no sea un conjuro, intentas leer su funcionamiento: Arcanos, Investigación o Naturaleza contra CD 10 + su VD (o CD 15 si no se conoce). Con éxito, el DM revela un dato observable: tipo de salvación, alcance, área/objetivos o una limitación evidente. No revela daño exacto, requisitos ocultos ni interrumpe la capacidad." },
     { id: "examinar-mecanismo", nombre: "Examinar mecanismo", act: "action", tipo: "check", pericias: ["inv"], pf2e: null,
       texto: "Examinas cerraduras, trampas, palancas y mecanismos sin activarlos: Investigación contra la CD que determine el DM según complejidad. Con éxito descubres el mecanismo de activación y una forma plausible de desarmarlo o abrirlo." },
     { id: "planear", nombre: "Planear", act: "special", tipo: "check", pericias: ["inv"], cdFija: 15, pf2e: null,
@@ -127,9 +146,15 @@ export const ACCIONES = [
   { car: "wis", acciones: [
     { id: "buscar", nombre: "Buscar", act: "action", tipo: "check", pericias: ["prc", "ins", "med", "sur"], pf2e: "Seek", base: "Buscar",
       texto: "Como en el Manual: buscas a alguien escondido (Percepción contra su Sigilo), algo oculto, una huella (Supervivencia), una mentira (Perspicacia) o qué le pasa a un herido (Medicina). Examinar algo con cuidado o deducir es Investigación, con la acción Estudiar." },
+    { id: "vigilar-flanco", nombre: "Vigilar el flanco", act: "bonus", tipo: "utility",
+      efecto: { nombre: "Atento al flanco", img: `${S}abilities/wisdom.svg`, cambios: [["system.skills.prc.bonuses.check", "add", "2"], ["system.skills.ins.bonuses.check", "add", "2"]], turnos: 1 },
+      texto: "Dedicas tu acción adicional a observar los alrededores y leer intenciones: +2 a tus pruebas de Percepción y Perspicacia hasta el inicio de tu siguiente turno. No revela por sí sola criaturas que no puedas percibir." },
     { id: "advertir-aliado", nombre: "Advertir al aliado", act: "reaction", tipo: "utility", alcance: 30,
       efecto: { nombre: "Advertido", img: `${S}abilities/wisdom.svg`, cambios: [["system.abilities.dex.bonuses.save", "add", "2"]], turnos: 1 }, pf2e: null,
       texto: "Cuando ves que un aliado a 30 ft va a quedar dentro de una trampa o efecto de área, le gritas para que se cubra: +2 a su siguiente salvación de Destreza contra ese mismo efecto. No cambia su posición ni evita el área." },
+    { id: "instinto-protector", nombre: "Instinto protector", act: "reaction", tipo: "utility", alcance: 30,
+      efecto: { nombre: "Voluntad reforzada", img: `${S}abilities/wisdom.svg`, cambios: [["system.abilities.wis.bonuses.save", "add", "2"]], turnos: 1 },
+      texto: "Cuando un aliado a 30 ft debe hacer una salvación de Sabiduría contra miedo, hechizo o control mental, lo animas a resistir: +2 a esa salvación. Aplica el efecto antes de tirar y retíralo después de resolverla." },
     { id: "orientarse", nombre: "Orientarse", act: "special", tipo: "check", pericias: ["sur"], pf2e: null,
       texto: "Fuera de combate, determinas el norte, reconoces hitos y mantienes el rumbo. Supervivencia contra la CD del terreno, clima y visibilidad; un fallo puede hacerte perder tiempo o tomar una ruta más difícil." },
     { id: "leer", nombre: "Leer al rival", act: "action", tipo: "save", salv: ["cha"], cdPericia: ["ins"], alcance: 30,
