@@ -19,7 +19,7 @@ test("3.43 · ritmo por días y dibujo", () => {
 });
 
 test("3.43 · defensa a la vista y candidatas a silueta", async () => {
-  const { veDefensa, imagenCandidata, LETRA_DEFENSA } = await import("../scripts/token-vista.js");
+  const { veDefensa, imagenCandidata, iconoDefensa } = await import("../scripts/token-vista.js");
   assert.equal(veDefensa("todos", false), true); assert.equal(veDefensa("dm", false), false); assert.equal(veDefensa("dm", true), true); assert.equal(veDefensa("nadie", true), false);
   assert.equal(imagenCandidata("systems/dnd5e/tokens/beast/Wolf.webp"), true);
   assert.equal(imagenCandidata("modules/JB2A_DnD5e/x.webp"), true);
