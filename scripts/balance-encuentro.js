@@ -73,6 +73,12 @@ const bandoMarcado = t => t?.flags?.[MOD]?.balanceBando ?? t?.getFlag?.(MOD, "ba
 export function normalizarBando(valor) {
   return ["aliado", "neutral", "enemigo"].includes(valor) ? valor : null;
 }
+/** Datos de clasificación y visibilidad aplicados al TokenDocument recién colocado. */
+export function datosColocacion(bando, oculto = false) {
+  const limpio = normalizarBando(bando);
+  if (!limpio) return null;
+  return { disposition: disposicionDeBando(limpio), [`flags.${MOD}.balanceBando`]: limpio, hidden: !!oculto };
+}
 export function bandoDeToken(token) {
   const marcado = normalizarBando(bandoMarcado(token));
   if (marcado) return marcado;
@@ -184,17 +190,18 @@ if (globalThis.Hooks) {
   async function preguntarBando(tokenDoc) {
     const DialogV2 = foundry.applications.api.DialogV2;
     const actual = bandoDeToken(tokenDoc);
-    const r = await DialogV2.wait({ window: { title: `Clasificar token · ${tokenDoc.name}`, icon: "fa-solid fa-people-arrows-left-right" }, position: { width: 390 },
-      content: `<div class="ecos-dialogo"><p>¿Qué papel tendrá <b>${esc(tokenDoc.name)}</b> en este encuentro?</p><p>Esta elección se guarda en el token y se usará en el cálculo del encuentro.</p></div>`,
+    const r = await DialogV2.wait({ window: { title: `Clasificar token · ${tokenDoc.name}`, icon: "fa-solid fa-people-arrows-left-right" }, position: { width: 420 },
+      content: `<div class="ecos-dialogo"><p>¿Qué papel tendrá <b>${esc(tokenDoc.name)}</b> en este encuentro?</p><p>Esta elección se guarda en el token y se usará en el cálculo del encuentro.</p><label class="ecos-check"><input type="checkbox" name="oculto" ${tokenDoc.hidden ? "checked" : ""}> Colocar oculto (solo visible para el DM y quienes tengan permiso)</label></div>`,
       buttons: [
-        { action: "aliado", label: "Aliado", icon: "fa-solid fa-shield-heart", default: actual === "aliado" },
-        { action: "neutral", label: "Neutral", icon: "fa-solid fa-hand" , default: actual === "neutral" },
-        { action: "enemigo", label: "Enemigo", icon: "fa-solid fa-skull-crossbones", default: actual === "enemigo" },
+        { action: "aliado", label: "Aliado", icon: "fa-solid fa-shield-heart", default: actual === "aliado", callback: (_ev, btn) => ({ ...new foundry.applications.ux.FormDataExtended(btn.form).object, bando: "aliado" }) },
+        { action: "neutral", label: "Neutral", icon: "fa-solid fa-hand", default: actual === "neutral", callback: (_ev, btn) => ({ ...new foundry.applications.ux.FormDataExtended(btn.form).object, bando: "neutral" }) },
+        { action: "enemigo", label: "Enemigo", icon: "fa-solid fa-skull-crossbones", default: actual === "enemigo", callback: (_ev, btn) => ({ ...new foundry.applications.ux.FormDataExtended(btn.form).object, bando: "enemigo" }) },
         { action: "cancelar", label: "Cancelar", icon: "fa-solid fa-xmark" }
       ], rejectClose: false });
-    const bando = normalizarBando(r);
+    const bando = normalizarBando(r?.bando);
     if (!bando) return null;
-    await tokenDoc.update({ disposition: disposicionDeBando(bando), [`flags.${MOD}.balanceBando`]: bando });
+    const datos = datosColocacion(bando, r.oculto);
+    await tokenDoc.update(datos);
     return bando;
   }
   Hooks.on("createToken", (doc, opts, userId) => {
