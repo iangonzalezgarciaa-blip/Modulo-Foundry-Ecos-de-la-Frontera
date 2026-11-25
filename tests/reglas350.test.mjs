@@ -9,6 +9,10 @@ test('3.50 · salto: largo = Fuerza en pies, alto = 3 + mod; sin carrera, la mit
   assert.deepEqual(R.salto({ fue: 16, carrera: false }), { largo: 8, alto: 3, casillas: 1 });
   assert.equal(R.salto({ fue: 8 }).alto, 2);
 });
+test('3.83 · actitud del menú sincroniza el bando del balance', () => {
+  assert.deepEqual(R.BANDO_POR_ACTITUD, { amistoso: 'aliado', indiferente: 'neutral', hostil: 'enemigo' });
+});
+
 test('3.50 · influir: CD por actitud (10/15/20) o la que fije el DM', () => {
   assert.deepEqual(R.resultadoInfluir(14, 'indiferente'), { cd: 15, exito: false, margen: -1 });
   assert.equal(R.resultadoInfluir(10, 'amistoso').exito, true);
