@@ -31,6 +31,8 @@ test("3.43 · defensa a la vista y candidatas a silueta", async () => {
   assert.equal(iconoDefensa("inexistente"), null);
   const { tamanoIconoDefensa } = await import("../scripts/token-vista.js");
   assert.equal(tamanoIconoDefensa(80), 5, "el icono ocupa el 30 % del tamaño anterior");
+  assert.equal(tamanoIconoDefensa(160), 7, "respeta el límite del icono anterior al reducirlo al 30 %");
+  assert.equal(tamanoIconoDefensa(50), 4, "mantiene un mínimo visible incluso en tokens pequeños");
 });
 
 test("3.43 · viajes: el ritmo cambia el umbral de encuentro; 20 en el hallazgo encuentra un lugar", async () => {
