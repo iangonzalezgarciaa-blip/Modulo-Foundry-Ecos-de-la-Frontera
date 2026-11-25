@@ -8,7 +8,7 @@ const MOD = "ecos-frontera", SIL = "icons/svg/mystery-man.svg";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const iconoDefensa = tipo => DEFENSAS[tipo]?.img ?? null;
 /** Mantiene el tamaño anterior y lo reduce un 70 % (el 30 % restante). */
-export const tamanoIconoDefensa = anchoToken => Math.max(4, Math.round(Math.min(22, Math.max(12, (Number(anchoToken) || 80) * 0.22)) * 0.3);
+export const tamanoIconoDefensa = anchoToken => Math.max(4, Math.round(Math.min(22, Math.max(12, (Number(anchoToken) || 80) * 0.22)) * 0.3));
 /** ¿Lo ve este usuario? Puro. */
 export const veDefensa = (modo, esGM) => modo === "todos" || (modo === "dm" && !!esGM);
 /** ¿Esta imagen es candidata a volver a silueta? (del sistema, de módulos de arte o del propio módulo). Puro. */
