@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 3.84.0 — 2026-11-25
+
+- **Visibilidad al colocar tokens:** en la misma ventana que pregunta si el token será Aliado, Neutral o Enemigo, ahora aparece «Colocar oculto».
+- La selección se aplica al TokenDocument antes de abrir el balance. Los tokens ocultos conservan su clasificación y siguen contando correctamente para el encuentro; solo cambia su visibilidad en el tablero.
+- Pruebas automatizadas para las tres clasificaciones y ambos estados de visibilidad. La interacción final debe comprobarse también en la instalación local de Foundry.
+
 ## 3.83.0 — 2026-11-25
 
 - **Actitud y balance del encuentro conectados:** al cambiar desde el panel de acciones la actitud de un PNJ a Amistoso, Indiferente o Hostil, su token pasa a Aliado, Neutral o Enemigo para el cálculo. Se conserva la diferencia por token, aunque varias fichas compartan actor.
