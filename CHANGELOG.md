@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 3.83.0 — 2026-11-25
+
+- **Actitud y balance del encuentro conectados:** al cambiar desde el panel de acciones la actitud de un PNJ a Amistoso, Indiferente o Hostil, su token pasa a Aliado, Neutral o Enemigo para el cálculo. Se conserva la diferencia por token, aunque varias fichas compartan actor.
+- Si el cambio altera su bando, se abre el mismo balance que al colocar una criatura: recalcula los PJ seleccionados, PNJ aliados y enemigos ya presentes. Neutrales no suman como aliados ni como amenaza.
+- El aviso de cambio incluye el bando anterior y el nuevo; «Deshacer» restaura también la disposición y clasificación anteriores.
+- Prueba automatizada para la correspondencia Amistoso → Aliado, Indiferente → Neutral y Hostil → Enemigo. La interacción visual dentro de Foundry queda pendiente de comprobar en la instalación del autor.
+
 ## 3.82.0 — 2026-11-25
 
 - **Interruptores de defensa en todas las fichas:** PJ y PNJ existentes y nuevos reciben Coraza, Fortaleza y Cuerpo sordo en la pestaña **Efectos**. Los tres interruptores nacen desactivados; no se aplica ninguna defensa automáticamente a un PJ. Cada ficha puede activar solo la defensa que corresponda y sus cambios mecánicos reales se aplican mientras esté encendida.
