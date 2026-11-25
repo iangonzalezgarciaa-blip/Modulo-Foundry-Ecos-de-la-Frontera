@@ -1,4 +1,4 @@
-# Preparar la primera prueba real · 3.81.0
+# Preparar la primera prueba real · 3.82.0
 
 Abre **Mesa Ecos → Diagnóstico y pruebas**. El módulo muestra versiones, integraciones disponibles y avisos. El informe técnico se descarga sin nombres, diarios, rutas locales o credenciales. El DM puede guardar cada resultado en un cuaderno privado; las notas no se incluyen en el informe técnico.
 
@@ -281,12 +281,6 @@ Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el pan
 Con un PJ que sepa «Mil aves en la palma» o una esfera, ataca al lobo terrible con Coraza: el ataque suma lo que la Coraza le daba (la atraviesa) y sale la tarjeta «Técnica pesada» avisando el ataque de oportunidad. Con un ojo abierto, la tarjeta dice que no abre su guardia.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
-
-### 47. 3.82 · Interruptores de defensa en PJ y PNJ
-
-Abre una ficha de PJ existente: en **Efectos** aparecen Coraza, Fortaleza y Cuerpo sordo, los tres apagados. Comprueba que la CA, las salvaciones y las resistencias no cambian mientras estén apagados. Activa Coraza y verifica el bono de CA; activa Fortaleza y verifica el bono a salvaciones; activa Cuerpo sordo y verifica la resistencia a contundente, perforante y cortante. Apaga uno: los otros que sigan activos conservan su mecánica. Repite en un PNJ existente y crea una ficha nueva de cada tipo. Ninguna defensa se activa por sí sola en una ficha de PJ.
-
-Aplica Quebrado a una ficha que tenga una o más defensas encendidas: los bonos y resistencias quedan suspendidos, los iconos desaparecen y los interruptores siguen encendidos. Al terminar Quebrado, las defensas seleccionadas vuelven a funcionar y sus iconos reaparecen. Comprueba también una técnica pesada contra Coraza y una técnica de salvación contra Fortaleza.
 
 ### 46. 3.28 · Defensa a pedido
 
@@ -630,6 +624,12 @@ Recarga el mundo como DM y espera un minuto: aparece el compendio «Conjuros de 
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
+
+### 103. 3.82 · Defensas activables en PJ y PNJ
+
+Abre una ficha PJ existente: en Efectos aparecen Coraza, Fortaleza y Cuerpo sordo, los tres apagados y sin modificar CA, salvaciones ni resistencias. Activa Coraza y comprueba el bono de CA; activa Fortaleza y comprueba el bono a salvaciones; activa Cuerpo sordo y comprueba las resistencias a contundente, perforante y cortante. Los interruptores son independientes: apagar uno no apaga los otros. Repite en un PNJ existente y crea una ficha nueva de cada tipo. Ningún PJ recibe una defensa activa automáticamente. En una ficha con defensas activas, aplica Quebrado: las mecánicas se suspenden sin apagar los interruptores; al terminar Quebrado, las defensas elegidas vuelven a funcionar.
+
+Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
 ## Qué registrar si algo falla
 
