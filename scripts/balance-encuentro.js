@@ -234,6 +234,7 @@ if (globalThis.Hooks) {
     if (!bando) return null;
     const datos = datosColocacion(bando, r.oculto);
     await tokenDoc.update(datos);
+    await sincronizarBandoActor(tokenDoc.actor, bando);
     return bando;
   }
   Hooks.on("createToken", (doc, opts, userId) => {
