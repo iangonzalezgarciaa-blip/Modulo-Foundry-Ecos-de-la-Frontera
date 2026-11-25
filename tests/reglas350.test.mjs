@@ -3,12 +3,20 @@ import assert from 'node:assert/strict';
 import './helpers/foundry.mjs';
 const R = await import('../scripts/reglas-dnd.js');
 const T = await import('../scripts/turno-tracker.js');
+const B = await import('../scripts/balance-encuentro.js');
 
 test('3.50 · salto: largo = Fuerza en pies, alto = 3 + mod; sin carrera, la mitad', () => {
   assert.deepEqual(R.salto({ fue: 16, carrera: true }), { largo: 16, alto: 6, casillas: 3 });
   assert.deepEqual(R.salto({ fue: 16, carrera: false }), { largo: 8, alto: 3, casillas: 1 });
   assert.equal(R.salto({ fue: 8 }).alto, 2);
 });
+test('3.84 · al colocar un token se guarda bando y visibilidad elegidos', () => {
+  assert.deepEqual(B.datosColocacion('aliado', true), { disposition: 1, 'flags.ecos-frontera.balanceBando': 'aliado', hidden: true });
+  assert.deepEqual(B.datosColocacion('neutral', false), { disposition: 0, 'flags.ecos-frontera.balanceBando': 'neutral', hidden: false });
+  assert.deepEqual(B.datosColocacion('enemigo', true), { disposition: -1, 'flags.ecos-frontera.balanceBando': 'enemigo', hidden: true });
+  assert.equal(B.datosColocacion('invalido', false), null);
+});
+
 test('3.83 · actitud del menú sincroniza el bando del balance', () => {
   assert.deepEqual(R.BANDO_POR_ACTITUD, { amistoso: 'aliado', indiferente: 'neutral', hostil: 'enemigo' });
 });
