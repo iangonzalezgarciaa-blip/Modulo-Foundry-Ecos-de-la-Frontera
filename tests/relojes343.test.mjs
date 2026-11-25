@@ -25,7 +25,10 @@ test("3.43 · defensa a la vista y candidatas a silueta", async () => {
   assert.equal(imagenCandidata("modules/JB2A_DnD5e/x.webp"), true);
   assert.equal(imagenCandidata("icons/svg/mystery-man.svg"), false);
   assert.equal(imagenCandidata("worlds/mio/retratos/pip.webp"), false, "lo que puso Ian en su mundo no se toca");
-  assert.equal(LETRA_DEFENSA.coraza, "C");
+  assert.equal(iconoDefensa("coraza"), "systems/dnd5e/icons/svg/statuses/marked.svg");
+  assert.equal(iconoDefensa("fortaleza"), "icons/svg/holy-shield.svg");
+  assert.equal(iconoDefensa("piel"), "systems/dnd5e/icons/svg/statuses/petrified.svg");
+  assert.equal(iconoDefensa("inexistente"), null);
 });
 
 test("3.43 · viajes: el ritmo cambia el umbral de encuentro; 20 en el hallazgo encuentra un lugar", async () => {
