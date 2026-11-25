@@ -19,5 +19,5 @@ jobs:
       - run: npm run ui:preview
       - run: npm run audit:text
       - run: npm run audit:balance
-      - run: git diff --exit-code -- docs/COBERTURA_CATALOGO.md docs/ESCENARIOS_BALANCE.md docs/PROGRESION_2.10.md docs/PROGRESION_3.1.md docs/AUDITORIA_3.1.md docs/AUDITORIA_TEXTUAL_3.2.1.md docs/AUDITORIA_TEXTUAL_3.3.0.md docs/AUDITORIA_TEXTUAL_3.4.0.md docs/ENSAYO_SESIONES_3.4.md docs/ENSAYO_SESIONES_3.4.json docs/PRUEBAS_REALES_3.4.md docs/preview/interfaz.html docs/preview/mesa.html
+      - run: git diff --exit-code -- docs/COBERTURA_CATALOGO.md docs/ESCENARIOS_BALANCE.md docs/PROGRESION_2.10.md docs/PROGRESION_3.1.md docs/AUDITORIA_3.1.md docs/AUDITORIA_TEXTUAL_3.2.1.md docs/AUDITORIA_TEXTUAL_3.3.0.md docs/AUDITORIA_TEXTUAL_3.4.0.md docs/ENSAYO_SESIONES_3.4.md docs/ENSAYO_SESIONES_3.4.json docs/PRUEBAS_REALES_3.4.md docs/preview/mesa.html
       - run: npm run package
