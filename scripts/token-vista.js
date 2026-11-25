@@ -1,15 +1,12 @@
 /**
- * 3.43 · Lo que se ve en el token (aprobado por el autor, 11-nov-2026).
- *  1) Defensa a la vista: un anillo de color y una letra en el token según su defensa (Coraza azul «C», Fortaleza
- *     dorada «F», Cuerpo sordo violeta «S»). Ajuste: lo ven todos, solo el DM o nadie.
- *  2) Tokens a silueta: el DM elige qué criaturas y PNJ vuelven a la silueta (las que tienen imagen del sistema o de
- *     un módulo que no calza). Guarda la imagen anterior y se puede deshacer.
+ * 3.80.1 · Defensa a la vista: un icono pequeño en el token solo cuando el efecto está activo.
+ * El interruptor del Active Effect en la pestaña Efectos de la hoja controla tanto la mecánica como el icono.
+ * Los tokens a silueta conservan su funcionamiento independiente.
  */
-import { defensaDe } from "./ruptura.js";
+import { DEFENSAS, defensaDe } from "./ruptura.js";
 const MOD = "ecos-frontera", SIL = "icons/svg/mystery-man.svg";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-export const COLOR_DEFENSA = { coraza: 0x4a7fb5, fortaleza: 0xd4a017, piel: 0x8e5bb5 };
-export const LETRA_DEFENSA = { coraza: "C", fortaleza: "F", piel: "S" };
+export const iconoDefensa = tipo => DEFENSAS[tipo]?.img ?? null;
 /** ¿Lo ve este usuario? Puro. */
 export const veDefensa = (modo, esGM) => modo === "todos" || (modo === "dm" && !!esGM);
 /** ¿Esta imagen es candidata a volver a silueta? (del sistema, de módulos de arte o del propio módulo). Puro. */
@@ -23,15 +20,28 @@ function dibujar(token) {
   try {
     const modo = game.settings.get(MOD, "defensaVisible");
     const d = token.actor ? defensaDe(token.actor) : null;
-    let g = token.ecosDefensa;
-    if (!d || !veDefensa(modo, game.user.isGM) || !token.visible) { if (g && !g.destroyed) g.visible = false; return; }
-    if (!g || g.destroyed) { g = new PIXI.Container(); g.addChild(new PIXI.Graphics()); token.ecosDefensa = g; token.addChild(g); }
-    const [ring] = g.children, w = token.w, h = token.h, color = COLOR_DEFENSA[d.tipo] ?? 0xffffff;
-    ring.clear(); ring.lineStyle(Math.max(2, w * 0.035), color, 0.9); ring.drawEllipse(w / 2, h / 2, w / 2 + 1, h / 2 + 1);
-    let t = g.children[1];
-    if (!t) { t = new PIXI.Text("", { fontFamily: "Signika, sans-serif", fontWeight: "bold", fontSize: Math.max(12, w * 0.2), fill: color, stroke: 0x000000, strokeThickness: 3 }); g.addChild(t); }
-    t.text = `${LETRA_DEFENSA[d.tipo] ?? "?"}${d.n ? `+${d.n}` : ""}`; t.style.fill = color; t.position.set(w - t.width, 0);
-    g.visible = true;
+    const img = d ? iconoDefensa(d.tipo) : null;
+    let icono = token.ecosDefensa;
+    if (!img || !veDefensa(modo, game.user.isGM) || !token.visible) {
+      if (icono && !icono.destroyed) icono.visible = false;
+      return;
+    }
+    if (!icono || icono.destroyed) {
+      icono = new PIXI.Sprite(PIXI.Texture.from(img));
+      icono.anchor.set(0.5);
+      icono.interactive = false;
+      token.ecosDefensa = icono;
+      token.ecosDefensaImg = img;
+      token.addChild(icono);
+    } else if (token.ecosDefensaImg !== img) {
+      icono.texture = PIXI.Texture.from(img);
+      token.ecosDefensaImg = img;
+    }
+    const lado = Math.max(12, Math.min(22, Math.round((Number(token.w) || 80) * 0.22)));
+    icono.width = lado;
+    icono.height = lado;
+    icono.position.set(token.w - lado / 2 - 2, lado / 2 + 2);
+    icono.visible = true;
   } catch (err) { console.debug(`${MOD} | defensa visible`, err); }
 }
 const refrescarActor = actor => { for (const t of canvas?.tokens?.placeables ?? []) if (t.actor === actor || t.actor?.id === actor?.id) dibujar(t); };
@@ -67,7 +77,7 @@ export async function abrirSiluetas() {
   ui.notifications.info(`${n} fichas a silueta. «Deshacer todas» las devuelve.`);
 }
 if (globalThis.Hooks) {
-  Hooks.once("init", () => game.settings.register(MOD, "defensaVisible", { name: "Defensa a la vista en el token", hint: "Un anillo y una letra en el token según su defensa: Coraza (C, azul), Fortaleza (F, dorada), Cuerpo sordo (S, violeta).", scope: "world", config: true, type: String, default: "todos",
+  Hooks.once("init", () => game.settings.register(MOD, "defensaVisible", { name: "Defensa a la vista en el token", hint: "Un icono pequeño en el token cuando su defensa está activa. Cada ficha puede activarla o desactivarla en la pestaña Efectos.", scope: "world", config: true, type: String, default: "todos",
     choices: { todos: "La ven todos", dm: "Solo el DM", nadie: "Nadie" }, onChange: () => canvas?.tokens?.placeables?.forEach(dibujar) }));
   Hooks.once("ready", () => { const api = game.modules.get(MOD)?.api; if (api) api.siluetas = abrirSiluetas; });
   Hooks.on("refreshToken", dibujar);
