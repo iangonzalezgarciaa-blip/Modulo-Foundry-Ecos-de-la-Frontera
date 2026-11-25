@@ -33,7 +33,7 @@ test("3.81 · la clasificación persistente de token separa aliados, neutrales y
   assert.equal(disposicionDeBando("neutral"), 0);
   assert.equal(disposicionDeBando("enemigo"), -1);
   const make = (id, type, disposition, balanceBando = null) => ({
-    id, name: id, disposition, actor: { type, hasPlayerOwner: false },
+    id, name: id, disposition, actor: { type, hasPlayerOwner: false, flags: balanceBando ? { "ecos-frontera": { balanceBando } } : {} },
     flags: balanceBando ? { "ecos-frontera": { balanceBando } } : {}
   });
   const tokens = [
@@ -45,4 +45,15 @@ test("3.81 · la clasificación persistente de token separa aliados, neutrales y
   assert.deepEqual(aliadosEscena(scene).map(t => t.id), ["a"]);
   assert.deepEqual(neutralesEscena(scene).map(t => t.id), ["n"]);
   assert.deepEqual(hostilesEscena(scene).map(t => t.id), ["e", "default"]);
+  assert.ok(!hostilesEscena(scene).some(t => t.id === "n"), "neutral no suma XP enemiga");
+  assert.ok(!aliadosEscena(scene).some(t => t.id === "n"), "neutral no suma presupuesto aliado");
+});
+test("3.86 · el bando persistente del Actor prevalece sobre una copia antigua del token", () => {
+  const actor = { type: "npc", hasPlayerOwner: false, flags: { "ecos-frontera": { balanceBando: "neutral" } } };
+  const token = { actor, disposition: -1, flags: { "ecos-frontera": { balanceBando: "enemigo" } } };
+  assert.equal(bandoDeToken(token), "neutral");
+  const scene = { tokens: [token] };
+  assert.deepEqual(hostilesEscena(scene), []);
+  assert.deepEqual(aliadosEscena(scene), []);
+  assert.deepEqual(neutralesEscena(scene).map(t => t), [token]);
 });
