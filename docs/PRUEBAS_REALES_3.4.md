@@ -624,12 +624,12 @@ Recarga el mundo como DM y espera un minuto: aparece el compendio «Conjuros de 
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
-
 ### 103. 3.82 · Defensas activables en PJ y PNJ
 
 Abre una ficha PJ existente: en Efectos aparecen Coraza, Fortaleza y Cuerpo sordo, los tres apagados y sin modificar CA, salvaciones ni resistencias. Activa Coraza y comprueba el bono de CA; activa Fortaleza y comprueba el bono a salvaciones; activa Cuerpo sordo y comprueba las resistencias a contundente, perforante y cortante. Los interruptores son independientes: apagar uno no apaga los otros. Repite en un PNJ existente y crea una ficha nueva de cada tipo. Ningún PJ recibe una defensa activa automáticamente. En una ficha con defensas activas, aplica Quebrado: las mecánicas se suspenden sin apagar los interruptores; al terminar Quebrado, las defensas elegidas vuelven a funcionar.
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
+
 
 ## Qué registrar si algo falla
 
