@@ -5,7 +5,7 @@ import { ACCIONES, ACCIONES_PLANAS, datosRasgosComunes, datosGolpe, planAcciones
 test('3.12: seis rasgos, uno por característica, con todas las acciones pedidas', () => {
   assert.deepEqual(ACCIONES.map(g => g.car), ['str', 'dex', 'con', 'int', 'wis', 'cha']);
   const ids = ACCIONES_PLANAS.map(a => a.id);
-  for (const id of ['presa', 'derribar', 'apartar', 'zancadilla', 'desarmar', 'esquivar', 'fintar', 'intimidar', 'evaluar', 'planear', 'distraer', 'aguantar', 'rompe-guardia', 'descerrajar', 'asegurar-caida', 'afirmar-pie', 'atrapar-al-vuelo', 'equilibrio', 'cerrar-garganta', 'identificar-conjuro', 'examinar-mecanismo', 'advertir-aliado', 'orientarse', 'desescalar', 'contener-aliento'])
+  for (const id of ['preparar-esfuerzo', 'sujetar-aliado', 'guardia-cerrada', 'desviar-proyectil', 'aferrar-arma', 'mantener-concentracion', 'leer-tecnica', 'vigilar-flanco', 'instinto-protector', 'presa', 'derribar', 'apartar', 'zancadilla', 'desarmar', 'esquivar', 'fintar', 'intimidar', 'evaluar', 'planear', 'distraer', 'aguantar', 'rompe-guardia', 'descerrajar', 'asegurar-caida', 'afirmar-pie', 'atrapar-al-vuelo', 'equilibrio', 'cerrar-garganta', 'identificar-conjuro', 'examinar-mecanismo', 'advertir-aliado', 'orientarse', 'desescalar', 'contener-aliento'])
     assert.ok(ids.includes(id), id);
   assert.equal(new Set(ids).size, ids.length, 'sin repetidas');
 });
@@ -73,6 +73,24 @@ test('3.14: lo que ya es de D&D se resuelve como en el Manual y lo de Ecos usa l
   assert.deepEqual(cub.statuses, ['coverThreeQuarters']);
 });
 
+test('3.85 · crecen solo las acciones adicionales y las reacciones, con efectos enlazados', () => {
+  assert.equal(VERSION_ACCIONES, 8);
+  assert.equal(ACCIONES_PLANAS.filter(a => a.act === 'bonus').length, 8);
+  assert.equal(ACCIONES_PLANAS.filter(a => a.act === 'reaction').length, 13);
+  const ids = ['preparar-esfuerzo', 'guardia-cerrada', 'vigilar-flanco', 'desviar-proyectil', 'aferrar-arma', 'mantener-concentracion', 'instinto-protector'];
+  const rasgos = datosRasgosComunes();
+  for (const id of ids) {
+    const def = ACCIONES_PLANAS.find(a => a.id === id);
+    const rasgo = rasgos.find(r => r.flags['ecos-frontera'].accionComun.id === def.grupo);
+    const actividad = Object.values(rasgo.system.activities).find(a => a.name === def.nombre);
+    assert.equal(actividad.activation.type, def.act, id);
+    assert.equal(actividad.effects.length, 1, id);
+    assert.ok(rasgo.effects.some(e => e._id === actividad.effects[0]._id), id);
+  }
+  const normales = ACCIONES_PLANAS.filter(a => a.act === 'action');
+  assert.ok(normales.length >= 20, 'se conservan las acciones normales existentes');
+});
+
 test('3.81 · el repertorio universal sube de versión para migrar también las hojas antiguas', () => {
-  assert.equal(VERSION_ACCIONES, 7);
+  assert.equal(VERSION_ACCIONES, 8);
 });
