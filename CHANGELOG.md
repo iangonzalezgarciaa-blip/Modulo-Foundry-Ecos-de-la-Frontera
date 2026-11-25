@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 3.80.1 — 2026-11-25
+
+- **Defensas como efectos activables:** Coraza, Fortaleza y Cuerpo sordo nacen desactivadas. En la pestaña **Efectos** de la ficha, el interruptor nativo de Foundry activa o desactiva su mecánica real: bono de CA, bono a salvaciones o resistencias a daño contundente, perforante y cortante.
+- **Migración segura:** al abrir el mundo por primera vez con esta versión, las defensas antiguas quedan desactivadas. Después, el módulo respeta el estado que el jugador o el DM elija y ya no lo sobrescribe al sincronizar la ficha.
+- **Quebrado:** suspende temporalmente los cambios mecánicos de la defensa sin alterar el interruptor; al terminar, se recupera el estado elegido en la hoja.
+- **Icono en el token:** se sustituye el anillo y el texto (C/F/S + bono) por el icono pequeño de la defensa activa. Un efecto apagado o temporalmente anulado no muestra icono.
+
+
 ## 3.80.0 — 2026-11-13
 
 - **Prueba combinada en el mundo (3.79):** **450 de 450 técnicas con requisito bien**, 0 errores; los estilos de combate todos bien (también Aguante de la bestia); revisión de mesa 13 de 13 (el único «falla» era la propia prueba, que esperaba el dado viejo de Aprendiz y no el del Control). Inconsciente ya no choca con Derribado. Reliquias: 74 de 78; **todas las de nivel 9+ ya se sintonizan y se usan**.
