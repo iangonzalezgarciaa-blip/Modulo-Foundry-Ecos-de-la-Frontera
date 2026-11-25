@@ -25,6 +25,8 @@ export function salto({ fue = 10, carrera = true } = {}) {
 }
 export const CD_ACTITUD = { amistoso: 10, indiferente: 15, hostil: 20 };
 export const NOMBRE_ACTITUD = { amistoso: "Amistoso", indiferente: "Indiferente", hostil: "Hostil" };
+/** La actitud social del PNJ también determina su clasificación en el balance de encuentro. */
+export const BANDO_POR_ACTITUD = Object.freeze({ amistoso: "aliado", indiferente: "neutral", hostil: "enemigo" });
 /** Influir: contra la CD de la actitud (o la que fije el DM). */
 export function resultadoInfluir(total, actitud = "indiferente", cd = null) {
   const c = Number.isFinite(Number(cd)) && cd !== null && cd !== "" ? Number(cd) : (CD_ACTITUD[actitud] ?? 15);
@@ -158,8 +160,25 @@ export async function ponerActitud(actor, actitud, token = null) {
   const doc = docToken(token) ?? (actor.isToken ? actor.token : null) ?? actor.getActiveTokens?.(false, true)?.[0] ?? null;
   const antes = actitudDe(actor, doc), destino = doc ?? actor;
   await destino.setFlag(MOD, "actitud", actitud);
-  await decir(actor, `<p><b>${esc(doc?.name ?? actor.name)}</b>: actitud ${NOMBRE_ACTITUD[antes]} → <b>${NOMBRE_ACTITUD[actitud]}</b>.</p>${botonDeshacer()}`,
-    { whisper: gms(), flags: { [MOD]: { deshacer: { cambios: [{ uuid: destino.uuid, antes: { [`flags.${MOD}.actitud`]: antes } }], borrar: [] } } } });
+  // 3.83: la actitud del panel también clasifica este token en el balance del encuentro.
+  // Se guarda en el TokenDocument, nunca en el Actor: dos tokens del mismo PNJ pueden diferir.
+  const bando = BANDO_POR_ACTITUD[actitud], escena = doc?.parent;
+  const bandoAnterior = doc ? (doc.getFlag?.(MOD, "balanceBando") ?? ((doc.disposition ?? 0) > 0 ? "aliado" : (doc.disposition ?? 0) < 0 ? "enemigo" : "neutral")) : null;
+  const disposicionAnterior = doc?.disposition ?? 0;
+  const balanceCambio = !!(doc && escena && bando && bandoAnterior !== bando);
+  if (balanceCambio) await doc.update({ disposition: ({ aliado: 1, neutral: 0, enemigo: -1 })[bando], [`flags.${MOD}.balanceBando`]: bando });
+  const cambiosAntes = { [`flags.${MOD}.actitud`]: antes };
+  if (doc && balanceCambio) {
+    cambiosAntes.disposition = disposicionAnterior;
+    cambiosAntes[`flags.${MOD}.balanceBando`] = doc.getFlag?.(MOD, "balanceBando") === bando ? bandoAnterior : null;
+  }
+  await decir(actor, `<p><b>${esc(doc?.name ?? actor.name)}</b>: actitud ${NOMBRE_ACTITUD[antes]} → <b>${NOMBRE_ACTITUD[actitud]}</b>.${balanceCambio ? ` Bando del encuentro: <b>${bandoAnterior}</b> → <b>${bando}</b>.` : ""}</p>${botonDeshacer()}`,
+    { whisper: gms(), flags: { [MOD]: { deshacer: { cambios: [{ uuid: destino.uuid, antes: cambiosAntes }], borrar: [] } } } });
+  // Mismo diálogo de balance que al colocar una criatura: recalcula PJ, PNJ aliados y enemigos ya presentes.
+  if (balanceCambio) {
+    const balance = game.modules.get(MOD)?.api?.balance;
+    if (typeof balance === "function") await balance({ token: doc, scene: escena }).catch(err => console.error(`${MOD} | balance por cambio de actitud`, err));
+  }
 }
 export async function influir(actor) {
   const tok = objetivo(), npc = tok?.actor;
