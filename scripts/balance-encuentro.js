@@ -69,7 +69,9 @@ const crDe = a => Number(a?.system?.details?.cr ?? 0) || 0;
 const pjsMundo = () => game.actors.filter(a => a.type === "character" && a.hasPlayerOwner);
 const nivelDe = a => Number(a.system?.details?.level) || 1;
 export const BANDOS_TOKEN = Object.freeze({ aliado: 1, neutral: 0, enemigo: -1 });
-const bandoMarcado = t => t?.flags?.[MOD]?.balanceBando ?? t?.getFlag?.(MOD, "balanceBando") ?? null;
+const flagDe = (doc, clave) => doc?.getFlag?.(MOD, clave) ?? doc?.flags?.[MOD]?.[clave] ?? null;
+// La clasificación del Actor es la fuente canónica; las flags del token quedan como copia para la escena.
+const bandoMarcado = t => normalizarBando(flagDe(t?.actor, "balanceBando")) ?? normalizarBando(flagDe(t, "balanceBando")) ?? null;
 export function normalizarBando(valor) {
   return ["aliado", "neutral", "enemigo"].includes(valor) ? valor : null;
 }
@@ -80,26 +82,56 @@ export function datosColocacion(bando, oculto = false) {
   return { disposition: disposicionDeBando(limpio), [`flags.${MOD}.balanceBando`]: limpio, hidden: !!oculto };
 }
 export function bandoDeToken(token) {
-  const marcado = normalizarBando(bandoMarcado(token));
+  const marcado = bandoMarcado(token);
   if (marcado) return marcado;
   const d = Number(token?.disposition ?? 0);
   return d > 0 ? "aliado" : d < 0 ? "enemigo" : "neutral";
 }
+/** Guarda el bando y la actitud en el Actor y sincroniza todas sus apariciones en cualquier escena. */
+export async function sincronizarBandoActor(actor, bando) {
+  const limpio = normalizarBando(bando);
+  if (!actor || !limpio || typeof actor.setFlag !== "function") return [];
+  const actitud = ({ aliado: "amistoso", neutral: "indiferente", enemigo: "hostil" })[limpio];
+  const anteriores = [{
+    uuid: actor.uuid,
+    antes: {
+      [`flags.${MOD}.balanceBando`]: flagDe(actor, "balanceBando"),
+      [`flags.${MOD}.actitud`]: flagDe(actor, "actitud")
+    }
+  }];
+  await actor.setFlag(MOD, "balanceBando", limpio);
+  await actor.setFlag(MOD, "actitud", actitud);
+  for (const escena of game.scenes ?? []) {
+    for (const token of escena.tokens ?? []) {
+      if (token.actorId !== actor.id && token.actor !== actor) continue;
+      anteriores.push({
+        uuid: token.uuid,
+        antes: {
+          disposition: token.disposition ?? 0,
+          [`flags.${MOD}.balanceBando`]: flagDe(token, "balanceBando"),
+          [`flags.${MOD}.actitud`]: flagDe(token, "actitud")
+        }
+      });
+      await token.update({
+        disposition: disposicionDeBando(limpio),
+        [`flags.${MOD}.balanceBando`]: limpio,
+        [`flags.${MOD}.actitud`]: actitud
+      });
+    }
+  }
+  return anteriores;
+}
 export const disposicionDeBando = bando => BANDOS_TOKEN[normalizarBando(bando)] ?? 0;
+const npcEnBalance = t => t?.actor && !(t.actor.type === "character" && t.actor.hasPlayerOwner);
 export function hostilesEscena(sc) {
-  return (sc?.tokens ?? []).filter(t => t.actor && (bandoMarcado(t)
-    ? bandoDeToken(t) === "enemigo"
-    : t.actor.type !== "character" && !t.actor.hasPlayerOwner && (t.disposition ?? 0) < 0));
+  return (sc?.tokens ?? []).filter(t => npcEnBalance(t) && bandoDeToken(t) === "enemigo");
 }
 export function aliadosEscena(sc) {
-  return (sc?.tokens ?? []).filter(t => t.actor && !(t.actor.type === "character" && t.actor.hasPlayerOwner) && (bandoMarcado(t)
-    ? bandoDeToken(t) === "aliado"
-    : t.actor.type !== "character" && !t.actor.hasPlayerOwner && (t.disposition ?? 0) > 0));
+  return (sc?.tokens ?? []).filter(t => npcEnBalance(t) && bandoDeToken(t) === "aliado");
 }
+/** Los neutrales se muestran aparte, pero jamás suman XP ni presupuesto de aliados. */
 export function neutralesEscena(sc) {
-  return (sc?.tokens ?? []).filter(t => t.actor && (bandoMarcado(t)
-    ? bandoDeToken(t) === "neutral"
-    : t.actor.type !== "character" && !t.actor.hasPlayerOwner && (t.disposition ?? 0) === 0));
+  return (sc?.tokens ?? []).filter(t => npcEnBalance(t) && bandoDeToken(t) === "neutral");
 }
 function candidatosPara(actor) {
   const mismos = actor?.folder ? game.actors.filter(a => a.folder?.id === actor.folder.id) : [];
