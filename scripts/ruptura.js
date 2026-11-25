@@ -73,8 +73,9 @@ export function efectoDefensa(tipo, n) {
     : tipo === "fortaleza" ? [{ key: "system.bonuses.abilities.save", mode: 2, value: `+${n}` }]
     : ["bludgeoning", "piercing", "slashing"].map(v => ({ key: "system.traits.dr.value", mode: 2, value: v }));
   const nombre = tipo === "piel" ? d.nombre : `${d.nombre} +${n}`;
-  return { name: nombre, img: d.img, transfer: false, disabled: false, changes, duration: {},
-    description: `<p>${d.texto}</p>`, flags: { [MOD]: { defensa: { tipo, n } } } };
+  return { name: nombre, img: d.img, transfer: false, disabled: true, changes, duration: {},
+    description: `<p>${d.texto}</p><p>Activa este efecto en la pestaña Efectos de la ficha para aplicar esta defensa.</p>`,
+    flags: { [MOD]: { defensa: { tipo, n, interruptorInicializado: true } } } };
 }
 
 /** Cuántas de cada ruptura tiene y si una nueva cabe. Puro. */
@@ -116,8 +117,8 @@ const datosCriatura = a => ({
   calculo: a.system?.attributes?.ac?.calc ?? "", deJugador: !!a.hasPlayerOwner,
   armadura: a.items?.find?.(i => i.type === "equipment" && i.system?.equipped && ["heavy", "medium", "shield"].includes(i.system?.type?.value))?.system?.type?.value ?? ""
 });
-/** La defensa que tiene: la que eligió el DM o, si no eligió, la sugerida. */
-export function defensaDe(actor) {
+/** La defensa asignada por el DM, esté o no encendido su efecto. */
+function defensaConfiguradaDe(actor) {
   const f = actor?.getFlag?.(MOD, "defensa");
   if (f?.tipo === "ninguna") return null;
   const tipo = DEFENSAS[f?.tipo] ? f.tipo : null;
@@ -125,6 +126,12 @@ export function defensaDe(actor) {
   return { tipo, n: Number(f.n) || bonoDefensa(vdDe(actor)) };
 }
 const efectoActual = actor => actor?.effects?.find?.(e => e.getFlag?.(MOD, "defensa"));
+/** Solo cuenta como defensa mecánica si el Active Effect está encendido y no está Quebrado. */
+export function defensaDe(actor) {
+  const d = defensaConfiguradaDe(actor), ef = efectoActual(actor);
+  if (!d || !ef || ef.disabled || tieneEstado(actor, QUEBRADO)) return null;
+  return d;
+}
 
 /** Deja la ficha con el efecto que corresponde a su defensa (o sin él). Solo el DM. */
 const COLA_DEFENSA = new Map();
@@ -140,12 +147,18 @@ export function sincronizarDefensa(actor) {
 async function sincronizarInterno(actor) {
   const todos = actor.effects?.filter?.(e => e.getFlag?.(MOD, "defensa")) ?? [];
   if (todos.length > 1) await actor.deleteEmbeddedDocuments("ActiveEffect", todos.slice(1).map(e => e.id));
-  const d = defensaDe(actor), ef = todos[0] ?? null;
+  const d = defensaConfiguradaDe(actor), ef = todos[0] ?? null;
   if (!d) { if (ef) await ef.delete(); return; }
   const datos = efectoDefensa(d.tipo, d.n);
-  datos.disabled = tieneEstado(actor, QUEBRADO);
+  const flagEfecto = ef?.getFlag?.(MOD, "defensa");
+  // Los efectos anteriores a 3.80.1 se apagan una sola vez. Después se respeta siempre el toggle de la hoja.
+  datos.disabled = ef ? (flagEfecto?.interruptorInicializado === true ? !!ef.disabled : true) : true;
+  // Quebrado suspende la mecánica, pero no cambia la elección del usuario en el interruptor.
+  if (tieneEstado(actor, QUEBRADO)) datos.changes = [];
   if (!ef) return actor.createEmbeddedDocuments("ActiveEffect", [datos]);
-  const igual = ef.name === datos.name && !!ef.disabled === datos.disabled && JSON.stringify(ef.changes) === JSON.stringify(datos.changes);
+  const igual = ef.name === datos.name && !!ef.disabled === datos.disabled
+    && JSON.stringify(ef.changes) === JSON.stringify(datos.changes)
+    && flagEfecto?.interruptorInicializado === true;
   if (!igual) await ef.update({ name: datos.name, img: datos.img, changes: datos.changes, disabled: datos.disabled, description: datos.description, flags: datos.flags });
 }
 
@@ -369,11 +382,18 @@ if (globalThis.Hooks) {
       if (leer("defensasCampana", "auto") === "no") { for (const a of game.actors) if (efectoActual(a)) await efectoActual(a).delete(); return; }
       // 3.45: el icono de Fortaleza apuntaba a un archivo que el sistema ya no trae (se veía roto).
       for (const a of game.actors) for (const ef of a.effects) if (ef.getFlag(MOD, "defensa") && String(ef.img ?? "").endsWith("blessed.svg")) await ef.update({ img: DEFENSAS.fortaleza.img }).catch(() => null);
-      // 3.34: arregla los efectos de defensa duplicados y quita la defensa automática a los aliados (el equipo del Verbe).
+      // 3.80.1: migra una sola vez las defensas antiguas al interruptor apagado por defecto.
       for (const a of game.actors) {
         const f = a.getFlag(MOD, "defensa");
-        if (esAliado(a) && f && !f.elegida) { await a.unsetFlag(MOD, "defensa"); await sincronizarDefensa(a); }
-        else if ((a.effects?.filter?.(e => e.getFlag?.(MOD, "defensa")).length ?? 0) > 1) await sincronizarDefensa(a);
+        if (esAliado(a) && f && !f.elegida) {
+          await a.unsetFlag(MOD, "defensa");
+          await sincronizarDefensa(a);
+        } else if (f) await sincronizarDefensa(a);
+        else for (const ef of a.effects ?? []) {
+          const defensa = ef.getFlag?.(MOD, "defensa");
+          if (defensa && defensa.interruptorInicializado !== true)
+            await ef.update({ disabled: true, [`flags.${MOD}.defensa.interruptorInicializado`]: true });
+        }
       }
       if (leer("defensasCampana", "auto") === "auto") {
         const n = await defensasAutomaticas();
