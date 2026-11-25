@@ -106,24 +106,60 @@ function sonidoBurla() {
   }
 }
 /** Duendecillo original (dibujado aquí) que se ríe: cabeza grande, orejas de punta, ojos cerrados de risa, lengua afuera y dedo que señala. */
-export const DUENDE_SVG = `<svg class="ef-duende" viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g class="ef-duende-cuerpo"><path d="M70 180 Q110 160 150 180 L160 250 Q110 262 60 250 Z" fill="#5b3fa0" stroke="#24123f" stroke-width="5"/>
-  <path d="M150 196 Q190 186 205 160" fill="none" stroke="#24123f" stroke-width="14" stroke-linecap="round"/><path d="M150 196 Q190 186 205 160" fill="none" stroke="#ffd2a8" stroke-width="8" stroke-linecap="round"/>
-  <circle cx="207" cy="156" r="9" fill="#ffd2a8" stroke="#24123f" stroke-width="4"/>
-  <path d="M72 200 Q40 215 32 236" fill="none" stroke="#24123f" stroke-width="14" stroke-linecap="round"/><path d="M72 200 Q40 215 32 236" fill="none" stroke="#ffd2a8" stroke-width="8" stroke-linecap="round"/></g>
-  <g class="ef-duende-cabeza"><path d="M38 70 L6 34 L52 52 Z M182 70 L214 34 L168 52 Z" fill="#ffd2a8" stroke="#24123f" stroke-width="5" stroke-linejoin="round"/>
-  <circle cx="110" cy="100" r="78" fill="#ffd2a8" stroke="#24123f" stroke-width="6"/>
-  <path d="M40 74 Q60 14 110 18 Q164 16 182 76 Q150 52 110 56 Q70 52 40 74 Z" fill="#7a5cff" stroke="#24123f" stroke-width="5"/>
-  <path d="M66 96 Q78 82 90 96 M130 96 Q142 82 154 96" fill="none" stroke="#24123f" stroke-width="7" stroke-linecap="round"/>
-  <ellipse cx="62" cy="122" rx="13" ry="8" fill="#ff8fb1" opacity=".8"/><ellipse cx="158" cy="122" rx="13" ry="8" fill="#ff8fb1" opacity=".8"/>
-  <path d="M74 124 Q110 186 146 124 Z" fill="#7a1030" stroke="#24123f" stroke-width="5" stroke-linejoin="round"/>
-  <path d="M96 146 Q110 178 124 146 Q110 156 96 146 Z" fill="#ff6f8e" stroke="#24123f" stroke-width="3"/></g></svg>`;
+export const GATO_SVG = `<svg class="ef-gato" viewBox="0 0 280 310" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <g class="ef-gato-cola"><path d="M177 232 C235 242 258 206 239 175 C227 156 210 165 219 180" fill="none" stroke="#24152f" stroke-width="24" stroke-linecap="round"/><path d="M177 232 C235 242 258 206 239 175 C227 156 210 165 219 180" fill="none" stroke="#f2b5d0" stroke-width="15" stroke-linecap="round"/></g>
+  <g class="ef-gato-cuerpo"><path d="M75 198 Q140 165 205 202 L224 292 Q140 308 56 292 Z" fill="#fff4e9" stroke="#24152f" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M75 254 Q44 276 37 294 M205 254 Q236 276 243 294" fill="none" stroke="#24152f" stroke-width="18" stroke-linecap="round"/>
+    <path d="M75 254 Q44 276 37 294 M205 254 Q236 276 243 294" fill="none" stroke="#fff4e9" stroke-width="10" stroke-linecap="round"/>
+    <path d="M105 214 Q140 235 175 214" fill="none" stroke="#e9a7c4" stroke-width="7" stroke-linecap="round"/></g>
+  <g class="ef-gato-cabeza">
+    <path d="M61 91 L37 15 Q35 4 47 12 L111 58 Q140 43 169 58 L233 12 Q245 4 243 15 L219 91" fill="#fff4e9" stroke="#24152f" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M55 55 L93 77 M225 55 L187 77" stroke="#e9a7c4" stroke-width="10" stroke-linecap="round"/>
+    <ellipse cx="140" cy="132" rx="111" ry="91" fill="#fff4e9" stroke="#24152f" stroke-width="8"/>
+    <path d="M52 116 Q63 62 111 65 Q140 68 140 93 Q140 68 169 65 Q217 62 228 116" fill="#2a2136"/>
+    <path d="M67 182 Q140 215 213 182" fill="none" stroke="#e9a7c4" stroke-width="5" opacity=".9"/>
+    <g class="ef-gato-ojos-base" fill="#2a2136" stroke="#24152f" stroke-width="3">
+      <path d="M70 129 Q85 104 106 125 Q109 151 89 157 Q69 151 70 129Z"/>
+      <path d="M174 125 Q195 104 210 129 Q211 151 191 157 Q171 151 174 125Z"/>
+    </g>
+    <ellipse class="ef-gato-brillos-base" cx="91" cy="132" rx="7" ry="13" fill="#fff"/>
+    <ellipse class="ef-gato-brillos-base" cx="193" cy="132" rx="7" ry="13" fill="#fff"/>
+    <path d="M130 153 Q140 146 150 153 Q140 164 130 153Z" fill="#e78cae" stroke="#24152f" stroke-width="3"/>
+    <path class="ef-gato-boca-base" d="M140 162 Q132 174 122 169 M140 162 Q148 174 158 169" fill="none" stroke="#24152f" stroke-width="4" stroke-linecap="round"/>
+    <path d="M45 156 L12 149 M47 169 L14 176 M235 156 L268 149 M233 169 L266 176" stroke="#24152f" stroke-width="3" stroke-linecap="round"/>
+    <g class="ef-cara-burlona">
+      <path d="M66 113 Q86 91 108 112 M172 112 Q194 91 214 113" fill="none" stroke="#24152f" stroke-width="8" stroke-linecap="round"/>
+      <path d="M122 181 Q140 172 158 181 Q142 207 122 181Z" fill="#9b345d" stroke="#24152f" stroke-width="4"/>
+      <path d="M134 180 L140 190 L147 180" fill="#fff"/>
+    </g>
+    <g class="ef-cara-triste">
+      <path d="M67 111 Q87 122 108 113 M172 113 Q193 122 213 111" fill="none" stroke="#24152f" stroke-width="8" stroke-linecap="round"/>
+      <path d="M132 183 Q140 173 148 183" fill="none" stroke="#24152f" stroke-width="5" stroke-linecap="round"/>
+      <path d="M72 145 Q61 169 72 178 Q84 170 72 145Z M208 145 Q196 170 208 178 Q219 169 208 145Z" fill="#75c9ef" stroke="#3986b7" stroke-width="2"/>
+    </g>
+    <g class="ef-cara-temerosa">
+      <ellipse cx="89" cy="137" rx="21" ry="28" fill="#fff" stroke="#24152f" stroke-width="4"/>
+      <ellipse cx="191" cy="137" rx="21" ry="28" fill="#fff" stroke="#24152f" stroke-width="4"/>
+      <circle cx="91" cy="141" r="10" fill="#2a2136"/><circle cx="189" cy="141" r="10" fill="#2a2136"/>
+      <path d="M126 184 Q140 172 154 184 Q140 202 126 184Z" fill="#2a2136"/>
+      <path d="M64 92 L89 104 M216 92 L191 104" stroke="#24152f" stroke-width="8" stroke-linecap="round"/>
+    </g>
+    <g class="ef-cara-alegre">
+      <path d="M68 137 Q88 112 108 137 M172 137 Q192 112 212 137" fill="none" stroke="#24152f" stroke-width="8" stroke-linecap="round"/>
+      <path d="M116 176 Q140 211 164 176 Q140 190 116 176Z" fill="#d94b80" stroke="#24152f" stroke-width="4"/>
+      <path d="M124 179 Q140 194 156 179" fill="none" stroke="#fff" stroke-width="5"/>
+    </g>
+    <ellipse cx="54" cy="163" rx="17" ry="9" fill="#f29bbd" opacity=".8"/><ellipse cx="226" cy="163" rx="17" ry="9" fill="#f29bbd" opacity=".8"/>
+  </g></svg>`;
+
 async function mostrar(d) {
   const T = TEMAS[d.tema] ?? TEMAS.naranja;
   const el = document.createElement("div");
   el.id = "ecos-festejo";
   el.className = `ef-tema-${d.tema} ${d.modo === "terror" ? "ef-terror" : d.modo === "burla" ? "ef-burla" : d.natural === 1 ? "ef-uno" : "ef-veinte"}`;
   el.style.setProperty("--c1", T.c1); el.style.setProperty("--c2", T.c2); el.style.setProperty("--c3", T.c3);
+  const cara = d.cara ?? (d.modo === "burla" ? "burlona" : d.modo === "terror" ? "temerosa" : d.natural === 1 ? "triste" : "alegre");
+  const textoGato = ({ burlona: d.burla ?? "¡JA, JA, JA!", triste: "¡OH, NO…!", temerosa: "¡AAAAH!", alegre: "¡YUJUUU!" })[cara];
   el.innerHTML = `<div class="ef-velo"></div><div class="ef-rayos"></div><div class="ef-flash"></div>
     <div class="ef-tinta">${manchas()}</div>
     <div class="ef-banda"><div class="ef-lineas"></div></div>
@@ -132,7 +168,7 @@ async function mostrar(d) {
     <div class="ef-texto"><div class="ef-grito">${esc(d.grito)}</div><div class="ef-nombre">${esc(d.nombre)}${d.detalle ? ` · <span>${esc(d.detalle)}</span>` : ""}</div></div>
     <div class="ef-chispas">${chispas()}</div>
     ${d.modo === "terror" ? `<div class="ef-grietas"></div><div class="ef-latido"></div><div class="ef-gotas">${Array.from({ length: 14 }, (_, i) => `<i style="left:${(i * 7.3 + Math.random() * 4).toFixed(1)}%;--d:${(Math.random() * 0.9).toFixed(2)}s;--h:${(8 + Math.random() * 22).toFixed(0)}vh"></i>`).join("")}</div><div class="ef-amenaza">Prepárense…</div>` : ""}
-    ${d.modo === "burla" ? `<div class="ef-burla-caja">${DUENDE_SVG}<div class="ef-globo">${esc(d.burla ?? "¡JA, JA, JA!")}</div></div>` : ""}`;
+<div class="ef-gato-caja ef-gato-cara-${cara}">${GATO_SVG}<div class="ef-globo">${esc(textoGato)}</div></div>`;
   document.body.appendChild(el);
   const temblar = leer("festejoTemblor", true) && !window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
   if (temblar) { document.body.classList.add("ecos-festejo-temblor"); setTimeout(() => document.body.classList.remove("ecos-festejo-temblor"), 650); }
@@ -164,7 +200,8 @@ function datosFestejo(actor, f, tokenDoc = null, detalle = "") {
   const propia = actor?.getFlag?.(MOD, "festejo") ?? {};
   const frase = f.natural === 1 ? propia.frase1 : propia.frase20;
   const propio = f.modo === "pj" || !f.modo;
-  return { natural: f.natural, modo: f.modo ?? "pj", burla: f.burla ?? null, tema: temaDe(f.natural, nat, f.modo), grito: propio && frase?.trim() ? frase.trim() : f.grito,
+  const cara = f.modo === "burla" ? "burlona" : f.modo === "terror" ? "temerosa" : f.natural === 1 ? "triste" : "alegre";
+  return { natural: f.natural, modo: f.modo ?? "pj", cara, burla: f.burla ?? null, tema: temaDe(f.natural, nat, f.modo), grito: propio && frase?.trim() ? frase.trim() : f.grito,
     nombre: tokenDoc?.name ?? actor?.name ?? "", detalle, img: imagenDe(actor, tokenDoc) };
 }
 async function alMensaje(m) {

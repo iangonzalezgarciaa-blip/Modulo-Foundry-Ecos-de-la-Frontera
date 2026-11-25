@@ -234,12 +234,20 @@ export function htmlAcciones(actor, { filtro = null, turno = null, enCombate = f
 const ICONO_BASICA = { correr: "fa-person-running", desenganche: "fa-person-walking-arrow-right", esquivar: "fa-shield-halved", ayudar: "fa-handshake-angle", esconderse: "fa-user-ninja",
   buscar: "fa-magnifying-glass", estudiar: "fa-book-open", influir: "fa-comments", objeto: "fa-flask", preparar: "fa-hourglass-half", oportunidad: "fa-bolt" };
 /** Clic en el menú (panel o ventana). Devuelve true si cambió la pestaña (para repintar). */
+export async function usarActividadMenu(actor, itemId, activityId) {
+  const activity = actor?.items?.get?.(itemId)?.system?.activities?.get?.(activityId);
+  if (!activity) return;
+  if (activity.canUse === false) return ui.notifications.warn("Esta actividad no está disponible para usar ahora.");
+  // El flujo nativo abre la configuración cuando corresponde; allí D&D5e resuelve y descuenta munición,
+  // consumibles, cargas y demás recursos. No se replica el descuento para no gastar dos veces.
+  return activity.use({}, { configure: true });
+}
 export async function clicAcciones(actor, ev, { claveFiltro = "aeFiltro" } = {}) {
   const t = ev.target.closest("[data-eco], [data-usar], [data-basica], [data-descanso], [data-taller]"); if (!t) return false;
   ev.preventDefault(); ev.stopPropagation();
   if (t.dataset.eco) { guardarLS(claveFiltro, t.dataset.eco); return true; }
   try {
-    if (t.dataset.usar) { const [iid, aid] = t.dataset.usar.split("."); const act = actor.items.get(iid)?.system?.activities?.get?.(aid); if (act) await act.use(); return false; }
+    if (t.dataset.usar) { const [iid, aid] = t.dataset.usar.split("."); await usarActividadMenu(actor, iid, aid); return false; }
     if (t.dataset.descanso) { await (t.dataset.descanso === "largo" ? actor.longRest?.() : actor.shortRest?.()); return false; }
     if (t.dataset.taller !== undefined) { game.modules.get(MOD)?.api?.taller?.abrir?.(actor); return false; }
     if (t.dataset.basica) await usarBasica(actor, t.dataset.basica, { adicional: ev.shiftKey });
@@ -338,8 +346,48 @@ export async function danoIndirecto() {
   await ChatMessage.create({ speaker: { alias: d.n }, content: `<section class="ecos-dano-indirecto"><h3>${esc(d.n)}${r.tipo === "caida" ? ` (${Number(r.pies) || 0} ft)` : ""}</h3><p>${esc(formula)}</p><p>${filas.join("<br>")}</p></section>` });
 }
 
+
+/** Solo corrige si D&D5e dejó intacta la pila: nunca duplica un descuento nativo. */
+export function ajusteFaltanteMunicion({ antes, actual, esperada, destruir = false } = {}) {
+  const b = Number(antes), a = Number(actual), e = Number(esperada);
+  if (!Number.isFinite(b) || !Number.isFinite(a)) return null;
+  if (destruir) return a === b ? { eliminar: true } : null;
+  if (!Number.isFinite(e) || e >= b || a !== b) return null;
+  return { cantidad: e };
+}
+const municionPendiente = new WeakMap();
+function registrarVerificacionMunicion() {
+  if (!globalThis.Hooks || registrarVerificacionMunicion.activo) return;
+  registrarVerificacionMunicion.activo = true;
+  Hooks.on("dnd5e.rollAttackV2", (_rolls, datos = {}) => {
+    const actividad = datos.subject, cambio = datos.ammoUpdate, actor = actividad?.actor;
+    if (!actividad || !cambio?.id || !actor) return;
+    const item = actor.items?.get?.(cambio.id), antes = Number(item?.system?.quantity);
+    if (!item || !Number.isFinite(antes)) return;
+    const pendientes = municionPendiente.get(actividad) ?? [];
+    pendientes.push({ actor, id: cambio.id, antes, esperada: Number(cambio.quantity), destruir: !!cambio.destroy });
+    municionPendiente.set(actividad, pendientes);
+  });
+  Hooks.on("dnd5e.postRollAttack", async (_rolls, datos = {}) => {
+    const actividad = datos.subject, pendientes = actividad && municionPendiente.get(actividad);
+    if (!pendientes?.length) return;
+    municionPendiente.delete(actividad);
+    for (const p of pendientes) {
+      const item = p.actor.items?.get?.(p.id);
+      const correccion = ajusteFaltanteMunicion({ antes: p.antes, actual: item?.system?.quantity,
+        esperada: p.esperada, destruir: p.destruir });
+      if (!correccion) continue;
+      try {
+        if (correccion.eliminar) await p.actor.deleteEmbeddedDocuments("Item", [p.id]);
+        else await p.actor.updateEmbeddedDocuments("Item", [{ _id: p.id, "system.quantity": correccion.cantidad }]);
+        console.warn(`${MOD} | se reparó un descuento de munición que no se aplicó por el flujo nativo`, p.id);
+      } catch (err) { console.error(`${MOD} | corregir munición`, err); }
+    }
+  });
+}
 if (globalThis.Hooks) {
-  Hooks.once("ready", () => { const api = game.modules.get(MOD)?.api; if (api) { api.accionEstandar = abrirAccionEstandar; api.danoIndirecto = danoIndirecto; } });
+  registrarVerificacionMunicion();
+  Hooks.once("ready", () => { const api = game.modules.get(MOD)?.api; if (api) { api.accionEstandar = abrirAccionEstandar; api.danoIndirecto = danoIndirecto; api.ajusteFaltanteMunicion = ajusteFaltanteMunicion; } });
   // Botón en la cabecera de cada hoja de actor.
   const poner = (app, html) => {
     const actor = app?.document ?? app?.actor;

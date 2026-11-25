@@ -1,5 +1,17 @@
 # Historial de cambios
 
+## 3.81.0 — 2026-11-25
+
+- **Munición y consumos del menú:** las acciones de «Uso» abren la configuración nativa de la actividad D&D 5e. Munición, cargas, consumibles y recursos se descuentan por el motor del sistema, sin una segunda resta del módulo.
+- **Aliado, neutral o enemigo al colocar:** cada token creado en escena pregunta su bando y guarda la elección. El balance suma los aliados PNJ al grupo, calcula XP con los enemigos y excluye los neutrales. También pide clasificación a fichas de personaje o tokens recomendados.
+- **Selector de reacciones unificado:** muestra las actividades de reacción de D&D 5e (incluidas las de clase) junto con las técnicas de reacción del Verbe. Cada una conserva su actividad original, condiciones, recursos y configuración. Los ataques de oportunidad abren el selector de ataques cuerpo a cuerpo disponibles.
+- **Más opciones universales:** se añaden maniobras y actividades comunes de fuerza, destreza, constitución, inteligencia, sabiduría y carisma, incluidas reacciones para afirmarse, atrapar objetos, cerrar la garganta, identificar conjuros y advertir a un aliado. La migración actualiza los rasgos existentes y los nuevos nacen con el repertorio.
+- **Brecha independiente del Verbe:** Romper la guardia es una maniobra física de Fuerza. La Brecha básica impone −2 CA por acumulación, hasta 3, y se elimina al primer daño recibido, antes de cualquier ataque adicional. Solo «Huella abierta» la prolonga expresamente; otras dotes pueden modificar su penalización o acumulación sin alargarla. Se añade un interruptor manual apagado a todas las fichas PJ/PNJ actuales y futuras para que el DM imponga Brecha cuando el rol lo justifique.
+- **Festejos con gato anime:** el antiguo duende se sustituye en los resultados naturales 1 y 20 por un gato animado con expresiones burlona, triste, temerosa y alegre.
+- **Hojas minimizadas:** se ocultan únicamente los botones de Ecos añadidos a la cabecera mientras la hoja está minimizada; el doble clic vuelve a restaurarla normalmente.
+
+## 3.80.4 — 2026-11-25
+
 ## 3.80.4 — 2026-11-25
 
 - **Menú de Acciones corregido:** los botones ajustan su altura al texto y envuelven títulos y descripciones dentro de sus límites, sin sobresalir ni cortar palabras.

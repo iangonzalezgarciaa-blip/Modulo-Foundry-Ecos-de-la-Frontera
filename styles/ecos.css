@@ -1210,3 +1210,39 @@ a.ecos-estado-link:hover { color: #b8862b; text-decoration-style: solid; }
 }
 .ecos-ae-e b { line-height: 1.25; }
 .ecos-ae-e small { line-height: 1.3; }
+
+
+/* 3.81.0 · Mascota animada: gato anime original con expresiones para 1 y 20 natural. */
+#ecos-festejo .ef-gato-caja { position:absolute; left:29vw; bottom:-1vh; width:22vw; max-width:340px; min-width:190px; z-index:4;
+  animation:ef-entra-abajo .48s .12s cubic-bezier(.3,1.6,.5,1) both; }
+#ecos-festejo .ef-gato { display:block; width:100%; height:auto; overflow:visible; filter:drop-shadow(0 9px 0 rgba(0,0,0,.34)); }
+#ecos-festejo .ef-gato-cabeza { transform-box:fill-box; transform-origin:50% 80%; animation:ef-gato-cabeza .42s ease-in-out infinite alternate; }
+#ecos-festejo .ef-gato-cuerpo { transform-box:fill-box; transform-origin:50% 15%; animation:ef-gato-cuerpo .36s ease-in-out infinite alternate; }
+#ecos-festejo .ef-gato-cola { transform-box:fill-box; transform-origin:0% 90%; animation:ef-gato-cola .28s ease-in-out infinite alternate; }
+#ecos-festejo .ef-globo { position:absolute; left:58%; top:-8%; padding:.28em .65em; border:4px solid #24152f; border-radius:1.2em; background:#fff; color:#24152f;
+  font-family:"EcosImpacto",sans-serif; font-size:clamp(17px,2.2vw,34px); white-space:nowrap; transform:rotate(5deg);
+  animation:ef-boing .6s .32s cubic-bezier(.3,1.8,.5,1) both; }
+#ecos-festejo .ef-gato .ef-cara-burlona,
+#ecos-festejo .ef-gato .ef-cara-triste,
+#ecos-festejo .ef-gato .ef-cara-temerosa,
+#ecos-festejo .ef-gato .ef-cara-alegre { display:none; }
+#ecos-festejo .ef-gato-caja.ef-gato-cara-burlona .ef-gato .ef-cara-burlona,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-triste .ef-gato .ef-cara-triste,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-temerosa .ef-gato .ef-cara-temerosa,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-alegre .ef-gato .ef-cara-alegre { display:inline; }
+#ecos-festejo .ef-gato-ojos-base,
+#ecos-festejo .ef-gato-brillos-base,
+#ecos-festejo .ef-gato-boca-base { display:none; }
+#ecos-festejo .ef-gato-caja.ef-gato-cara-burlona .ef-gato-ojos-base,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-burlona .ef-gato-brillos-base,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-triste .ef-gato-ojos-base,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-triste .ef-gato-brillos-base { display:inline; }
+@keyframes ef-gato-cabeza { from { transform:rotate(-4deg) translateY(0); } to { transform:rotate(4deg) translateY(-5px); } }
+@keyframes ef-gato-cuerpo { from { transform:translateY(0) scaleY(1); } to { transform:translateY(-7px) scaleY(1.025); } }
+@keyframes ef-gato-cola { from { transform:rotate(-12deg); } to { transform:rotate(16deg); } }
+@media (prefers-reduced-motion:reduce) {
+  #ecos-festejo .ef-gato-cabeza,#ecos-festejo .ef-gato-cuerpo,#ecos-festejo .ef-gato-cola { animation:none; }
+}
+/* 3.81.0 · Los controles añadidos por Ecos no bloquean el doble clic de restauración de una hoja minimizada. */
+.window-app.minimized .window-header .ecos-ae-boton,
+.window-app.minimized .window-header .ecos-estilo-boton { display:none !important; }

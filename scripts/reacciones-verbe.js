@@ -94,32 +94,155 @@ function tecnicasDe(actor) {
   }
   return out;
 }
+/** Reacciones nativas de D&D5e (actividades originales, sin duplicar sus reglas). */
+export function reaccionesDndDe(actor) {
+  const out = [];
+  for (const item of actor?.items ?? []) {
+    for (const act of item.system?.activities?.values?.() ?? Object.values(item.system?.activities ?? {})) {
+      if (act.activation?.type !== "reaction" || act.canUse === false || act.isHidden) continue;
+      const condicion = act.activation?.condition || act.description?.chatFlavor || item.system?.description?.value || "";
+      out.push({ id: `${item.id}.${act.id}`, itemId: item.id, activityId: act.id, n: item.system?.activities?.size > 1 ? `${item.name}: ${act.name || act.type}` : item.name,
+        texto: String(condicion).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 260), tipo: "dnd", actividad: act });
+    }
+  }
+  return out;
+}
+const POPUPS = new Set();
+const REACCIONES_EN_COLA = new Map();
+
+const tokenPorUuid = async uuid => { try { const d = await fromUuid(uuid); return d?.object ?? d ?? null; } catch { return null; } };
+function usuarioPuedeElegir(actor) {
+  if (!actor?.hasPlayerOwner) return game.user.isGM;
+  const activo = actor.activeOwner;
+  return game.user.isGM ? !activo : (activo ? activo.id === game.user.id : actor.isOwner);
+}
+/** Ataques de oportunidad desde el mismo selector, usando el ataque cuerpo a cuerpo original de D&D. */
+export function pedirAtaqueOportunidad(combatantIds = [], objetivoUuid) {
+  if (!objetivoUuid || !combatantIds.length) return;
+  game.socket.emit(`module.${MOD}`, { ecosOportunidad: { combatantIds, objetivoUuid } });
+}
+async async function ejecutarOportunidad(datos) {
+  const combat = game.combat;
+  const objetivo = await fromUuid(datos.objetivoUuid);
+  const objetivoActor = objetivo?.actor ?? objetivo?.parent?.actor;
+  if (!combat || !objetivoActor) return;
+  const candidatos = (datos.combatantIds ?? []).map(id => combat.combatants.find(c => c.tokenId === id || c.token?.id === id)).filter(Boolean);
+  for (const c of candidatos) {
+    const actor = c.actor;
+    if (!actor || !usuarioPuedeElegir(actor)) continue;
+    const { datosTurno, turnoVacio } = await import("./turno-tracker.js");
+    if ((datosTurno(combat, c.id) ?? turnoVacio()).reaccion) continue;
+    const armas = [];
+    for (const item of actor.items ?? []) for (const act of item.system?.activities?.values?.() ?? Object.values(item.system?.activities ?? {})) {
+      if (act.activation?.type !== "action" || act.type !== "attack" || act.attack?.type?.value !== "melee" || act.canUse === false) continue;
+      armas.push({ itemId: item.id, activityId: act.id, n: `${item.name}: ${act.name || "Ataque"}`, tipo: "dnd", texto: "Ataque de oportunidad: ataque cuerpo a cuerpo al salir del alcance." });
+    }
+    if (!armas.length) continue;
+    const DialogV2 = foundry.applications.api.DialogV2;
+    const botones = armas.map((a, i) => ({ action: `a${i}`, label: a.n, callback: () => i }));
+    botones.push({ action: "pasar", label: "No atacar" });
+    const elegido = await DialogV2.wait({ window: { title: `Ataque de oportunidad · ${actor.name}`, icon: "fa-solid fa-hand-fist" },
+      content: `<p><b>${esc(objetivoActor.name)}</b> sale de tu alcance. Elige el ataque cuerpo a cuerpo que harás con tu reacción.</p>`,
+      buttons: botones, rejectClose: false });
+    if (!Number.isInteger(elegido) || !armas[elegido]) continue;
+    const anterior = new Set(game.user.targets ?? []);
+    try {
+      const token = objetivo.object ?? objetivo;
+      if (token?.document) { game.user.updateTokenTargets([token.id]); }
+      const item = actor.items.get(armas[elegido].itemId), act = item?.system?.activities?.get?.(armas[elegido].activityId);
+      if (act) {
+        const { cambiarTurno } = await import("./turno-tracker.js");
+        const resultado = await act.use({ consume: { action: false } }, { configure: true }, { data: { flags: { [MOD]: { ataqueOportunidad: true } } } });
+        if (resultado) await cambiarTurno(c.id, { op: "gastar", clave: "reaccion" });
+      }
+    } finally {
+      game.user.updateTokenTargets([...anterior].map(t => t.id));
+    }
+  }
+}
+async function ejecutarReaccion(actor, opcion) {
+  if (!actor?.isOwner) return ui.notifications.warn("No tienes permiso para usar esta reacción.");
+  if (opcion.tipo === "dnd") {
+    const actividad = actor.items.get(opcion.itemId)?.system?.activities?.get?.(opcion.activityId);
+    if (!actividad || actividad.canUse === false) return ui.notifications.warn("Esa reacción ya no está disponible.");
+    return actividad.use({}, { configure: true });
+  }
+  const item = actor.items.get(opcion.itemId);
+  const actividad = item?.system?.activities?.contents?.[0];
+  if (!item || !actividad) return ui.notifications.warn("La técnica ya no está disponible.");
+  return actividad.use({}, { configure: true });
+}
+async function mostrarPopupReaccion(datos) {
+  const actor = await fromUuid(datos.actorUuid);
+  if (!actor || !usuarioPuedeElegir(actor)) return;
+  const combat = game.combat;
+  const combatant = combat?.combatants?.find(c => c.actor === actor || c.actorId === actor.id);
+  if (!combatant || combatant.defeated) return;
+  const api = game.modules.get(MOD)?.api?.verbe;
+  const turno = game.modules.get(MOD)?.api?.turnoVerbe?.(actor) ?? api?.turnoVerbe?.(actor);
+  const { datosTurno, turnoVacio } = await import("./turno-tracker.js");
+  const economía = datosTurno(combat, combatant.id) ?? turnoVacio();
+  if (economía.reaccion) return;
+  const targets = await Promise.all((datos.targets ?? []).map(tokenPorUuid));
+  const validoTargets = targets.filter(t => t?.actor);
+  const tokenActor = combatant.token?.object ?? tokenDe(actor);
+  const tokenAtacante = await tokenPorUuid(datos.attackerTokenUuid);
+  const distBlanco = tokenActor && validoTargets.length ? Math.min(...validoTargets.map(t => distanciaCasillas(casillas(tokenActor), casillas(t), pasos()))) : null;
+  const distAtacante = tokenActor && tokenAtacante?.document ? distanciaCasillas(casillas(tokenActor), casillas(tokenAtacante), pasos()) : null;
+  const esBlanco = validoTargets.some(t => t.actor === actor);
+  const dnd = reaccionesDndDe(actor);
+  const verbe = api?.despierto?.(actor) && (turno?.reaccionLibre ?? true) ? tecnicasDe(actor) : [];
+  const verbeEnRango = reaccionesEnAlcance({ tecnicas: verbe, esBlanco, distBlanco, distAtacante,
+    yaPreguntadas: new Set(Object.keys(api?.datos?.()?.defensas ?? {})) });
+  const opciones = [
+    ...dnd,
+    ...verbeEnRango.map(v => ({ ...v, tipo: "verbe" }))
+  ];
+  if (!opciones.length) return;
+  if (POPUPS.has(actor.uuid)) return;
+  POPUPS.add(actor.uuid);
+  try {
+    const DialogV2 = foundry.applications.api.DialogV2;
+    const filas = opciones.map((o, i) => `<li><b>${esc(o.n)}</b> <small>${o.tipo === "dnd" ? "D&D 5e" : "Verbe"}${o.alc ? ` · alcance ${esc(o.alc)}` : ""}${Number.isFinite(o.costo) ? ` · ${o.costo} Verbe` : ""}</small>${o.texto ? `<p>${esc(o.texto)}</p>` : ""}</li>`).join("");
+    const botones = opciones.map((o, i) => ({ action: `r${i}`, label: `Usar: ${o.n}`, icon: o.tipo === "dnd" ? "fa-solid fa-shield-halved" : "fa-solid fa-bolt",
+      callback: async () => i }));
+    botones.push({ action: "pasar", label: "No reaccionar", icon: "fa-solid fa-xmark" });
+    const seleccion = await DialogV2.wait({ window: { title: `Reacción disponible · ${actor.name}`, icon: "fa-solid fa-shield-halved" }, position: { width: 520 },
+      content: `<div class="ecos-dialogo ecos-reacciones-popup"><p><b>${esc(datos.attackerName ?? "Un enemigo")}</b> ${esc(datos.weapon ? `ataca con ${datos.weapon}` : "realiza un ataque")} a ${esc((datos.targetNames ?? []).join(", ") || "un aliado")}. Elige una opción solo si se cumple su condición.</p><ol>${filas}</ol><p><small>Las reacciones de D&D conservan sus propias reglas, recursos, alcance y ventanas de configuración. Las del Verbe conservan su coste.</small></p></div>`,
+      buttons: botones, rejectClose: false });
+    if (Number.isInteger(seleccion) && opciones[seleccion]) await ejecutarReaccion(actor, opciones[seleccion]);
+  } finally { POPUPS.delete(actor.uuid); }
+}
+function solicitarPopup(actor, datos) {
+  if (!actor) return;
+  game.socket.emit(`module.${MOD}`, { ecosReaccionPopup: { ...datos, actorUuid: actor.uuid } });
+}
 async function avisarReacciones(atacante, blancos, arma) {
-  const combat = game.combat, api = game.modules.get(MOD)?.api?.verbe;
-  if (!combat?.started || !api || !blancos.length) return;
-  const tokA = tokenDe(atacante), yaPreguntadas = new Set(Object.keys(api.datos?.()?.defensas ?? {}));
-  const encendidas = [];
+  const combat = game.combat;
+  if (!combat?.started || !blancos.length) return;
+  const tokA = tokenDe(atacante), encendidas = [], candidatos = new Map();
   for (const c of combat.combatants) {
     const actor = c.actor, tok = c.token?.object ?? tokenDe(actor);
-    if (!actor || !tok || actor === atacante || c.defeated || !api.despierto?.(actor)) continue;
-    if (!api.turnoVerbe?.(actor)?.reaccionLibre) continue;
+    if (!actor || !tok || actor === atacante || c.defeated) continue;
     const esBlanco = blancos.some(b => b.actor === actor);
     const mismoBando = tokA && (tok.document.disposition ?? 0) === (tokA.document.disposition ?? 0);
     if (mismoBando && !esBlanco) continue;
-    const tecnicas = tecnicasDe(actor);
-    if (!tecnicas.length) continue;
     const distBlanco = Math.min(...blancos.map(b => distanciaCasillas(casillas(tok), casillas(b), pasos())));
     const distAtacante = tokA ? distanciaCasillas(casillas(tok), casillas(tokA), pasos()) : null;
-    const lista = reaccionesEnAlcance({ tecnicas, esBlanco, distBlanco, distAtacante, yaPreguntadas });
-    if (!lista.length) continue;
-    const verbe = Number(api.estado?.(actor)?.valor) || 0;
-    const filas = lista.map(r => `<li><b>${esc(r.n)}</b> · ${r.pies ? `alcance ${r.pies} ft, estás a ${r.dist} ft` : "sobre ti"}${Number.isFinite(r.costo) ? ` · ${r.costo} Verbe${r.costo > verbe ? " <i>(te pasarías a negativo: sobreesfuerzo)</i>" : ""}` : ""}
-      <br><small>${esc(r.texto).slice(0, 220)}</small><br><button type="button" data-ecos-reaccion="${actor.uuid}|${r.itemId}"><i class="fa-solid fa-shield-halved"></i> Usar ${esc(r.n)}</button></li>`).join("");
-    const duenos = game.users.filter(u => u.isGM || actor.testUserPermission(u, "OWNER")).map(u => u.id);
-    await ChatMessage.create({ whisper: duenos, speaker: { alias: `Reacción Verbe · ${actor.name}` },
-      content: `<div class="ecos-reaccion-aviso"><p>⚡ <b>${esc(atacante.name)}</b> ataca a <b>${blancos.map(b => esc(b.name)).join(", ")}</b>${arma ? ` con ${esc(arma)}` : ""}. <b>${esc(actor.name)}</b> puede reaccionar (reacción Verbe libre, Verbe ${verbe}):</p><ul>${filas}</ul><p><small>Solo es un aviso: no gasta nada hasta que la uses. Caduca en 30 s o al cambiar el turno.</small></p></div>`,
-      flags: { [MOD]: { reaccionVerbe: { actor: actor.uuid, hasta: Date.now() + DURA_MS } } } });
+    if (!esBlanco && distBlanco > 5) continue; // protección/interposición: aliado a 5 ft del blanco, no a cualquier distancia
+    const nativas = reaccionesDndDe(actor);
+    const verbe = game.modules.get(MOD)?.api?.verbe;
+    const tecnicas = verbe?.despierto?.(actor) && verbe?.turnoVerbe?.(actor)?.reaccionLibre ? tecnicasDe(actor) : [];
+    const rVerbe = reaccionesEnAlcance({ tecnicas, esBlanco, distBlanco, distAtacante,
+      yaPreguntadas: new Set(Object.keys(verbe?.datos?.()?.defensas ?? {})) });
+    if (!nativas.length && !rVerbe.length) continue;
+    candidatos.set(actor.uuid, { actor, c, nativas, rVerbe });
     encendidas.push(c.id);
+  }
+  for (const { actor } of candidatos.values()) {
+    const data = { attackerName: atacante.name, weapon: arma ?? "", targetNames: blancos.map(b => b.name),
+      targets: blancos.map(b => b.document.uuid), attackerTokenUuid: tokA?.document?.uuid };
+    solicitarPopup(actor, data);
   }
   if (encendidas.length) {
     const hasta = Date.now() + DURA_MS;
@@ -127,12 +250,21 @@ async function avisarReacciones(atacante, blancos, arma) {
     game.socket.emit(`module.${MOD}`, { ecosReaccionAura: { cids: encendidas, hasta, combat: combat.id } });
   }
 }
+
 if (globalThis.Hooks) {
   Hooks.once("init", () => game.settings.register(MOD, "reaccionesVerbeAviso", { name: "Avisar reacciones del Verbe en alcance", scope: "world", config: true, type: Boolean, default: true,
     hint: "En combate, cuando alguien ataca, avisa a quien puede reaccionar con una técnica del Verbe a su alcance (con la distancia y el costo) y hace brillar su retrato en el carrusel." }));
   Hooks.once("ready", () => {
-    game.socket.on(`module.${MOD}`, d => { if (d?.ecosReaccionAura && d.ecosReaccionAura.combat === game.combat?.id) encenderAuras(d.ecosReaccionAura.cids ?? [], Number(d.ecosReaccionAura.hasta) || 0); });
-    const api = game.modules.get(MOD)?.api; if (api) api.reaccionesEnAlcance = reaccionesEnAlcance;
+    game.socket.on(`module.${MOD}`, d => {
+      if (d?.ecosReaccionAura && d.ecosReaccionAura.combat === game.combat?.id) encenderAuras(d.ecosReaccionAura.cids ?? [], Number(d.ecosReaccionAura.hasta) || 0);
+      if (d?.ecosReaccionPopup?.actorUuid) mostrarPopupReaccion(d.ecosReaccionPopup).catch(err => console.error(`${MOD} | popup reacción`, err));
+      if (d?.ecosOportunidad) ejecutarOportunidad(d.ecosOportunidad).catch(err => console.error(`${MOD} | oportunidad`, err));
+    });
+    const api = game.modules.get(MOD)?.api; if (api) {
+      api.reaccionesEnAlcance = reaccionesEnAlcance;
+      api.reaccionesDndDe = reaccionesDndDe;
+      api.pedirAtaqueOportunidad = pedirAtaqueOportunidad;
+    }
   });
   Hooks.on("dnd5e.rollAttackV2", (rolls, datos) => {
     if (!activo()) return;
@@ -155,7 +287,7 @@ if (globalThis.Hooks) {
       const actor = await fromUuid(uuid), item = actor?.items?.get(itemId);
       if (!item?.isOwner) return ui.notifications.warn("Solo su dueño o el DM la puede usar.");
       const act = item.system?.activities?.contents?.[0];
-      await (act ? act.use() : item.use?.());
+      await (act ? act.use({}, { configure: true }) : item.use?.());
       setTimeout(pintarAuras, 300);
     });
   });

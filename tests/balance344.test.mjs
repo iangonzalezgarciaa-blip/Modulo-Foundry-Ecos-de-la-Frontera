@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { xpDe, presupuestoGrupo, clasificar, letalSola, sugerir } from "../scripts/balance-encuentro.js";
+import { xpDe, presupuestoGrupo, clasificar, letalSola, sugerir, normalizarBando, bandoDeToken, disposicionDeBando, hostilesEscena, aliadosEscena, neutralesEscena } from "../scripts/balance-encuentro.js";
 
 test("3.44 · presupuesto 2024 y clasificación", () => {
   assert.deepEqual(presupuestoGrupo([2, 2]), { bajo: 200, moderado: 300, alto: 400 });
@@ -22,4 +22,27 @@ test("3.44 · letal por sí sola y recomendación interesante", () => {
   assert.ok(Math.abs(s.xpFinal - 350) <= 70);
   assert.notEqual(s.candidato.id, "c", "no suma algo que se pasa del objetivo");
   assert.equal(sugerir({ xpActual: 500, objetivo: 350, candidatos: cands }).n, 0);
+});
+
+test("3.81 · la clasificación persistente de token separa aliados, neutrales y enemigos", () => {
+  assert.equal(normalizarBando("aliado"), "aliado");
+  assert.equal(normalizarBando("neutral"), "neutral");
+  assert.equal(normalizarBando("enemigo"), "enemigo");
+  assert.equal(normalizarBando("otro"), null);
+  assert.equal(disposicionDeBando("aliado"), 1);
+  assert.equal(disposicionDeBando("neutral"), 0);
+  assert.equal(disposicionDeBando("enemigo"), -1);
+  const make = (id, type, disposition, balanceBando = null) => ({
+    id, name: id, disposition, actor: { type, hasPlayerOwner: false },
+    flags: balanceBando ? { "ecos-frontera": { balanceBando } } : {}
+  });
+  const tokens = [
+    make("a", "npc", 1, "aliado"), make("n", "npc", 0, "neutral"),
+    make("e", "npc", -1, "enemigo"), make("default", "npc", -1)
+  ];
+  const scene = { tokens };
+  assert.equal(bandoDeToken(tokens[0]), "aliado");
+  assert.deepEqual(aliadosEscena(scene).map(t => t.id), ["a"]);
+  assert.deepEqual(neutralesEscena(scene).map(t => t.id), ["n"]);
+  assert.deepEqual(hostilesEscena(scene).map(t => t.id), ["e", "default"]);
 });

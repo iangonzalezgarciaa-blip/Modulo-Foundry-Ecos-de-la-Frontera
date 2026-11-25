@@ -5,7 +5,7 @@ import { ACCIONES, ACCIONES_PLANAS, datosRasgosComunes, datosGolpe, planAcciones
 test('3.12: seis rasgos, uno por característica, con todas las acciones pedidas', () => {
   assert.deepEqual(ACCIONES.map(g => g.car), ['str', 'dex', 'con', 'int', 'wis', 'cha']);
   const ids = ACCIONES_PLANAS.map(a => a.id);
-  for (const id of ['presa', 'derribar', 'apartar', 'zancadilla', 'desarmar', 'esquivar', 'fintar', 'intimidar', 'evaluar', 'planear', 'distraer', 'aguantar'])
+  for (const id of ['presa', 'derribar', 'apartar', 'zancadilla', 'desarmar', 'esquivar', 'fintar', 'intimidar', 'evaluar', 'planear', 'distraer', 'aguantar', 'rompe-guardia', 'descerrajar', 'asegurar-caida', 'afirmar-pie', 'atrapar-al-vuelo', 'equilibrio', 'cerrar-garganta', 'identificar-conjuro', 'examinar-mecanismo', 'advertir-aliado', 'orientarse', 'desescalar', 'contener-aliento'])
     assert.ok(ids.includes(id), id);
   assert.equal(new Set(ids).size, ids.length, 'sin repetidas');
 });
@@ -71,4 +71,8 @@ test('3.14: lo que ya es de D&D se resuelve como en el Manual y lo de Ecos usa l
   // Ponerse a cubierto mejora la cobertura del Manual un paso; no la repite.
   const cub = rasgos.find(r => r.flags['ecos-frontera'].accionComun.id === 'dex').effects.find(e => e.name === 'A cubierto');
   assert.deepEqual(cub.statuses, ['coverThreeQuarters']);
+});
+
+test('3.81 · el repertorio universal sube de versión para migrar también las hojas antiguas', () => {
+  assert.equal(VERSION_ACCIONES, 7);
 });

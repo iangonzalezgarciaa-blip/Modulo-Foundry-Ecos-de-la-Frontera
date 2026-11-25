@@ -249,8 +249,11 @@ async function preguntarMovimiento(doc, destino, { oportunidad = [], falta = 0, 
   if (r === "desenganche") await accionEstandar(actor, "desenganche");
   if (r === "desengancheAd") await accionEstandar(actor, "desenganche", { adicional: true });
   if (r === "correr") await accionEstandar(actor, "correr");
-  if (r === "igual" && oportunidad.length) await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }),
-    content: `<p class="ecos-oportunidad">⚔ <b>${esc(doc.name)}</b> se aleja de ${oportunidad.map(e => `<b>${esc(e.nombre)}</b>`).join(", ")}: ${oportunidad.length > 1 ? "pueden" : "puede"} hacerle un <b>ataque de oportunidad</b> con su reacción.</p>` });
+  if (r === "igual" && oportunidad.length) {
+    await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }),
+      content: `<p class="ecos-oportunidad">⚔ <b>${esc(doc.name)}</b> se aleja de ${oportunidad.map(e => `<b>${esc(e.nombre)}</b>`).join(", ")}: ${oportunidad.length > 1 ? "pueden" : "puede"} hacerle un <b>ataque de oportunidad</b> con su reacción.</p>` });
+    game.modules.get(MOD)?.api?.pedirAtaqueOportunidad?.(oportunidad.map(e => e.id).filter(Boolean), doc.uuid);
+  }
   await doc.update({ x: destino.x, y: destino.y }, { ecosMovOk: true });
   return true;
 }
@@ -464,7 +467,7 @@ if (globalThis.Hooks) {
     const combat = combateActivo(), uuid = actividadMensaje(msg);
     if (!combat || !uuid || !esTarjetaUso(msg)) return;
     let act = null; try { act = msg.getAssociatedActivity?.() ?? fromUuidSync(uuid, { strict: false }); } catch { act = null; }
-    if (!act || act.item?.flags?.[MOD]?.verbe) return;
+    if (!act || act.item?.flags?.[MOD]?.verbe || msg.getFlag?.(MOD, "ataqueOportunidad")) return;
     const k = tipoActivacion(act.activation?.type ?? act.item?.system?.activation?.type);
     const c = combat.combatants.find(x => x.actor === act.actor || x.actorId === act.actor?.id);
     if (k && c) cambiarTurno(c.id, { op: "gastar", clave: k }).catch(() => null);

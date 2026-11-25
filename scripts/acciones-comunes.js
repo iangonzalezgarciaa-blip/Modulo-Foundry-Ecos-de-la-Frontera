@@ -12,7 +12,7 @@
 import { cambio } from "./compat.js";
 
 const MOD = "ecos-frontera";
-export const VERSION_ACCIONES = 6;
+export const VERSION_ACCIONES = 7;
 const DESPREVENIDO = "ecosDesprevenido";
 const S = "systems/dnd5e/icons/svg/";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -52,12 +52,16 @@ export const ACCIONES = [
     { id: "lanzar", nombre: "Lanzar a quien sujetas", act: "action", tipo: "save", salv: ["str"], cd: "str", estado: "prone", dano: [1, 6, "bludgeoning"], alcance: 5, pf2e: null,
       texto: "Arrojas a quien tienes Agarrado hasta 10 ft (15 ft con Fuerza 18 o más). Si falla, cae Derribado y recibe 1d6 contundente. La presa termina." },
     { id: "rompe-guardia", nombre: "Romper la guardia", act: "action", tipo: "save", salv: ["str", "con"], cdPericia: ["ath"], alcance: 5, pf2e: null,
-      efecto: { nombre: "Brecha", img: "systems/dnd5e/icons/svg/statuses/bleeding.svg", statuses: ["ecosBrecha"], cambios: [["system.attributes.ac.bonus", "add", "-2"]], segundos: 6 },
-      texto: "Golpeas donde la coraza, el escudo o la guardia ya cedieron: un borde de quitina, una correa, la mano del escudo. Va en lugar de uno de tus ataques. Si falla, recibe una Brecha (−2 a la CA hasta el final de tu próximo turno; con una dote de ruptura del Verbe, 1 minuto; hasta 3 se acumulan). D&D pega; esto abre." },
+      efecto: { nombre: "Brecha", img: "systems/dnd5e/icons/svg/statuses/bleeding.svg", statuses: ["ecosBrecha"], cambios: [["system.attributes.ac.bonus", "add", "-2"]], brechaImpacto: true },
+      texto: "Golpeas donde la coraza, el escudo o la guardia ya cedieron: un borde de quitina, una correa, la mano del escudo. Es una maniobra física de Fuerza y va en lugar de uno de tus ataques. Si falla, recibe una Brecha (−2 a la CA hasta que reciba daño; hasta 3 se acumulan). La Brecha básica se cierra al recibir el siguiente impacto, incluso si el atacante tiene Ataque Extra. Solo una dote que prolongue expresamente la Brecha puede mantenerla abierta más tiempo. D&D pega; esto abre." },
     { id: "abrirse-paso", nombre: "Abrirse paso", act: "special", tipo: "save", salv: ["str"], cdPericia: ["ath"], alcance: 5, pf2e: null,
       texto: "Una vez por turno, durante tu movimiento, intentas cruzar el espacio de un enemigo. Si falla, pasas (cuenta como terreno difícil). Si es dos tamaños más pequeño que tú, además cae Derribado." },
     { id: "escapar", nombre: "Escapar o forzar", act: "action", tipo: "check", pericias: ["ath", "acr"], pf2e: "Escape / Force Open", base: "Escapar de una presa",
-      texto: "Te sueltas de una presa (contra la CD de quien te sujeta, como en el Manual) o fuerzas algo: puerta de madera CD 15, reforzada 20, grilletes 20, barrotes 25." }
+      texto: "Te sueltas de una presa (contra la CD de quien te sujeta, como en el Manual) o fuerzas algo: puerta de madera CD 15, reforzada 20, grilletes 20, barrotes 25." },
+    { id: "descerrajar", nombre: "Descerrajar", act: "action", tipo: "check", pericias: ["ath"], cdFija: 15, pf2e: null,
+      texto: "Fuerzas una puerta, tapa, reja o mecanismo trabado con el cuerpo. Atletismo contra CD 15 (madera reforzada 20, metal 25; el DM ajusta por tamaño, material y herramientas)." },
+    { id: "asegurar-caida", nombre: "Asegurar a quien cae", act: "reaction", tipo: "check", pericias: ["ath"], alcance: 5, pf2e: null,
+      texto: "Cuando una criatura a 5 ft cae o es empujada hacia un borde, usas tu reacción para intentar sujetarla. Necesitas una mano libre. Atletismo contra la CD del DM; con éxito, la frenas o la dejas colgando. Es una reacción común y no sustituye ninguna reacción de clase." }
   ] },
   { car: "dex", acciones: [
     { id: "zancadilla", nombre: "Zancadilla", act: "action", tipo: "save", salv: ["dex"], cdPericia: ["acr"], estado: "prone", alcance: 5, pf2e: "Trip",
@@ -80,6 +84,12 @@ export const ACCIONES = [
     { id: "interponerse", nombre: "Interponerse", act: "reaction", tipo: "utility", alcance: 5,
       efecto: { nombre: "Protegido", img: "systems/dnd5e/icons/svg/checked-shield.svg", cambios: [["system.attributes.ac.bonus", "add", "2"]], turnos: 1 }, pf2e: null,
       texto: "Cuando una criatura que ves ataca a un aliado que está a 5 ft de ti: el aliado tiene +2 a la CA contra ese ataque (pon este efecto en él). Si aun así impacta, el daño lo recibes tú en vez de él. No puedes si estás Incapacitado, Agarrado o con velocidad 0. Si tienes el estilo de combate Protección o Intercepción, puedes usar ese en su lugar: es la misma reacción." },
+    { id: "afirmar-pie", nombre: "Afirmar el pie", act: "reaction", tipo: "check", pericias: ["acr", "ath"], alcance: 5, pf2e: null,
+      texto: "Cuando un golpe o una maniobra intenta empujarte, arrastrarte o derribarte, usas tu reacción para afirmarte. Acrobacias o Atletismo contra la CD del efecto; con éxito reduces 5 ft el desplazamiento forzado o evitas quedar Derribado, según el caso." },
+    { id: "atrapar-al-vuelo", nombre: "Atrapar al vuelo", act: "reaction", tipo: "check", pericias: ["slt"], alcance: 5, pf2e: null,
+      texto: "Cuando un objeto pequeño o un arma cae al suelo a 5 ft de ti, intentas atraparlo antes de que toque el suelo o llegue a otras manos. Juego de manos; el DM fija la CD según tamaño, velocidad y distancia. No arrebata objetos que alguien aún sostiene." },
+    { id: "equilibrio", nombre: "Mantener el equilibrio", act: "special", tipo: "check", pericias: ["acr"], pf2e: "Balance",
+      texto: "Cruzas una superficie estrecha, resbaladiza o inestable, aterrizas de un salto o te mantienes sobre algo que se mueve. Acrobacias contra la CD del DM; durante el combate puede resolverse dentro del movimiento." },
     { id: "esconderse", nombre: "Esconderse", act: "action", tipo: "check", pericias: ["ste"], cdFija: 15, pf2e: "Hide / Sneak", base: "Esconderse",
       texto: "Como en el Manual: muy oscuro o tras cobertura de tres cuartos o total, y fuera de la vista de los enemigos. Sigilo CD 15. Si lo logras, ponte el estado Escondido: los demás te buscan con su Percepción contra tu tirada." }
   ] },
@@ -87,14 +97,23 @@ export const ACCIONES = [
     { id: "aguantar", nombre: "Aguantar", act: "bonus", tipo: "utility",
       efecto: { nombre: "Aguantando", img: `${S}abilities/constitution.svg`, cambios: [["system.abilities.str.bonuses.save", "add", "2"], ["system.abilities.con.bonuses.save", "add", "2"]] }, pf2e: null,
       texto: "Te plantas y aprietas los dientes: +2 a las salvaciones de Fuerza y Constitución hasta el inicio de tu siguiente turno. Sirve contra Presa, Empujón, venenos y para no perder la concentración." },
+    { id: "cerrar-garganta", nombre: "Cerrar la garganta", act: "reaction", tipo: "utility",
+      efecto: { nombre: "Garganta cerrada", img: `${S}abilities/constitution.svg`, cambios: [["system.abilities.con.bonuses.save", "add", "2"]], turnos: 1 }, pf2e: null,
+      texto: "Cuando ves venir humo, gas o un veneno inhalado, cierras la boca y contienes el aire: +2 a la siguiente salvación de Constitución contra ese efecto. No sirve contra venenos ingeridos, contacto ni efectos que ya te afectaron." },
     { id: "sacudirse", nombre: "Sacudirse", act: "action", tipo: "check", car: "con", pf2e: null,
       texto: "Terminas un efecto no mágico que te ciega, te ensordece o te envenena (polvo en los ojos, humo, un veneno leve) si superas su CD: la que te pidieron al salvar." },
+    { id: "contener-aliento", nombre: "Contener el aliento", act: "special", tipo: "utility", pf2e: null,
+      texto: "Fuera de combate, aguantas la respiración durante 1 + tu modificador de Constitución minutos (mínimo 30 segundos). Si realizas una acción agotadora, el DM puede pedir una prueba de Constitución." },
     { id: "resistir", nombre: "Resistir", act: "special", tipo: "check", car: "con", pf2e: null,
-      texto: "Fuera de combate, lo que el Manual ya pide: aguantar la respiración (1 + tu CON minutos, mínimo 30 segundos), una marcha forzada (salvación de CON CD 10 + 1 por hora de más), el frío, el hambre o una noche en vela. Las consecuencias son las del Manual. Para lo que el Manual no cubre, el DM pone la CD." }
+      texto: "Fuera de combate, lo que el Manual ya pide: una marcha forzada (salvación de CON CD 10 + 1 por hora de más), el frío, el hambre o una noche en vela. Las consecuencias son las del Manual. Para lo que el Manual no cubre, el DM pone la CD." }
   ] },
   { car: "int", acciones: [
     { id: "evaluar", nombre: "Evaluar al enemigo", act: "action", tipo: "check", pericias: ["arc", "his", "nat", "rel"], pf2e: "Recall Knowledge", base: "Estudiar",
       texto: "La acción Estudiar del Manual aplicada a una criatura que ves. Arcanos (constructos, elementales, aberraciones), Historia (humanoides y órdenes), Naturaleza (bestias, plantas, monstruosidades) o Religión (no muertos, infernales, celestiales). CD 10 + su VD; +5 si es única o rara. Si lo logras, el DM te dice una cosa: su salvación más débil, una resistencia, vulnerabilidad o inmunidad, o qué hace mejor. Una más por cada 5 que pases. Lo que no tienes manera de saber, no te lo dice." },
+    { id: "identificar-conjuro", nombre: "Identificar conjuro", act: "reaction", tipo: "check", pericias: ["arc"], alcance: 60, cdFija: 15, pf2e: null,
+      texto: "Cuando ves a una criatura lanzar un conjuro a 60 ft, intentas reconocerlo al instante: Arcanos contra CD 15 + nivel del conjuro. Con éxito conoces su nombre, escuela y objetivo evidente; con fallo solo sabes que es magia. No lo interrumpes ni sustituyes Contraconjuro." },
+    { id: "examinar-mecanismo", nombre: "Examinar mecanismo", act: "action", tipo: "check", pericias: ["inv"], pf2e: null,
+      texto: "Examinas cerraduras, trampas, palancas y mecanismos sin activarlos: Investigación contra la CD que determine el DM según complejidad. Con éxito descubres el mecanismo de activación y una forma plausible de desarmarlo o abrirlo." },
     { id: "planear", nombre: "Planear", act: "special", tipo: "check", pericias: ["inv"], cdFija: 15, pf2e: null,
       texto: "Un minuto fuera de combate (o una acción en combate) para explicar un plan. Con Investigación CD 15, tú y tantos aliados que te escucharon como tu INT (mínimo 1) tienen «Según el plan»: una vez, +1d4 a una tirada que siga el plan. Si el plan se rompe, se pierde. Un fallo por 5 o más: el plan tiene un agujero que el DM conoce." },
     { id: "plan", nombre: "Según el plan", act: "special", tipo: "utility", efecto: { nombre: "Según el plan", img: `${S}abilities/intelligence.svg`, horas: 1 }, pf2e: null,
@@ -108,6 +127,11 @@ export const ACCIONES = [
   { car: "wis", acciones: [
     { id: "buscar", nombre: "Buscar", act: "action", tipo: "check", pericias: ["prc", "ins", "med", "sur"], pf2e: "Seek", base: "Buscar",
       texto: "Como en el Manual: buscas a alguien escondido (Percepción contra su Sigilo), algo oculto, una huella (Supervivencia), una mentira (Perspicacia) o qué le pasa a un herido (Medicina). Examinar algo con cuidado o deducir es Investigación, con la acción Estudiar." },
+    { id: "advertir-aliado", nombre: "Advertir al aliado", act: "reaction", tipo: "utility", alcance: 30,
+      efecto: { nombre: "Advertido", img: `${S}abilities/wisdom.svg`, cambios: [["system.abilities.dex.bonuses.save", "add", "2"]], turnos: 1 }, pf2e: null,
+      texto: "Cuando ves que un aliado a 30 ft va a quedar dentro de una trampa o efecto de área, le gritas para que se cubra: +2 a su siguiente salvación de Destreza contra ese mismo efecto. No cambia su posición ni evita el área." },
+    { id: "orientarse", nombre: "Orientarse", act: "special", tipo: "check", pericias: ["sur"], pf2e: null,
+      texto: "Fuera de combate, determinas el norte, reconoces hitos y mantienes el rumbo. Supervivencia contra la CD del terreno, clima y visibilidad; un fallo puede hacerte perder tiempo o tomar una ruta más difícil." },
     { id: "leer", nombre: "Leer al rival", act: "action", tipo: "save", salv: ["cha"], cdPericia: ["ins"], alcance: 30,
       efecto: { nombre: "Desprevenido", img: "systems/dnd5e/icons/svg/statuses/surprised.svg", statuses: [DESPREVENIDO] }, pf2e: null,
       texto: "Le miras los hombros, los pies, la respiración. Si falla, queda Desprevenido hasta el final de tu siguiente turno (todo ataque contra él suma +2) y el DM te dice qué piensa hacer en su próximo turno." },
@@ -117,6 +141,8 @@ export const ACCIONES = [
       texto: "Respiras hondo: repites ahora la salvación contra estar Asustado o Hechizado, con +2, en vez de esperar al final de tu turno." }
   ] },
   { car: "cha", acciones: [
+    { id: "desescalar", nombre: "Desescalar", act: "action", tipo: "check", pericias: ["per", "itm"], alcance: 30, pf2e: null,
+      texto: "Intentas calmar una hostilidad, evitar que una discusión se convierta en pelea o conseguir una pausa breve. Persuasión o Intimidación (la adecuada a tu enfoque) contra la CD del DM; no obliga a un enemigo fanático o bajo control mágico." },
     { id: "fintar", nombre: "Fintar", act: "bonus", tipo: "save", salv: ["wis"], cdPericia: ["dec"], alcance: 5,
       efecto: { nombre: "Desprevenido", img: "systems/dnd5e/icons/svg/statuses/surprised.svg", statuses: [DESPREVENIDO], turnos: 1 }, pf2e: "Feint",
       texto: "Un amago antes de golpear. Si falla, queda Desprevenido hasta el final de tu turno: todo ataque contra él suma +2. Si falla por 5 o más, tu próximo 20 contra él elige el efecto." },
@@ -155,10 +181,11 @@ export const formulaCdPericia = ps => ps.length === 1 ? `8 + @skills.${ps[0]}.to
 function efectoDe(grupo, a) {
   const e = a.efecto ?? (a.estado ? { nombre: { grappled: "Agarrado", prone: "Derribado" }[a.estado] ?? a.estado, statuses: [a.estado], img: `${S}statuses/${a.estado}.svg` } : null);
   if (!e) return null;
-  const duracion = e.horas ? { seconds: e.horas * 3600 } : e.segundos ? { seconds: e.segundos, rounds: Math.max(1, Math.round(e.segundos / 6)) } : e.turnos ? { turns: e.turnos } : { rounds: 1, seconds: 6 };
+  const brecha = e.brechaImpacto || e.statuses?.includes("ecosBrecha");
+  const duracion = brecha ? {} : e.horas ? { seconds: e.horas * 3600 } : e.segundos ? { seconds: e.segundos, rounds: Math.max(1, Math.round(e.segundos / 6)) } : e.turnos ? { turns: e.turnos } : { rounds: 1, seconds: 6 };
   return { _id: idEstable(`ecos-accion-efecto-${grupo}-${a.id}`), name: e.nombre, img: e.img ?? `${S}abilities/${({ str: "strength", dex: "dexterity", con: "constitution", int: "intelligence", wis: "wisdom", cha: "charisma" })[grupo]}.svg`,
     statuses: e.statuses ?? [], changes: (e.cambios ?? []).map(([k, t, v]) => cambio(k, t, v)), duration: duracion, transfer: false, disabled: false,
-    description: `<p>${esc(a.texto)}</p>`, flags: { [MOD]: { accionComunEfecto: a.id } } };
+    description: `<p>${esc(a.texto)}</p>`, flags: { [MOD]: { accionComunEfecto: a.id, ...(brecha ? { brecha: { consumirEnImpacto: true, prolongada: false } } : {}) } } };
 }
 
 /**

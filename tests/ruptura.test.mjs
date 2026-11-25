@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { tramoVD, bonoDefensa, bonoDefensaNPC, defensaSugerida, defensaDe, defensasActivasDe, npcPuedeTenerDefensas, efectosDefensaNPC, efectoDefensa, cabeRuptura, ESTADOS_RUPTURA, BRECHA, GRIETA, QUEBRADO } from '../scripts/ruptura.js';
+import { tramoVD, bonoDefensa, bonoDefensaNPC, defensaSugerida, defensaDe, defensasActivasDe, npcPuedeTenerDefensas, efectosDefensaNPC, efectoDefensa, efectoBrechaManual, efectoRuptura, brechaSeProlonga, cabeRuptura, ESTADOS_RUPTURA, BRECHA, GRIETA, QUEBRADO } from '../scripts/ruptura.js';
 import { pideDefensa, esAccionBasica, textoAmenaza, seSalva } from '../scripts/defensa-pedida.js';
 import { ACCIONES_PLANAS, datosRasgosComunes } from '../scripts/acciones-comunes.js';
 
@@ -61,11 +61,21 @@ test('3.80.2 · los tres interruptores mecánicos son independientes y Quebrado 
 
 test('3.28 · dos acciones de cualquiera nuevas abren defensas: Romper la guardia (Brecha) y Buscar la grieta (Grieta)', () => {
   const rg = ACCIONES_PLANAS.find(a => a.id === 'rompe-guardia'), gr = ACCIONES_PLANAS.find(a => a.id === 'grieta');
-  assert.equal(rg.grupo, 'str'); assert.deepEqual(rg.efecto.statuses, ['ecosBrecha']); assert.equal(rg.efecto.segundos, 6, '3.36: un turno; con dote de ruptura, 1 minuto');
+  assert.equal(rg.grupo, 'str'); assert.deepEqual(rg.efecto.statuses, ['ecosBrecha']); assert.equal(rg.efecto.brechaImpacto, true);
   assert.equal(gr.grupo, 'int'); assert.deepEqual(gr.efecto.statuses, ['ecosGrieta']);
   const fue = datosRasgosComunes().find(r => r.system.identifier === 'ecos-acciones-str');
   const ef = fue.effects.find(e => e.statuses.includes('ecosBrecha'));
-  assert.equal(ef.duration.seconds, 6); assert.equal(ef.changes[0].key, 'system.attributes.ac.bonus');
+  assert.deepEqual(ef.duration, {}, 'Brecha básica no tiene temporizador: se consume con el siguiente daño');
+  assert.deepEqual(ef.flags['ecos-frontera'].brecha, { consumirEnImpacto: true, prolongada: false });
+  assert.deepEqual(efectoRuptura(BRECHA).duration, {}, 'las Brechas de técnicas también duran un impacto');
+  assert.equal(efectoRuptura(BRECHA).changes[0].value, '-2');
+  assert.equal(brechaSeProlonga(['huella-abierta']), true);
+  assert.equal(brechaSeProlonga(['filo-que-abre']), false);
+  assert.equal(efectoRuptura(GRIETA).duration.seconds, 60, 'Grieta conserva su minuto');
+  const manual = efectoBrechaManual();
+  assert.equal(manual.disabled, true); assert.ok(manual.flags['ecos-frontera'].brechaPlantilla);
+  assert.deepEqual(manual.statuses, [], 'la plantilla apagada no impone el efecto');
+  assert.equal(ef.changes[0].key, 'system.attributes.ac.bonus');
 });
 
 test('3.28 · la defensa a pedido: salvaciones con objetivo, el texto de la amenaza y la comparación con la CD', () => {

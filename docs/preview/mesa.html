@@ -1210,6 +1210,42 @@ a.ecos-estado-link:hover { color: #b8862b; text-decoration-style: solid; }
 }
 .ecos-ae-e b { line-height: 1.25; }
 .ecos-ae-e small { line-height: 1.3; }
+
+/* 3.81.0 · Mascota animada: gato anime original con expresiones para 1 y 20 natural. */
+#ecos-festejo .ef-gato-caja { position:absolute; left:29vw; bottom:-1vh; width:22vw; max-width:340px; min-width:190px; z-index:4;
+  animation:ef-entra-abajo .48s .12s cubic-bezier(.3,1.6,.5,1) both; }
+#ecos-festejo .ef-gato { display:block; width:100%; height:auto; overflow:visible; filter:drop-shadow(0 9px 0 rgba(0,0,0,.34)); }
+#ecos-festejo .ef-gato-cabeza { transform-box:fill-box; transform-origin:50% 80%; animation:ef-gato-cabeza .42s ease-in-out infinite alternate; }
+#ecos-festejo .ef-gato-cuerpo { transform-box:fill-box; transform-origin:50% 15%; animation:ef-gato-cuerpo .36s ease-in-out infinite alternate; }
+#ecos-festejo .ef-gato-cola { transform-box:fill-box; transform-origin:0% 90%; animation:ef-gato-cola .28s ease-in-out infinite alternate; }
+#ecos-festejo .ef-globo { position:absolute; left:58%; top:-8%; padding:.28em .65em; border:4px solid #24152f; border-radius:1.2em; background:#fff; color:#24152f;
+  font-family:"EcosImpacto",sans-serif; font-size:clamp(17px,2.2vw,34px); white-space:nowrap; transform:rotate(5deg);
+  animation:ef-boing .6s .32s cubic-bezier(.3,1.8,.5,1) both; }
+#ecos-festejo .ef-gato .ef-cara-burlona,
+#ecos-festejo .ef-gato .ef-cara-triste,
+#ecos-festejo .ef-gato .ef-cara-temerosa,
+#ecos-festejo .ef-gato .ef-cara-alegre { display:none; }
+#ecos-festejo .ef-gato-caja.ef-gato-cara-burlona .ef-gato .ef-cara-burlona,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-triste .ef-gato .ef-cara-triste,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-temerosa .ef-gato .ef-cara-temerosa,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-alegre .ef-gato .ef-cara-alegre { display:inline; }
+#ecos-festejo .ef-gato-ojos-base,
+#ecos-festejo .ef-gato-brillos-base,
+#ecos-festejo .ef-gato-boca-base { display:none; }
+#ecos-festejo .ef-gato-caja.ef-gato-cara-burlona .ef-gato-ojos-base,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-burlona .ef-gato-brillos-base,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-triste .ef-gato-ojos-base,
+#ecos-festejo .ef-gato-caja.ef-gato-cara-triste .ef-gato-brillos-base { display:inline; }
+@keyframes ef-gato-cabeza { from { transform:rotate(-4deg) translateY(0); } to { transform:rotate(4deg) translateY(-5px); } }
+@keyframes ef-gato-cuerpo { from { transform:translateY(0) scaleY(1); } to { transform:translateY(-7px) scaleY(1.025); } }
+@keyframes ef-gato-cola { from { transform:rotate(-12deg); } to { transform:rotate(16deg); } }
+@media (prefers-reduced-motion:reduce) {
+  #ecos-festejo .ef-gato-cabeza,#ecos-festejo .ef-gato-cuerpo,#ecos-festejo .ef-gato-cola { animation:none; }
+}
+/* 3.81.0 · Los controles añadidos por Ecos no bloquean el doble clic de restauración de una hoja minimizada. */
+.window-app.minimized .window-header .ecos-ae-boton,
+.window-app.minimized .window-header .ecos-estilo-boton { display:none !important; }
+
 </style><p class="preview-nota">Vista de revisión · personajes ficticios · cambia de pestaña para revisar el HTML real. Las acciones se ejecutan dentro de Foundry.</p><label class="preview-nota">Vista de revisión <select data-preview-vista><option value="turno">Mi turno</option><option value="intenciones">Qué quiero hacer</option><option value="crear">Crear personaje</option><option value="buscar">Buscar información</option><option value="azar">Dados 1 y 20</option><option value="dm">Dirección</option><option value="npc">Taller de NPC</option><option value="encuentros">Encuentros</option><option value="diagnostico">Diagnóstico y pruebas</option><option value="memoria">Identidad de Nimerios</option><option value="recibo">Recibo de resolución</option></select></label><div class="ecos-mesa" data-vista="turno" ><div class="em-marco"><header class="em-cabecera"><div><h1>Tu mesa, a mano</h1><p>Elige una tarea. Cada herramienta explica qué hace y qué debes confirmar en mesa.</p></div><label>Ficha activa<select name="actor"><option value="">Sin ficha</option><option value="Actor.demo-pj" selected>Ari del Vado</option><option value="Actor.demo-npc" >Vigilante del paso</option></select></label></header><nav class="em-tabs" aria-label="Herramientas de campaña"><button type="button" data-em="tab" data-id="turno" aria-current="page">Mi turno</button><button type="button" data-em="tab" data-id="intenciones" >Qué quiero hacer</button><button type="button" data-em="tab" data-id="crear" >Crear personaje</button><button type="button" data-em="tab" data-id="buscar" >Buscar información</button><button type="button" data-em="tab" data-id="azar" >Dados 1 y 20</button><button type="button" data-em="tab" data-id="diagnostico" >Diagnóstico y pruebas</button><button type="button" data-em="tab" data-id="dm" >Dirección</button><button type="button" data-em="tab" data-id="npc" >Taller de NPC</button><button type="button" data-em="tab" data-id="encuentros" >Encuentros</button><button type="button" data-em="tab" data-id="memoria" >Identidad de Nimerios</button></nav><main class="em-contenido"><h2>Ari del Vado · lo esencial</h2><div class="em-resumen"><div><b>18 / 24</b><span>Puntos de vida</span></div><div><b>10</b><span>Clase de armadura</span></div><div><b>9 m</b><span>Movimiento</span></div><div><b>18 / 26</b><span>Verbe disponible</span></div></div><p><b>Estados:</b> Sin estados registrados. <b>Concentración:</b> Revisa los efectos de tu ficha si mantienes un poder.</p>
    <section><h3>Mi lista del turno</h3><p>Recordatorio personal; no concede ni consume acciones del sistema. Se renueva al comenzar tu turno propio; fuera de combate puedes limpiarlo.</p><div class="em-fila"><button type="button" data-em="marcar" data-id="accion" aria-pressed="false">Acción</button><button type="button" data-em="marcar" data-id="adicional" aria-pressed="false">Acción adicional</button><button type="button" data-em="marcar" data-id="reaccion" aria-pressed="false">Reacción</button><button type="button" data-em="marcar" data-id="movimiento" aria-pressed="false">Movimiento</button><button type="button" data-em="limpiar">Limpiar lista</button></div></section>
    <section><h3>Tus accesos frecuentes</h3><div class="em-fila"><button type="button" data-em="hoja">Abrir ficha</button><button type="button" data-em="verbe">Abrir Verbe</button><button type="button" data-em="compendios">Abrir compendios</button></div><p>Añade hasta ocho técnicas, conjuros, armas o rasgos para encontrarlos sin recorrer toda la ficha.</p><label>Añadir acceso<select name="favorito"><option value="0000000000000001" >Viajero</option><option value="0000000000000002" >Habitante del valle</option><option value="0000000000000003" >Guía de caminos</option><option value="0000000000000004" >Mochila de viaje</option></select></label><button type="button" data-em="favorito">Añadir a mis accesos</button></section>

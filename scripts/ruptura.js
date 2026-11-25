@@ -21,9 +21,9 @@ const S = "systems/dnd5e/icons/svg/";
 
 /** Los estados de ruptura (se registran con los del Verbe y las técnicas los pueden imponer). */
 export const ESTADOS_RUPTURA = {
-  [BRECHA]: { name: "Brecha", img: `${S}statuses/bleeding.svg`, dura: 60,
+  [BRECHA]: { name: "Brecha", img: `${S}statuses/bleeding.svg`,
     changes: [{ key: "system.attributes.ac.bonus", mode: 2, value: "-2" }],
-    texto: "Su guardia cedió: −2 a la CA por cada Brecha, hasta 3 (−6). Dura 1 minuto. Si gasta su acción en recomponerse, se quita una." },
+    texto: "Su guardia cedió: −2 a la CA por cada Brecha, hasta 3 (−6). La Brecha básica se consume al recibir el siguiente daño; las dotes que la prolongan expresamente pueden mantenerla abierta." },
   [GRIETA]: { name: "Grieta", img: `${S}statuses/cursed.svg`, dura: 60,
     changes: [{ key: "system.bonuses.abilities.save", mode: 2, value: "-2" }],
     texto: "Le encontraron la grieta: −2 a todas sus salvaciones por cada Grieta, hasta 3 (−6). Dura 1 minuto. Si gasta su acción en recomponerse, se quita una." },
@@ -90,17 +90,17 @@ export const cabeRuptura = (actuales, tope = TOPE_RUPTURA) => Number(actuales) <
 /** La página de reglas para todos: qué es ablandar y cómo se hace. Pura. */
 export function guiaRupturaHTML() {
   return `<h1>Ablandar a las criaturas</h1>
-<p>En este mundo, D&amp;D es el cañón de golpe y el Verbe es lo que abre el camino. Cada PNJ tiene tres defensas opcionales en la pestaña <b>Efectos</b>: <b>Coraza</b> (+4 a +7 CA), <b>Fortaleza</b> (+4 a +7 a las salvaciones) y <b>Cuerpo sordo</b> (resistencia a daño contundente, perforante y cortante). Las tres empiezan apagadas; el DM activa por separado las que correspondan. Las fichas de jugadores no reciben estos efectos.</p>
+<p>El daño y las maniobras de <b>D&amp;D</b> siguen siendo la base; el Verbe se suma, no reemplaza las reglas de clase. Cada PNJ tiene tres defensas opcionales en la pestaña <b>Efectos</b>: <b>Coraza</b> (+4 a +7 CA), <b>Fortaleza</b> (+4 a +7 a las salvaciones) y <b>Cuerpo sordo</b> (resistencia a daño contundente, perforante y cortante). Las tres empiezan apagadas; el DM activa por separado las que correspondan. Además, <b>todas las fichas de PJ y PNJ</b> reciben el interruptor apagado «Brecha · imponer» para que el DM pueda imponer manualmente ese estado cuando el rol lo justifique.</p>
 <h2>Las tres defensas</h2>
 <ul><li><b>Coraza.</b> CA altísima: quitina, escamas, placas, una guardia de hierro. Cuesta acertarle.</li>
 <li><b>Fortaleza.</b> Salvaciones altísimas: un cuerpo o una voluntad que no ceden. Resiste lo que pide salvación.</li>
 <li><b>Cuerpo sordo.</b> Resiste los golpes de armas (contundente, cortante, perforante). El Verbe con elemento entra entero.</li></ul>
 <p>No sabes de antemano cuál tiene ni cuánto: lo vas viendo (o lo descubres con <b>Evaluar al enemigo</b> y <b>Buscar la grieta</b>).</p>
 <h2>Cómo se ablanda</h2>
-<ul><li><b>Brecha</b>: −2 a su CA. Se acumulan hasta 3 (−6). Dura 1 minuto.</li>
+<ul><li><b>Brecha</b>: −2 a su CA por cada Brecha, hasta 3 (−6). La versión básica dura <b>un solo impacto</b>: se elimina automáticamente cuando el actor recibe daño, incluso si el atacante tiene Ataque Extra. El primer impacto la consume antes del siguiente ataque. Solo una dote que diga expresamente que prolonga la Brecha (como <b>Huella abierta</b>) mantiene abierta la abertura; las demás dotes pueden modificar su penalización o añadir acumulaciones, pero no alargan su duración.</li>
 <li><b>Grieta</b>: −2 a todas sus salvaciones. Hasta 3 (−6). Dura 1 minuto.</li>
 <li><b>Quebrado</b>: hasta el final de su próximo turno, su defensa no cuenta y el daño ignora sus resistencias.</li></ul>
-<p>Las ponen muchas técnicas del Verbe (cada una a su manera: el hielo vuelve quebradiza la coraza, el rayo afloja la guardia…) y dos acciones de cualquiera: <b>Romper la guardia</b> (Fuerza, Atletismo: Brecha) y <b>Buscar la grieta</b> (Inteligencia, la mejor de Investigación, Naturaleza, Arcanos o Medicina: Grieta). Si la criatura gasta su acción en recomponerse, se quita una.</p>
+<p>La Brecha no pertenece en exclusiva al Verbe: puede surgir de una maniobra física de Fuerza, una apertura creada al romper una puerta, una guardia o una coraza, una técnica o una imposición manual del DM. La acción universal <b>Romper la guardia</b> (Fuerza, Atletismo) la aplica; <b>Buscar la grieta</b> (Inteligencia) aplica Grieta. Si la criatura gasta su acción en recomponerse, el DM puede retirar una acumulación; la Brecha básica, de todos modos, se consume al primer daño recibido.</p>
 <h2>Sinergias: un estado más un golpe</h2>
 <p>Lo que deja una técnica lo remata otra, o un arma. Sale solo al aplicar el daño:</p>
 <ul>${SINERGIAS.map(x => `<li><b>${NOMBRE_ESTADO[x.si] ?? x.si}</b> + daño de ${x.con.map(c => TIPOS_ES[c] ?? c).join(" o ")}: ${x.texto}</li>`).join("")}</ul>
@@ -303,9 +303,21 @@ export function sinergiasDe(estados, tipos) {
 export function efectoRuptura(id, origen = null) {
   const c = ESTADOS_RUPTURA[id];
   if (!c) return null;
+  const brecha = id === BRECHA;
   return { name: c.name, img: c.img, statuses: [id], changes: (c.changes ?? []).map(x => ({ ...x })), transfer: false, disabled: false,
-    duration: { seconds: c.dura, rounds: Math.max(1, Math.round(c.dura / 6)) }, description: `<p>${c.texto}</p>`, origin: origen ?? undefined,
-    flags: { [MOD]: { verbe: { estado: id } } } };
+    duration: brecha ? {} : { seconds: c.dura, rounds: Math.max(1, Math.round(c.dura / 6)) },
+    description: `<p>${c.texto}</p>`, origin: origen ?? undefined,
+    flags: { [MOD]: { verbe: { estado: id }, ...(brecha ? { brecha: { consumirEnImpacto: true, prolongada: false } } : {}) } } };
+}
+
+export function efectoBrechaManual() {
+  return { name: "Brecha · imponer (1 impacto)", img: `${S}statuses/bleeding.svg`, statuses: [], changes: [], transfer: false, disabled: true, duration: {},
+    description: "<p>Interruptor del DM. Al activarlo impone una Brecha básica (−2 CA) al actor; se desactiva de nuevo automáticamente. La Brecha se consume al recibir el siguiente daño, salvo que una dote la prolongue.</p>",
+    flags: { [MOD]: { brechaPlantilla: true } } };
+}
+
+export function brechaSeProlonga(dotes = []) {
+  return new Set(dotes ?? []).has("huella-abierta");
 }
 
 /**
@@ -357,6 +369,7 @@ export function ajustePorDotes(statuses, dotes) {
   if (s.has(BRECHA) && d.has("filo-que-abre")) cambio = { ...(cambio ?? {}), changes: [{ key: "system.attributes.ac.bonus", mode: 2, value: "-3" }] };
   if (s.has(GRIETA) && d.has("sello-de-la-grieta")) cambio = { ...(cambio ?? {}), changes: [{ key: "system.bonuses.abilities.save", mode: 2, value: "-3" }] };
   if ((s.has(BRECHA) || s.has(GRIETA)) && d.has("huella-abierta")) cambio = { ...(cambio ?? {}), duration: { seconds: 600, rounds: 100 } };
+  if (s.has(BRECHA) && d.has("huella-abierta")) cambio = { ...(cambio ?? {}), "flags.ecos-frontera.brecha.prolongada": true, "flags.ecos-frontera.brecha.consumirEnImpacto": false };
   if (s.has(QUEBRADO) && d.has("latido-que-rompe")) cambio = { ...(cambio ?? {}), duration: { seconds: 12, rounds: 2 } };
   if (d.has("muerde-elemento")) for (const [st, r] of Object.entries(MUERDE)) if (s.has(st)) nuevos.push(r);
   if (d.has("mordida-que-rompe") && (s.has("prone") || s.has("grappled"))) nuevos.push(BRECHA);
@@ -375,9 +388,9 @@ async function topeAlCrear(efecto) {
   const actor = efecto.parent;
   if (!(actor instanceof Actor)) return;
   const autor = autorEfecto(efecto), dotes = autor && autor !== actor ? dotesDe(autor) : [];
-  // 3.36: lo que deja una acción de cualquiera dura un turno; con una dote de ruptura del Verbe, 1 minuto.
-  if (efecto.getFlag?.(MOD, "accionComunEfecto") && dotes.some(id => DOTES_RUPTURA.has(id)) && (Number(efecto.duration?.seconds) || 0) < 60)
-    await efecto.update({ "duration.seconds": 60, "duration.rounds": 10 });
+  // Solo «Huella abierta» prolonga la Brecha básica; las demás dotes conservan su propio efecto.
+  if (efecto.statuses?.has?.(BRECHA) && brechaSeProlonga(dotes))
+    await efecto.update({ duration: { seconds: 600, rounds: 100 }, "flags.ecos-frontera.brecha.prolongada": true, "flags.ecos-frontera.brecha.consumirEnImpacto": false });
   if (dotes.length) {
     const { cambio, nuevos } = ajustePorDotes([...(efecto.statuses ?? [])], dotes);
     if (cambio) await efecto.update(cambio);
@@ -401,14 +414,23 @@ if (globalThis.Hooks) {
     if (!game.user.isGM || game.users.activeGM?.isSelf === false) return;
     import("./acciones-comunes.js").then(m => m.paginaReglas("guiaRuptura", "16 · Ablandar: Coraza, Fortaleza, Brecha y Grieta", guiaRupturaHTML())).catch(err => console.error(`${MOD} | guía de ruptura`, err));
     try {
-      // 3.80.2: todos los PNJ reciben los tres interruptores; nacen apagados.
+      // 3.81.0: la plantilla de Brecha manual queda disponible apagada en todos los PJ y PNJ existentes.
+      const actores = new Set([...(game.actors ?? []), ...[...(game.scenes ?? [])].flatMap(sc => [...(sc.tokens ?? [])].map(t => t.actor).filter(Boolean))]);
+      await Promise.all([...actores].filter(a => ["character", "npc"].includes(a.type)).map(asegurarPlantillaBrecha));
       const n = await defensasAutomaticas();
       if (n) ChatMessage.create({ whisper: game.users.filter(u => u.isGM).map(u => u.id), speaker: { alias: "Ecos" },
         content: `<p><b>Defensas de la campaña:</b> se añadieron o actualizaron los tres efectos en ${n} ficha${n === 1 ? "" : "s"} PNJ. Están desactivados; actívalos por separado en la pestaña Efectos.</p>` });
-    } catch (err) { console.error(`${MOD} | defensas`, err); }
+    } catch (err) { console.error(`${MOD} | defensas / Brecha`, err); }
   });
+  async function asegurarPlantillaBrecha(actor) {
+    if (!actor || !["character", "npc"].includes(actor.type)) return false;
+    if ([...(actor.effects ?? [])].some(e => e.getFlag?.(MOD, "brechaPlantilla"))) return false;
+    await actor.createEmbeddedDocuments("ActiveEffect", [efectoBrechaManual()]);
+    return true;
+  }
   const prepararActor = actor => {
     if (!game.user.isGM || game.users.activeGM?.isSelf === false || !actor) return;
+    asegurarPlantillaBrecha(actor).catch(err => console.error(`${MOD} | plantilla Brecha`, err));
     const p = npcPuedeTenerDefensas(actor) ? sincronizarDefensa(actor)
       : (actor.type === "character" || actor.hasPlayerOwner) ? quitarDefensasDeJugador(actor) : Promise.resolve(false);
     p.catch(err => console.error(`${MOD} | defensas`, err));
@@ -426,6 +448,44 @@ if (globalThis.Hooks) {
     const tipo = foundry.utils.hasProperty(cambios, "type");
     const defensa = foundry.utils.hasProperty(cambios, `flags.${MOD}.defensa`) || foundry.utils.hasProperty(cambios, `flags.${MOD}.-=defensa`);
     if (propietario || vd || tipo || defensa) prepararActor(actor);
+  });
+  const PLANTILLAS_BRECHA_EN_CURSO = new Set();
+  Hooks.on("preUpdateActiveEffect", (ef, cambios) => {
+    if (ef.getFlag?.(MOD, "brechaPlantilla") && cambios.disabled === false && !game.user.isGM) {
+      ui.notifications.warn("Solo el DM puede imponer Brecha con este interruptor.");
+      return false;
+    }
+  });
+  Hooks.on("updateActiveEffect", async (ef, cambios) => {
+    if (!ef.getFlag?.(MOD, "brechaPlantilla") || cambios.disabled !== false || !game.user.isGM || !ef.parent) return;
+    if (PLANTILLAS_BRECHA_EN_CURSO.has(ef.id)) return;
+    PLANTILLAS_BRECHA_EN_CURSO.add(ef.id);
+    try {
+      await ef.parent.createEmbeddedDocuments("ActiveEffect", [efectoRuptura(BRECHA)]);
+      await ef.update({ disabled: true });
+    } catch (err) { console.error(`${MOD} | imponer Brecha`, err); }
+    finally { PLANTILLAS_BRECHA_EN_CURSO.delete(ef.id); }
+  });
+  const BRECHAS_PENDIENTES_DANO = new Map();
+  Hooks.on("dnd5e.preApplyDamage", (actor, amount) => {
+    if (!(Number(amount) > 0) || !actor) return;
+    const ids = [...(actor.effects ?? [])].filter(e => e.statuses?.has?.(BRECHA) && !e.getFlag?.(MOD, "brecha")?.prolongada).map(e => e.id);
+    if (ids.length) {
+      const cola = BRECHAS_PENDIENTES_DANO.get(actor.uuid) ?? [];
+      cola.push(ids); BRECHAS_PENDIENTES_DANO.set(actor.uuid, cola);
+    }
+  });
+  Hooks.on("dnd5e.applyDamage", (actor, amount) => {
+    const cola = BRECHAS_PENDIENTES_DANO.get(actor?.uuid);
+    if (!cola?.length) return;
+    const ids = cola.shift();
+    if (!cola.length) BRECHAS_PENDIENTES_DANO.delete(actor.uuid);
+    if (Number(amount) > 0 && ids?.length) {
+      const vigentes = ids.map(id => actor.effects?.get?.(id)).filter(Boolean);
+      // Desactiva el modificador inmediatamente al cerrar el primer daño; el borrado persistente sigue en async.
+      for (const efecto of vigentes) efecto.updateSource({ disabled: true });
+      if (vigentes.length) actor.deleteEmbeddedDocuments("ActiveEffect", vigentes.map(e => e.id)).catch(err => console.error(`${MOD} | consumir Brecha`, err));
+    }
   });
   Hooks.on("createActiveEffect", ef => { topeAlCrear(ef).catch(err => console.error(`${MOD} | ruptura`, err)); });
   Hooks.on("deleteActiveEffect", ef => {

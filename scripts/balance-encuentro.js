@@ -68,7 +68,33 @@ const ETIQUETA = { trivial: "Trivial", bajo: "Bajo", moderado: "Moderado", alto:
 const crDe = a => Number(a?.system?.details?.cr ?? 0) || 0;
 const pjsMundo = () => game.actors.filter(a => a.type === "character" && a.hasPlayerOwner);
 const nivelDe = a => Number(a.system?.details?.level) || 1;
-const hostilesEscena = sc => (sc?.tokens ?? []).filter(t => t.actor && t.actor.type !== "character" && !t.actor.hasPlayerOwner && (t.disposition ?? 0) < 0);
+export const BANDOS_TOKEN = Object.freeze({ aliado: 1, neutral: 0, enemigo: -1 });
+const bandoMarcado = t => t?.flags?.[MOD]?.balanceBando ?? t?.getFlag?.(MOD, "balanceBando") ?? null;
+export function normalizarBando(valor) {
+  return ["aliado", "neutral", "enemigo"].includes(valor) ? valor : null;
+}
+export function bandoDeToken(token) {
+  const marcado = normalizarBando(bandoMarcado(token));
+  if (marcado) return marcado;
+  const d = Number(token?.disposition ?? 0);
+  return d > 0 ? "aliado" : d < 0 ? "enemigo" : "neutral";
+}
+export const disposicionDeBando = bando => BANDOS_TOKEN[normalizarBando(bando)] ?? 0;
+export function hostilesEscena(sc) {
+  return (sc?.tokens ?? []).filter(t => t.actor && (bandoMarcado(t)
+    ? bandoDeToken(t) === "enemigo"
+    : t.actor.type !== "character" && !t.actor.hasPlayerOwner && (t.disposition ?? 0) < 0));
+}
+export function aliadosEscena(sc) {
+  return (sc?.tokens ?? []).filter(t => t.actor && !(t.actor.type === "character" && t.actor.hasPlayerOwner) && (bandoMarcado(t)
+    ? bandoDeToken(t) === "aliado"
+    : t.actor.type !== "character" && !t.actor.hasPlayerOwner && (t.disposition ?? 0) > 0));
+}
+export function neutralesEscena(sc) {
+  return (sc?.tokens ?? []).filter(t => t.actor && (bandoMarcado(t)
+    ? bandoDeToken(t) === "neutral"
+    : t.actor.type !== "character" && !t.actor.hasPlayerOwner && (t.disposition ?? 0) === 0));
+}
 function candidatosPara(actor) {
   const mismos = actor?.folder ? game.actors.filter(a => a.folder?.id === actor.folder.id) : [];
   const raiz = f => { while (f?.folder) f = f.folder; return f; };
@@ -100,14 +126,14 @@ export async function abrirBalance({ token = null, scene = canvas?.scene } = {})
   const calcular = (ids) => {
     const niveles = pjs.filter(a => ids.includes(a.id)).map(nivelDe), p = presupuestoGrupo(niveles);
     // 3.59: los aliados PNJ del tablero también suman al grupo (como un PJ de nivel ≈ su VD).
-    const aliados = (scene.tokens ?? []).filter(t => t.actor && t.actor.type !== "character" && !t.actor.hasPlayerOwner && (t.disposition ?? 0) > 0);
+    const aliados = aliadosEscena(scene);
     for (const t of aliados) { const a = aporteAliado(crDe(t.actor)); p.bajo += a.bajo; p.moderado += a.moderado; p.alto += a.alto; }
-    const host = hostilesEscena(scene), xp = host.reduce((s, t) => s + xpDe(crDe(t.actor)), 0), clase = clasificar(xp, p);
+    const host = hostilesEscena(scene), neutrales = neutralesEscena(scene), xp = host.reduce((s, t) => s + xpDe(crDe(t.actor)), 0), clase = clasificar(xp, p);
     const medio = niveles.length ? Math.round(niveles.reduce((s, n) => s + n, 0) / niveles.length) : 1;
     const solas = host.filter(t => letalSola(crDe(t.actor), niveles));
     const cands = candidatosPara(actor ?? host.at(-1)?.actor);
     const base = { xpActual: xp, candidatos: cands, nPJ: niveles.length || 1, nEnemigos: host.length, nivelMedio: medio };
-    return { niveles, p, host, xp, clase, solas, medio, aliados, escenario: scene.getFlag?.(MOD, "escenario") ?? null,
+    return { niveles, p, host, neutrales, xp, clase, solas, medio, aliados, escenario: scene.getFlag?.(MOD, "escenario") ?? null,
       interesante: sugerir({ ...base, objetivo: Math.round((p.moderado + p.alto) / 2) }),
       alto: sugerir({ ...base, objetivo: p.alto }),
       trivial: xp < p.bajo * 0.5 ? null : { quitar: true } };
@@ -116,7 +142,8 @@ export async function abrirBalance({ token = null, scene = canvas?.scene } = {})
     : (s.falta <= 0 ? `<b>${nombre}:</b> ya llegas (o te pasas) con lo que hay.` : `<b>${nombre}:</b> no encuentro criaturas de su carpeta que encajen; súmalas a mano.`);
   const cuerpo = (c) => `<div class="ecos-balance">
     <p class="ecos-balance-clase ecos-balance-${c.clase.replace(" ", "-")}">${ETIQUETA[c.clase] ?? c.clase} · ${c.xp} XP en la escena (${c.host.length} hostiles) · grupo: bajo ${c.p.bajo} · moderado ${c.p.moderado} · alto ${c.p.alto}</p>
-    ${c.aliados.length ? `<p>Aliados PNJ en el tablero: <b>${c.aliados.map(t => esc(t.name)).join(", ")}</b> (ya suman al presupuesto del grupo).</p>` : ""}
+    ${c.aliados.length ? `<p>Aliados en el tablero: <b>${c.aliados.map(t => esc(t.name)).join(", ")}</b> (los PNJ aliados suman al presupuesto del grupo).</p>` : ""}
+    ${c.neutrales.length ? `<p>Neutrales: <b>${c.neutrales.map(t => esc(t.name)).join(", ")}</b> (no suman como aliados ni como enemigos).</p>` : ""}
     ${c.escenario ? `<p><b>Escenario:</b> ${esc(ESCENARIOS_N[c.escenario] ?? c.escenario)} (consejos y sucesos en el Asistente de combate).</p>` : `<p class="ecos-nota">Esta escena no tiene etiqueta de escenario: Menú del DM → «Etiqueta de la escena».</p>`}
     ${c.clase === "letal" ? `<p class="ecos-aviso"><b>Esto es letal para este grupo.</b> Quita criaturas, divide el combate en oleadas o dales una salida (huir, negociar, un objetivo que no sea matar).</p>` : ""}
     ${c.solas.length ? `<p class="ecos-aviso"><b>Criatura letal por sí sola:</b> ${c.solas.map(t => esc(t.name)).join(", ")} (VD 3 o más por encima del nivel más alto del grupo): un solo golpe suyo puede tumbar a un PJ.</p>` : ""}
@@ -153,12 +180,33 @@ if (globalThis.Hooks) {
     game.settings.register(MOD, "balanceGrupo", { scope: "world", config: false, type: Array, default: [] });
   });
   Hooks.once("ready", () => { const api = game.modules.get(MOD)?.api; if (api) api.balance = abrirBalance; });
+  let colaClasificacion = Promise.resolve();
+  async function preguntarBando(tokenDoc) {
+    const DialogV2 = foundry.applications.api.DialogV2;
+    const actual = bandoDeToken(tokenDoc);
+    const r = await DialogV2.wait({ window: { title: `Clasificar token · ${tokenDoc.name}`, icon: "fa-solid fa-people-arrows-left-right" }, position: { width: 390 },
+      content: `<div class="ecos-dialogo"><p>¿Qué papel tendrá <b>${esc(tokenDoc.name)}</b> en este encuentro?</p><p>Esta elección se guarda en el token y se usará en el cálculo del encuentro.</p></div>`,
+      buttons: [
+        { action: "aliado", label: "Aliado", icon: "fa-solid fa-shield-heart", default: actual === "aliado" },
+        { action: "neutral", label: "Neutral", icon: "fa-solid fa-hand" , default: actual === "neutral" },
+        { action: "enemigo", label: "Enemigo", icon: "fa-solid fa-skull-crossbones", default: actual === "enemigo" },
+        { action: "cancelar", label: "Cancelar", icon: "fa-solid fa-xmark" }
+      ], rejectClose: false });
+    const bando = normalizarBando(r);
+    if (!bando) return null;
+    await tokenDoc.update({ disposition: disposicionDeBando(bando), [`flags.${MOD}.balanceBando`]: bando });
+    return bando;
+  }
   Hooks.on("createToken", (doc, opts, userId) => {
-    if (userId !== game.user.id || !game.user.isGM || !game.settings.get(MOD, "balanceAlArrastrar")) return;
-    const a = doc.actor;
-    if (!a || a.type === "character" || a.hasPlayerOwner || (doc.disposition ?? 0) >= 0 || doc.parent?.getFlag(MOD, "balanceCallar") || opts?.ecosSinBalance) return;
-    if (abrirBalance._abierto) return;
-    abrirBalance._abierto = true;
-    setTimeout(() => { abrirBalance({ token: doc, scene: doc.parent }).catch(err => console.error(`${MOD} | balance`, err)).finally(() => { abrirBalance._abierto = false; }); }, 150);
+    if (!game.user.isGM || game.users.activeGM?.isSelf === false || !doc.actor) return;
+    colaClasificacion = colaClasificacion.then(async () => {
+      const bando = await preguntarBando(doc);
+      if (!bando || opts?.ecosSinBalance || !game.settings.get(MOD, "balanceAlArrastrar") || doc.parent?.getFlag(MOD, "balanceCallar")) return;
+      if (abrirBalance._abierto) return;
+      abrirBalance._abierto = true;
+      try { await abrirBalance({ token: doc, scene: doc.parent }); }
+      catch (err) { console.error(`${MOD} | balance`, err); }
+      finally { abrirBalance._abierto = false; }
+    }).catch(err => console.error(`${MOD} | clasificar token`, err));
   });
 }

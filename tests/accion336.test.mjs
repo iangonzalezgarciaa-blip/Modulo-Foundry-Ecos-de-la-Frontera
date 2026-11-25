@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { agruparPorTiempo, dadosCaida, DANOS_INDIRECTOS, ACCIONES_BASICAS } from '../scripts/accion-estandar.js';
+import { agruparPorTiempo, dadosCaida, DANOS_INDIRECTOS, ACCIONES_BASICAS, usarActividadMenu } from '../scripts/accion-estandar.js';
 import { bonosDeClase, planAcciones } from '../scripts/acciones-comunes.js';
 import './helpers/foundry.mjs';
 const { volumenEfectivo } = await import('../scripts/mesa-musica.js');
@@ -28,4 +28,32 @@ test('3.36 · las clases no pierden: lo que ya hacen les da +2 a la CD y se reha
 });
 test('3.36 · el volumen del DM vale para todos: mesa × el tuyo', () => {
   assert.equal(volumenEfectivo(100, 50), 50); assert.equal(volumenEfectivo(50, 50), 25); assert.equal(volumenEfectivo(0, 80), 0);
+});
+
+test('3.81 · el menú usa la actividad nativa y su consumo de munición, sin descontar por duplicado', async () => {
+  const llamadas = [];
+  const activity = { canUse: true, use: async (...args) => { llamadas.push(args); return "ok"; } };
+  const actor = { items: new Map([["arma", { system: { activities: new Map([["disparo", activity]]) } }]]) };
+  assert.equal(await usarActividadMenu(actor, "arma", "disparo"), "ok");
+  assert.equal(llamadas.length, 1);
+  assert.deepEqual(llamadas[0], [{}, { configure: true }]);
+  assert.equal(await usarActividadMenu(actor, "arma", "ausente"), undefined);
+});
+
+test('3.81 · las cabeceras de hojas minimizadas ocultan solo botones añadidos por Ecos', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const css = await readFile(new URL('../styles/ecos.css', import.meta.url), 'utf8');
+  assert.match(css, /\.window-app\.minimized \.window-header \.ecos-ae-boton/);
+  assert.match(css, /\.window-app\.minimized \.window-header \.ecos-estilo-boton/);
+  assert.match(css, /ef-gato-cara-burlona/);
+  assert.match(css, /ef-gato-cara-temerosa/);
+});
+
+test('3.81 · la munición solo se repara si el descuento nativo no ocurrió', async () => {
+  const { ajusteFaltanteMunicion } = await import('../scripts/accion-estandar.js');
+  assert.deepEqual(ajusteFaltanteMunicion({ antes: 5, actual: 5, esperada: 4 }), { cantidad: 4 });
+  assert.equal(ajusteFaltanteMunicion({ antes: 5, actual: 4, esperada: 4 }), null, 'D&D ya descontó');
+  assert.equal(ajusteFaltanteMunicion({ antes: 5, actual: 3, esperada: 4 }), null, 'no pisa cambios concurrentes');
+  assert.deepEqual(ajusteFaltanteMunicion({ antes: 1, actual: 1, destruir: true }), { eliminar: true });
+  assert.equal(ajusteFaltanteMunicion({ antes: 1, actual: undefined, destruir: true }), null, 'ya se eliminó');
 });
