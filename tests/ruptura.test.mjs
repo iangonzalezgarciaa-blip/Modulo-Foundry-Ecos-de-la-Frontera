@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { tramoVD, bonoDefensa, defensaSugerida, efectoDefensa, cabeRuptura, ESTADOS_RUPTURA, BRECHA, GRIETA, QUEBRADO } from '../scripts/ruptura.js';
+import { tramoVD, bonoDefensa, defensaSugerida, defensaDe, efectoDefensa, cabeRuptura, ESTADOS_RUPTURA, BRECHA, GRIETA, QUEBRADO } from '../scripts/ruptura.js';
 import { pideDefensa, esAccionBasica, textoAmenaza, seSalva } from '../scripts/defensa-pedida.js';
 import { ACCIONES_PLANAS, datosRasgosComunes } from '../scripts/acciones-comunes.js';
 
@@ -25,9 +25,27 @@ test('3.28 · los efectos: Coraza suma a la CA, Fortaleza a las salvaciones, Cue
   assert.deepEqual(efectoDefensa('fortaleza', 5).changes, [{ key: 'system.bonuses.abilities.save', mode: 2, value: '+5' }]);
   assert.deepEqual(efectoDefensa('piel', 4).changes.map(c => c.value), ['bludgeoning', 'piercing', 'slashing']);
   assert.equal(efectoDefensa('nada', 1), null);
+  const nuevo = efectoDefensa('coraza', 4);
+  assert.equal(nuevo.disabled, true, 'toda defensa nueva empieza apagada');
+  assert.equal(nuevo.flags['ecos-frontera'].defensa.interruptorInicializado, true);
   assert.equal(ESTADOS_RUPTURA[BRECHA].changes[0].value, '-2'); assert.equal(ESTADOS_RUPTURA[GRIETA].changes[0].value, '-2');
   assert.match(ESTADOS_RUPTURA[QUEBRADO].texto, /ignora sus resistencias/);
   assert.ok(cabeRuptura(2)); assert.ok(!cabeRuptura(3), 'no más de 3');
+});
+
+test('3.80.1 · la defensa solo cuenta cuando su interruptor de la hoja está encendido', () => {
+  const efecto = { disabled: true, getFlag: (_mod, key) => key === 'defensa' ? { tipo: 'coraza', n: 4 } : null };
+  const actor = {
+    getFlag: (_mod, key) => key === 'defensa' ? { tipo: 'coraza', n: 4 } : null,
+    effects: [efecto],
+    statuses: new Set(),
+    system: { details: { cr: 1 } }
+  };
+  assert.equal(defensaDe(actor), null, 'apagada: no da CA y no se considera defensa activa');
+  efecto.disabled = false;
+  assert.deepEqual(defensaDe(actor), { tipo: 'coraza', n: 4 }, 'encendida: sí aplica');
+  actor.statuses.add(QUEBRADO);
+  assert.equal(defensaDe(actor), null, 'Quebrado la suspende sin alterar el interruptor');
 });
 
 test('3.28 · dos acciones de cualquiera nuevas abren defensas: Romper la guardia (Brecha) y Buscar la grieta (Grieta)', () => {
