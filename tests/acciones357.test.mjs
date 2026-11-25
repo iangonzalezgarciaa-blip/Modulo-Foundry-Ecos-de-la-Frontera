@@ -39,7 +39,7 @@ test('3.57 · Sorprendido: sin reacciones y atacado con ventaja', () => {
 });
 
 test('3.58 · el 20 del PNJ es terror y su 1, burla; los PJ siguen igual', async () => {
-  const { festejoDe, temaDe, DUENDE_SVG } = await import('../scripts/festejo-20.js');
+  const { festejoDe, temaDe, GATO_SVG } = await import('../scripts/festejo-20.js');
   const t = festejoDe({ natural: 20, tipo: 'attack', esPJ: false });
   assert.equal(t.modo, 'terror'); assert.equal(t.grito, '¡GOLPE MORTAL!'); assert.equal(temaDe(20, null, t.modo), 'terror');
   const b = festejoDe({ natural: 1, tipo: 'attack', esPJ: false, azar: () => 0 });
@@ -47,5 +47,5 @@ test('3.58 · el 20 del PNJ es terror y su 1, burla; los PJ siguen igual', async
   assert.equal(festejoDe({ natural: 20, tipo: 'attack', esPJ: false, enemigo: false }), null);
   assert.equal(festejoDe({ natural: 20, tipo: 'attack', esPJ: true }).modo, 'pj');
   assert.equal(festejoDe({ natural: 20, tipo: 'attack', esPJ: false, quien: 'todos' }).modo, 'pj');
-  assert.ok(DUENDE_SVG.startsWith('<svg'));
+  assert.ok(GATO_SVG.startsWith('<svg'));
 });

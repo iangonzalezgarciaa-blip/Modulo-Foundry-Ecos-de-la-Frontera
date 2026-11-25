@@ -2,7 +2,7 @@
 
 ## 3.81.0 — 2026-11-25
 
-- **Munición y consumos del menú:** las acciones de «Uso» abren la configuración nativa de la actividad D&D 5e. Munición, cargas, consumibles y recursos se descuentan por el motor del sistema, sin una segunda resta del módulo.
+- **Munición y consumos del menú:** las acciones de «Uso» abren la configuración nativa de la actividad D&D 5e. Munición, cargas, consumibles y recursos se descuentan por el motor del sistema. Tras el ataque, una comprobación conservadora repara únicamente los casos en que la munición quedó intacta; no duplica un descuento que D&D ya realizó.
 - **Aliado, neutral o enemigo al colocar:** cada token creado en escena pregunta su bando y guarda la elección. El balance suma los aliados PNJ al grupo, calcula XP con los enemigos y excluye los neutrales. También pide clasificación a fichas de personaje o tokens recomendados.
 - **Selector de reacciones unificado:** muestra las actividades de reacción de D&D 5e (incluidas las de clase) junto con las técnicas de reacción del Verbe. Cada una conserva su actividad original, condiciones, recursos y configuración. Los ataques de oportunidad abren el selector de ataques cuerpo a cuerpo disponibles.
 - **Más opciones universales:** se añaden maniobras y actividades comunes de fuerza, destreza, constitución, inteligencia, sabiduría y carisma, incluidas reacciones para afirmarse, atrapar objetos, cerrar la garganta, identificar conjuros y advertir a un aliado. La migración actualiza los rasgos existentes y los nuevos nacen con el repertorio.

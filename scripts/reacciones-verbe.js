@@ -121,7 +121,7 @@ export function pedirAtaqueOportunidad(combatantIds = [], objetivoUuid) {
   if (!objetivoUuid || !combatantIds.length) return;
   game.socket.emit(`module.${MOD}`, { ecosOportunidad: { combatantIds, objetivoUuid } });
 }
-async async function ejecutarOportunidad(datos) {
+async function ejecutarOportunidad(datos) {
   const combat = game.combat;
   const objetivo = await fromUuid(datos.objetivoUuid);
   const objetivoActor = objetivo?.actor ?? objetivo?.parent?.actor;

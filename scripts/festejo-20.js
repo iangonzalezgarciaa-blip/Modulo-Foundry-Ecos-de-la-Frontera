@@ -106,7 +106,7 @@ function sonidoBurla() {
   }
 }
 /** Duendecillo original (dibujado aquí) que se ríe: cabeza grande, orejas de punta, ojos cerrados de risa, lengua afuera y dedo que señala. */
-export const GATO_SVG = `<svg class="ef-gato" viewBox="0 0 280 310" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+export export const GATO_SVG = `<svg class="ef-gato" viewBox="0 0 280 310" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <g class="ef-gato-cola"><path d="M177 232 C235 242 258 206 239 175 C227 156 210 165 219 180" fill="none" stroke="#24152f" stroke-width="24" stroke-linecap="round"/><path d="M177 232 C235 242 258 206 239 175 C227 156 210 165 219 180" fill="none" stroke="#f2b5d0" stroke-width="15" stroke-linecap="round"/></g>
   <g class="ef-gato-cuerpo"><path d="M75 198 Q140 165 205 202 L224 292 Q140 308 56 292 Z" fill="#fff4e9" stroke="#24152f" stroke-width="7" stroke-linejoin="round"/>
     <path d="M75 254 Q44 276 37 294 M205 254 Q236 276 243 294" fill="none" stroke="#24152f" stroke-width="18" stroke-linecap="round"/>

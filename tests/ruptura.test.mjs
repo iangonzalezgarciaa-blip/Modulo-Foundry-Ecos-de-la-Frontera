@@ -112,7 +112,7 @@ test('3.28 · sinergias: lo que preparó un estado lo remata otro daño (tambié
   assert.deepEqual(sinergiasDe(['helado'], ['fire']), [], 'el fuego no parte el hielo');
   assert.deepEqual(sinergiasDe([], ['lightning']), []);
   const ef = efectoRuptura(BRECHA);
-  assert.deepEqual(ef.statuses, [BRECHA]); assert.equal(ef.duration.seconds, 60); assert.equal(ef.changes[0].value, '-2');
+  assert.deepEqual(ef.statuses, [BRECHA]); assert.deepEqual(ef.duration, {}, 'Brecha básica se consume al primer daño'); assert.equal(ef.changes[0].value, '-2');
   assert.equal(efectoRuptura('nada'), null);
 });
 
