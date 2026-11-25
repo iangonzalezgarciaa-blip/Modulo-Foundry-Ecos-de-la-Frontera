@@ -90,7 +90,7 @@ export const cabeRuptura = (actuales, tope = TOPE_RUPTURA) => Number(actuales) <
 /** La página de reglas para todos: qué es ablandar y cómo se hace. Pura. */
 export function guiaRupturaHTML() {
   return `<h1>Ablandar a las criaturas</h1>
-<p>El daño y las maniobras de <b>D&amp;D</b> siguen siendo la base; el Verbe se suma, no reemplaza las reglas de clase. Cada PNJ tiene tres defensas opcionales en la pestaña <b>Efectos</b>: <b>Coraza</b> (+4 a +7 CA), <b>Fortaleza</b> (+4 a +7 a las salvaciones) y <b>Cuerpo sordo</b> (resistencia a daño contundente, perforante y cortante). Las tres empiezan apagadas; el DM activa por separado las que correspondan. Además, <b>todas las fichas de PJ y PNJ</b> reciben el interruptor apagado «Brecha · imponer» para que el DM pueda imponer manualmente ese estado cuando el rol lo justifique.</p>
+<p>El daño y las maniobras de <b>D&amp;D</b> siguen siendo la base; el Verbe se suma, no reemplaza las reglas de clase. Todas las fichas de <b>PJ y PNJ</b> tienen tres defensas opcionales en la pestaña <b>Efectos</b>: <b>Coraza</b> (+4 a +7 CA), <b>Fortaleza</b> (+4 a +7 a las salvaciones) y <b>Cuerpo sordo</b> (resistencia a daño contundente, perforante y cortante). Los tres interruptores aparecen apagados y no conceden beneficios hasta que alguien con permiso de edición los active; ninguna ficha de jugador recibe una defensa activa automáticamente. Además, todas las fichas reciben el interruptor apagado «Brecha · imponer» para que el DM pueda imponer manualmente ese estado cuando el rol lo justifique.</p>
 <h2>Las tres defensas</h2>
 <ul><li><b>Coraza.</b> CA altísima: quitina, escamas, placas, una guardia de hierro. Cuesta acertarle.</li>
 <li><b>Fortaleza.</b> Salvaciones altísimas: un cuerpo o una voluntad que no ceden. Resiste lo que pide salvación.</li>
@@ -116,7 +116,9 @@ const TIPOS_ES = { lightning: "relámpago", bludgeoning: "contundente (un mazo, 
 /* ---------------- Foundry ---------------- */
 const tieneEstado = (actor, id) => !!actor?.statuses?.has?.(id);
 const esNPC = a => a?.type === "npc";
-/** Todo actor de tipo PNJ recibe los tres buffs; las fichas de personaje jugador quedan excluidas. */
+/** PJ y PNJ tienen los tres interruptores disponibles; todos nacen apagados. */
+export const fichaPuedeTenerDefensas = actor => ["character", "npc"].includes(actor?.type);
+/** Compatibilidad: indica si el actor es PNJ, sin incluir fichas de personaje. */
 export const npcPuedeTenerDefensas = actor => esNPC(actor);
 const vdDe = a => Number(a?.system?.details?.cr ?? NaN);
 /** Los buffs se pueden activar en cualquier PNJ; el tramo mínimo conserva el valor base +4. */
@@ -146,7 +148,7 @@ function actoresDelMundo() {
   for (const token of canvas?.tokens?.placeables ?? []) if (token.actor) actores.add(token.actor);
   return [...actores];
 }
-async function quitarDefensasDeJugador(actor) {
+async function quitarDefensasDeFicha(actor) {
   const ids = [...(actor.effects ?? [])].filter(e => e.getFlag?.(MOD, "defensa")).map(e => e.id);
   if (ids.length) await actor.deleteEmbeddedDocuments("ActiveEffect", ids);
   if (actor.getFlag?.(MOD, "defensa")) await actor.unsetFlag(MOD, "defensa");
@@ -163,7 +165,7 @@ export function sincronizarDefensa(actor) {
   return p;
 }
 async function sincronizarDefensasInterno(actor) {
-  if (!npcPuedeTenerDefensas(actor)) { await quitarDefensasDeJugador(actor); return false; }
+  if (!fichaPuedeTenerDefensas(actor)) { await quitarDefensasDeFicha(actor); return false; }
   let cambio = false;
   const porTipo = new Map(), duplicados = [];
   for (const ef of actor.effects ?? []) {
@@ -192,9 +194,9 @@ async function sincronizarDefensasInterno(actor) {
   return cambio;
 }
 
-/** Compatibilidad: ahora cada PNJ recibe los tres efectos; los tres nacen desactivados. */
+/** Compatibilidad: cada ficha PJ/PNJ tiene los tres interruptores; solo se activa lo que se elija. */
 export async function ponerDefensa(actor, tipo, n = null) {
-  if (!game.user.isGM || !npcPuedeTenerDefensas(actor) || !TIPOS_DEFENSA.includes(tipo)) return false;
+  if (!game.user.isGM || !fichaPuedeTenerDefensas(actor) || !TIPOS_DEFENSA.includes(tipo)) return false;
   await sincronizarDefensa(actor);
   const efectos = [...(actor.effects ?? [])].filter(e => e.getFlag?.(MOD, "defensa"));
   const elegido = tipo === "ninguna" ? null : efectos.find(e => e.getFlag(MOD, "defensa")?.tipo === tipo);
@@ -204,13 +206,13 @@ export async function ponerDefensa(actor, tipo, n = null) {
   return true;
 }
 
-/** Migra todos los PNJ del mundo, incluidos tokens sintéticos; excluye fichas de jugadores. */
+/** Migra todos los PJ y PNJ del mundo, incluidos actores sintéticos; los tres interruptores quedan apagados. */
 export async function defensasAutomaticas() {
   if (!game.user.isGM) return 0;
   let n = 0;
   for (const actor of actoresDelMundo()) {
-    if (!npcPuedeTenerDefensas(actor)) {
-      if (actor.type === "character" || actor.hasPlayerOwner) await quitarDefensasDeJugador(actor);
+    if (!fichaPuedeTenerDefensas(actor)) {
+      await quitarDefensasDeFicha(actor);
       continue;
     }
     if (await sincronizarDefensa(actor)) n++;
@@ -419,7 +421,7 @@ if (globalThis.Hooks) {
       await Promise.all([...actores].filter(a => ["character", "npc"].includes(a.type)).map(asegurarPlantillaBrecha));
       const n = await defensasAutomaticas();
       if (n) ChatMessage.create({ whisper: game.users.filter(u => u.isGM).map(u => u.id), speaker: { alias: "Ecos" },
-        content: `<p><b>Defensas de la campaña:</b> se añadieron o actualizaron los tres efectos en ${n} ficha${n === 1 ? "" : "s"} PNJ. Están desactivados; actívalos por separado en la pestaña Efectos.</p>` });
+        content: `<p><b>Defensas de la campaña:</b> se añadieron o actualizaron los tres interruptores en ${n} ficha${n === 1 ? "" : "s"} PJ/PNJ. Están desactivados; activa solo los que correspondan desde Efectos.</p>` });
     } catch (err) { console.error(`${MOD} | defensas / Brecha`, err); }
   });
   async function asegurarPlantillaBrecha(actor) {
@@ -431,8 +433,7 @@ if (globalThis.Hooks) {
   const prepararActor = actor => {
     if (!game.user.isGM || game.users.activeGM?.isSelf === false || !actor) return;
     asegurarPlantillaBrecha(actor).catch(err => console.error(`${MOD} | plantilla Brecha`, err));
-    const p = npcPuedeTenerDefensas(actor) ? sincronizarDefensa(actor)
-      : (actor.type === "character" || actor.hasPlayerOwner) ? quitarDefensasDeJugador(actor) : Promise.resolve(false);
+    const p = fichaPuedeTenerDefensas(actor) ? sincronizarDefensa(actor) : quitarDefensasDeFicha(actor);
     p.catch(err => console.error(`${MOD} | defensas`, err));
   };
   Hooks.on("createActor", prepararActor);

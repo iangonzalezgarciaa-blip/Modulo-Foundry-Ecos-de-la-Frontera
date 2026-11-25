@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 3.82.0 — 2026-11-25
+
+- **Interruptores de defensa en todas las fichas:** PJ y PNJ existentes y nuevos reciben Coraza, Fortaleza y Cuerpo sordo en la pestaña **Efectos**. Los tres interruptores nacen desactivados; no se aplica ninguna defensa automáticamente a un PJ. Cada ficha puede activar solo la defensa que corresponda y sus cambios mecánicos reales se aplican mientras esté encendida.
+- **Compatibilidad de la ruptura:** las tres defensas siguen siendo independientes y pueden coexistir. Brecha y Grieta mantienen sus penalizaciones; Quebrado suspende temporalmente las defensas sin cambiar los interruptores; las técnicas pesadas atraviesan la defensa concreta que corresponda.
+- **Iconos en tokens:** cada defensa activa muestra su icono pequeño, reducido un 70 % respecto al tamaño anterior; al apagar el efecto desaparece su icono.
+
 ## 3.81.0 — 2026-11-25
 
 - **Munición y consumos del menú:** las acciones de «Uso» abren la configuración nativa de la actividad D&D 5e. Munición, cargas, consumibles y recursos se descuentan por el motor del sistema. Tras el ataque, una comprobación conservadora repara únicamente los casos en que la munición quedó intacta; no duplica un descuento que D&D ya realizó.

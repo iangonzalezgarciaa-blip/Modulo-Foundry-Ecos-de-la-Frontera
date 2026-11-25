@@ -282,6 +282,12 @@ Con un PJ que sepa «Mil aves en la palma» o una esfera, ataca al lobo terrible
 
 Resultado inicial: **Pendiente**. Registra Correcto, Fallo o No aplica en el panel.
 
+### 47. 3.82 · Interruptores de defensa en PJ y PNJ
+
+Abre una ficha de PJ existente: en **Efectos** aparecen Coraza, Fortaleza y Cuerpo sordo, los tres apagados. Comprueba que la CA, las salvaciones y las resistencias no cambian mientras estén apagados. Activa Coraza y verifica el bono de CA; activa Fortaleza y verifica el bono a salvaciones; activa Cuerpo sordo y verifica la resistencia a contundente, perforante y cortante. Apaga uno: los otros que sigan activos conservan su mecánica. Repite en un PNJ existente y crea una ficha nueva de cada tipo. Ninguna defensa se activa por sí sola en una ficha de PJ.
+
+Aplica Quebrado a una ficha que tenga una o más defensas encendidas: los bonos y resistencias quedan suspendidos, los iconos desaparecen y los interruptores siguen encendidos. Al terminar Quebrado, las defensas seleccionadas vuelven a funcionar y sus iconos reaparecen. Comprueba también una técnica pesada contra Coraza y una técnica de salvación contra Fortaleza.
+
 ### 46. 3.28 · Defensa a pedido
 
 Con un jugador conectado, que use Presa contra un PNJ marcado: a ti te sale «Te defiendes» con Fuerza y Destreza; tira y, si falla, el PNJ queda Agarrado solo. Al revés, usa el Empujón de un PNJ contra el PJ marcado: al jugador le sale la ventana, sin ver la CD.
