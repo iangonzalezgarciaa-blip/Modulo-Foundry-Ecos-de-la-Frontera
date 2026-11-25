@@ -1,3 +1,10 @@
+## 3.85.0 — 2026-11-25
+
+- **Más acciones adicionales y reacciones universales:** se incorporan preparación del esfuerzo, guardia cerrada y vigilancia del flanco como acciones adicionales.
+- **Seis nuevas reacciones:** sujetar a un aliado desplazado, desviar un proyectil, aferrar un arma ante un desarme, mantener la concentración, leer una técnica especial y reforzar la voluntad de un aliado.
+- Los efectos aplican sus bonificadores temporales en la ficha; las reacciones que modifican una única tirada indican retirar el efecto tras resolverla. Las comprobaciones que dependen de la situación siguen usando las tiradas nativas y la resolución del DM.
+- Las acciones normales y los beneficios de clase existentes se conservan. Se eleva la versión interna del repertorio para migrar los seis rasgos universales de PJ y PNJ ya existentes.
+
 # Historial de cambios
 
 ## 3.84.0 — 2026-11-25
