@@ -17,8 +17,11 @@ test('3.84 · al colocar un token se guarda bando y visibilidad elegidos', () =>
   assert.equal(B.datosColocacion('invalido', false), null);
 });
 
-test('3.83 · actitud del menú sincroniza el bando del balance', () => {
+test('3.86 · la actitud es persistente en el Actor y se corresponde con el bando', () => {
   assert.deepEqual(R.BANDO_POR_ACTITUD, { amistoso: 'aliado', indiferente: 'neutral', hostil: 'enemigo' });
+  const actor = { flags: { 'ecos-frontera': { actitud: 'hostil' } }, getFlag(mod, key) { return this.flags[mod]?.[key]; } };
+  const token = { flags: { 'ecos-frontera': { actitud: 'indiferente' } }, getFlag(mod, key) { return this.flags[mod]?.[key]; } };
+  assert.equal(R.actitudDe(actor, token), 'hostil', 'la actitud del Actor prevalece y acompaña al NPC entre escenas');
 });
 
 test('3.50 · influir: CD por actitud (10/15/20) o la que fije el DM', () => {
