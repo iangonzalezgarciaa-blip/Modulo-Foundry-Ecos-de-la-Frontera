@@ -1,3 +1,10 @@
+## 3.86.0 — 2026-11-25
+
+- **Actitud y bando persistentes por Actor:** Aliado/Amistoso, Neutral/Indiferente y Enemigo/Hostil comparten una única clasificación canónica guardada en el Actor. El menú de acciones y el selector al colocar un token leen y actualizan el mismo dato.
+- **Sincronización entre escenas:** cambiar la clasificación actualiza todas las apariciones del mismo Actor, incluidas sus disposiciones y flags de token. Al trasladar o volver a colocar ese PNJ, conserva la elección.
+- **Neutrales fuera del encuentro:** se muestran como referencia, pero no suman XP enemiga ni presupuesto de aliados. Al pasar a aliado o enemigo entran en el cálculo; al volver a neutral salen.
+- Pruebas de regresión para precedencia del dato persistente del Actor, correspondencia de actitud y exclusión neutral. La validación automatizada no sustituye la prueba final en Foundry.
+
 ## 3.85.0 — 2026-11-25
 
 - **Más acciones adicionales y reacciones universales:** se incorporan preparación del esfuerzo, guardia cerrada y vigilancia del flanco como acciones adicionales.
