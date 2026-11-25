@@ -1,11 +1,11 @@
 {
   "id": "ecos-frontera",
   "title": "Ecos de la frontera · Reglas de la casa",
-  "description": "Herramientas de Nimerios para Foundry 13–14 y dnd5e: 949 técnicas, 471 dotes, 78 reliquias, creación verificada, recibos de resolución, búsqueda por intención, memoria de campaña, revisión de NPC, encuentros, tres defensas mecánicas activables en las hojas PNJ e iconos de token reducidos un 70 %.",
-  "version": "3.80.2",
+  "description": "Herramientas de Nimerios para Foundry 13–14 y dnd5e: 949 técnicas, 471 dotes, 78 reliquias, creación verificada, recibos de resolución, búsqueda por intención, memoria de campaña, revisión de NPC, encuentros, tres defensas mecánicas activables en todas las hojas PNJ e iconos de token reducidos un 70 %.",
+  "version": "3.80.3",
   "url": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera",
   "manifest": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera/releases/latest/download/module.json",
-  "download": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera/releases/download/v3.80.2/ecos-frontera-3.80.2.zip",
+  "download": "https://github.com/iangonzalezgarciaa-blip/Modulo-Foundry-Ecos-de-la-Frontera/releases/download/v3.80.3/ecos-frontera-3.80.3.zip",
   "authors": [
     {
       "name": "Iangonz"

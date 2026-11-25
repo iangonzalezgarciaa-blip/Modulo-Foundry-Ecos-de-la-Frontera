@@ -1,4 +1,4 @@
-# Ecos de la frontera (v3.80.2)
+# Ecos de la frontera (v3.80.3)
 
 **Ecos de la frontera** es un módulo para **Foundry VTT** que añade a tus partidas de **Dungeons & Dragons 5e** y **Pathfinder 2 ed** las reglas de la casa de la campaña del mismo nombre. Está en español.
 
@@ -19,7 +19,7 @@ No hace falta saber programar para usarlo. Se instala desde Foundry, como cualqu
   Las dificultades salen de tus propias estadísticas.
 - **Conjuros.** Una lupa en cada nivel del libro de conjuros busca en tu lista de clase, con los de D&D y, si conviertes los de Pathfinder 2e con la herramienta de `tools/pf2e` (necesita PF2e instalado), también esos. El mago aprende y copia al libro como dice el Manual. Con el Verbe despierto, los conjuros afines a tu naturaleza o a tu rama ganan +1.
 - **El 20 y el 1.** El 20 natural sigue siendo el crítico de D&D, y además el 20 y el 1 traen consecuencias con sabor en ataques, salvaciones y pruebas, para todos por igual.
-- **Defensas de PNJ.** Cada ficha PNJ sin propietario jugador tiene Coraza (+4 a +7 CA), Fortaleza (+4 a +7 a salvaciones) y Cuerpo sordo (resistencia a daño contundente, perforante y cortante). Los tres efectos aparecen en la pestaña **Efectos**, empiezan desactivados y tienen interruptores independientes. Las fichas de jugadores no los reciben.
+- **Defensas de PNJ.** Todas las fichas de tipo PNJ, tengan o no propietario jugador, tienen Coraza (+4 a +7 CA), Fortaleza (+4 a +7 a salvaciones) y Cuerpo sordo (resistencia a daño contundente, perforante y cortante). Los tres efectos aparecen en la pestaña **Efectos**, empiezan desactivados y tienen interruptores independientes. Las fichas de jugadores no los reciben.
 - **Combate táctico.** Diez reglas que premian el engaño, el plan, rodear al enemigo y conocerlo: Desprevenido, Rodear, Plan maestro, moral de los PNJ, secuaces, técnicas combinadas, Interponerse, terreno que se usa y Evaluar que te dice lo que ganaste. Valen para todos, con bandos para peleas de tres o más grupos, y el Director las enciende o apaga en la Mesa.
 - **Trabajo y economía.** Oficios por horas, encargos, prestigio, un mercadillo con tiendas y la Moneda Antigua (que también se cambia por Trazos o en el mercader extraño).
 - **Mesa Ecos.** Herramientas del Director de Juego en una sola ventana: estado del grupo, tablas, taller de PNJ, diagnóstico y música de YouTube sincronizada para todos.

@@ -116,8 +116,8 @@ const TIPOS_ES = { lightning: "relámpago", bludgeoning: "contundente (un mazo, 
 /* ---------------- Foundry ---------------- */
 const tieneEstado = (actor, id) => !!actor?.statuses?.has?.(id);
 const esNPC = a => a?.type === "npc";
-/** Solo PNJ sin propietario jugador reciben los tres buffs de la campaña. */
-export const npcPuedeTenerDefensas = actor => esNPC(actor) && !actor.hasPlayerOwner;
+/** Todo actor de tipo PNJ recibe los tres buffs; las fichas de personaje jugador quedan excluidas. */
+export const npcPuedeTenerDefensas = actor => esNPC(actor);
 const vdDe = a => Number(a?.system?.details?.cr ?? NaN);
 /** Los buffs se pueden activar en cualquier PNJ; el tramo mínimo conserva el valor base +4. */
 export const bonoDefensaNPC = vd => Math.max(4, bonoDefensa(vd));

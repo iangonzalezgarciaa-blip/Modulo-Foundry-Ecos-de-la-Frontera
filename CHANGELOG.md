@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 3.80.3 — 2026-11-25
+
+- **Todos los PNJ, también los controlados por jugadores:** las tres defensas aparecen en cualquier ficha de tipo PNJ, aunque tenga propietario jugador. Las fichas de personaje (PJ) siguen excluidas. La migración elimina defensas anteriores de fichas de personaje y conserva los tres efectos activables en todos los PNJ.
+
 ## 3.80.2 — 2026-11-25
 
 - **Tres defensas independientes para cada PNJ:** todas las fichas de tipo PNJ sin propietario jugador (incluidos PNJ amistosos y tokens no enlazados en escenas) reciben Coraza, Fortaleza y Cuerpo sordo en la pestaña **Efectos**. Los tres interruptores nacen apagados y se pueden activar por separado.

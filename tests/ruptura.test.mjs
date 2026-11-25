@@ -33,10 +33,11 @@ test('3.28 · los efectos: Coraza suma a la CA, Fortaleza a las salvaciones, Cue
   assert.ok(cabeRuptura(2)); assert.ok(!cabeRuptura(3), 'no más de 3');
 });
 
-test('3.80.2 · los tres buffs se asignan a todos los PNJ sin propietario jugador, no a fichas de jugadores', () => {
+test('3.80.3 · los tres buffs se asignan a todo PNJ, incluso con propietario jugador, pero no a personajes', () => {
   assert.equal(npcPuedeTenerDefensas({ type: 'npc', hasPlayerOwner: false }), true);
-  assert.equal(npcPuedeTenerDefensas({ type: 'npc', hasPlayerOwner: true }), false);
+  assert.equal(npcPuedeTenerDefensas({ type: 'npc', hasPlayerOwner: true }), true, 'sigue siendo PNJ aunque lo controle un jugador');
   assert.equal(npcPuedeTenerDefensas({ type: 'character', hasPlayerOwner: false }), false);
+  assert.equal(npcPuedeTenerDefensas({ type: 'character', hasPlayerOwner: true }), false, 'una ficha de personaje jugador no recibe buffs');
   assert.equal(bonoDefensaNPC(0.25), 4, 'también un PNJ de VD bajo tiene una opción mecánica real');
   assert.equal(bonoDefensaNPC(7), 5);
   const efectos = efectosDefensaNPC(4);
