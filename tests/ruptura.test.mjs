@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { tramoVD, bonoDefensa, defensaSugerida, defensaDe, efectoDefensa, cabeRuptura, ESTADOS_RUPTURA, BRECHA, GRIETA, QUEBRADO } from '../scripts/ruptura.js';
+import { tramoVD, bonoDefensa, bonoDefensaNPC, defensaSugerida, defensaDe, defensasActivasDe, npcPuedeTenerDefensas, efectosDefensaNPC, efectoDefensa, cabeRuptura, ESTADOS_RUPTURA, BRECHA, GRIETA, QUEBRADO } from '../scripts/ruptura.js';
 import { pideDefensa, esAccionBasica, textoAmenaza, seSalva } from '../scripts/defensa-pedida.js';
 import { ACCIONES_PLANAS, datosRasgosComunes } from '../scripts/acciones-comunes.js';
 
@@ -33,19 +33,29 @@ test('3.28 · los efectos: Coraza suma a la CA, Fortaleza a las salvaciones, Cue
   assert.ok(cabeRuptura(2)); assert.ok(!cabeRuptura(3), 'no más de 3');
 });
 
-test('3.80.1 · la defensa solo cuenta cuando su interruptor de la hoja está encendido', () => {
-  const efecto = { disabled: true, getFlag: (_mod, key) => key === 'defensa' ? { tipo: 'coraza', n: 4 } : null };
-  const actor = {
-    getFlag: (_mod, key) => key === 'defensa' ? { tipo: 'coraza', n: 4 } : null,
-    effects: [efecto],
-    statuses: new Set(),
-    system: { details: { cr: 1 } }
-  };
-  assert.equal(defensaDe(actor), null, 'apagada: no da CA y no se considera defensa activa');
-  efecto.disabled = false;
-  assert.deepEqual(defensaDe(actor), { tipo: 'coraza', n: 4 }, 'encendida: sí aplica');
+test('3.80.2 · los tres buffs se asignan a todos los PNJ sin propietario jugador, no a fichas de jugadores', () => {
+  assert.equal(npcPuedeTenerDefensas({ type: 'npc', hasPlayerOwner: false }), true);
+  assert.equal(npcPuedeTenerDefensas({ type: 'npc', hasPlayerOwner: true }), false);
+  assert.equal(npcPuedeTenerDefensas({ type: 'character', hasPlayerOwner: false }), false);
+  assert.equal(bonoDefensaNPC(0.25), 4, 'también un PNJ de VD bajo tiene una opción mecánica real');
+  assert.equal(bonoDefensaNPC(7), 5);
+  const efectos = efectosDefensaNPC(4);
+  assert.equal(efectos.length, 3);
+  assert.deepEqual(efectos.map(e => e.flags['ecos-frontera'].defensa.tipo), ['coraza', 'fortaleza', 'piel']);
+  assert.ok(efectos.every(e => e.disabled === true), 'los tres interruptores empiezan apagados');
+  assert.ok(efectos.every(e => e.flags['ecos-frontera'].defensa.interruptorInicializado === true));
+});
+
+test('3.80.2 · los tres interruptores mecánicos son independientes y Quebrado los suspende', () => {
+  const efectos = efectosDefensaNPC(4).map((ef, i) => ({
+    disabled: i !== 0 && i !== 2,
+    getFlag: (_mod, key) => key === 'defensa' ? ef.flags['ecos-frontera'].defensa : null
+  }));
+  const actor = { effects: efectos, statuses: new Set(), system: { details: { cr: 1 } } };
+  assert.deepEqual(defensasActivasDe(actor), [{ tipo: 'coraza', n: 4 }, { tipo: 'piel', n: 4 }]);
+  assert.deepEqual(defensaDe(actor), { tipo: 'coraza', n: 4 }, 'compatibilidad con consumidores antiguos');
   actor.statuses.add(QUEBRADO);
-  assert.equal(defensaDe(actor), null, 'Quebrado la suspende sin alterar el interruptor');
+  assert.deepEqual(defensasActivasDe(actor), [], 'Quebrado suspende las tres sin modificar sus interruptores');
 });
 
 test('3.28 · dos acciones de cualquiera nuevas abren defensas: Romper la guardia (Brecha) y Buscar la grieta (Grieta)', () => {

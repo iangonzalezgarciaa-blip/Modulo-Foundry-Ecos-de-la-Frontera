@@ -29,6 +29,8 @@ test("3.43 · defensa a la vista y candidatas a silueta", async () => {
   assert.equal(iconoDefensa("fortaleza"), "icons/svg/holy-shield.svg");
   assert.equal(iconoDefensa("piel"), "systems/dnd5e/icons/svg/statuses/petrified.svg");
   assert.equal(iconoDefensa("inexistente"), null);
+  const { tamanoIconoDefensa } = await import("../scripts/token-vista.js");
+  assert.equal(tamanoIconoDefensa(80), 5, "el icono ocupa el 30 % del tamaño anterior");
 });
 
 test("3.43 · viajes: el ritmo cambia el umbral de encuentro; 20 en el hallazgo encuentra un lugar", async () => {

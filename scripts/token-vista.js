@@ -1,12 +1,14 @@
 /**
- * 3.80.1 · Defensa a la vista: un icono pequeño en el token solo cuando el efecto está activo.
+ * 3.80.2 · Iconos de defensa reducidos: un icono pequeño en el token solo cuando el efecto está activo.
  * El interruptor del Active Effect en la pestaña Efectos de la hoja controla tanto la mecánica como el icono.
  * Los tokens a silueta conservan su funcionamiento independiente.
  */
-import { DEFENSAS, defensaDe } from "./ruptura.js";
+import { DEFENSAS, defensasActivasDe } from "./ruptura.js";
 const MOD = "ecos-frontera", SIL = "icons/svg/mystery-man.svg";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const iconoDefensa = tipo => DEFENSAS[tipo]?.img ?? null;
+/** Mantiene el tamaño anterior y lo reduce un 70 % (el 30 % restante). */
+export const tamanoIconoDefensa = anchoToken => Math.max(4, Math.round(Math.min(22, Math.max(12, (Number(anchoToken) || 80) * 0.22)) * 0.3);
 /** ¿Lo ve este usuario? Puro. */
 export const veDefensa = (modo, esGM) => modo === "todos" || (modo === "dm" && !!esGM);
 /** ¿Esta imagen es candidata a volver a silueta? (del sistema, de módulos de arte o del propio módulo). Puro. */
@@ -19,29 +21,41 @@ export function imagenCandidata(src) {
 function dibujar(token) {
   try {
     const modo = game.settings.get(MOD, "defensaVisible");
-    const d = token.actor ? defensaDe(token.actor) : null;
-    const img = d ? iconoDefensa(d.tipo) : null;
-    let icono = token.ecosDefensa;
-    if (!img || !veDefensa(modo, game.user.isGM) || !token.visible) {
-      if (icono && !icono.destroyed) icono.visible = false;
+    const activos = token.actor ? defensasActivasDe(token.actor) : [];
+    const tipos = activos.filter(d => iconoDefensa(d.tipo));
+    let contenedor = token.ecosDefensas;
+    if (!veDefensa(modo, game.user.isGM) || !token.visible || !tipos.length) {
+      if (contenedor && !contenedor.destroyed) contenedor.visible = false;
       return;
     }
-    if (!icono || icono.destroyed) {
-      icono = new PIXI.Sprite(PIXI.Texture.from(img));
-      icono.anchor.set(0.5);
-      icono.interactive = false;
-      token.ecosDefensa = icono;
-      token.ecosDefensaImg = img;
-      token.addChild(icono);
-    } else if (token.ecosDefensaImg !== img) {
-      icono.texture = PIXI.Texture.from(img);
-      token.ecosDefensaImg = img;
+    if (!contenedor || contenedor.destroyed) {
+      contenedor = new PIXI.Container();
+      contenedor.interactive = false;
+      token.ecosDefensas = contenedor;
+      token.ecosDefensaSprites = new Map();
+      token.addChild(contenedor);
     }
-    const lado = Math.max(12, Math.min(22, Math.round((Number(token.w) || 80) * 0.22)));
-    icono.width = lado;
-    icono.height = lado;
-    icono.position.set(token.w - lado / 2 - 2, lado / 2 + 2);
-    icono.visible = true;
+    const lado = tamanoIconoDefensa(token.w), separacion = 1;
+    const sprites = token.ecosDefensaSprites ??= new Map();
+    for (const sprite of sprites.values()) sprite.visible = false;
+    const inicio = token.w - tipos.length * lado - (tipos.length - 1) * separacion - 2;
+    tipos.forEach((d, i) => {
+      const img = iconoDefensa(d.tipo);
+      let sprite = sprites.get(d.tipo);
+      if (!sprite || sprite.destroyed) {
+        sprite = new PIXI.Sprite(PIXI.Texture.from(img));
+        sprite.anchor.set(0.5);
+        sprite.interactive = false;
+        sprites.set(d.tipo, sprite);
+        contenedor.addChild(sprite);
+      } else if (sprite._ecosImg !== img) sprite.texture = PIXI.Texture.from(img);
+      sprite._ecosImg = img;
+      sprite.width = lado;
+      sprite.height = lado;
+      sprite.position.set(inicio + i * (lado + separacion) + lado / 2, lado / 2 + 2);
+      sprite.visible = true;
+    });
+    contenedor.visible = true;
   } catch (err) { console.debug(`${MOD} | defensa visible`, err); }
 }
 const refrescarActor = actor => { for (const t of canvas?.tokens?.placeables ?? []) if (t.actor === actor || t.actor?.id === actor?.id) dibujar(t); };

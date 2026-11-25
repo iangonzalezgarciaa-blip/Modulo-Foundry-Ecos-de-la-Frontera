@@ -8,7 +8,7 @@
  * Quién responde: el jugador dueño de la ficha si está conectado; si no, el DM. Ajuste «Defensa a pedido».
  */
 import { sistema } from "./sistema/index.js";
-import { esPesada, defensaDe, QUEBRADO } from "./ruptura.js";
+import { esPesada, defensasActivasDe } from "./ruptura.js";
 
 const MOD = "ecos-frontera", AJ = "defensaPedida";
 export const MODOS_DEFENSA = { todas: "Toda acción con salvación contra un objetivo (también técnicas y conjuros)", acciones: "Solo las Acciones de cualquiera y el agarre o empujón de D&D", no: "No (cada uno tira desde la tarjeta del chat)" };
@@ -96,8 +96,8 @@ async function responder(d) {
     let total = -Infinity, ok = false;
     if (!r.nada) {
       const ability = r[`o${i}`] ?? mejor(o.actor, d.salv);
-      const fort = d.pesada ? defensaDe(o.actor) : null;
-      const quitar = fort?.tipo === "fortaleza" && !o.actor.statuses?.has?.(QUEBRADO) ? fort.n : 0;
+      const fort = d.pesada ? defensasActivasDe(o.actor).find(x => x.tipo === "fortaleza") : null;
+      const quitar = fort?.n ?? 0;
       const config = { ability, target: d.cd, ...(quitar ? { rolls: [{ parts: ["-@ecosPesada"], data: { ecosPesada: quitar } }] } : {}) };
       const tiradas = await o.actor.rollSavingThrow(config, { configure: false }, { data: { flags: { [MOD]: { defensa: d.id } } } });
       total = Number(tiradas?.[0]?.total);

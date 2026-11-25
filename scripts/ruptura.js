@@ -1,5 +1,5 @@
 /**
- * 3.28 · La ruptura (pedido del autor). En la campaña, las criaturas de VD ½ o más tienen una defensa altísima de un tipo:
+ * 3.80.2 · La ruptura (pedido del autor). En la campaña, las criaturas de VD ½ o más tienen una defensa altísima de un tipo:
  *  - Coraza: CA muy alta. La baja la Brecha (−2 CA cada una, hasta 3).
  *  - Fortaleza: salvaciones muy altas. La baja la Grieta (−2 a sus salvaciones cada una, hasta 3).
  *  - Cuerpo sordo: resistencia a los golpes de armas (contundente, cortante y perforante). La anula Quebrado.
@@ -74,8 +74,14 @@ export function efectoDefensa(tipo, n) {
     : ["bludgeoning", "piercing", "slashing"].map(v => ({ key: "system.traits.dr.value", mode: 2, value: v }));
   const nombre = tipo === "piel" ? d.nombre : `${d.nombre} +${n}`;
   return { name: nombre, img: d.img, transfer: false, disabled: true, changes, duration: {},
-    description: `<p>${d.texto}</p><p>Activa este efecto en la pestaña Efectos de la ficha para aplicar esta defensa.</p>`,
+    description: `<p>${d.texto}</p><p>Activa o desactiva este efecto desde la pestaña Efectos. Su interruptor controla la mecánica real.</p>`,
     flags: { [MOD]: { defensa: { tipo, n, interruptorInicializado: true } } } };
+}
+
+/** Los tres Active Effects independientes que puede activar el DM en cada ficha PNJ. */
+export const TIPOS_DEFENSA_AUTOMATICA = Object.keys(DEFENSAS);
+export function efectosDefensaNPC(n) {
+  return TIPOS_DEFENSA_AUTOMATICA.map(tipo => efectoDefensa(tipo, n)).filter(Boolean);
 }
 
 /** Cuántas de cada ruptura tiene y si una nueva cabe. Puro. */
@@ -84,7 +90,7 @@ export const cabeRuptura = (actuales, tope = TOPE_RUPTURA) => Number(actuales) <
 /** La página de reglas para todos: qué es ablandar y cómo se hace. Pura. */
 export function guiaRupturaHTML() {
   return `<h1>Ablandar a las criaturas</h1>
-<p>En este mundo, D&amp;D es el cañón de golpe y el Verbe es lo que abre el camino. Las criaturas de VD ½ o más tienen una defensa altísima de un tipo. Las de menos son salvajes casi sin Verbe, igual de letales.</p>
+<p>En este mundo, D&amp;D es el cañón de golpe y el Verbe es lo que abre el camino. Cada PNJ tiene tres defensas opcionales en la pestaña <b>Efectos</b>: <b>Coraza</b> (+4 a +7 CA), <b>Fortaleza</b> (+4 a +7 a las salvaciones) y <b>Cuerpo sordo</b> (resistencia a daño contundente, perforante y cortante). Las tres empiezan apagadas; el DM activa por separado las que correspondan. Las fichas de jugadores no reciben estos efectos.</p>
 <h2>Las tres defensas</h2>
 <ul><li><b>Coraza.</b> CA altísima: quitina, escamas, placas, una guardia de hierro. Cuesta acertarle.</li>
 <li><b>Fortaleza.</b> Salvaciones altísimas: un cuerpo o una voluntad que no ceden. Resiste lo que pide salvación.</li>
@@ -108,82 +114,106 @@ const NOMBRE_ESTADO = { empapado: "Empapado", helado: "Helado", ardiendo: "Ardie
 const TIPOS_ES = { lightning: "relámpago", bludgeoning: "contundente (un mazo, un puño)", thunder: "trueno", force: "fuerza", cold: "frío", fire: "fuego" };
 
 /* ---------------- Foundry ---------------- */
-const leer = (k, def) => { try { return game.settings.get(MOD, k); } catch { return def; } };
 const tieneEstado = (actor, id) => !!actor?.statuses?.has?.(id);
 const esNPC = a => a?.type === "npc";
+/** Solo PNJ sin propietario jugador reciben los tres buffs de la campaña. */
+export const npcPuedeTenerDefensas = actor => esNPC(actor) && !actor.hasPlayerOwner;
 const vdDe = a => Number(a?.system?.details?.cr ?? NaN);
+/** Los buffs se pueden activar en cualquier PNJ; el tramo mínimo conserva el valor base +4. */
+export const bonoDefensaNPC = vd => Math.max(4, bonoDefensa(vd));
 const datosCriatura = a => ({
   tipo: a.system?.details?.type?.value, vd: vdDe(a), ca: Number(a.system?.attributes?.ac?.value) || 10,
   calculo: a.system?.attributes?.ac?.calc ?? "", deJugador: !!a.hasPlayerOwner,
   armadura: a.items?.find?.(i => i.type === "equipment" && i.system?.equipped && ["heavy", "medium", "shield"].includes(i.system?.type?.value))?.system?.type?.value ?? ""
 });
-/** La defensa asignada por el DM, esté o no encendido su efecto. */
-function defensaConfiguradaDe(actor) {
-  const f = actor?.getFlag?.(MOD, "defensa");
-  if (f?.tipo === "ninguna") return null;
-  const tipo = DEFENSAS[f?.tipo] ? f.tipo : null;
-  if (!tipo) return null;
-  return { tipo, n: Number(f.n) || bonoDefensa(vdDe(actor)) };
+/** Los Active Effects de la hoja son la fuente de verdad: cada uno tiene su propio interruptor. */
+export function defensasActivasDe(actor) {
+  if (!actor || tieneEstado(actor, QUEBRADO)) return [];
+  return [...(actor.effects ?? [])].map(ef => {
+    const f = ef.getFlag?.(MOD, "defensa");
+    return f && DEFENSAS[f.tipo] && !ef.disabled ? { tipo: f.tipo, n: Number(f.n) || 0 } : null;
+  }).filter(Boolean);
 }
-const efectoActual = actor => actor?.effects?.find?.(e => e.getFlag?.(MOD, "defensa"));
-/** Solo cuenta como defensa mecánica si el Active Effect está encendido y no está Quebrado. */
-export function defensaDe(actor) {
-  const d = defensaConfiguradaDe(actor), ef = efectoActual(actor);
-  if (!d || !ef || ef.disabled || tieneEstado(actor, QUEBRADO)) return null;
-  return d;
+/** Compatibilidad con consumidores antiguos que esperan una sola defensa. */
+export function defensaDe(actor) { return defensasActivasDe(actor)[0] ?? null; }
+
+/** Incluye actores enlazados y actores sintéticos de tokens no enlazados en escenas. */
+function actoresDelMundo() {
+  const actores = new Set(game.actors ?? []);
+  for (const escena of game.scenes ?? []) for (const td of escena.tokens ?? []) {
+    try { if (td.actor) actores.add(td.actor); } catch { /* token temporal o sin actor */ }
+  }
+  for (const token of canvas?.tokens?.placeables ?? []) if (token.actor) actores.add(token.actor);
+  return [...actores];
+}
+async function quitarDefensasDeJugador(actor) {
+  const ids = [...(actor.effects ?? [])].filter(e => e.getFlag?.(MOD, "defensa")).map(e => e.id);
+  if (ids.length) await actor.deleteEmbeddedDocuments("ActiveEffect", ids);
+  if (actor.getFlag?.(MOD, "defensa")) await actor.unsetFlag(MOD, "defensa");
 }
 
-/** Deja la ficha con el efecto que corresponde a su defensa (o sin él). Solo el DM. */
+/** Cola por ficha: evita duplicados al crear y migrar al mismo tiempo. */
 const COLA_DEFENSA = new Map();
-/** Los aliados (token amistoso o del equipo del Verbe) no llevan la defensa de la campaña. */
+/** Se conserva para compatibilidad con sistemas externos. */
 export const esAliado = a => !!a?.getFlag?.(MOD, "equipoVerbe") || (a?.prototypeToken?.disposition ?? -1) === (globalThis.CONST?.TOKEN_DISPOSITIONS?.FRIENDLY ?? 1);
-/** 3.34: en cola por ficha (crear la ficha y su bandera disparaban dos sincronizaciones a la vez y duplicaban el efecto). */
 export function sincronizarDefensa(actor) {
-  if (!game.user.isGM || !actor) return Promise.resolve();
-  const p = (COLA_DEFENSA.get(actor.uuid) ?? Promise.resolve()).catch(() => null).then(() => sincronizarInterno(actor));
+  if (!game.user.isGM || !actor) return Promise.resolve(false);
+  const p = (COLA_DEFENSA.get(actor.uuid) ?? Promise.resolve()).catch(() => false).then(() => sincronizarDefensasInterno(actor));
   COLA_DEFENSA.set(actor.uuid, p);
   return p;
 }
-async function sincronizarInterno(actor) {
-  const todos = actor.effects?.filter?.(e => e.getFlag?.(MOD, "defensa")) ?? [];
-  if (todos.length > 1) await actor.deleteEmbeddedDocuments("ActiveEffect", todos.slice(1).map(e => e.id));
-  const d = defensaConfiguradaDe(actor), ef = todos[0] ?? null;
-  if (!d) { if (ef) await ef.delete(); return; }
-  const datos = efectoDefensa(d.tipo, d.n);
-  const flagEfecto = ef?.getFlag?.(MOD, "defensa");
-  // Los efectos anteriores a 3.80.1 se apagan una sola vez. Después se respeta siempre el toggle de la hoja.
-  datos.disabled = ef ? (flagEfecto?.interruptorInicializado === true ? !!ef.disabled : true) : true;
-  // Quebrado suspende la mecánica, pero no cambia la elección del usuario en el interruptor.
-  if (tieneEstado(actor, QUEBRADO)) datos.changes = [];
-  if (!ef) return actor.createEmbeddedDocuments("ActiveEffect", [datos]);
-  const igual = ef.name === datos.name && !!ef.disabled === datos.disabled
-    && JSON.stringify(ef.changes) === JSON.stringify(datos.changes)
-    && flagEfecto?.interruptorInicializado === true;
-  if (!igual) await ef.update({ name: datos.name, img: datos.img, changes: datos.changes, disabled: datos.disabled, description: datos.description, flags: datos.flags });
+async function sincronizarDefensasInterno(actor) {
+  if (!npcPuedeTenerDefensas(actor)) { await quitarDefensasDeJugador(actor); return false; }
+  let cambio = false;
+  const porTipo = new Map(), duplicados = [];
+  for (const ef of actor.effects ?? []) {
+    const f = ef.getFlag?.(MOD, "defensa");
+    if (!f || !DEFENSAS[f.tipo]) continue;
+    if (porTipo.has(f.tipo)) duplicados.push(ef.id);
+    else porTipo.set(f.tipo, ef);
+  }
+  if (duplicados.length) { await actor.deleteEmbeddedDocuments("ActiveEffect", duplicados); cambio = true; }
+  const n = bonoDefensaNPC(vdDe(actor)), quebrado = tieneEstado(actor, QUEBRADO), nuevos = [];
+  for (const tipo of TIPOS_DEFENSA_AUTOMATICA) {
+    const ef = porTipo.get(tipo), actual = ef?.getFlag?.(MOD, "defensa");
+    const datos = efectoDefensa(tipo, n);
+    datos.disabled = ef ? (actual?.interruptorInicializado === true ? !!ef.disabled : true) : true;
+    if (quebrado) datos.changes = [];
+    if (!ef) { nuevos.push(datos); continue; }
+    const igual = ef.name === datos.name && ef.img === datos.img && !!ef.disabled === datos.disabled
+      && JSON.stringify(ef.changes) === JSON.stringify(datos.changes)
+      && actual?.interruptorInicializado === true;
+    if (!igual) {
+      await ef.update({ name: datos.name, img: datos.img, changes: datos.changes, disabled: datos.disabled, description: datos.description, flags: datos.flags });
+      cambio = true;
+    }
+  }
+  if (nuevos.length) { await actor.createEmbeddedDocuments("ActiveEffect", nuevos); cambio = true; }
+  return cambio;
 }
 
-/** Elige (o quita) la defensa de una ficha. `tipo` es coraza, fortaleza, piel o ninguna; `n` opcional. */
+/** Compatibilidad: ahora cada PNJ recibe los tres efectos; los tres nacen desactivados. */
 export async function ponerDefensa(actor, tipo, n = null) {
-  if (!game.user.isGM || !actor || !TIPOS_DEFENSA.includes(tipo)) return false;
-  await actor.setFlag(MOD, "defensa", { tipo, n: tipo === "ninguna" ? 0 : (Number(n) || bonoDefensa(vdDe(actor))), elegida: true });
+  if (!game.user.isGM || !npcPuedeTenerDefensas(actor) || !TIPOS_DEFENSA.includes(tipo)) return false;
   await sincronizarDefensa(actor);
+  const efectos = [...(actor.effects ?? [])].filter(e => e.getFlag?.(MOD, "defensa"));
+  const elegido = tipo === "ninguna" ? null : efectos.find(e => e.getFlag(MOD, "defensa")?.tipo === tipo);
+  if (tipo !== "ninguna" && !elegido) return false;
+  for (const ef of efectos) await ef.update({ disabled: tipo === "ninguna" || ef !== elegido });
+  await actor.setFlag(MOD, "defensa", { tipo, n: tipo === "ninguna" ? 0 : (Number(n) || bonoDefensaNPC(vdDe(actor))), elegida: true });
   return true;
 }
 
-/** A las fichas de PNJ de VD ½ o más que no tienen defensa, les pone la sugerida. Devuelve cuántas cambió. */
-export async function defensasAutomaticas({ forzar = false } = {}) {
+/** Migra todos los PNJ del mundo, incluidos tokens sintéticos; excluye fichas de jugadores. */
+export async function defensasAutomaticas() {
   if (!game.user.isGM) return 0;
   let n = 0;
-  for (const a of game.actors ?? []) {
-    if (!esNPC(a) || a.hasPlayerOwner || esAliado(a)) continue;
-    const f = a.getFlag(MOD, "defensa");
-    if (f && !forzar) continue;
-    if (f?.elegida) continue;
-    const tipo = defensaSugerida(datosCriatura(a));
-    if (!tipo) continue;
-    await a.setFlag(MOD, "defensa", { tipo, n: bonoDefensa(vdDe(a)), elegida: false });
-    await sincronizarDefensa(a);
-    n += 1;
+  for (const actor of actoresDelMundo()) {
+    if (!npcPuedeTenerDefensas(actor)) {
+      if (actor.type === "character" || actor.hasPlayerOwner) await quitarDefensasDeJugador(actor);
+      continue;
+    }
+    if (await sincronizarDefensa(actor)) n++;
   }
   return n;
 }
@@ -197,8 +227,8 @@ function pesadaAtraviesaCoraza(config) {
   if (!esPesada(act?.item)) return;
   const blancos = [...(game.user?.targets ?? [])];
   if (blancos.length !== 1) return;
-  const d = defensaDe(blancos[0].actor);
-  if (d?.tipo !== "coraza" || tieneEstado(blancos[0].actor, QUEBRADO)) return;
+  const d = defensasActivasDe(blancos[0].actor).find(x => x.tipo === "coraza");
+  if (!d) return;
   for (const r of config.rolls ?? []) { r.parts ??= []; if (!r.parts.includes("@ecosPesada")) { r.parts.push("@ecosPesada"); r.data ??= {}; r.data.ecosPesada = d.n; } }
 }
 
@@ -211,8 +241,8 @@ function dotesAlAtacar(config) {
     config.advantage = true;
     for (const r of config.rolls ?? []) (r.options ??= {}).advantage = true;
   }
-  const cor = defensaDe(b);
-  if (d.has("ver-la-grieta") && ojoAbierto(atacante) && cor?.tipo === "coraza" && !esPesada(act.item) && !tieneEstado(b, QUEBRADO))
+  const cor = defensasActivasDe(b).find(x => x.tipo === "coraza");
+  if (d.has("ver-la-grieta") && ojoAbierto(atacante) && cor && !esPesada(act.item) && !tieneEstado(b, QUEBRADO))
     for (const r of config.rolls ?? []) { r.parts ??= []; if (!r.parts.includes("@ecosVerGrieta")) { r.parts.push("@ecosVerGrieta"); r.data ??= {}; r.data.ecosVerGrieta = cor.n; } }
 }
 /** Daño extra de las dotes: Golpe al quiebre (contra Brecha, cuerpo a cuerpo) y Golpe en el vacío (contra Quebrado). Puro. */
@@ -367,49 +397,35 @@ async function topeAlCrear(efecto) {
 }
 
 if (globalThis.Hooks) {
-  Hooks.once("init", () => {
-    try {
-      game.settings.register(MOD, "defensasCampana", { name: "Defensas de la campaña (VD ½ o más)",
-        hint: "Cada criatura de VD ½ o más lleva una defensa altísima: Coraza (CA), Fortaleza (salvaciones) o Cuerpo sordo (resistencia a las armas). «Automáticas» se la pone a las fichas que no tienen una elegida por ti; puedes cambiarla en el panel del Verbe de cada PNJ (pestaña DM).",
-        scope: "world", config: true, type: String, default: "auto",
-        choices: { auto: "Automáticas en las fichas sin elegir (recomendado)", manual: "Solo las que yo elija", no: "Apagadas" } });
-    } catch { /* ya */ }
-  });
   Hooks.once("ready", async () => {
     if (!game.user.isGM || game.users.activeGM?.isSelf === false) return;
     import("./acciones-comunes.js").then(m => m.paginaReglas("guiaRuptura", "16 · Ablandar: Coraza, Fortaleza, Brecha y Grieta", guiaRupturaHTML())).catch(err => console.error(`${MOD} | guía de ruptura`, err));
     try {
-      if (leer("defensasCampana", "auto") === "no") { for (const a of game.actors) if (efectoActual(a)) await efectoActual(a).delete(); return; }
-      // 3.45: el icono de Fortaleza apuntaba a un archivo que el sistema ya no trae (se veía roto).
-      for (const a of game.actors) for (const ef of a.effects) if (ef.getFlag(MOD, "defensa") && String(ef.img ?? "").endsWith("blessed.svg")) await ef.update({ img: DEFENSAS.fortaleza.img }).catch(() => null);
-      // 3.80.1: migra una sola vez las defensas antiguas al interruptor apagado por defecto.
-      for (const a of game.actors) {
-        const f = a.getFlag(MOD, "defensa");
-        if (esAliado(a) && f && !f.elegida) {
-          await a.unsetFlag(MOD, "defensa");
-          await sincronizarDefensa(a);
-        } else if (f) await sincronizarDefensa(a);
-        else for (const ef of a.effects ?? []) {
-          const defensa = ef.getFlag?.(MOD, "defensa");
-          if (defensa && defensa.interruptorInicializado !== true)
-            await ef.update({ disabled: true, [`flags.${MOD}.defensa.interruptorInicializado`]: true });
-        }
-      }
-      if (leer("defensasCampana", "auto") === "auto") {
-        const n = await defensasAutomaticas();
-        if (n) ChatMessage.create({ whisper: game.users.filter(u => u.isGM).map(u => u.id), speaker: { alias: "Ecos" },
-          content: `<p><b>Defensas de la campaña:</b> ${n} ficha${n === 1 ? "" : "s"} de VD ½ o más recibieron su Coraza, Fortaleza o Cuerpo sordo. Puedes cambiar cada una en su panel del Verbe (pestaña DM).</p>` });
-      }
+      // 3.80.2: todos los PNJ reciben los tres interruptores; nacen apagados.
+      const n = await defensasAutomaticas();
+      if (n) ChatMessage.create({ whisper: game.users.filter(u => u.isGM).map(u => u.id), speaker: { alias: "Ecos" },
+        content: `<p><b>Defensas de la campaña:</b> se añadieron o actualizaron los tres efectos en ${n} ficha${n === 1 ? "" : "s"} PNJ. Están desactivados; actívalos por separado en la pestaña Efectos.</p>` });
     } catch (err) { console.error(`${MOD} | defensas`, err); }
   });
-  Hooks.on("createActor", actor => {
-    if (!game.user.isGM || game.users.activeGM?.isSelf === false || leer("defensasCampana", "auto") !== "auto" || !esNPC(actor) || esAliado(actor) || actor.getFlag(MOD, "defensa")) return;
-    const tipo = defensaSugerida(datosCriatura(actor));
-    if (tipo) actor.setFlag(MOD, "defensa", { tipo, n: bonoDefensa(vdDe(actor)), elegida: false }).then(() => sincronizarDefensa(actor)).catch(err => console.error(`${MOD} | defensas`, err));
+  const prepararActor = actor => {
+    if (!game.user.isGM || game.users.activeGM?.isSelf === false || !actor) return;
+    const p = npcPuedeTenerDefensas(actor) ? sincronizarDefensa(actor)
+      : (actor.type === "character" || actor.hasPlayerOwner) ? quitarDefensasDeJugador(actor) : Promise.resolve(false);
+    p.catch(err => console.error(`${MOD} | defensas`, err));
+  };
+  Hooks.on("createActor", prepararActor);
+  // Los tokens no enlazados crean actores sintéticos y no siempre pasan por createActor.
+  Hooks.on("createToken", tokenDoc => prepararActor(tokenDoc.actor));
+  Hooks.on("updateToken", (tokenDoc, cambios) => {
+    if (foundry.utils.hasProperty(cambios, "actorId") || foundry.utils.hasProperty(cambios, "actorLink")) prepararActor(tokenDoc.actor);
   });
   Hooks.on("updateActor", (actor, cambios) => {
     if (!game.user.isGM || game.users.activeGM?.isSelf === false) return;
-    if (foundry.utils.hasProperty(cambios, `flags.${MOD}.defensa`) || foundry.utils.hasProperty(cambios, `flags.${MOD}.-=defensa`)) sincronizarDefensa(actor).catch(err => console.error(`${MOD} | defensas`, err));
+    const propietario = foundry.utils.hasProperty(cambios, "ownership");
+    const vd = foundry.utils.hasProperty(cambios, "system.details.cr");
+    const tipo = foundry.utils.hasProperty(cambios, "type");
+    const defensa = foundry.utils.hasProperty(cambios, `flags.${MOD}.defensa`) || foundry.utils.hasProperty(cambios, `flags.${MOD}.-=defensa`);
+    if (propietario || vd || tipo || defensa) prepararActor(actor);
   });
   Hooks.on("createActiveEffect", ef => { topeAlCrear(ef).catch(err => console.error(`${MOD} | ruptura`, err)); });
   Hooks.on("deleteActiveEffect", ef => {

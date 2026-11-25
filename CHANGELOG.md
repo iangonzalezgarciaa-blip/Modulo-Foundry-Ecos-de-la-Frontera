@@ -1,5 +1,14 @@
 # Historial de cambios
 
+## 3.80.2 — 2026-11-25
+
+- **Tres defensas independientes para cada PNJ:** todas las fichas de tipo PNJ sin propietario jugador (incluidos PNJ amistosos y tokens no enlazados en escenas) reciben Coraza, Fortaleza y Cuerpo sordo en la pestaña **Efectos**. Los tres interruptores nacen apagados y se pueden activar por separado.
+- **Mecánicas reales:** Coraza suma +4 a +7 a la CA y Fortaleza +4 a +7 a las salvaciones según VD (los PNJ por debajo de VD ½ reciben el tramo base +4 si el DM activa el efecto); Cuerpo sordo añade resistencia a contundente, perforante y cortante.
+- **Jugadores excluidos:** las fichas de personajes y cualquier PNJ con propietario jugador no reciben estos efectos; se eliminan si existían de versiones anteriores.
+- **Migración del mundo:** al abrir el mundo se añaden los tres efectos a los PNJ existentes, respetando el estado de un interruptor ya inicializado. También se incluyen los PNJ creados después y los tokens no enlazados de las escenas.
+- **Iconos del token:** se reduce un 70 % el tamaño anterior y se muestra un icono por cada defensa activa. Quebrado oculta temporalmente los iconos y suspende las tres mecánicas sin cambiar sus interruptores.
+- **Integración:** técnicas pesadas y «Ver la grieta» consultan el efecto específico encendido, incluso cuando hay más de una defensa activa.
+
 ## 3.80.1 — 2026-11-25
 
 - **Defensas como efectos activables:** Coraza, Fortaleza y Cuerpo sordo nacen desactivadas. En la pestaña **Efectos** de la ficha, el interruptor nativo de Foundry activa o desactiva su mecánica real: bono de CA, bono a salvaciones o resistencias a daño contundente, perforante y cortante.
