@@ -44,3 +44,15 @@ test("3.43 · viajes: el ritmo cambia el umbral de encuentro; 20 en el hallazgo 
   assert.equal(RITMOS.normal.umbral, 16);
   assert.equal(planViaje({}).length, 1);
 });
+
+
+test("3.80.4 · el menú de acciones envuelve títulos y descripciones dentro de sus botones", async () => {
+  const { readFileSync } = await import("node:fs");
+  const css = readFileSync(new URL("../styles/ecos.css", import.meta.url), "utf8");
+  const layout = css.slice(css.lastIndexOf("/* 3.80.4 · Menú de acciones:"));
+  assert.match(layout, /\.ecos-ae-e\s*\{[^}]*box-sizing:\s*border-box/s);
+  assert.match(layout, /\.ecos-ae-e\s*\{[^}]*min-width:\s*0/s);
+  assert.match(layout, /\.ecos-ae-e b,\s*\.ecos-ae-e small\s*\{[^}]*white-space:\s*normal/s);
+  assert.match(layout, /\.ecos-ae-e b,\s*\.ecos-ae-e small\s*\{[^}]*overflow-wrap:\s*anywhere/s);
+  assert.match(layout, /\.ecos-ae-e small\s*\{[^}]*line-height:\s*1\.3/s);
+});

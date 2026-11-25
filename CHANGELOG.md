@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 3.80.4 — 2026-11-25
+
+- **Menú de Acciones corregido:** los botones ajustan su altura al texto y envuelven títulos y descripciones dentro de sus límites, sin sobresalir ni cortar palabras.
+- **Alcance:** la corrección se aplica por igual al panel lateral y a la ventana «Acciones»: Correr, Desengancharse, Esquivar, Influir, Usar un objeto, Ataques de oportunidad, el resto de reacciones, Descanso corto, Descanso largo y las demás acciones de la hoja.
+
 ## 3.80.3 — 2026-11-25
 
 - **Todos los PNJ, también los controlados por jugadores:** las tres defensas aparecen en cualquier ficha de tipo PNJ, aunque tenga propietario jugador. Las fichas de personaje (PJ) siguen excluidas. La migración elimina defensas anteriores de fichas de personaje y conserva los tres efectos activables en todos los PNJ.

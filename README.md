@@ -1,4 +1,4 @@
-# Ecos de la frontera (v3.80.3)
+# Ecos de la frontera (v3.80.4)
 
 **Ecos de la frontera** es un módulo para **Foundry VTT** que añade a tus partidas de **Dungeons & Dragons 5e** y **Pathfinder 2 ed** las reglas de la casa de la campaña del mismo nombre. Está en español.
 
@@ -8,7 +8,7 @@ No hace falta saber programar para usarlo. Se instala desde Foundry, como cualqu
 
 - **Supervivencia con peso.** Morir de verdad cuesta, pero recuperarse también: santuarios, descansos que no lo curan todo, heridas que hay que tratar y secuelas.
 - **El Verbe.** Un sistema de poderes propio con más de 900 técnicas, dotes, ramas, naturalezas (fuego, agua, viento, tierra, rayo) y linajes. Cada jugador lo maneja desde un panel con filtros, favoritas y un «así se resuelve, paso a paso» con los números de su ficha.
-- **Lo que cualquiera puede intentar.** Todas las hojas traen Golpe sin armas y acciones para las seis características:
+- **Lo que cualquiera puede intentar.** Todas las hojas traen Golpe sin armas y acciones para las seis características. El menú de Acciones adapta sus botones y textos al ancho disponible, tanto en combate como en descansos y actividades fuera de combate:
   - Fuerza: Presa, Empujón.
   - Destreza: Zancadilla, Desarmar, Esquivar, Esconderse, Interponerse.
   - Constitución: Aguantar, Sacudirse.

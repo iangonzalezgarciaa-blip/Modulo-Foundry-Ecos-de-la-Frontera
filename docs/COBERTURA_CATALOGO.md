@@ -1,4 +1,4 @@
-# Cobertura declarada del catálogo 3.80.3
+# Cobertura declarada del catálogo 3.80.4
 
 Generado con `npm run docs:catalog`. Inventario estático completo: no certifica que el texto de cada poder esté automatizado.
 

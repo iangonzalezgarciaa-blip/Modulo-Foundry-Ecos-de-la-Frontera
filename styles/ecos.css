@@ -1172,3 +1172,41 @@ a.ecos-estado-link:hover { color: #b8862b; text-decoration-style: solid; }
 .ecos-verbe-panel h3.ev-tipo-dote small { display: block; font-weight: normal; font-size: 11px; opacity: .75; }
 .ecos-verbe-panel button.ev-mini { padding: 0 6px; min-width: 0; line-height: 1.4; font-size: 11px; }
 .ecos-verbe-panel .ev-chips-act { margin-top: 4px; }
+
+
+/* 3.80.4 · Menú de acciones: cada texto queda dentro de su botón, tanto en el panel como en la ventana. */
+.ecos-ae-cuerpo,
+.ecos-ae-l {
+  width: 100%;
+  min-width: 0;
+}
+.ecos-ae-e {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 42px;
+  padding: 5px 6px;
+  align-items: flex-start;
+  white-space: normal;
+}
+.ecos-ae-e > span {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  max-width: 100%;
+}
+.ecos-ae-e b,
+.ecos-ae-e small {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  text-overflow: clip;
+}
+.ecos-ae-e b { line-height: 1.25; }
+.ecos-ae-e small { line-height: 1.3; }
